@@ -52,6 +52,9 @@ services:
       interval: 30s
       start_period: 30s
     user: root
+    profiles:
+      - central-ledger
+      - p2p    
 
   objstore:
     image: mongo:latest
@@ -69,6 +72,56 @@ services:
       timeout: 10s
       retries: 5
       start_period: 40s
+    profiles:
+      - central-ledger
+      - p2p
+
+  kafka:
+    image: johnnypark/kafka-zookeeper:2.3.0
+    container_name: kafka
+    volumes:
+      - ./docker/kafka/:/opt/kafka_2.12-2.3.0/config/
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+    environment:
+      - ZOO_LOG4J_PROP=WARN
+    networks:
+      - mojaloop-net
+    healthcheck:
+      test: ["CMD" ,"/opt/kafka_2.12-2.3.0/bin/kafka-broker-api-versions.sh","--bootstrap-server","kafka:29092"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    profiles:
+      - central-ledger
+      - p2p
+
+  mysql:
+    image: mysql/mysql-server
+    container_name: mysql
+    ports:
+      - "3307:3306"
+    volumes:
+      # Note: this fixes the permissions issue, but docker-compose up will fail on first attempt
+      - ./docker/sql-init/:/docker-entrypoint-initdb.d/
+    environment:
+      - MYSQL_USER=${DBUSER:-central_ledger}
+      - MYSQL_PASSWORD=${DBPASS:-password}
+      - MYSQL_DATABASE=${DBUSER:-central_ledger}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    networks:
+      - mojaloop-net
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "mysql"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    profiles:
+      - central-ledger
+      - p2p
 
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
@@ -92,6 +145,9 @@ services:
       retries: 30
       interval: 15s
     user: root
+    profiles:
+      - quoting-service
+      - p2p
 
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
@@ -111,8 +167,6 @@ services:
         condition: service_started
       central-ledger:
         condition: service_started
-      account-lookup-service:
-        condition: service_started
       config-builder:
         condition: service_completed_successfully
     healthcheck:
@@ -121,28 +175,9 @@ services:
       retries: 30
       interval: 30s
       start_period: 30s
-
-  mysql:
-    image: mysql/mysql-server
-    container_name: mysql
-    ports:
-      - "3307:3306"
-    volumes:
-      # Note: this fixes the permissions issue, but docker-compose up will fail on first attempt
-      - ./docker/sql-init/:/docker-entrypoint-initdb.d/
-    environment:
-      - MYSQL_USER=${DBUSER:-central_ledger}
-      - MYSQL_PASSWORD=${DBPASS:-password}
-      - MYSQL_DATABASE=${DBUSER:-central_ledger}
-      - MYSQL_ALLOW_EMPTY_PASSWORD=true
-    networks:
-      - mojaloop-net
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "mysql"]
-      timeout: 20s
-      retries: 10
-      start_period: 40s
-      interval: 30s
+    profiles:
+      - ml-api-adapter
+      - p2p
 
   simulator:
     image: mojaloop/simulator:v11.1.3
@@ -163,25 +198,9 @@ services:
       timeout: 20s
       retries: 10
       interval: 30s
-
-  kafka:
-    image: johnnypark/kafka-zookeeper:2.3.0
-    container_name: kafka
-    volumes:
-      - ./docker/kafka/:/opt/kafka_2.12-2.3.0/config/
-    ports:
-      - "2181:2181"
-      - "9092:9092"
-    environment:
-      - ZOO_LOG4J_PROP=WARN
-    networks:
-      - mojaloop-net
-    healthcheck:
-      test: ["CMD" ,"/opt/kafka_2.12-2.3.0/bin/kafka-broker-api-versions.sh","--bootstrap-server","kafka:29092"]
-      timeout: 20s
-      retries: 10
-      start_period: 40s
-      interval: 30s
+    profiles:
+      - simulator
+      - p2p
 
   account-lookup-service:
     image: mojaloop/account-lookup-service:${ACCOUNT_LOOKUP_SERVICE_VERSION}
@@ -212,6 +231,9 @@ services:
       start_period: 40s
       interval: 30s
     user: root
+    profiles:
+      - account-lookup-service
+      - p2p
 
   mysql-als:
     image: mysql/mysql-server
@@ -233,6 +255,9 @@ services:
       retries: 10
       start_period: 40s
       interval: 30s
+    profiles:
+      - account-lookup-service
+      - p2p
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
@@ -254,6 +279,9 @@ services:
       interval: 5s
       timeout: 10s
       retries: 3
+    profiles:
+      - testing-toolkit
+      - p2p
 
   mojaloop-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:v13.5.5
@@ -267,6 +295,9 @@ services:
       - /usr/share/nginx/start.sh
     networks:
       - mojaloop-net
+    profiles:
+      - testing-toolkit
+      - p2p
 
   ttk-provisioning:
     image: mojaloop/ml-testing-toolkit-client-lib:v0.0.6
@@ -291,3 +322,35 @@ services:
       - sh
       - -c
       - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --report-format html --report-target file://reports/latest.html"
+    profiles:
+      - ttk-provisioning
+      - p2p
+
+  ttk-tests:
+    image: mojaloop/ml-testing-toolkit-client-lib:v0.0.6
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./docker/ml-testing-toolkit/reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+      central-ledger:
+        condition: service_healthy
+      ml-api-adapter:
+        condition: service_healthy
+      account-lookup-service:
+        condition: service_healthy
+      quoting-service:
+        condition: service_healthy
+      ttk-provisioning:
+        condition: service_completed_successfully
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/tests -e environments/default-env.json --report-format html --report-target file://reports/latest.html"
+    profiles:
+      - ttk-tests
+      - p2p

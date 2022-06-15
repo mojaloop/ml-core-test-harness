@@ -14,35 +14,35 @@ Execute the following commands to run mojaloop in local machine
 ```
 git clone https://github.com/mojaloop/ml-core-test-harness.git
 cd ml-core-test-harness
-docker-compose up
+docker-compose --profile p2p up
 ```
 
 Wait for some time to get all the containers up and healthy.
 You can check the status of the containers using the command `docker ps`.
 
-You should see the following output after some time. That means all your mojaloop services are up and test FSPs onboarded successfully. Now you can run a P2P transfer.
+You should see the following output after some time. That means all your mojaloop services are up and test FSPs are onboarded successfully. Now you can run a P2P transfer.
 
 ```
 ┌───────────────────────────────────────────────────┐
 │                      SUMMARY                      │
 ├───────────────────┬───────────────────────────────┤
-│ Total assertions  │ 84                            │
+│ Total assertions  │ 27                            │
 ├───────────────────┼───────────────────────────────┤
-│ Passed assertions │ 84                            │
+│ Passed assertions │ 27                            │
 ├───────────────────┼───────────────────────────────┤
 │ Failed assertions │ 0                             │
 ├───────────────────┼───────────────────────────────┤
-│ Total requests    │ 82                            │
+│ Total requests    │ 4                             │
 ├───────────────────┼───────────────────────────────┤
-│ Total test cases  │ 6                             │
+│ Total test cases  │ 1                             │
 ├───────────────────┼───────────────────────────────┤
 │ Passed percentage │ 100.00%                       │
 ├───────────────────┼───────────────────────────────┤
-│ Started time      │ Wed, 15 Jun 2022 16:20:04 GMT │
+│ Started time      │ Wed, 15 Jun 2022 17:02:28 GMT │
 ├───────────────────┼───────────────────────────────┤
-│ Completed time    │ Wed, 15 Jun 2022 16:20:13 GMT │
+│ Completed time    │ Wed, 15 Jun 2022 17:02:30 GMT │
 ├───────────────────┼───────────────────────────────┤
-│ Runtime duration  │ 8714 ms                       │
+│ Runtime duration  │ 2398 ms                       │
 └───────────────────┴───────────────────────────────┘
 ```
 
@@ -55,3 +55,43 @@ You should see the following output after some time. That means all your mojaloo
 - Collection manager closes and click on `Run` button at the top right corner
 - You should see all the tests passed
 - You can explore the requests and responses by clicking on `Edit` button next to the test case
+
+## Running various services with different profile combinations
+
+### Central ledger
+```
+docker-compose --profile central-ledger up
+```
+
+### Quoting Service
+```
+docker-compose --profile quoting-service --profile central-ledger up
+```
+Note: We need to include central-ledger profile also here because its a dependency for quoting service
+
+### Account lookup service
+```
+docker-compose --profile account-lookup-service --profile central-ledger up
+```
+Note: We need to include central-ledger profile also here because its a dependency for account lookup service
+
+### ML API Adapter
+```
+docker-compose --profile ml-api-adapter --profile central-ledger up
+```
+Note: We need to include central-ledger profile also here because its a dependency for ml-api-adapter
+
+### Settlements
+TODO: Add settlement related services
+
+### Bulk
+TODO: Add bulk related services
+
+### Debug
+TODO: Add debug related services like kowl
+
+### QA
+TODO: Add a profile for running all tests
+
+### All
+TODO: Add a profile for running all services
