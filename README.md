@@ -7,14 +7,14 @@ Run `Mojaloop` in your local machine using docker-compose without need for a `Ku
 - docker
 - docker-compose
 
-## Starting light weight mojaloop for a simple P2P transfer
+## Starting mojaloop core services for a simple P2P transfer
 
 Execute the following commands to run mojaloop in local machine
 
 ```
 git clone https://github.com/mojaloop/ml-core-test-harness.git
 cd ml-core-test-harness
-docker-compose --profile p2p up
+docker-compose --profile all-services --profile ttk-provisioning --profile ttk-tests up
 ```
 
 Wait for some time to get all the containers up and healthy.
@@ -46,6 +46,16 @@ You should see the following output after some time. That means all your mojaloo
 └───────────────────┴───────────────────────────────┘
 ```
 
+## Running P2P transfer again in a separate terminal session along with the running mojaloop
+
+After all services been started, if you want to execute the P2P transfer from the command line again, use the following command in a separate terminal session.
+
+```
+docker-compose --project-name ttk-test-only --profile ttk-tests up --no-deps
+```
+
+_Note: This doesn't wait for any dependent services. You should make sure that all the services are up and healthy.
+
 ## Running P2P transfer using testing toolkit web interface
 
 - Open the URL `http://localhost:9660` and go to `Test Runner`
@@ -56,7 +66,42 @@ You should see the following output after some time. That means all your mojaloo
 - You should see all the tests passed
 - You can explore the requests and responses by clicking on `Edit` button next to the test case
 
+## Running P2P transfer using testing toolkit mobile simulator
+
+You can execute a transfer using the mobile simulator page where you can see two virtual mobile applications a sender and receiver.
+
+By making a transfer using sender mobile application, you can see all the mojaloop requests and callbacks visually by means of a live sequence diagram.
+
+http://localhost:9660/mobilesimulator
+
+## Profiles available
+
+| Profile Name | Description | Dependent Profiles |
+| -------------------- | ----------- | ----------- |
+| all-services | All mojaloop services including TTK | - |
+| ttk-provisioning | For setting up mojaloop switch and onboard sample DFSPs | - |
+| ttk-tests | TTK tests | - |
+| debug | Debug utilities (kowl) | kafka |
+| central-ledger | Central Ledger service | kafka |
+| ml-api-adapter | ML API Adapter service | central-ledger |
+| quoting-service | Quoting service | central-ledger |
+| account-lookup-service | Account lookup service | central-ledger |
+| discovery | Services used for discovery | - |
+| agreement | Services used for agreement | - |
+| transfer | Services used for transfer | - |
+
+
 ## Running various services with different profile combinations
+
+### Core services without provisioning
+```
+docker-compose --profile all-services up
+```
+
+### Core services with debug utilities
+```
+docker-compose --profile all-services --profile debug up
+```
 
 ### Central ledger
 ```
@@ -81,17 +126,23 @@ docker-compose --profile ml-api-adapter --profile central-ledger up
 ```
 Note: We need to include central-ledger profile also here because its a dependency for ml-api-adapter
 
+### Discovery
+```
+docker-compose --profile discovery up
+```
+
+### Agreement
+```
+docker-compose --profile agreement up
+```
+
+### Transfer
+```
+docker-compose --profile transfer up
+```
+
 ### Settlements
 TODO: Add settlement related services
 
 ### Bulk
 TODO: Add bulk related services
-
-### Debug
-TODO: Add debug related services like kowl
-
-### QA
-TODO: Add a profile for running all tests
-
-### All
-TODO: Add a profile for running all services

@@ -3,9 +3,9 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "ttkpayeefsp provisioning",
+      "name": "receiver provisioning",
       "meta": {
-        "info": "ttkpayeefsp provisioning"
+        "info": "receiver provisioning"
       },
       "requests": [
         {
@@ -23,7 +23,7 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "ttkpayeefsp",
+            "name": "{$inputs.payeefsp}",
             "currency": "{$inputs.currency}"
           },
           "headers": {
@@ -58,10 +58,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/ttkpayeefsp/initialPositionAndLimits",
+          "path": "/participants/{$inputs.payeefsp}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "body": {
             "currency": "{$inputs.currency}",
@@ -103,10 +103,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -140,10 +140,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -177,10 +177,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -214,10 +214,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -251,10 +251,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -288,10 +288,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -325,10 +325,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -362,10 +362,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -399,10 +399,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -436,10 +436,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -473,10 +473,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -510,10 +510,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -547,10 +547,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -584,10 +584,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -621,10 +621,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -658,10 +658,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -695,10 +695,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -732,10 +732,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -769,10 +769,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -806,10 +806,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -843,10 +843,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -880,10 +880,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -917,10 +917,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -954,10 +954,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/ttkpayeefsp/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -994,7 +994,7 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "ttkpayeefsp",
+            "name": "{$inputs.payeefsp}",
             "currency": "{$inputs.currency2}"
           },
           "headers": {
@@ -1029,10 +1029,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/ttkpayeefsp/initialPositionAndLimits",
+          "path": "/participants/{$inputs.payeefsp}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "body": {
             "currency": "{$inputs.currency2}",
@@ -1077,7 +1077,7 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "ttkpayeefsp",
+            "name": "{$inputs.payeefsp}",
             "currency": "{$inputs.cgscurrency}"
           },
           "headers": {
@@ -1112,10 +1112,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/ttkpayeefsp/initialPositionAndLimits",
+          "path": "/participants/{$inputs.payeefsp}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "ttkpayeefsp"
+            "name": "{$inputs.payeefsp}"
           },
           "body": {
             "currency": "{$inputs.cgscurrency}",

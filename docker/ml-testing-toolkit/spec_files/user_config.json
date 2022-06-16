@@ -26,7 +26,7 @@
     "dfsps": {}
   },
   "SEND_CALLBACK_ENABLE": true,
-  "FSPID": "ttkpayeefsp",
+  "FSPID": "greenbankfsp",
   "DEFAULT_USER_FSPID": "userdfsp",
   "TRANSFERS_VALIDATION_WITH_PREVIOUS_QUOTES": true,
   "TRANSFERS_VALIDATION_ILP_PACKET": true,
