@@ -17,10 +17,11 @@ services:
     volumes:
       - ./docker/config-builder:/opt/config-builder
       - ./generated-config-files:/opt/generated-config-files
+      - ./original-config-files:/opt/original-config-files
     command: >
         sh -c "ls /opt/config-builder
         && cd /opt/config-builder
-        && sh ./run.sh -c /opt/config-builder/config.json -o /opt/generated-config-files"
+        && sh ./run.sh -c /opt/config-builder/config.json -i /opt/original-config-files -o /opt/generated-config-files"
     profiles:
       - config-builder
       - all-services
