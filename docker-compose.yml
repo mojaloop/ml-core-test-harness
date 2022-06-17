@@ -299,7 +299,7 @@ services:
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
-      - "./docker/ml-testing-toolkit/reports:/opt/app/reports"
+      - "./reports:/opt/app/reports"
     depends_on:
       mojaloop-testing-toolkit:
         condition: service_healthy
