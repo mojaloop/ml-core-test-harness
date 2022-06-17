@@ -154,7 +154,7 @@ You can use this repo to run functional tests inside the CICD of a core service
 The following commands can be added to the CICD pipeline
 
 ```
-git clone https://github.com/mojaloop/ml-core-test-harness.git
+git clone --depth 1 --branch v0.0.2 https://github.com/mojaloop/ml-core-test-harness.git
 cd ml-core-test-harness
 
 docker-compose --project-name ttk-func --profile all-services --profile ttk-provisioning --profile ttk-tests up -d
