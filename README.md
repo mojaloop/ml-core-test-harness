@@ -156,8 +156,9 @@ The following commands can be added to the CICD pipeline
 ```
 git clone https://github.com/mojaloop/ml-core-test-harness.git
 cd ml-core-test-harness
-sh get-config-files-from-docker-images.sh -o original-config-files
 docker-compose --project-name ttk-func --profile all-services --profile ttk-provisioning --profile ttk-tests up -d
-sh wait-for-container.sh ttk-func_ttk-tests_1
+bash wait-for-container.sh ttk-func_ttk-tests_1
 docker-compose -p ttk-func down
+ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 ```
+

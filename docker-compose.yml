@@ -5,44 +5,17 @@ networks:
     name: mojaloop-net
 
 services:
-  ## Config file generator
-  config-builder:
-    # image: ubuntu:focal
-    image: dwdraju/alpine-curl-jq:latest
-    environment:
-      - ML_API_ADAPTER_VERSION
-      - ACCOUNT_LOOKUP_SERVICE_VERSION
-      - QUOTING_SERVICE_VERSION
-      - CENTRAL_LEDGER_VERSION
-    volumes:
-      - ./docker/config-builder:/opt/config-builder
-      - ./generated-config-files:/opt/generated-config-files
-      - ./original-config-files:/opt/original-config-files
-    command: >
-        sh -c "ls /opt/config-builder
-        && cd /opt/config-builder
-        && sh ./run.sh -c /opt/config-builder/config.json -i /opt/original-config-files -o /opt/generated-config-files"
-    profiles:
-      - config-builder
-      - all-services
-      - central-ledger
-      - ml-api-adapter
-      - transfer
-      - quoting-service
-      - agreement
-      - account-lookup-service
-      - discovery
 
   ## Switch
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
     container_name: central-ledger
-    command: sh -c "/opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
     ports:
       - "3001:3001"
     volumes:
-       - ./generated-config-files/central-ledger/default.json:/opt/app/config/default.json
        - ./docker/wait4:/opt/app/wait4
+       - ./docker/config-modifier:/opt/app/config-modifier
     environment:
       - LOG_LEVEL=info
       - CLEDG_MONGODB__DISABLED=false
@@ -55,8 +28,6 @@ services:
         condition: service_started
       objstore:
         condition: service_started
-      config-builder:
-        condition: service_completed_successfully
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -150,6 +121,7 @@ services:
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
     container_name: quoting-service
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && node src/index.js"
     networks:
       - mojaloop-net
     depends_on:
@@ -157,12 +129,10 @@ services:
         condition: service_started
       central-ledger:
         condition: service_started
-      config-builder:
-        condition: service_completed_successfully
     ports:
       - "3002:3002"
     volumes:
-      - ./generated-config-files/quoting-service/default.json:/opt/app/config/default.json
+      - ./docker/config-modifier:/opt/app/config-modifier      
     healthcheck:
       test: wget -q http://localhost:3002/health -O /dev/null || exit 1
       timeout: 20s
@@ -177,12 +147,12 @@ services:
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
     container_name: ml-api-adapter
-    command: sh -c "/opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-api-adapter.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
     ports:
       - "3000:3000"
     volumes:
-      - ./generated-config-files/ml-api-adapter/default.json:/opt/app/config/default.json
       - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier      
     environment:
       - LOG_LEVEL=info
     networks:
@@ -192,8 +162,6 @@ services:
         condition: service_started
       central-ledger:
         condition: service_started
-      config-builder:
-        condition: service_completed_successfully
     healthcheck:
       test: wget -q http://localhost:3000/health -O /dev/null || exit 1
       timeout: 30s
@@ -232,7 +200,7 @@ services:
   account-lookup-service:
     image: mojaloop/account-lookup-service:${ACCOUNT_LOOKUP_SERVICE_VERSION}
     container_name: account-lookup-service
-    command: sh -c "/opt/account-lookup-service/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
+    command: sh -c "/opt/account-lookup-service/config-modifier/run.js /opt/account-lookup-service/config/default.json /opt/account-lookup-service/config-modifier/configs/account-lookup-service.js /opt/account-lookup-service/config/default.json && /opt/account-lookup-service/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
     ports:
       - "4001:4001"
       - "4002:4002"
@@ -246,11 +214,9 @@ services:
         condition: service_started
       central-ledger:
         condition: service_started
-      config-builder:
-        condition: service_completed_successfully      
     volumes:
-      - ./generated-config-files/account-lookup-service/default.json:/opt/account-lookup-service/config/default.json
       - ./docker/wait4:/opt/account-lookup-service/wait4
+      - ./docker/config-modifier:/opt/account-lookup-service/config-modifier      
     healthcheck:
       test: wget -q http://localhost:4001/health -O /dev/null || exit 1
       timeout: 20s
@@ -350,7 +316,7 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --report-format html --report-target file://reports/latest.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --report-format html --report-target file://reports/ttk-provisioning-report.html"
     profiles:
       - ttk-provisioning
 
@@ -359,7 +325,7 @@ services:
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
-      - "./docker/ml-testing-toolkit/reports:/opt/app/reports"
+      - "./reports:/opt/app/reports"
     depends_on:
       mojaloop-testing-toolkit:
         condition: service_healthy
@@ -378,7 +344,7 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/tests -e environments/default-env.json --report-format html --report-target file://reports/latest.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/tests -e environments/default-env.json --report-format html --report-target file://reports/ttk-func-tests-report.html"
     profiles:
       - ttk-tests
 
