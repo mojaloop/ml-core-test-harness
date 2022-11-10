@@ -989,8 +989,6 @@
     }
   },
   {
-    "type": "callback",
-    "version": 1,
     "ruleId": 19,
     "priority": 1,
     "description": "post /bulkTransfers",
@@ -1017,10 +1015,36 @@
     "event": {
       "method": "put",
       "path": "/bulkTransfers/{ID}",
-      "params": {},
+      "params": {
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.bulkTransfers+json;version=1.1",
+          "Date": "Thu, 20 Oct 2022 19:18:25 GMT",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "{$request.body.payerFsp}"
+        },
+        "body": {
+          "completedTimestamp": "{$function.generic.curDateISO}",
+          "individualTransferResults": [
+            {
+              "transferId": "{$request.body.individualTransfers[0].transferId}",
+              "fulfilment": "UNlJ98hZTY_dsw0cAqw4i_UN3v4utt7CZFB4yfLbVFA"
+            },
+            {
+              "transferId": "{$request.body.individualTransfers[1].transferId}",
+              "fulfilment": "UNlJ98hZTY_dsw0cAqw4i_UN3v4utt7CZFB4yfLbVFA"
+            }
+          ],
+          "bulkTransferState": "RECEIVED"
+        },
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
       "delay": 0,
-      "type": "MOCK_CALLBACK"
-    }
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
   },
   {
     "ruleId": 21,

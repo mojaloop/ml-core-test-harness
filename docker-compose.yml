@@ -18,7 +18,6 @@ services:
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
       - LOG_LEVEL=info
-      - CLEDG_MONGODB__DISABLED=false
     networks:
       - mojaloop-net
     depends_on:
@@ -200,7 +199,7 @@ services:
   account-lookup-service:
     image: mojaloop/account-lookup-service:${ACCOUNT_LOOKUP_SERVICE_VERSION}
     container_name: account-lookup-service
-    command: sh -c "/opt/account-lookup-service/config-modifier/run.js /opt/account-lookup-service/config/default.json /opt/account-lookup-service/config-modifier/configs/account-lookup-service.js /opt/account-lookup-service/config/default.json && /opt/account-lookup-service/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/account-lookup-service.js /opt/app/config/default.json && /opt/app/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
     ports:
       - "4001:4001"
       - "4002:4002"
@@ -214,9 +213,10 @@ services:
         condition: service_started
       central-ledger:
         condition: service_started
+
     volumes:
-      - ./docker/wait4:/opt/account-lookup-service/wait4
-      - ./docker/config-modifier:/opt/account-lookup-service/config-modifier      
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier      
     healthcheck:
       test: wget -q http://localhost:4001/health -O /dev/null || exit 1
       timeout: 20s
@@ -296,6 +296,7 @@ services:
 
   ttk-provisioning:
     image: mojaloop/ml-testing-toolkit-client-lib:v0.0.6
+    user: root
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
@@ -326,6 +327,7 @@ services:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
       - "./reports:/opt/app/reports"
+    user: root
     depends_on:
       mojaloop-testing-toolkit:
         condition: service_healthy
