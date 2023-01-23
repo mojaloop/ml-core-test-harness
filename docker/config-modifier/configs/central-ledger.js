@@ -1,4 +1,5 @@
 module.exports = {
+  "ENABLED_SETTLEMENT_MODEL_RULES_ENGINE": true,
   "HOSTNAME": "http://central-ledger",
   "DATABASE": {
     "HOST": "mysql"

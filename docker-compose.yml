@@ -16,6 +16,7 @@ services:
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
+       - ./docker/central-ledger/rules-settlement-model.json:/opt/app/config/rules-settlement-model.json
     environment:
       - LOG_LEVEL=info
     networks:
