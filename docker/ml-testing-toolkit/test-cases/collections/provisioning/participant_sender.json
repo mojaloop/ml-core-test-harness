@@ -1641,7 +1641,7 @@
                 "const jsonData = pm.response.body",
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
-                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT_REMITTANCE' && jsonData[i].currency === pm.environment.get('currency')) {",
                 "    pm.environment.set(\"senderSettlementRemittanceAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
