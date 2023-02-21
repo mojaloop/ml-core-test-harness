@@ -132,7 +132,7 @@ services:
     ports:
       - "3002:3002"
     volumes:
-      - ./docker/config-modifier:/opt/app/config-modifier      
+      - ./docker/config-modifier:/opt/app/config-modifier
     healthcheck:
       test: wget -q http://localhost:3002/health -O /dev/null || exit 1
       timeout: 20s
@@ -152,7 +152,7 @@ services:
       - "3000:3000"
     volumes:
       - ./docker/wait4:/opt/app/wait4
-      - ./docker/config-modifier:/opt/app/config-modifier      
+      - ./docker/config-modifier:/opt/app/config-modifier
     environment:
       - LOG_LEVEL=info
     networks:
@@ -216,7 +216,7 @@ services:
         condition: service_started
     volumes:
       - ./docker/wait4:/opt/account-lookup-service/wait4
-      - ./docker/config-modifier:/opt/account-lookup-service/config-modifier      
+      - ./docker/config-modifier:/opt/account-lookup-service/config-modifier
     healthcheck:
       test: wget -q http://localhost:4001/health -O /dev/null || exit 1
       timeout: 20s
@@ -296,6 +296,7 @@ services:
 
   ttk-provisioning:
     image: mojaloop/ml-testing-toolkit-client-lib:v0.0.6
+    user: root
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
@@ -322,6 +323,7 @@ services:
 
   ttk-tests:
     image: mojaloop/ml-testing-toolkit-client-lib:v0.0.6
+    user: root
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
