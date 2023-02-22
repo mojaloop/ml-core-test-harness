@@ -132,7 +132,7 @@ services:
     ports:
       - "3002:3002"
     volumes:
-      - ./docker/config-modifier:/opt/app/config-modifier      
+      - ./docker/config-modifier:/opt/app/config-modifier
     healthcheck:
       test: wget -q http://localhost:3002/health -O /dev/null || exit 1
       timeout: 20s
@@ -152,7 +152,7 @@ services:
       - "3000:3000"
     volumes:
       - ./docker/wait4:/opt/app/wait4
-      - ./docker/config-modifier:/opt/app/config-modifier      
+      - ./docker/config-modifier:/opt/app/config-modifier
     environment:
       - LOG_LEVEL=info
     networks:
@@ -168,6 +168,7 @@ services:
       retries: 30
       interval: 30s
       start_period: 30s
+    user: root
     profiles:
       - ml-api-adapter
       - transfer
@@ -216,7 +217,7 @@ services:
         condition: service_started
     volumes:
       - ./docker/wait4:/opt/account-lookup-service/wait4
-      - ./docker/config-modifier:/opt/account-lookup-service/config-modifier      
+      - ./docker/config-modifier:/opt/account-lookup-service/config-modifier
     healthcheck:
       test: wget -q http://localhost:4001/health -O /dev/null || exit 1
       timeout: 20s
@@ -317,6 +318,7 @@ services:
       - sh
       - -c
       - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --report-format html --report-target file://reports/ttk-provisioning-report.html"
+    user: root
     profiles:
       - ttk-provisioning
 
@@ -345,6 +347,7 @@ services:
       - sh
       - -c
       - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/tests -e environments/default-env.json --report-format html --report-target file://reports/ttk-func-tests-report.html"
+    user: root
     profiles:
       - ttk-tests
 
