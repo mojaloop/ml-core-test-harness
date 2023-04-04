@@ -43,17 +43,14 @@ services:
       - all-services
 
   objstore:
-    image: mongo:latest
+    image: mongo:6.0.5
     container_name: objstore
-    # Disable logging, this container is not that important and rather verbose
-    logging:
-      driver: none
     ports:
       - "27017:27017"
     networks:
       - mojaloop-net
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 10s
       timeout: 10s
       retries: 5
@@ -65,20 +62,43 @@ services:
       - agreement
       - all-services
 
-  kafka:
-    image: johnnypark/kafka-zookeeper:2.3.0
-    container_name: kafka
-    volumes:
-      - ./docker/kafka/:/opt/kafka_2.12-2.3.0/config/
-    ports:
-      - "2181:2181"
-      - "9092:9092"
-    environment:
-      - ZOO_LOG4J_PROP=WARN
+  zookeeper:
     networks:
       - mojaloop-net
+    image: docker.io/bitnami/zookeeper:3.8
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+
+  kafka:
+    networks:
+      - mojaloop-net
+    image: docker.io/bitnami/kafka:3.2
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_LISTENERS: LISTENER_DOCKER://kafka:29092,LISTENER_INTERN://kafka:9093,LISTENER_EXTERN://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER://kafka:29092,LISTENER_INTERN://kafka:9093,LISTENER_EXTERN://127.0.0.1:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER:PLAINTEXT,LISTENER_INTERN:PLAINTEXT,LISTENER_EXTERN:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERN
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_MESSAGE_MAX_BYTES: 200000000
+    depends_on:
+      - zookeeper
     healthcheck:
-      test: ["CMD" ,"/opt/kafka_2.12-2.3.0/bin/kafka-broker-api-versions.sh","--bootstrap-server","kafka:29092"]
+      test: ["CMD" ,"/opt/bitnami/kafka/bin/kafka-broker-api-versions.sh","--bootstrap-server","kafka:9092"]
       timeout: 20s
       retries: 10
       start_period: 40s
