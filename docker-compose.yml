@@ -317,6 +317,7 @@ services:
 
   ttk-provisioning:
     image: mojaloop/ml-testing-toolkit-client-lib:v0.0.6
+    user: root
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
@@ -344,6 +345,7 @@ services:
 
   ttk-tests:
     image: mojaloop/ml-testing-toolkit-client-lib:v0.0.6
+    user: root
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
