@@ -65,12 +65,14 @@ services:
   zookeeper:
     networks:
       - mojaloop-net
-    image: docker.io/bitnami/zookeeper:3.8
+    image: docker.io/bitnami/zookeeper:3.8.1
     container_name: zookeeper
     ports:
       - 2181:2181
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+    volumes:
+      - ./docker/persistence/zookeeper:/bitnami/zookeeper
     profiles:
       - central-ledger
       - transfer
@@ -81,7 +83,7 @@ services:
   kafka:
     networks:
       - mojaloop-net
-    image: docker.io/bitnami/kafka:3.2
+    image: docker.io/bitnami/kafka:3.2.0
     container_name: kafka
     ports:
       - "9092:9092"
