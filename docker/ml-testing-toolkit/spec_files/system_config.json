@@ -1,6 +1,7 @@
 {
-  "API_PORT": 5000,
+  "API_PORT": 4040,
   "HOSTING_ENABLED": false,
+  "REQUEST_PAYLOAD_MAX_BYTES": 20485760,
   "INBOUND_MUTUAL_TLS_ENABLED": false,
   "OUTBOUND_MUTUAL_TLS_ENABLED": false,
   "CONFIG_VERSIONS": {
@@ -11,7 +12,11 @@
     "userSettings": 1
   },
   "DB": {
-    "URI": "mongodb://ttk:ttk@localhost:27017/ttk"
+    "HOST": "objstore",
+    "PORT": 27017,
+    "USER": "",
+    "PASSWORD": "",
+    "DATABASE": "ttk"
   },
   "OAUTH": {
     "AUTH_ENABLED": false,

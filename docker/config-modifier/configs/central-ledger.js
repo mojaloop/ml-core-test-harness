@@ -4,8 +4,12 @@ module.exports = {
     "HOST": "mysql"
   },
   "MONGODB": {
-    "URI": "mongodb://objstore:27017/mlos",
-    "DISABLED": false
+    "DISABLED": false,
+    "HOST": "objstore",
+    "PORT": 27017,
+    "USER": "",
+    "PASSWORD": "",
+    "DATABASE": "mlos"
   },
   "KAFKA": {
     "CONSUMER": {

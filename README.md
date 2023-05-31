@@ -46,6 +46,8 @@ You should see the following output after some time. That means all your mojaloo
 └───────────────────┴───────────────────────────────┘
 ```
 
+You can see all the test reports at http://localhost:9660/admin/reports and latest report should be available in `reports/` folder.
+
 ## Running P2P transfer again in a separate terminal session along with the running mojaloop
 
 After all services been started, if you want to execute the P2P transfer from the command line again, use the following command in a separate terminal session.
