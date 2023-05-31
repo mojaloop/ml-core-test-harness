@@ -103,7 +103,7 @@ services:
     ports:
       - "9092:9092"
     environment:
-      BITNAMI_DEBUG: no
+      # BITNAMI_DEBUG: "yes"
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_CFG_LISTENERS: CONTROLLER://:9093,LISTENER_DOCKER://kafka:29092,LISTENER_EXTERN://:9092
