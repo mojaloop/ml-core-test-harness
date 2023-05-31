@@ -62,6 +62,39 @@ services:
       - agreement
       - all-services
 
+  kafka-provisioning:
+    container_name: kafka-provisioning
+    networks:
+      - mojaloop-net
+    image: docker.io/bitnami/kafka:3.4.0
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics.sh --bootstrap-server kafka:29092 --list
+      echo -e 'Creating kafka topics'
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-prepare --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-position --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-fulfil --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-notification-event --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-get --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-admin-transfer --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-prepare --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-fulfil --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-processing --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-get --replication-factor 1 --partitions 1
+      echo -e 'Successfully created the following topics:'
+      kafka-topics.sh --bootstrap-server kafka:29092 --list
+      "
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+
   kafka:
     networks:
       - mojaloop-net
