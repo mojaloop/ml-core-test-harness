@@ -311,7 +311,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: ["CMD-SHELL", "nc localhost 4040"]
+      test: ["CMD-SHELL", "nc -z -v localhost 4040"]
       interval: 5s
       timeout: 10s
       retries: 3
