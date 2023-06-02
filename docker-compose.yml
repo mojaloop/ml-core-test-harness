@@ -314,7 +314,8 @@ services:
       test: ["CMD-SHELL", "nc -z -v localhost 4040"]
       interval: 5s
       timeout: 10s
-      retries: 3
+      start_period: 10s
+      retries: 10
     profiles:
       - testing-toolkit
       - all-services
