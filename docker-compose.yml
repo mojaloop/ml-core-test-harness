@@ -62,15 +62,32 @@ services:
       - agreement
       - all-services
 
-  zookeeper:
+  kafka-provisioning:
+    container_name: kafka-provisioning
     networks:
       - mojaloop-net
-    image: docker.io/bitnami/zookeeper:3.8
-    container_name: zookeeper
-    ports:
-      - 2181:2181
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+    image: docker.io/bitnami/kafka:3.4.0
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics.sh --bootstrap-server kafka:29092 --list
+      echo -e 'Creating kafka topics'
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-prepare --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-position --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-fulfil --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-notification-event --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-get --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-admin-transfer --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-prepare --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-fulfil --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-processing --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-get --replication-factor 1 --partitions 1
+      echo -e 'Successfully created the following topics:'
+      kafka-topics.sh --bootstrap-server kafka:29092 --list
+      "
     profiles:
       - central-ledger
       - transfer
@@ -81,22 +98,25 @@ services:
   kafka:
     networks:
       - mojaloop-net
-    image: docker.io/bitnami/kafka:3.2
+    image: docker.io/bitnami/kafka:3.4.0
     container_name: kafka
     ports:
       - "9092:9092"
     environment:
+      # BITNAMI_DEBUG: "yes"
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_LISTENERS: LISTENER_DOCKER://kafka:29092,LISTENER_INTERN://kafka:9093,LISTENER_EXTERN://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER://kafka:29092,LISTENER_INTERN://kafka:9093,LISTENER_EXTERN://127.0.0.1:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER:PLAINTEXT,LISTENER_INTERN:PLAINTEXT,LISTENER_EXTERN:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERN
+      KAFKA_CFG_LISTENERS: CONTROLLER://:9093,LISTENER_DOCKER://kafka:29092,LISTENER_EXTERN://:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: LISTENER_DOCKER://kafka:29092,LISTENER_EXTERN://:9092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,LISTENER_DOCKER:PLAINTEXT,LISTENER_EXTERN:PLAINTEXT
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CFG_MESSAGE_MAX_BYTES: 200000000
-    depends_on:
-      - zookeeper
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@127.0.0.1:9093
+      KAFKA_ENABLE_KRAFT: "true"
     healthcheck:
       test: ["CMD" ,"/opt/bitnami/kafka/bin/kafka-broker-api-versions.sh","--bootstrap-server","kafka:9092"]
       timeout: 20s
@@ -221,12 +241,12 @@ services:
   account-lookup-service:
     image: mojaloop/account-lookup-service:${ACCOUNT_LOOKUP_SERVICE_VERSION}
     container_name: account-lookup-service
-    command: sh -c "/opt/account-lookup-service/config-modifier/run.js /opt/account-lookup-service/config/default.json /opt/account-lookup-service/config-modifier/configs/account-lookup-service.js /opt/account-lookup-service/config/default.json && /opt/account-lookup-service/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/account-lookup-service.js /opt/app/config/default.json && /opt/app/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
     # ports:
     #   - "4001:4001"
     #   - "4002:4002"
     environment:
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=info
       - ALS_DISPLAY_ROUTES=false
     networks:
       - mojaloop-net
@@ -236,8 +256,8 @@ services:
       central-ledger:
         condition: service_started
     volumes:
-      - ./docker/wait4:/opt/account-lookup-service/wait4
-      - ./docker/config-modifier:/opt/account-lookup-service/config-modifier
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
     healthcheck:
       test: wget -q http://localhost:4001/health -O /dev/null || exit 1
       timeout: 20s
@@ -277,12 +297,12 @@ services:
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
-    image: mojaloop/ml-testing-toolkit:v14.0.2
+    image: mojaloop/ml-testing-toolkit:v16.1.1
     volumes:
-      - "./docker/ml-testing-toolkit/spec_files:/opt/mojaloop-testing-toolkit/spec_files"
-      - "./docker/ml-testing-toolkit/test-cases:/opt/mojaloop-testing-toolkit/examples"
+      - "./docker/ml-testing-toolkit/spec_files:/opt/app/spec_files"
+      - "./docker/ml-testing-toolkit/test-cases:/opt/app/examples"
     ports:
-      - "9500:5000"
+      - "9440:4040"
       - "9550:5050"
     command:
       - sh
@@ -291,16 +311,17 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: ["CMD-SHELL", "nc localhost 5000"]
+      test: ["CMD-SHELL", "nc -z -v localhost 4040"]
       interval: 5s
       timeout: 10s
-      retries: 3
+      start_period: 10s
+      retries: 10
     profiles:
       - testing-toolkit
       - all-services
 
   mojaloop-testing-toolkit-ui:
-    image: mojaloop/ml-testing-toolkit-ui:v13.5.5
+    image: mojaloop/ml-testing-toolkit-ui:v15.3.0
     ports:
       - "9660:6060"
     environment:
@@ -316,7 +337,7 @@ services:
       - all-services
 
   ttk-provisioning:
-    image: mojaloop/ml-testing-toolkit-client-lib:v0.0.6
+    image: mojaloop/ml-testing-toolkit-client-lib:v1.2.0
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
@@ -337,13 +358,13 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --report-format html --report-target file://reports/ttk-provisioning-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
     user: root
     profiles:
       - ttk-provisioning
 
   ttk-tests:
-    image: mojaloop/ml-testing-toolkit-client-lib:v0.0.6
+    image: mojaloop/ml-testing-toolkit-client-lib:v1.2.0
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
@@ -366,7 +387,7 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/tests -e environments/default-env.json --report-format html --report-target file://reports/ttk-func-tests-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/tests -e environments/default-env.json --report-format html --save-report --report-target file://reports/ttk-func-tests-report.html"
     user: root
     profiles:
       - ttk-tests
