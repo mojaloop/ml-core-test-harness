@@ -166,4 +166,3 @@ docker-compose -p ttk-func down
 cat ttk-tests-console.log
 ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 ```
-
