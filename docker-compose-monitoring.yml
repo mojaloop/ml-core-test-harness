@@ -1,0 +1,107 @@
+version: "3.7"
+
+networks:
+  mojaloop-net:
+    name: mojaloop-net
+
+volumes:
+    vol_prometheus_data: {}
+    vol_grafana_data: {}
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.36.2
+    volumes:
+      - ./docker/prometheus/:/etc/prometheus/
+      - vol_prometheus_data:/prometheus/
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+    links:
+      - cadvisor:cadvisor
+      #- alertmanager:alertmanager
+      #- pushgateway:pushgateway
+    depends_on:
+      - cadvisor
+      #- pushgateway
+    networks:
+      - mojaloop-net
+    restart: always
+    # deploy:
+    #   placement:
+    #     constraints:
+    #       - node.hostname == ${HOSTNAME}
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+    command: 
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    ports:
+      - 9100:9100
+    networks:
+      - mojaloop-net
+    restart: always
+    deploy:
+      mode: global
+
+  # alertmanager:
+  #   image: prom/alertmanager
+  #   ports:
+  #     - 9093:9093
+  #   volumes:
+  #     - ./docker/alertmanager/:/etc/alertmanager/
+  #   networks:
+  #     - mojaloop-net
+  #   restart: always
+  #   command:
+  #     - '--config.file=/etc/alertmanager/config.yml'
+  #     - '--storage.path=/alertmanager'
+  #   # deploy:
+  #   #   placement:
+  #   #     constraints:
+  #   #       - node.hostname == ${HOSTNAME}
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 8080:8080
+    networks:
+      - mojaloop-net
+    restart: always
+    deploy:
+      mode: global
+
+  grafana:
+    image: grafana/grafana
+    user: "472"
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - vol_grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning/:/etc/grafana/provisioning/
+    env_file:
+      - ./docker/grafana/config.monitoring
+    networks:
+      - mojaloop-net
+    restart: always
