@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src",
+    "ambient.d.ts"
+  ],
+  "exclude": [
+    "coverage",
+    "dist",
+    "node_modules",
+    "test",
+    "jest.config.js"
+  ],
+  "compilerOptions": {
+    "paths": {
+      "~/*": [
+        "src/*"
+      ],
+      "test/*": [
+        "test/*"
+      ]
+    },
+  }
+}
