@@ -37,6 +37,7 @@ import http from 'http'
 import Config from '../shared/config'
 import Logger from '@mojaloop/central-services-logger'
 import Metrics from '@mojaloop/central-services-metrics'
+import { logger } from '~/shared/logger'
 
 type TracestateMap = {
   tx_end2end_start_ts: number | undefined;
@@ -67,15 +68,10 @@ function getTraceStateMap (headers: any): TracestateMap {
 }
 
 async function run (): Promise<void> {
-  const metricsConfig = {
-    timeout: 5000, // Set the timeout in ms for the underlying prom-client library. Default is '5000'.
-    prefix: 'tx_', // Set prefix for all defined metrics names
-    defaultLabels: { // Set default labels that will be applied to all metrics
-      serviceName: 'callback-handler-svc'
-    }
+  logger.info(Config)
+  if (!Config.INSTRUMENTATION.METRICS.DISABLED) {
+    Metrics.setup(Config.INSTRUMENTATION.METRICS.config)
   }
-
-  Metrics.setup(metricsConfig)
 
   app.use(express.json())
   app.get('/health', (_req, res) => {
