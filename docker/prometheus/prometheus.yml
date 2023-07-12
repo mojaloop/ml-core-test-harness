@@ -59,5 +59,11 @@ scrape_configs:
   
     static_configs:
       - targets: [
-          'account-lookup-service:4001'
+          ## Discovery Services
+          'account-lookup-service:4001',
+          ## Agreement Services
+          # 'quoting-service:3002' // Currently no metrics end-point exposed
+          ## Transfer Services
+          'ml-api-adapter:3000',
+          'central-ledger:3001',
         ]

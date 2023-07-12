@@ -155,7 +155,7 @@ You can use this repo to run functional tests inside the CICD of a core service
 
 The following commands can be added to the CICD pipeline
 
-```
+```bash
 git clone --depth 1 --branch v0.0.2 https://github.com/mojaloop/ml-core-test-harness.git
 cd ml-core-test-harness
 
@@ -169,6 +169,19 @@ ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 
 ## Monitoring
 
-```
+Start Monitoring Services
+
+```bash
 docker-compose --project-name monitoring -f docker-compose-monitoring.yml up -d
 ```
+
+Stop Monitoring Services
+
+```bash
+docker-compose --project-name monitoring -f docker-compose-monitoring.yml down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
+TODO:
+- add note about network being created by main docker-compose, or it can be done manually.
