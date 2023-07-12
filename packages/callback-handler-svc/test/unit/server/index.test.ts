@@ -97,11 +97,11 @@ describe('start', () => {
     expect(jsonResult).toHaveProperty('serverHandlingTime')
 
     expect(jsonResult.path).toEqual('/test/111/error')
-    expect(jsonResult.operation).toEqual('test_error')
+    expect(jsonResult.operation).toEqual('test')
     expect(jsonResult.isErrorOperation).toEqual(true)
     expect(jsonResult.tracestate.tx_end2end_start_ts).toEqual(e2eStart)
     expect(jsonResult.tracestate.tx_callback_start_ts).toEqual(e2eCallbackStart)
-    expect(jsonResult.test_error_request).toEqual(
+    expect(jsonResult.test_request).toEqual(
       jsonResult.tracestate.tx_callback_start_ts - jsonResult.tracestate.tx_end2end_start_ts
     )
   })

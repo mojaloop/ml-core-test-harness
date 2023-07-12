@@ -87,38 +87,37 @@ async function run (): Promise<void> {
     const currentTime = Date.now()
     const path = req.path
     const isErrorOperation = path.endsWith('error')
-    let operation = req.params.operation
-    if (isErrorOperation) {
-      operation = operation + '_error'
-    }
+    const operation = req.params.operation
     const operationE2e = `${operation}_end2end`
     const operationRequest = `${operation}_request`
     const operationResponse = `${operation}_response`
     const tracestate = getTraceStateMap(req.headers)
+
     if (tracestate.tx_end2end_start_ts === undefined || tracestate.tx_callback_start_ts === undefined) {
       return res.status(400).send('tx_end2end_start_ts or tx_callback_start_ts key/values not found in tracestate')
     }
+
     const e2eDelta = currentTime - tracestate.tx_end2end_start_ts
     const requestDelta = tracestate.tx_callback_start_ts - tracestate.tx_end2end_start_ts
     const responseDelta = currentTime - tracestate.tx_callback_start_ts
 
-    const operationHistogram = Metrics.getHistogram(
+    const performanceHistogram = Metrics.getHistogram(
       'cb_perf',
       'Metrics for callbacks',
       ['success', 'path', 'operation']
     )
 
-    operationHistogram.observe({
+    performanceHistogram.observe({
       success: (!isErrorOperation).toString(),
       path,
       operation: operationE2e
     }, e2eDelta / 1000)
-    operationHistogram.observe({
+    performanceHistogram.observe({
       success: (!isErrorOperation).toString(),
       path,
       operation: operationRequest
     }, requestDelta / 1000)
-    operationHistogram.observe({
+    performanceHistogram.observe({
       success: (!isErrorOperation).toString(),
       path,
       operation: operationResponse
