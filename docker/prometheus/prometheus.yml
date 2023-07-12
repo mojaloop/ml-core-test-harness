@@ -48,7 +48,7 @@ scrape_configs:
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 10s
-  
+
     static_configs:
       - targets: ['node-exporter:9100']
 
@@ -56,7 +56,7 @@ scrape_configs:
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 10s
-  
+
     static_configs:
       - targets: [
           ## Discovery Services
@@ -66,4 +66,14 @@ scrape_configs:
           ## Transfer Services
           'ml-api-adapter:3000',
           'central-ledger:3001',
+        ]
+
+  - job_name: 'support-services'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 10s
+
+    static_configs:
+      - targets: [
+          'callback-handler-svc:3001',
         ]

@@ -107,7 +107,7 @@ async function run (): Promise<void> {
     const responseDelta = currentTime - tracestate.tx_callback_start_ts
 
     const operationHistogram = Metrics.getHistogram(
-      'Performance',
+      'cb_perf',
       'Metrics for callbacks',
       ['success', 'path', 'operation']
     )
@@ -125,7 +125,7 @@ async function run (): Promise<void> {
     operationHistogram.observe({
       success: (!isErrorOperation).toString(),
       path,
-      operation: operationRequest
+      operation: operationResponse
     }, responseDelta / 1000)
 
     return res.json({

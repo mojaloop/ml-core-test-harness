@@ -45,9 +45,9 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
       - /:/host:ro,rslave
-    command: 
+    command:
       - '--path.rootfs=/host'
-      - '--path.procfs=/host/proc' 
+      - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
@@ -106,3 +106,25 @@ services:
     networks:
       - mojaloop-net
     restart: always
+
+  callback-handler-svc:
+    container_name: callback-handler-svc
+    image: mojaloop/callback-handler-svc:local
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    ports:
+      - "3011:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/dist/config
+    environment:
+      - LOG_LEVEL=debug
+    healthcheck:
+      test: wget -q http://localhost:3011/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
