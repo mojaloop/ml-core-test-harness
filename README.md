@@ -166,3 +166,9 @@ docker-compose -p ttk-func down
 cat ttk-tests-console.log
 ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 ```
+
+## Monitoring
+
+```
+docker-compose --project-name monitoring -f docker-compose-monitoring.yml up -d
+```
