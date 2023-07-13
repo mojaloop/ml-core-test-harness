@@ -125,17 +125,22 @@ async function run (): Promise<void> {
       operation: operationResponse
     }, responseDelta / 1000)
 
-    return res.json({
-      traceparent: req.headers.traceparent,
-      tracestate,
-      operation,
-      path,
-      isErrorOperation,
-      serverHandlingTime: currentTime,
-      [operationE2e]: e2eDelta,
-      [operationRequest]: requestDelta,
-      [operationResponse]: responseDelta
-    })
+    Logger.debug(
+      {
+        traceparent: req.headers.traceparent,
+        tracestate,
+        operation,
+        path,
+        isErrorOperation,
+        serverHandlingTime: currentTime,
+        [operationE2e]: e2eDelta,
+        [operationRequest]: requestDelta,
+        [operationResponse]: responseDelta
+      }
+    )
+
+    res.status(202)
+    return res.end()
   })
 
   appInstance = app.listen(Config.PORT)
