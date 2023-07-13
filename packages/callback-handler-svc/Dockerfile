@@ -1,4 +1,16 @@
-FROM node:18.16.1-alpine as builder
+# Arguments
+ARG NODE_VERSION=lts-alpine
+
+# NOTE: Ensure you set NODE_VERSION Build Argument as follows...
+#
+#  export NODE_VERSION="$(cat .nvmrc)-alpine" \
+#  docker build \
+#    --build-arg NODE_VERSION=$NODE_VERSION \
+#    -t mojaloop/sdk-scheme-adapter:local \
+#    . \
+#
+
+FROM node:${NODE_VERSION} as builder
 USER root
 
 WORKDIR /opt/app
@@ -19,7 +31,7 @@ RUN rm -rf src
 # cleanup
 RUN apk del build-dependencies
 
-FROM node:18.16.1-alpine
+FROM node:${NODE_VERSION}
 WORKDIR /opt/app
 
 # Create empty log file & link stdout to the application log file

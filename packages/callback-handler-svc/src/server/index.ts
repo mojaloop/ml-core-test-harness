@@ -83,11 +83,13 @@ async function run (): Promise<void> {
     res.status(200)
     res.send(await Metrics.getMetricsForPrometheus())
   })
-  app.get(['/:operation', '/:operation/*'], async (req, res) => {
+  app.all(['/:resource', '/:resource/*'], async (req, res) => {
     const currentTime = Date.now()
     const path = req.path
+    const httpMethod = req.method.toLowerCase()
     const isErrorOperation = path.endsWith('error')
-    const operation = req.params.operation
+    const resource = req.params.resource
+    const operation = `${httpMethod}_${resource}`
     const operationE2e = `${operation}_end2end`
     const operationRequest = `${operation}_request`
     const operationResponse = `${operation}_response`
@@ -124,6 +126,7 @@ async function run (): Promise<void> {
     }, responseDelta / 1000)
 
     return res.json({
+      traceparent: req.headers.traceparent,
       tracestate,
       operation,
       path,

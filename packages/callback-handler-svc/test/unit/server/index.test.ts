@@ -52,29 +52,33 @@ describe('start', () => {
     expect(jsonResult).toHaveProperty('status')
     expect(jsonResult.status).toEqual('OK')
   })
+
   it('wildcard endpoint success callback should work', async () => {
     const app = Server.getApp()
     const e2eStart = new Date(Date.now() - 1000 * 5).valueOf()
     const e2eCallbackStart = new Date(Date.now() - 1000 * 3).valueOf()
     const result = await
     request(app)
-      .get('/test/111')
+      .put('/parties/111')
       .set('tracestate', `tx_end2end_start_ts=${e2eStart},tx_callback_start_ts=${e2eCallbackStart}`)
+      .set('traceparent', '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01')
+
     let jsonResult: any = {}
     expect(() => { jsonResult = JSON.parse(result.text) }).not.toThrowError()
     expect(result.statusCode).toEqual(200)
     expect(jsonResult).toHaveProperty('path')
     expect(jsonResult).toHaveProperty('operation')
     expect(jsonResult).toHaveProperty('isErrorOperation')
+    expect(jsonResult).toHaveProperty('traceparent')
     expect(jsonResult).toHaveProperty('tracestate')
     expect(jsonResult).toHaveProperty('serverHandlingTime')
 
-    expect(jsonResult.path).toEqual('/test/111')
-    expect(jsonResult.operation).toEqual('test')
+    expect(jsonResult.path).toEqual('/parties/111')
+    expect(jsonResult.operation).toEqual('put_parties')
     expect(jsonResult.isErrorOperation).toEqual(false)
     expect(jsonResult.tracestate.tx_end2end_start_ts).toEqual(e2eStart)
     expect(jsonResult.tracestate.tx_callback_start_ts).toEqual(e2eCallbackStart)
-    expect(jsonResult.test_request).toEqual(
+    expect(jsonResult.put_parties_request).toEqual(
       jsonResult.tracestate.tx_callback_start_ts - jsonResult.tracestate.tx_end2end_start_ts
     )
   })
@@ -85,23 +89,26 @@ describe('start', () => {
     const e2eCallbackStart = new Date(Date.now() - 1000 * 3).valueOf()
     const result = await
     request(app)
-      .get('/test/111/error')
+      .put('/parties/111/error')
       .set('tracestate', `tx_end2end_start_ts=${e2eStart},tx_callback_start_ts=${e2eCallbackStart}`)
+      .set('traceparent', '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01')
+
     let jsonResult: any = {}
     expect(() => { jsonResult = JSON.parse(result.text) }).not.toThrowError()
     expect(result.statusCode).toEqual(200)
     expect(jsonResult).toHaveProperty('path')
     expect(jsonResult).toHaveProperty('operation')
     expect(jsonResult).toHaveProperty('isErrorOperation')
+    expect(jsonResult).toHaveProperty('traceparent')
     expect(jsonResult).toHaveProperty('tracestate')
     expect(jsonResult).toHaveProperty('serverHandlingTime')
 
-    expect(jsonResult.path).toEqual('/test/111/error')
-    expect(jsonResult.operation).toEqual('test')
+    expect(jsonResult.path).toEqual('/parties/111/error')
+    expect(jsonResult.operation).toEqual('put_parties')
     expect(jsonResult.isErrorOperation).toEqual(true)
     expect(jsonResult.tracestate.tx_end2end_start_ts).toEqual(e2eStart)
     expect(jsonResult.tracestate.tx_callback_start_ts).toEqual(e2eCallbackStart)
-    expect(jsonResult.test_request).toEqual(
+    expect(jsonResult.put_parties_request).toEqual(
       jsonResult.tracestate.tx_callback_start_ts - jsonResult.tracestate.tx_end2end_start_ts
     )
   })
@@ -110,7 +117,7 @@ describe('start', () => {
     const app = Server.getApp()
     const result = await
     request(app)
-      .get('/test/error')
+      .put('/test/error')
       .set('tracestate', '')
     expect(result.statusCode).toEqual(400)
   })
@@ -119,8 +126,7 @@ describe('start', () => {
     const app = Server.getApp()
     const result = await
     request(app)
-      .get('/test/error')
-    const jsonResult: any = {}
+      .put('/test/error')
     expect(result.statusCode).toEqual(400)
   })
 })
