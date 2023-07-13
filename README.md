@@ -169,7 +169,12 @@ ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 
 ## Monitoring
 
-Start Monitoring Services
+Start Monitoring Services stack which uses:
+- Prometheus for time series data store
+- Grafana for visualization dashboards
+- Node Exporter to instrument the Host machine
+- CAdviser to instrument the Docker containers running on Host machine
+
 
 ```bash
 docker-compose --project-name monitoring -f docker-compose-monitoring.yml up -d
@@ -185,3 +190,23 @@ docker-compose --project-name monitoring -f docker-compose-monitoring.yml down -
 
 TODO:
 - add note about network being created by main docker-compose, or it can be done manually.
+
+## Performance Characterization
+
+[K6](https://k6.io) is being used to execute performance tests, with metrics being captured by [Prometheus](https://k6.io/docs/results-output/real-time/prometheus-remote-write) and displayed using [Grafana](https://k6.io/docs/results-output/real-time/prometheus-remote-write/#time-series-visualization).
+
+Tests can be defined in the [./docker/k6/scripts/test.js](./docker/k6/scripts/test.js), refer to [API load testing guide](https://k6.io/docs/testing-guides/api-load-testing/) for more information.
+
+Env configs are stored in the [./docker/k6/.env](./docker/k6/.env) environment configuration file, which can be referenced in by the [./docker/k6/scripts/test.js](./docker/k6/scripts/test.js).
+
+Start tests
+
+```bash
+docker compose --project-name load -f docker-compose-load.yml up
+```
+
+Cleanup tests
+
+```bash
+docker compose --project-name load -f docker-compose-load.yml down -v
+```
