@@ -37,7 +37,7 @@ import http from 'http'
 import Config from '../shared/config'
 import Logger from '@mojaloop/central-services-logger'
 import Metrics from '@mojaloop/central-services-metrics'
-import { logger } from '~/shared/logger'
+import { logger } from '../shared/logger'
 
 type TracestateMap = {
   tx_end2end_start_ts: number | undefined;
