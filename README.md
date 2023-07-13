@@ -175,7 +175,6 @@ Start Monitoring Services stack which uses:
 - [Node Exporter](https://github.com/prometheus/node_exporter) to instrument the Host machine
 - [CAdviser](https://github.com/google/cadvisor) to instrument the Docker containers running on Host machine
 
-
 ```bash
 docker-compose --project-name monitoring -f docker-compose-monitoring.yml up -d
 ```
