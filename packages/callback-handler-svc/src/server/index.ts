@@ -125,7 +125,7 @@ async function run (): Promise<void> {
       operation: operationResponse
     }, responseDelta / 1000)
 
-    Logger.debug(
+    Logger.isDebugEnabled && Logger.debug(
       {
         traceparent: req.headers.traceparent,
         tracestate,
@@ -144,12 +144,12 @@ async function run (): Promise<void> {
   })
 
   appInstance = app.listen(Config.PORT)
-  Logger.info(`service is running on port ${Config.PORT}`)
+  Logger.isInfoEnabled && Logger.info(`service is running on port ${Config.PORT}`)
 }
 
 async function terminate (): Promise<void> {
   appInstance.close()
-  Logger.info('service stopped')
+  Logger.isInfoEnabled && Logger.info('service stopped')
 }
 
 function getApp (): any {
