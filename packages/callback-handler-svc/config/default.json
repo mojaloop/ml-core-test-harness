@@ -1,0 +1,16 @@
+{
+  "PORT": 3001,
+  "HOST": "0.0.0.0",
+  "INSTRUMENTATION": {
+    "METRICS": {
+      "DISABLED": false,
+      "config": {
+        "timeout": 5000,
+        "prefix": "tx_",
+        "defaultLabels": {
+          "serviceName": "callback-handler-svc"
+        }
+      }
+    }
+  }
+}
