@@ -170,10 +170,10 @@ ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 ## Monitoring
 
 Start Monitoring Services stack which uses:
-- Prometheus for time series data store
-- Grafana for visualization dashboards
-- Node Exporter to instrument the Host machine
-- CAdviser to instrument the Docker containers running on Host machine
+- [Prometheus](https://prometheus.io) for time series data store
+- [Grafana](https://grafana.com/) for visualization dashboards
+- [Node Exporter](https://github.com/prometheus/node_exporter) to instrument the Host machine
+- [CAdviser](https://github.com/google/cadvisor) to instrument the Docker containers running on Host machine
 
 
 ```bash
