@@ -126,6 +126,7 @@ services:
     ports:
       - "3011:3001"
     networks:
+      - monitoring-net
       - mojaloop-net
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/dist/config
