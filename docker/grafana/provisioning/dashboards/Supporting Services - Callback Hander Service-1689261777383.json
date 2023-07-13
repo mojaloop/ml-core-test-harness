@@ -1,14 +1,5 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
+  "__inputs": [],
   "__elements": {},
   "__requires": [
     {
@@ -22,12 +13,6 @@
       "id": "graph",
       "name": "Graph (old)",
       "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
     },
     {
       "type": "panel",
@@ -60,10 +45,6 @@
   "liveNow": false,
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
       "description": "Party Callbacks / Sec",
       "fieldConfig": {
         "defaults": {
@@ -116,7 +97,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^Financial Transfers / sec$/",
+          "fields": "/^Party Callbacks / Sec$/",
           "values": false
         },
         "textMode": "auto"
@@ -124,14 +105,10 @@
       "pluginVersion": "10.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "editorMode": "code",
           "expr": "sum(irate(tx_cb_perf_bucket{operation=\"get_parties_end2end\"}[30s]))",
           "instant": true,
-          "legendFormat": "Financial Transfers / sec",
+          "legendFormat": "Party Callbacks / Sec",
           "refId": "A"
         }
       ],
@@ -139,10 +116,6 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
       "description": "Participant Callbacks / Sec",
       "fieldConfig": {
         "defaults": {
@@ -195,7 +168,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^Financial Transfers / sec$/",
+          "fields": "/^Participant Callbacks / Sec$/",
           "values": false
         },
         "textMode": "auto"
@@ -203,14 +176,10 @@
       "pluginVersion": "10.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "editorMode": "code",
           "expr": "sum(irate(tx_cb_perf_bucket{operation=\"get_participants_end2end\"}[30s]))",
           "instant": true,
-          "legendFormat": "Financial Transfers / sec",
+          "legendFormat": "Participant Callbacks / Sec",
           "refId": "A"
         }
       ],
@@ -222,10 +191,6 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -276,10 +241,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "editorMode": "code",
           "expr": "sum(rate(tx_cb_perf_bucket[30s])) by (operation, success)",
           "hide": false,
@@ -325,10 +286,6 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -378,10 +335,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "editorMode": "code",
           "expr": "avg(rate(tx_cb_perf_sum[30s]) >=0 / rate(tx_cb_perf_count[30s]) >=0) by (operation, success)",
           "format": "time_series",
@@ -480,6 +433,6 @@
   "timezone": "browser",
   "title": "Supporting Services - Callback Hander Service",
   "uid": "afe9dda2-878b-40c8-90df-072e7ecaaaee",
-  "version": 26,
+  "version": 4,
   "weekStart": ""
 }
