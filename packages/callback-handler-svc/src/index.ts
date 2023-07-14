@@ -29,5 +29,7 @@
  ******/
 
 import Server from './server'
+import { WSServer } from './ws-server'
 
-Server.run()
+const wsServer = new WSServer();
+Server.run(wsServer)
