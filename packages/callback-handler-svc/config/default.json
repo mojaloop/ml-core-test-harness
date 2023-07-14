@@ -6,7 +6,7 @@
       "DISABLED": false,
       "config": {
         "timeout": 5000,
-        "prefix": "tx_",
+        "prefix": "cbs_",
         "defaultLabels": {
           "serviceName": "callback-handler-svc"
         }

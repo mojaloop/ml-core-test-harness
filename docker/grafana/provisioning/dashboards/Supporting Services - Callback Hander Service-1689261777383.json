@@ -1,26 +1,4 @@
 {
-  "__inputs": [],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "10.0.2"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph (old)",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -40,28 +18,50 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
     {
-      "description": "Party Callbacks / Sec",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "0"
-                }
-              },
-              "type": "special"
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
-          ],
+          },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -74,65 +74,87 @@
                 "value": 80
               }
             ]
-          },
-          "unit": "ops"
+          }
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 3,
+        "h": 8,
+        "w": 12,
         "x": 0,
         "y": 0
       },
-      "id": 123128,
-      "links": [],
-      "maxDataPoints": 100,
+      "id": 123132,
       "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "/^Party Callbacks / Sec$/",
-          "values": false
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "textMode": "auto"
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
-      "pluginVersion": "10.0.2",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "editorMode": "code",
-          "expr": "sum(irate(tx_cb_perf_bucket{operation=\"get_parties_end2end\"}[30s]))",
-          "instant": true,
-          "legendFormat": "Party Callbacks / Sec",
+          "expr": "irate(cbs_ing_callbackHandler_sum[30s]) / irate(cbs_ing_callbackHandler_count[30s])",
+          "instant": false,
+          "legendFormat": "op: {{operation}} success: {{success}}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Party Callbacks / Sec",
-      "type": "stat"
+      "title": "Handler Ingress  - Processing Time",
+      "type": "timeseries"
     },
     {
-      "description": "Participant Callbacks / Sec",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "0"
-                }
-              },
-              "type": "special"
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
-          ],
+          },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -145,52 +167,55 @@
                 "value": 80
               }
             ]
-          },
-          "unit": "ops"
+          }
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 3,
-        "x": 3,
+        "h": 8,
+        "w": 12,
+        "x": 12,
         "y": 0
       },
-      "id": 123129,
-      "links": [],
-      "maxDataPoints": 100,
+      "id": 123131,
       "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "/^Participant Callbacks / Sec$/",
-          "values": false
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "textMode": "auto"
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
-      "pluginVersion": "10.0.2",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "editorMode": "code",
-          "expr": "sum(irate(tx_cb_perf_bucket{operation=\"get_participants_end2end\"}[30s]))",
-          "instant": true,
-          "legendFormat": "Participant Callbacks / Sec",
+          "expr": "sum(rate(cbs_ing_callbackHandler_count[30s])) by (operation, success)",
+          "instant": false,
+          "legendFormat": "op:{{operation}} success: {{success}}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Participant Callbacks / Sec",
-      "type": "stat"
+      "title": "Handler Ingress - Processed Per Second",
+      "type": "timeseries"
     },
     {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -203,7 +228,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 8
       },
       "hiddenSeries": false,
       "hideTimeOverride": false,
@@ -241,8 +266,12 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "editorMode": "code",
-          "expr": "sum(rate(tx_cb_perf_bucket[30s])) by (operation, success)",
+          "expr": "sum(rate(cbs_tx_cb_perf_bucket[30s])) by (operation, success)",
           "hide": false,
           "legendFormat": "op:{{operation}} - success:{{success}}",
           "range": true,
@@ -251,7 +280,7 @@
       ],
       "thresholds": [],
       "timeRegions": [],
-      "title": "Callback Service - Proccessed per sec",
+      "title": "E2E, Request, Response Calulations Proccessed Per Second",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -286,6 +315,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -298,7 +331,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 17
       },
       "hiddenSeries": false,
       "id": 123130,
@@ -335,13 +368,17 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "editorMode": "code",
-          "expr": "avg(rate(tx_cb_perf_sum[30s]) >=0 / rate(tx_cb_perf_count[30s]) >=0) by (operation, success)",
+          "expr": "avg(rate(cbs_tx_cb_perf_sum[30s]) >=0 / rate(cbs_tx_cb_perf_count[30s]) >=0) by (operation, success)",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Op {{operation}} - Success {{success}}",
+          "legendFormat": "op:{{operation}} - Success {{success}}",
           "range": true,
           "refId": "A"
         }
@@ -360,7 +397,7 @@
         }
       ],
       "timeRegions": [],
-      "title": "Callback Service - Processing Time",
+      "title": "E2E, Request, Response Performance Timing Calculations",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -400,7 +437,7 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -433,6 +470,6 @@
   "timezone": "browser",
   "title": "Supporting Services - Callback Hander Service",
   "uid": "afe9dda2-878b-40c8-90df-072e7ecaaaee",
-  "version": 4,
+  "version": 1,
   "weekStart": ""
 }
