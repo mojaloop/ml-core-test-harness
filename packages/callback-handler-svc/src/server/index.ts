@@ -84,6 +84,11 @@ async function run (): Promise<void> {
     res.send(await Metrics.getMetricsForPrometheus())
   })
   app.all(['/:resource', '/:resource/*'], async (req, res) => {
+    const histTimerEnd = Metrics.getHistogram(
+      'ing_callbackHandler',
+      'Ingress - Wildcard operation handler',
+      ['success', 'operation']
+    ).startTimer()
     const currentTime = Date.now()
     const path = req.path
     const httpMethod = req.method.toLowerCase()
@@ -95,7 +100,7 @@ async function run (): Promise<void> {
     const operationResponse = `${operation}_response`
     const tracestate = getTraceStateMap(req.headers)
 
-    if (tracestate.tx_end2end_start_ts === undefined || tracestate.tx_callback_start_ts === undefined) {
+    if (tracestate?.tx_end2end_start_ts === undefined || tracestate?.tx_callback_start_ts === undefined) {
       return res.status(400).send('tx_end2end_start_ts or tx_callback_start_ts key/values not found in tracestate')
     }
 
@@ -104,7 +109,7 @@ async function run (): Promise<void> {
     const responseDelta = currentTime - tracestate.tx_callback_start_ts
 
     const performanceHistogram = Metrics.getHistogram(
-      'cb_perf',
+      'tx_cb_perf',
       'Metrics for callbacks',
       ['success', 'path', 'operation']
     )
@@ -139,6 +144,7 @@ async function run (): Promise<void> {
       }
     )
 
+    histTimerEnd({ success: true, operation })
     res.status(202)
     return res.end()
   })
