@@ -53,7 +53,7 @@ export class WSServer {
     });
 
     this.wsServer.on("connection", (ws: WebSocket, req: IncomingMessage) => {
-      logger.debug('Connection established');
+      logger.debug('Connection established for client channel ' + req.url);
       this.wsClientMap[req.url as string] = ws;
     
       // Listen to the message coming from client.
@@ -80,7 +80,7 @@ export class WSServer {
   notify (channel:string, message: string) {
     logger.debug(`Notifying channel ${channel}: ${message}`);
     // TODO: refine the following. Handle errors cases ...etc
-    this.wsClientMap[channel].send(message);
+    this.wsClientMap[channel]?.send(message);
   };
   
 }
