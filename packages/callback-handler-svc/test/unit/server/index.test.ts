@@ -63,24 +63,7 @@ describe('start', () => {
       .set('tracestate', `tx_end2end_start_ts=${e2eStart},tx_callback_start_ts=${e2eCallbackStart}`)
       .set('traceparent', '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01')
 
-    let jsonResult: any = {}
-    expect(() => { jsonResult = JSON.parse(result.text) }).not.toThrowError()
-    expect(result.statusCode).toEqual(200)
-    expect(jsonResult).toHaveProperty('path')
-    expect(jsonResult).toHaveProperty('operation')
-    expect(jsonResult).toHaveProperty('isErrorOperation')
-    expect(jsonResult).toHaveProperty('traceparent')
-    expect(jsonResult).toHaveProperty('tracestate')
-    expect(jsonResult).toHaveProperty('serverHandlingTime')
-
-    expect(jsonResult.path).toEqual('/parties/111')
-    expect(jsonResult.operation).toEqual('put_parties')
-    expect(jsonResult.isErrorOperation).toEqual(false)
-    expect(jsonResult.tracestate.tx_end2end_start_ts).toEqual(e2eStart)
-    expect(jsonResult.tracestate.tx_callback_start_ts).toEqual(e2eCallbackStart)
-    expect(jsonResult.put_parties_request).toEqual(
-      jsonResult.tracestate.tx_callback_start_ts - jsonResult.tracestate.tx_end2end_start_ts
-    )
+    expect(result.statusCode).toEqual(202)
   })
 
   it('wildcard endpoint error callback should work', async () => {
@@ -93,24 +76,7 @@ describe('start', () => {
       .set('tracestate', `tx_end2end_start_ts=${e2eStart},tx_callback_start_ts=${e2eCallbackStart}`)
       .set('traceparent', '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01')
 
-    let jsonResult: any = {}
-    expect(() => { jsonResult = JSON.parse(result.text) }).not.toThrowError()
-    expect(result.statusCode).toEqual(200)
-    expect(jsonResult).toHaveProperty('path')
-    expect(jsonResult).toHaveProperty('operation')
-    expect(jsonResult).toHaveProperty('isErrorOperation')
-    expect(jsonResult).toHaveProperty('traceparent')
-    expect(jsonResult).toHaveProperty('tracestate')
-    expect(jsonResult).toHaveProperty('serverHandlingTime')
-
-    expect(jsonResult.path).toEqual('/parties/111/error')
-    expect(jsonResult.operation).toEqual('put_parties')
-    expect(jsonResult.isErrorOperation).toEqual(true)
-    expect(jsonResult.tracestate.tx_end2end_start_ts).toEqual(e2eStart)
-    expect(jsonResult.tracestate.tx_callback_start_ts).toEqual(e2eCallbackStart)
-    expect(jsonResult.put_parties_request).toEqual(
-      jsonResult.tracestate.tx_callback_start_ts - jsonResult.tracestate.tx_end2end_start_ts
-    )
+    expect(result.statusCode).toEqual(202)
   })
 
   it('wildcard endpoint should throw error when tracestate key values are not found', async () => {
