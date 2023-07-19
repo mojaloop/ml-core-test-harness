@@ -4,13 +4,15 @@ import { check, sleep, crypto } from 'k6';
 
 export const options = {
   stages: [
-    { duration: '1m', target: 20, vus: 1 },
+    { duration: '2m', target: 20, vus: 1 },
     // { duration: '1m30s', target: 10 },
     // { duration: '20s', target: 0 },
   ],
   tags: {
     testid: `${Date.now()}`,
   },
+  // Ref: https://k6.io/docs/using-k6/k6-options/reference/#no-connection-reuse
+  noConnectionReuse: false,
 };
 
 console.log(`Env Vars -->

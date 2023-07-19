@@ -35,6 +35,10 @@ export interface ServiceConfig {
   // API Server
   PORT: number;
   HOST: string;
+  WS_SERVER: {
+    ENABLED: boolean
+    PORT: number
+  }
   INSTRUMENTATION: {
     METRICS: {
       DISABLED: boolean
@@ -60,8 +64,22 @@ export const ConvictConfig = Convict<ServiceConfig>({
   PORT: {
     doc: 'The port to bind.',
     format: 'port',
-    default: 3000,
+    default: 3001,
     env: 'PORT'
+  },
+  WS_SERVER: {
+    ENABLED: {
+      doc: 'Boolean for enabling websocket server',
+      format: Boolean,
+      default: true,
+      env: 'WS_SERVER_ENABLED'
+    },
+    PORT: {
+      doc: 'The port to bind for websocket server',
+      format: 'port',
+      default: 3002,
+      env: 'WS_SERVER_PORT'
+    }
   },
   INSTRUMENTATION: {
     METRICS: {
@@ -110,6 +128,7 @@ ConvictConfig.validate({ allowed: 'strict' })
 const config: ServiceConfig = {
   HOST: ConvictConfig.get('HOST'),
   PORT: ConvictConfig.get('PORT'),
+  WS_SERVER: ConvictConfig.get('WS_SERVER'),
   INSTRUMENTATION: ConvictConfig.get('INSTRUMENTATION')
 }
 
