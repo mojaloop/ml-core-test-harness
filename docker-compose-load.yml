@@ -22,7 +22,7 @@ services:
       - run
       # - '--help' ## Useful to list run options
       - '--include-system-env-vars'
-      - '/scripts/test.js'
+      - '/scripts/test-ws.js'
     networks:
       - load-net
       - monitoring-net

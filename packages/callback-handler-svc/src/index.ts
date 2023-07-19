@@ -23,11 +23,13 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Vijay Kumar Guthi <vijaya.guthi@modusbox.com>
+ - Vijay Kumar Guthi <vijaya.guthi@infitx.com>
 
  --------------
  ******/
 
 import Server from './server'
+import { WSServer } from './ws-server'
 
-Server.run()
+const wsServer = new WSServer();
+Server.run(wsServer)

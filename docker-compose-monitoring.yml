@@ -124,7 +124,7 @@ services:
       cache_from:
         - mojaloop/callback-handler-svc:local
     ports:
-      - "3011:3001"
+      - "3001:3001"
     networks:
       - monitoring-net
       - mojaloop-net
@@ -133,7 +133,7 @@ services:
     environment:
       - LOG_LEVEL=info
     healthcheck:
-      test: wget -q http://localhost:3011/health -O /dev/null || exit 1
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s

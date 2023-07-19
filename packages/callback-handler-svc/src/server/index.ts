@@ -38,6 +38,7 @@ import Config from '../shared/config'
 import Logger from '@mojaloop/central-services-logger'
 import Metrics from '@mojaloop/central-services-metrics'
 import { logger } from '../shared/logger'
+import { WSServer } from '../ws-server'
 
 type TracestateMap = {
   tx_end2end_start_ts: number | undefined;
@@ -67,7 +68,15 @@ function getTraceStateMap (headers: any): TracestateMap {
   return tracestates as TracestateMap
 }
 
-async function run (): Promise<void> {
+function getTraceId (headers: any): string | null {
+  const traceparent: string = headers.traceparent
+  if (traceparent === undefined) {
+    return null
+  }
+  return traceparent.split('-')[1];
+}
+
+async function run (wsServer: WSServer): Promise<void> {
   logger.info(Config)
   if (!Config.INSTRUMENTATION.METRICS.DISABLED) {
     Metrics.setup(Config.INSTRUMENTATION.METRICS.config)
@@ -143,14 +152,17 @@ async function run (): Promise<void> {
         [operationResponse]: responseDelta
       }
     )
-
+    const traceId = getTraceId(req.headers)
+    // TODO: Refine this
+    const channel = '/' + traceId + '/' + req.method + req.path
+    wsServer.notify(channel,'CALLBACK_RECEIVED')
     histTimerEnd({ success: true, operation })
     res.status(202)
     return res.end()
   })
 
   appInstance = app.listen(Config.PORT)
-  Logger.isInfoEnabled && Logger.info(`service is running on port ${Config.PORT}`)
+  Logger.isInfoEnabled && Logger.info(`Service is running on port ${Config.PORT}`)
 }
 
 async function terminate (): Promise<void> {
