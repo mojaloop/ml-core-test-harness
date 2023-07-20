@@ -39,6 +39,11 @@ export interface ServiceConfig {
     ENABLED: boolean
     PORT: number
   }
+  CALLBACK_ENDPOINTS: {
+    ALS_ENDPOINT_URL: string
+    QUOTES_ENDPOINT_URL: string
+    TRANSFERS_ENDPOINT_URL: string
+  }
   INSTRUMENTATION: {
     METRICS: {
       DISABLED: boolean
@@ -80,6 +85,26 @@ export const ConvictConfig = Convict<ServiceConfig>({
       default: 3002,
       env: 'WS_SERVER_PORT'
     }
+  },
+  CALLBACK_ENDPOINTS: {
+    ALS_ENDPOINT_URL: {
+      doc: 'Endpoint base URL of Account Lookup Service',
+      format: String,
+      default: '',
+      env: 'ALS_ENDPOINT_URL'
+    },
+    QUOTES_ENDPOINT_URL: {
+      doc: 'Endpoint base URL of Quoting Service',
+      format: String,
+      default: '',
+      env: 'QUOTES_ENDPOINT_URL'
+    },
+    TRANSFERS_ENDPOINT_URL: {
+      doc: 'Endpoint base URL of ML API Adapter Service',
+      format: String,
+      default: '',
+      env: 'TRANSFERS_ENDPOINT_URL'
+    },
   },
   INSTRUMENTATION: {
     METRICS: {
@@ -129,6 +154,7 @@ const config: ServiceConfig = {
   HOST: ConvictConfig.get('HOST'),
   PORT: ConvictConfig.get('PORT'),
   WS_SERVER: ConvictConfig.get('WS_SERVER'),
+  CALLBACK_ENDPOINTS: ConvictConfig.get('CALLBACK_ENDPOINTS'),
   INSTRUMENTATION: ConvictConfig.get('INSTRUMENTATION')
 }
 

@@ -39,24 +39,27 @@ import Logger from '@mojaloop/central-services-logger'
 import Metrics from '@mojaloop/central-services-metrics'
 import { logger } from '../shared/logger'
 import { WSServer } from '../ws-server'
-import Utils from '../shared/utils'
 
-import axios from 'axios'
 const requireGlob = require('require-glob')
 
 const app = express()
 let appInstance: http.Server
 
+export type dependecyConfiguration = {
+  wsServer: WSServer
+}
+export type userConfiguration = typeof Config
+
 async function run (wsServer: WSServer): Promise<void> {
-  const rulesList = await requireGlob('../../rules/**.js')
-  Logger.isInfoEnabled && Logger.info(`Rule imports found ${JSON.stringify(rulesList)}`)
+  const handlersList = await requireGlob('../../handlers/**.js')
+  Logger.isInfoEnabled && Logger.info(`Handler imports found ${JSON.stringify(handlersList)}`)
   // e.g. https://www.npmjs.com/package/require-glob
-  // import all imports from "working-dir/rules/*.js"(options) into rulesList
-  for (const key in rulesList) {
-    if (Object.prototype.hasOwnProperty.call(rulesList[key], 'init')) {
-      const handlerObject = rulesList[key]
-      const rules = handlerObject.init(express, Metrics, Logger, Date, wsServer, axios, Utils)
-      app.use(rules.basepath, rules.router)
+  // import all imports from "working-dir/handlers/*.js"(options) into handlersList
+  for (const key in handlersList) {
+    if (Object.prototype.hasOwnProperty.call(handlersList[key], 'init')) {
+      const handlerObject = handlersList[key]
+      const handlers = handlerObject.init({ wsServer }, Config, Logger)
+      app.use(handlers.basepath, handlers.router)
     }
   }
 

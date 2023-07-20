@@ -1,5 +1,6 @@
+const express = require('express')
 
-const init = (express, metrics, logger, date, wsServer, axios, Utils, options = undefined) => {
+const init = (depConfig, _userConfig, logger, options = undefined) => {
   const router = express.Router()
 
   // Handle admin Get Participants request

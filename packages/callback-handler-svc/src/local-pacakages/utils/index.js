@@ -28,13 +28,8 @@
  --------------
  ******/
 
-export type TracestateMap = {
-  tx_end2end_start_ts: number | undefined;
-  tx_callback_start_ts: number | undefined;
-}
-
-function getTraceStateMap (headers: any): TracestateMap {
-  const tracestate: string = headers.tracestate
+const getTraceStateMap = (headers) => {
+  const tracestate = headers.tracestate
   if (tracestate === undefined) {
     return {
       tx_end2end_start_ts: undefined,
@@ -44,27 +39,25 @@ function getTraceStateMap (headers: any): TracestateMap {
   let tracestates = {}
   tracestate
     .split(',')
-    .map(ts => ts.split('='))
+    .map(item => item.split('='))
     .map(([k, v]) => {
-    return { [k]: Number(v) }
+      return k.startsWith('tx_') ? { [k]: Number(v) } : { [k]: v }
     })
     .forEach(ts => {
     tracestates = { ...tracestates, ...ts }
     })
-  return tracestates as TracestateMap
+  return tracestates
 }
 
-function getTraceId (headers: any): string | null {
-  const traceparent: string = headers.traceparent
+const getTraceId = (headers) => {
+  const traceparent = headers.traceparent
   if (traceparent === undefined) {
     return null
   }
   return traceparent.split('-')[1];
 }
 
-export default {
-  TraceUtils: {
-    getTraceStateMap,
-    getTraceId  
-  }
+exports.TraceUtils = {
+  getTraceStateMap,
+  getTraceId  
 }
