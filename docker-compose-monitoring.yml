@@ -117,7 +117,7 @@ services:
     restart: always
 
   callback-handler-svc:
-    container_name: callback-handler-svc
+    scale: 1
     image: mojaloop/callback-handler-svc:local
     build:
       context: ./packages/callback-handler-svc
@@ -130,8 +130,9 @@ services:
       - mojaloop-net
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/dist/config
+      - ./packages/callback-handler-svc/rules:/opt/app/dist/rules
     environment:
-      - LOG_LEVEL=info
+      - LOG_LEVEL=debug
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s

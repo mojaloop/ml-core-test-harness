@@ -23,12 +23,48 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Kevin Leyow <kevin.leyow@modusbox.com>
+ - Vijay Kumar Guthi <vijaya.guthi@infitx.com>
+
  --------------
  ******/
 
-// for mojaloop there is lack for @types files
-// to stop typescript complains, we have to declare some modules here
-declare module '@mojaloop/central-services-logger'
-declare module '@mojaloop/central-services-metrics'
-declare module 'require-glob'
+export type TracestateMap = {
+  tx_end2end_start_ts: number | undefined;
+  tx_callback_start_ts: number | undefined;
+}
+
+function getTraceStateMap (headers: any): TracestateMap {
+  const tracestate: string = headers.tracestate
+  if (tracestate === undefined) {
+    return {
+      tx_end2end_start_ts: undefined,
+      tx_callback_start_ts: undefined
+    }
+  }
+  let tracestates = {}
+  tracestate
+    .split(',')
+    .map(ts => ts.split('='))
+    .map(([k, v]) => {
+    return { [k]: Number(v) }
+    })
+    .forEach(ts => {
+    tracestates = { ...tracestates, ...ts }
+    })
+  return tracestates as TracestateMap
+}
+
+function getTraceId (headers: any): string | null {
+  const traceparent: string = headers.traceparent
+  if (traceparent === undefined) {
+    return null
+  }
+  return traceparent.split('-')[1];
+}
+
+export default {
+  TraceUtils: {
+    getTraceStateMap,
+    getTraceId  
+  }
+}

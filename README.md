@@ -167,7 +167,23 @@ cat ttk-tests-console.log
 ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 ```
 
-## Monitoring
+## Performance Characterization
+
+### Running ALS with dependencies
+
+```bash
+docker-compose --project-name ml-core -f docker-compose-perf-als.yml --profile all-services --profile ttk-provisioning up -d
+```
+
+Stop Monitoring Services
+
+```bash
+docker-compose --project-name ml-core -f docker-compose-perf-als.yml --profile all-services down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
+### Monitoring
 
 Start Monitoring Services stack which uses:
 - [Prometheus](https://prometheus.io) for time series data store
@@ -188,9 +204,9 @@ docker-compose --project-name monitoring -f docker-compose-monitoring.yml down -
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
 TODO:
-- add note about network being created by main docker-compose, or it can be done manually.
+- add note about network being created by docker-compose-perf.yml, or it can be done manually.
 
-## Performance Characterization
+### Load Tests
 
 [K6](https://k6.io) is being used to execute performance tests, with metrics being captured by [Prometheus](https://k6.io/docs/results-output/real-time/prometheus-remote-write) and displayed using [Grafana](https://k6.io/docs/results-output/real-time/prometheus-remote-write/#time-series-visualization).
 
