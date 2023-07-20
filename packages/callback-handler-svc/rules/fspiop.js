@@ -6,9 +6,11 @@ const init = (express, metrics, logger, date, wsServer, axios, options = undefin
 
   // Handle Payee GET Party
   router.get('/parties/:type/:id', (req, res) => {
+    // Sync 202
     res.status(202)
     res.end()
 
+    // Async callback
     const type = req.params.type
     const id = req.params.id
     const host = req.get('host')
@@ -58,9 +60,11 @@ const init = (express, metrics, logger, date, wsServer, axios, options = undefin
 
   // Handle Payee GET Participants
   router.get('/participants', (req, res) => {
+    // Sync 202
     res.status(202)
     res.end()
 
+    // Async callback
     const type = req.params.type
     const id = req.params.id
     const host = req.get('host')
