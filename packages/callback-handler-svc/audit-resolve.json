@@ -1,0 +1,110 @@
+{
+  "decisions": {
+    "1004854|@mojaloop/central-services-shared>widdershins>openapi-sampler>json-pointer": {
+      "decision": "postpone",
+      "madeAt": 1646227101017
+    },
+    "1004869|@mojaloop/central-services-shared>widdershins>swagger2openapi>better-ajv-errors>jsonpointer": {
+      "decision": "postpone",
+      "madeAt": 1646227102220
+    },
+    "1004869|@mojaloop/central-services-shared>widdershins>swagger2openapi>oas-validator>better-ajv-errors>jsonpointer": {
+      "decision": "postpone",
+      "madeAt": 1646227102220
+    },
+    "1004946|@mojaloop/central-services-shared>widdershins>yargs>string-width>strip-ansi>ansi-regex": {
+      "decision": "postpone",
+      "madeAt": 1646227102612
+    },
+    "1004946|@mojaloop/central-services-shared>widdershins>yargs>cliui>string-width>strip-ansi>ansi-regex": {
+      "decision": "postpone",
+      "madeAt": 1646227102612
+    },
+    "1005383|@mojaloop/central-services-shared>shins>sanitize-html": {
+      "decision": "postpone",
+      "madeAt": 1646227107687
+    },
+    "1005384|@mojaloop/central-services-shared>shins>sanitize-html": {
+      "decision": "postpone",
+      "madeAt": 1646227107687
+    },
+    "1005534|@mojaloop/central-services-shared>widdershins>yargs>yargs-parser": {
+      "decision": "postpone",
+      "madeAt": 1646227108811
+    },
+    "1006846|@mojaloop/central-services-shared>shins>sanitize-html>postcss": {
+      "decision": "postpone",
+      "madeAt": 1645021441204
+    },
+    "1006886|@mojaloop/central-services-shared>shins>markdown-it": {
+      "decision": "postpone",
+      "madeAt": 1646227109296
+    },
+    "1007017|@mojaloop/central-services-shared>widdershins>swagger2openapi>oas-validator>ajv": {
+      "decision": "postpone",
+      "madeAt": 1646227109723
+    },
+    "1067300|@mojaloop/central-services-shared>widdershins>yargs>string-width>strip-ansi>ansi-regex": {
+      "decision": "postpone",
+      "madeAt": 1649354948486
+    },
+    "1067300|@mojaloop/central-services-shared>widdershins>yargs>cliui>string-width>strip-ansi>ansi-regex": {
+      "decision": "postpone",
+      "madeAt": 1649354948487
+    },
+    "1067342|rc>minimist": {
+      "decision": "postpone",
+      "madeAt": 1649354948955
+    },
+    "1067342|@mojaloop/central-services-logger>rc>minimist": {
+      "decision": "postpone",
+      "madeAt": 1649354948955
+    },
+    "1067342|@mojaloop/event-sdk>@mojaloop/central-services-logger>rc>minimist": {
+      "decision": "postpone",
+      "madeAt": 1649354948955
+    },
+    "1067384|@mojaloop/central-services-shared>widdershins>urijs": {
+      "decision": "postpone",
+      "madeAt": 1649354949383
+    },
+    "1067387|@mojaloop/central-services-shared>widdershins>urijs": {
+      "decision": "postpone",
+      "madeAt": 1649354949383
+    },
+    "1067456|@mojaloop/central-services-shared>shins>markdown-it": {
+      "decision": "postpone",
+      "madeAt": 1649354949822
+    },
+    "1067536|@mojaloop/central-services-shared>widdershins>openapi-sampler>json-pointer": {
+      "decision": "postpone",
+      "madeAt": 1649354950229
+    },
+    "1067553|@mojaloop/central-services-shared>widdershins>swagger2openapi>better-ajv-errors>jsonpointer": {
+      "decision": "postpone",
+      "madeAt": 1649354951152
+    },
+    "1067553|@mojaloop/central-services-shared>widdershins>swagger2openapi>oas-validator>better-ajv-errors>jsonpointer": {
+      "decision": "postpone",
+      "madeAt": 1649354951152
+    },
+    "1067946|@mojaloop/central-services-shared>widdershins>swagger2openapi>oas-validator>ajv": {
+      "decision": "postpone",
+      "madeAt": 1649354951771
+    },
+    "1068154|@mojaloop/central-services-shared>shins>sanitize-html": {
+      "decision": "postpone",
+      "madeAt": 1649354952333
+    },
+    "1068155|@mojaloop/central-services-shared>shins>sanitize-html": {
+      "decision": "postpone",
+      "madeAt": 1649354952333
+    },
+    "1068310|@mojaloop/central-services-shared>widdershins>yargs>yargs-parser": {
+      "decision": "postpone",
+      "madeAt": 1649354952906
+    }
+  },
+  "rules": {},
+  "version": 1
+}

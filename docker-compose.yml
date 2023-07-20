@@ -248,6 +248,7 @@ services:
     environment:
       - LOG_LEVEL=info
       - ALS_DISPLAY_ROUTES=false
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
     depends_on:
@@ -304,6 +305,7 @@ services:
     ports:
       - "9440:4040"
       - "9550:5050"
+    user: root
     command:
       - sh
       - -c

@@ -1,0 +1,37 @@
+## Ref: https://github.com/grafana/xk6-output-prometheus-remote/blob/main/docker-compose.yml
+## Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/
+
+version: '3.8'
+
+networks:
+  load-net:
+    name: load-net
+  monitoring-net:
+    name: monitoring-net
+    external: true
+  mojaloop-net:
+    name: mojaloop-net
+    external: true
+
+services:
+  k6:
+    image: grafana/k6:0.45.0
+    env_file:
+      - ./docker/k6/.env
+    command:
+      - run
+      # - '--help' ## Useful to list run options
+      - '--include-system-env-vars'
+      - '/scripts/test-ws.js'
+    networks:
+      - load-net
+      - monitoring-net
+      - mojaloop-net
+    ports:
+      - "6565:6565"
+    environment:
+      - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write # Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/#options
+      - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true # Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/#options
+      - K6_OUT=experimental-prometheus-rw # Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/
+    volumes:
+      - ./docker/k6/scripts:/scripts

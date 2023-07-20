@@ -1,0 +1,20 @@
+{
+  "PORT": 3001,
+  "HOST": "0.0.0.0",
+  "WS_SERVER": {
+    "ENABLED": true,
+    "PORT": 3002
+  },
+  "INSTRUMENTATION": {
+    "METRICS": {
+      "DISABLED": false,
+      "config": {
+        "timeout": 5000,
+        "prefix": "cbs_",
+        "defaultLabels": {
+          "serviceName": "callback-handler-svc"
+        }
+      }
+    }
+  }
+}
