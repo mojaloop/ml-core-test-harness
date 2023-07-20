@@ -10,11 +10,17 @@ import { WebSocket } from 'k6/experimental/websockets';
 // const myRate = new Trend('rate_time');
 
 export const options = {
-  stages: [
-    { duration: '3m', target: 1, vus: 1 },
-    // { duration: '1m30s', target: 10 },
-    // { duration: '20s', target: 0 },
-  ],
+  vus: 30,
+  duration: '5m',
+  batch: 20,
+  batchPerHost: 6,
+  noConnectionReuse: false,
+  noVUConnectionReuse: false,
+  // stages: [
+  //   { duration: '5m', target: 30 },
+  //   // { duration: '1m30s', target: 10 },
+  //   // { duration: '20s', target: 0 },
+  // ],
   tags: {
     testid: `${Date.now()}`,
   },
@@ -76,12 +82,13 @@ export default function () {
   // const ws = new WebSocket(`ws://${__ENV.CALLBACK_HANDLER_SERVICE_WS_HOST}:${__ENV.CALLBACK_HANDLER_SERVICE_WS_PORT}/${wsChannel}`);
   // TODO: Need to parameterize the following. The above line is not working somehow and need to investigate
   const ws = new WebSocket(`ws://callback-handler-svc:3002/${wsChannel}`);
-  
-  ws.onmessage = (data) => {
+
+  ws.onmessage = (event) => {
     // const deltaTs = Date.now() - startTs
     // myTrend.add(deltaTs);
     // myRate.add(deltaTs)
-    console.log('a message received');
+    console.log(`WS message received: ${event.data}`);
+    check(event.data, { 'Success Callback should be received': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
     // console.log(deltaTs);
     ws.close();
     // sleep(1);
@@ -98,7 +105,7 @@ export default function () {
         'tracestate': `tx_end2end_start_ts=${startTs}`
       },
     };
-  
+
     const res = http.get(`http://${__ENV.ACCOUNT_LOOKUP_SERVICE_HOST}:${__ENV.ACCOUNT_LOOKUP_SERVICE_PORT}/parties/MSISDN/${payeeId}`, params);
     check(res, { 'http sync response status is 202': (r) => r.status == 202 });
   };
