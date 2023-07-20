@@ -71,8 +71,8 @@ services:
       - "./docker/ml-testing-toolkit/spec_files:/opt/app/spec_files"
       - "./docker/ml-testing-toolkit/test-cases:/opt/app/examples"
     ports:
-      - "9440:4040"
-      - "9550:5050"
+      - "4040:4040"
+      - "5050:5050"
     user: root
     command:
       - sh
@@ -93,9 +93,9 @@ services:
   mojaloop-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:v15.3.0
     ports:
-      - "9660:6060"
+      - "6060:6060"
     environment:
-      - API_BASE_URL=http://10.1.2.182:9550
+      # - API_BASE_URL=http://localhost:5050
       - AUTH_ENABLED=FALSE
     command:
       - sh
