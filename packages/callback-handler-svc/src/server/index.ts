@@ -39,6 +39,8 @@ import Logger from '@mojaloop/central-services-logger'
 import Metrics from '@mojaloop/central-services-metrics'
 import { logger } from '../shared/logger'
 import { WSServer } from '../ws-server'
+import axios from 'axios'
+const requireGlob = require('require-glob')
 
 type TracestateMap = {
   tx_end2end_start_ts: number | undefined;
@@ -77,6 +79,18 @@ function getTraceId (headers: any): string | null {
 }
 
 async function run (wsServer: WSServer): Promise<void> {
+  const rulesList = await requireGlob('../../rules/**.js')
+  Logger.isInfoEnabled && Logger.info(`Rule imports found ${JSON.stringify(rulesList)}`)
+  // e.g. https://www.npmjs.com/package/require-glob
+  // import all imports from "working-dir/rules/*.js"(options) into rulesList
+  for (const key in rulesList) {
+    if (Object.prototype.hasOwnProperty.call(rulesList[key], 'init')) {
+      const handlerObject = rulesList[key]
+      const rules = handlerObject.init(express, Metrics, Logger, Date, wsServer, axios)
+      app.use(rules.basepath, rules.router)
+    }
+  }
+
   logger.info(Config)
   if (!Config.INSTRUMENTATION.METRICS.DISABLED) {
     Metrics.setup(Config.INSTRUMENTATION.METRICS.config)
@@ -88,10 +102,13 @@ async function run (wsServer: WSServer): Promise<void> {
       status: 'OK'
     })
   })
+
   app.get('/metrics', async (_req, res) => {
     res.status(200)
     res.send(await Metrics.getMetricsForPrometheus())
   })
+
+  /*
   app.all(['/:resource', '/:resource/*'], async (req, res) => {
     const histTimerEnd = Metrics.getHistogram(
       'ing_callbackHandler',
@@ -160,7 +177,7 @@ async function run (wsServer: WSServer): Promise<void> {
     res.status(202)
     return res.end()
   })
-
+  */
   appInstance = app.listen(Config.PORT)
   Logger.isInfoEnabled && Logger.info(`Service is running on port ${Config.PORT}`)
 }

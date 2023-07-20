@@ -18,6 +18,7 @@ services:
       - mojaloop-net
     volumes:
       - ./config:/opt/app/dist/config
+      - ./rules:/opt/app/dist/rules
     environment:
       - LOG_LEVEL=debug
     healthcheck:

@@ -1,0 +1,31 @@
+// example callback handler
+export default {
+  "id": "1234", // unique ID
+  "matcher" :{ // or just a single "key": "POST_PARTY"
+    "method": "POST",
+    "operation": "party"
+  },
+  "parameters": { // common variables that are shared between sync/async responses
+    "ALS_HOST": "account-lookup-svc",
+    "PAYER_NAME": "perfsp1"
+  },
+  "syncResponse": {
+    "code" : 202,
+    "headers" : {
+      "example": "test"
+    },
+    "body" : {
+      "dfsp": "{{PAYER_NAME}}"
+    }
+  },
+  "asyncResponse" :{
+    "url": "http://{{ALS_HOST}}",
+    "headers" : {
+      "example": "test"
+    },
+    "body": {
+      "hello": "world",
+      "dfsp": "{{PAYER_NAME}}"
+    }
+  }
+}

@@ -31,3 +31,4 @@
 // to stop typescript complains, we have to declare some modules here
 declare module '@mojaloop/central-services-logger'
 declare module '@mojaloop/central-services-metrics'
+declare module 'require-glob'
