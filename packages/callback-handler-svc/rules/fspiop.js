@@ -1,5 +1,17 @@
+// const axios = require('axios')
+// const Utils = require('@local/utils')
 
-const init = (express, metrics, logger, date, wsServer, axios, options = undefined) => {
+const init = (express, metrics, logger, date, wsServer, axios, Utils, options = undefined) => {
+// const init = (express, metrics, logger, wsServer, options = undefined) => {
+
+  // TODO: Need to parameterize the following endpoints
+  const ALS_ENDPOINT_URL = 'http://account-lookup-service:4002'
+  // QUOTES_ENDPOINT_URL
+  // TRANSFERS_ENDPOINT_URL
+  // BULK_QUOTES_ENDPOINT_URL
+  // BULK_TRANSFERS_ENDPOINT_URL
+  // TRANSACTION_REQUESTS_ENDPOINT_URL
+
 
   const FSP_ID = 'perffsp2'
   const router = express.Router()
@@ -13,9 +25,9 @@ const init = (express, metrics, logger, date, wsServer, axios, options = undefin
     // Async callback
     const type = req.params.type
     const id = req.params.id
-    const host = req.get('host')
+    // const host = req.get('host')
     // Send to TTK to double check callback http://10.1.2.182:9440 or http://localhost:4040
-    axios.put(`${host}/parties/${type}/${id}`, {
+    axios.put(`${ALS_ENDPOINT_URL}/parties/${type}/${id}`, {
       "party": {
         "partyIdInfo": {
           "partyIdType": "MSISDN",
@@ -49,9 +61,10 @@ const init = (express, metrics, logger, date, wsServer, axios, options = undefin
     {
       headers: {
         'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',
+        'Accept': 'application/vnd.interoperability.parties+json;version=1.1',
         Date: new date(),
         'FSPIOP-Source': 'perffsp2',
-        'FSPIOP-Destination': req.headers['FSPIOP-Source'],
+        'FSPIOP-Destination': req.headers['fspiop-source'],
         'traceparent': req.headers['traceparent'],
         'tracestate': req.headers['tracestate'] + ',tx_callback_start_ts=' + date.now()
       }
@@ -67,8 +80,8 @@ const init = (express, metrics, logger, date, wsServer, axios, options = undefin
     // Async callback
     const type = req.params.type
     const id = req.params.id
-    const host = req.get('host')
-    axios.put(`${host}/participants/${type}/${id}`, {
+    // const host = req.get('host')
+    axios.put(`${ALS_ENDPOINT_URL}/participants/${type}/${id}`, {
       "fspId": ""
     },
     {
@@ -76,13 +89,12 @@ const init = (express, metrics, logger, date, wsServer, axios, options = undefin
         'Content-Type': 'application/vnd.interoperability.participants+json;version=1.1',
         Date: new date(),
         'FSPIOP-Source': FSP_ID,
-        'FSPIOP-Destination': req.headers['FSPIOP-Source'],
+        'FSPIOP-Destination': req.headers['fspiop-source'],
         'traceparent': req.headers['traceparent'],
         'tracestate': req.headers['tracestate'] + ',tx_callback_start_ts=' + date.now()
       }
     })
   })
-
 
   const handleCallback = (resource, req, res) => {
     const histTimerEnd = metrics.getHistogram(
@@ -98,7 +110,7 @@ const init = (express, metrics, logger, date, wsServer, axios, options = undefin
     const operationE2e = `${operation}_end2end`
     const operationRequest = `${operation}_request`
     const operationResponse = `${operation}_response`
-    const tracestate = getTraceStateMap(req.headers)
+    const tracestate = Utils.TraceUtils.getTraceStateMap(req.headers)
 
     if (tracestate?.tx_end2end_start_ts === undefined || tracestate?.tx_callback_start_ts === undefined) {
       return res.status(400).send('tx_end2end_start_ts or tx_callback_start_ts key/values not found in tracestate')
@@ -143,10 +155,10 @@ const init = (express, metrics, logger, date, wsServer, axios, options = undefin
         [operationResponse]: responseDelta
       }
     )
-    const traceId = getTraceId(req.headers)
+    const traceId = Utils.TraceUtils.getTraceId(req.headers)
     // TODO: Refine this
     const channel = '/' + traceId + '/' + req.method + req.path
-    wsServer.notify(channel,'CALLBACK_RECEIVED')
+    wsServer.notify(channel, isErrorOperation ? 'ERROR_CALLBACK_RECEIVED' : 'SUCCESS_CALLBACK_RECEIVED')
     histTimerEnd({ success: true, operation })
     res.status(202)
     return res.end()

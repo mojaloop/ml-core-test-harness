@@ -1,5 +1,5 @@
 
-const init = (express, metrics, logger, date, wsServer, axios, options = undefined) => {
+const init = (express, metrics, logger, date, wsServer, axios, Utils, options = undefined) => {
   const router = express.Router()
 
   // Handle Oracle GET Participants request

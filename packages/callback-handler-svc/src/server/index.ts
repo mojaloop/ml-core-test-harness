@@ -39,44 +39,13 @@ import Logger from '@mojaloop/central-services-logger'
 import Metrics from '@mojaloop/central-services-metrics'
 import { logger } from '../shared/logger'
 import { WSServer } from '../ws-server'
+import Utils from '../shared/utils'
+
 import axios from 'axios'
 const requireGlob = require('require-glob')
 
-type TracestateMap = {
-  tx_end2end_start_ts: number | undefined;
-  tx_callback_start_ts: number | undefined;
-}
 const app = express()
 let appInstance: http.Server
-
-function getTraceStateMap (headers: any): TracestateMap {
-  const tracestate: string = headers.tracestate
-  if (tracestate === undefined) {
-    return {
-      tx_end2end_start_ts: undefined,
-      tx_callback_start_ts: undefined
-    }
-  }
-  let tracestates = {}
-  tracestate
-    .split(',')
-    .map(ts => ts.split('='))
-    .map(([k, v]) => {
-      return { [k]: Number(v) }
-    })
-    .forEach(ts => {
-      tracestates = { ...tracestates, ...ts }
-    })
-  return tracestates as TracestateMap
-}
-
-function getTraceId (headers: any): string | null {
-  const traceparent: string = headers.traceparent
-  if (traceparent === undefined) {
-    return null
-  }
-  return traceparent.split('-')[1];
-}
 
 async function run (wsServer: WSServer): Promise<void> {
   const rulesList = await requireGlob('../../rules/**.js')
@@ -86,7 +55,7 @@ async function run (wsServer: WSServer): Promise<void> {
   for (const key in rulesList) {
     if (Object.prototype.hasOwnProperty.call(rulesList[key], 'init')) {
       const handlerObject = rulesList[key]
-      const rules = handlerObject.init(express, Metrics, Logger, Date, wsServer, axios)
+      const rules = handlerObject.init(express, Metrics, Logger, Date, wsServer, axios, Utils)
       app.use(rules.basepath, rules.router)
     }
   }
@@ -107,77 +76,6 @@ async function run (wsServer: WSServer): Promise<void> {
     res.status(200)
     res.send(await Metrics.getMetricsForPrometheus())
   })
-
-  /*
-  app.all(['/:resource', '/:resource/*'], async (req, res) => {
-    const histTimerEnd = Metrics.getHistogram(
-      'ing_callbackHandler',
-      'Ingress - Wildcard operation handler',
-      ['success', 'operation']
-    ).startTimer()
-    const currentTime = Date.now()
-    const path = req.path
-    const httpMethod = req.method.toLowerCase()
-    const isErrorOperation = path.endsWith('error')
-    const resource = req.params.resource
-    const operation = `${httpMethod}_${resource}`
-    const operationE2e = `${operation}_end2end`
-    const operationRequest = `${operation}_request`
-    const operationResponse = `${operation}_response`
-    const tracestate = getTraceStateMap(req.headers)
-
-    if (tracestate?.tx_end2end_start_ts === undefined || tracestate?.tx_callback_start_ts === undefined) {
-      return res.status(400).send('tx_end2end_start_ts or tx_callback_start_ts key/values not found in tracestate')
-    }
-
-    const e2eDelta = currentTime - tracestate.tx_end2end_start_ts
-    const requestDelta = tracestate.tx_callback_start_ts - tracestate.tx_end2end_start_ts
-    const responseDelta = currentTime - tracestate.tx_callback_start_ts
-
-    const performanceHistogram = Metrics.getHistogram(
-      'tx_cb_perf',
-      'Metrics for callbacks',
-      ['success', 'path', 'operation']
-    )
-
-    performanceHistogram.observe({
-      success: (!isErrorOperation).toString(),
-      path,
-      operation: operationE2e
-    }, e2eDelta / 1000)
-    performanceHistogram.observe({
-      success: (!isErrorOperation).toString(),
-      path,
-      operation: operationRequest
-    }, requestDelta / 1000)
-    performanceHistogram.observe({
-      success: (!isErrorOperation).toString(),
-      path,
-      operation: operationResponse
-    }, responseDelta / 1000)
-
-    Logger.isDebugEnabled && Logger.debug(
-      {
-        traceparent: req.headers.traceparent,
-        tracestate,
-        operation,
-        path,
-        isErrorOperation,
-        serverHandlingTime: currentTime,
-        [operationE2e]: e2eDelta,
-        [operationRequest]: requestDelta,
-        [operationResponse]: responseDelta
-      }
-    )
-    const traceId = getTraceId(req.headers)
-    // TODO: Refine this
-    const channel = '/' + traceId + '/' + req.method + req.path
-    wsServer.notify(channel,'CALLBACK_RECEIVED')
-    histTimerEnd({ success: true, operation })
-    res.status(202)
-    return res.end()
-  })
-  */
   appInstance = app.listen(Config.PORT)
   Logger.isInfoEnabled && Logger.info(`Service is running on port ${Config.PORT}`)
 }
