@@ -1,36 +1,6 @@
 const axios = require('axios')
 const express = require('express')
-const Metrics = require('@mojaloop/central-services-metrics')
-
-const getTraceStateMap = (headers) => {
-  const tracestate = headers.tracestate
-  if (tracestate === undefined) {
-    return {
-      tx_end2end_start_ts: undefined,
-      tx_callback_start_ts: undefined
-    }
-  }
-  let tracestates = {}
-  tracestate
-    .split(',')
-    .map(item => item.split('='))
-    .map(([k, v]) => {
-      return k.startsWith('tx_') ? { [k]: Number(v) } : { [k]: v }
-    })
-    .forEach(ts => {
-    tracestates = { ...tracestates, ...ts }
-    })
-  return tracestates
-}
-
-const getTraceId = (headers) => {
-  const traceparent = headers.traceparent
-  if (traceparent === undefined) {
-    return null
-  }
-  return traceparent.split('-')[1];
-}
-
+const Utils = require('@callback-handler-svc/utils')
 
 const init = (depConfig, userConfig, logger, options = undefined) => {
   // TODO: Need to parameterize the following endpoints
@@ -154,7 +124,7 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
     const operationE2e = `${operation}_end2end`
     const operationRequest = `${operation}_request`
     const operationResponse = `${operation}_response`
-    const tracestate = getTraceStateMap(req.headers)
+    const tracestate = Utils.TraceUtils.getTraceStateMap(req.headers)
 
     if (tracestate?.tx_end2end_start_ts === undefined || tracestate?.tx_callback_start_ts === undefined) {
       return res.status(400).send('tx_end2end_start_ts or tx_callback_start_ts key/values not found in tracestate')
@@ -199,7 +169,7 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
         [operationResponse]: responseDelta
       }
     )
-    const traceId = getTraceId(req.headers)
+    const traceId = Utils.TraceUtils.getTraceId(req.headers)
     const channel = '/' + traceId + '/' + req.method + req.path
     depConfig.wsServer.notify(channel, isErrorOperation ? 'ERROR_CALLBACK_RECEIVED' : 'SUCCESS_CALLBACK_RECEIVED')
     histTimerEnd({ success: true, operation })
