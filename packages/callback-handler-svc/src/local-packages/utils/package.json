@@ -1,0 +1,5 @@
+{
+  "name": "@callback-handler-svc/utils",
+  "main": "../../../dist/local-packages/utils/index.js",
+  "private": true
+}

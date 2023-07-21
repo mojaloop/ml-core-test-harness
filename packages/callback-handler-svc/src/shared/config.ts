@@ -116,7 +116,7 @@ export const ConvictConfig = Convict<ServiceConfig>({
 })
 
 // Load environment dependent configuration
-const configFile = process.env.CONFIG_FILE || path.join(__dirname, '../../config/default.json')
+const configFile = process.env.CONFIG_FILE || path.join(process.cwd(), './config/default.json')
 if (configFile) {
   ConvictConfig.loadFile(configFile)
 }

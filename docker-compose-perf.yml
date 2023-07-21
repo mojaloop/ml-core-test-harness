@@ -1,0 +1,156 @@
+version: "3.7"
+
+networks:
+  mojaloop-net:
+    name: mojaloop-net
+
+services:
+
+  account-lookup-service:
+    image: mojaloop/account-lookup-service:${ACCOUNT_LOOKUP_SERVICE_VERSION}
+    scale: 1
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/account-lookup-service.js /opt/app/config/default.json && /opt/app/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
+    # ports:
+    #   - "4001:4001"
+    #   - "4002:4002"
+    environment:
+      - LOG_LEVEL=info
+      - ALS_DISPLAY_ROUTES=false
+      - ALS_SWITCH_ENDPOINT=http://callback-handler-svc:3001/admin
+      - WAIT4_CONFIG=./wait4.config.perf-als.js
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql-als:
+        condition: service_started
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: wget -q http://localhost:4001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - account-lookup-service
+      - discovery
+      - all-services
+
+  mysql-als:
+    image: mysql/mysql-server
+    container_name: mysql-als
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./docker/sql-als-init/:/docker-entrypoint-initdb.d/
+    environment:
+      - MYSQL_USER=${DBUSER:-account_lookup}
+      - MYSQL_PASSWORD=${DBPASS:-password}
+      - MYSQL_DATABASE=${DBUSER:-account_lookup}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    networks:
+      - mojaloop-net
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "mysql-als"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    profiles:
+      - account-lookup-service
+      - discovery
+      - all-services
+
+  ## Testing Toolkit
+  mojaloop-testing-toolkit:
+    image: mojaloop/ml-testing-toolkit:v16.1.1
+    volumes:
+      - "./docker/ml-testing-toolkit/spec_files:/opt/app/spec_files"
+      - "./docker/ml-testing-toolkit/test-cases:/opt/app/examples"
+    ports:
+      - "4040:4040"
+      - "5050:5050"
+    user: root
+    command:
+      - sh
+      - -c
+      - "npm start"
+    networks:
+      - mojaloop-net
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z -v localhost 4040"]
+      interval: 5s
+      timeout: 10s
+      start_period: 10s
+      retries: 10
+    profiles:
+      - testing-toolkit
+      - all-services
+
+  mojaloop-testing-toolkit-ui:
+    image: mojaloop/ml-testing-toolkit-ui:v15.3.0
+    ports:
+      - "6060:6060"
+    environment:
+      # - API_BASE_URL=http://localhost:5050
+      - AUTH_ENABLED=FALSE
+    command:
+      - sh
+      - /usr/share/nginx/start.sh
+    networks:
+      - mojaloop-net
+    profiles:
+      - testing-toolkit
+      - all-services
+
+  ttk-provisioning:
+    image: mojaloop/ml-testing-toolkit-client-lib:v1.2.0
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+      account-lookup-service:
+        condition: service_healthy
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning-perf-als -e environments/default-env.json --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+    user: root
+    profiles:
+      - ttk-provisioning
+
+  callback-handler-svc:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    ports:
+      - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - callback-handler
+      - all-services
