@@ -174,7 +174,7 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "ops"
         },
         "overrides": []
       },
@@ -184,7 +184,7 @@
         "x": 12,
         "y": 0
       },
-      "id": 123133,
+      "id": 123135,
       "options": {
         "legend": {
           "calcs": [
@@ -209,14 +209,14 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(cbs_ing_callbackHandler_sum[$__rate_interval]) / rate(cbs_ing_callbackHandler_count[$__rate_interval]) >=0) by (operation, success)",
+          "expr": "sum(rate(cbs_ing_callbackHandler_count[$__rate_interval])) by (operation, success)",
           "instant": false,
-          "legendFormat": "op: {{operation}} success: {{success}}",
+          "legendFormat": "op:{{operation}} success: {{success}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Handler Ingress  - Processing Time",
+      "title": "Handler Ingress - Processed Per Second",
       "type": "timeseries"
     },
     {
@@ -619,7 +619,32 @@
           },
           "unit": "s"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "op:fspiop_put_parties_end2end - Success true"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 9,
