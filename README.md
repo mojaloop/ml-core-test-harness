@@ -175,7 +175,7 @@ ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 docker-compose --project-name ml-core -f docker-compose-perf-als.yml --profile all-services --profile ttk-provisioning up -d
 ```
 
-Stop Monitoring Services
+Stop Services...
 
 ```bash
 docker-compose --project-name ml-core -f docker-compose-perf-als.yml --profile all-services down -v
