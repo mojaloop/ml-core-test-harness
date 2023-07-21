@@ -4,6 +4,7 @@ const env = require('env-var')
 const init = (config, logger, options = undefined) => {
   const router = express.Router()
   const FSP_ID = env.get('FSPIOP_FSP_ID').default('perffsp2').asString()
+  const FSPIOP_CALLBACK_URL = env.get('FSPIOP_CALLBACK_URL').default('http://callback-handler-svc:3001').asString()
 
   // Handle admin Get Participants request
   router.get('/participants/:id', (req, res) => {
@@ -50,39 +51,39 @@ const init = (config, logger, options = undefined) => {
       [
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}`
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/error`
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_GET",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}`
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_PUT",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}`
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error`
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error`
         },
         {
            "type":"NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
@@ -98,15 +99,15 @@ const init = (config, logger, options = undefined) => {
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{requestId}}"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/participants/{{requestId}}`
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{requestId}}/error"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/participants/{{requestId}}/error`
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
-           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+           "value":`${FSPIOP_CALLBACK_URL}/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/error`
         }
      ]
     )

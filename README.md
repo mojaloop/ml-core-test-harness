@@ -172,13 +172,13 @@ ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 ### Running ALS with dependencies
 
 ```bash
-docker-compose --project-name ml-core -f docker-compose-perf-als.yml --profile all-services --profile ttk-provisioning up -d
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile ttk-provisioning up -d
 ```
 
-Stop Services...
+Stop Services
 
 ```bash
-docker-compose --project-name ml-core -f docker-compose-perf-als.yml --profile all-services down -v
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services down -v
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
@@ -192,13 +192,13 @@ Start Monitoring Services stack which uses:
 - [CAdviser](https://github.com/google/cadvisor) to instrument the Docker containers running on Host machine
 
 ```bash
-docker-compose --project-name monitoring -f docker-compose-monitoring.yml up -d
+docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
 ```
 
 Stop Monitoring Services
 
 ```bash
-docker-compose --project-name monitoring -f docker-compose-monitoring.yml down -v
+docker compose --project-name monitoring -f docker-compose-monitoring.yml down -v
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose

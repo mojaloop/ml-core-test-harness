@@ -126,3 +126,31 @@ services:
     user: root
     profiles:
       - ttk-provisioning
+
+  callback-handler-svc:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    ports:
+      - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - callback-handler
+      - all-services
