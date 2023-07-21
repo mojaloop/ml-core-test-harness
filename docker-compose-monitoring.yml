@@ -129,8 +129,8 @@ services:
       - monitoring-net
       - mojaloop-net
     volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/dist/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/dist/handlers
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment:
       - LOG_LEVEL=debug
       - FSPIOP_ALS_ENDPOINT_URL=http://account-lookup-service:4002

@@ -19,7 +19,6 @@
       "test/*": [
         "test/*"
       ],
-      "@callback-handler-svc/*": ["src/local-packages/*"],
     }
   }
 }

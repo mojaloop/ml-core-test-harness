@@ -28,8 +28,13 @@
  --------------
  ******/
 
-const getTraceStateMap = (headers) => {
-  const tracestate = headers.tracestate
+ export type TracestateMap = {
+  tx_end2end_start_ts: number | undefined;
+  tx_callback_start_ts: number | undefined;
+}
+
+function getTraceStateMap (headers: any): TracestateMap {
+  const tracestate: string = headers.tracestate
   if (tracestate === undefined) {
     return {
       tx_end2end_start_ts: undefined,
@@ -46,18 +51,20 @@ const getTraceStateMap = (headers) => {
     .forEach(ts => {
     tracestates = { ...tracestates, ...ts }
     })
-  return tracestates
+  return tracestates as TracestateMap
 }
 
-const getTraceId = (headers) => {
-  const traceparent = headers.traceparent
+function getTraceId (headers: any): string | null {
+  const traceparent: string = headers.traceparent
   if (traceparent === undefined) {
     return null
   }
   return traceparent.split('-')[1];
 }
 
-exports.TraceUtils = {
-  getTraceStateMap,
-  getTraceId  
+export default {
+  TraceUtils: {
+    getTraceStateMap,
+    getTraceId  
+  }
 }

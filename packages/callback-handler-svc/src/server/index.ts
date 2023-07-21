@@ -39,6 +39,7 @@ import Logger from '@mojaloop/central-services-logger'
 import Metrics from '@mojaloop/central-services-metrics'
 import { logger } from '../shared/logger'
 import { WSServer } from '../ws-server'
+import path from 'path'
 
 const requireGlob = require('require-glob')
 
@@ -50,7 +51,7 @@ export type options = {
   metrics: (typeof Metrics)
 }
 async function run (wsServer: WSServer): Promise<void> {
-  const handlersList = await requireGlob('../../handlers/**.js')
+  const handlersList = await requireGlob(path.join(process.cwd(), './handlers/**.js'))
   Logger.isInfoEnabled && Logger.info(`Handler imports found ${JSON.stringify(handlersList)}`)
   // e.g. https://www.npmjs.com/package/require-glob
   // import all imports from "working-dir/handlers/*.js"(options) into handlersList
