@@ -1,16 +1,19 @@
 const axios = require('axios')
 const express = require('express')
 const Utils = require('@callback-handler-svc/utils')
+const env = require('env-var');
 
-const init = (depConfig, userConfig, logger, options = undefined) => {
-  // TODO: Need to parameterize the following endpoints
-  const ALS_ENDPOINT_URL = userConfig.CALLBACK_ENDPOINTS.ALS_ENDPOINT_URL
-  const FSP_ID = 'perffsp2'
+const TRACESTATE_KEY_END2END_START_TS = 'tx_end2end_start_ts'
+const TRACESTATE_KEY_CALLBACK_START_TS = 'tx_callback_start_ts'
+
+const init = (config, logger, options = undefined) => {
+  const ALS_ENDPOINT_URL = env.get('FSPIOP_ALS_ENDPOINT_URL').default('http://account-lookup-service:4002').asString()
+  const FSP_ID = env.get('FSPIOP_FSP_ID').default('perffsp2').asString()
   const router = express.Router()
 
   // Handle Payee GET Party
   router.get('/parties/:type/:id', (req, res) => {
-    const histTimerEnd = depConfig.metrics.getHistogram(
+    const histTimerEnd = options.metrics.getHistogram(
       'ing_callbackHandler',
       'Ingress - Operation handler',
       ['success', 'operation']
@@ -24,24 +27,17 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
     const tracestateHeader = req.headers['tracestate'];
 
     (async () => {
-      axios.put(`${ALS_ENDPOINT_URL}/parties/${type}/${id}`, {
+      const egressHistTimerEnd = options.metrics.getHistogram(
+        'egress_callbackHandler',
+        'Egress - Operation handler',
+        ['success', 'operation']
+      ).startTimer()
+      await axios.put(`${ALS_ENDPOINT_URL}/parties/${type}/${id}`, {
         "party": {
           "partyIdInfo": {
             "partyIdType": "MSISDN",
             "partyIdentifier": "19012345002",
             "fspId": FSP_ID,
-            "extensionList": {
-              "extension": [
-                {
-                  "key": "labore",
-                  "value": "occaecat exercitation dolor laborum"
-                },
-                {
-                  "key": "deser",
-                  "value": "quis dese"
-                }
-              ]
-            },
             "partySubIdOrType": "HEALTH_CARD"
           },
           "personalInfo": {
@@ -60,12 +56,13 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
           'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',
           'Accept': 'application/vnd.interoperability.parties+json;version=1.1',
           Date: new Date(),
-          'FSPIOP-Source': 'perffsp2',
+          'FSPIOP-Source': FSP_ID,
           'FSPIOP-Destination': fspiopSourceHeader,
           'traceparent': traceparentHeader,
-          'tracestate': tracestateHeader + ',tx_callback_start_ts=' + Date.now()
+          'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
         }
       })
+      egressHistTimerEnd({ success: true, operation: 'fspiop_put_parties'})
     })();
     // Sync 202
     res.status(202)
@@ -75,7 +72,7 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
 
   // Handle Payee GET Participants
   router.get('/participants', (req, res) => {
-    const histTimerEnd = depConfig.metrics.getHistogram(
+    const histTimerEnd = options.metrics.getHistogram(
       'ing_callbackHandler',
       'Ingress - Operation handler',
       ['success', 'operation']
@@ -89,7 +86,12 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
     const tracestateHeader = req.headers['tracestate'];
 
     (async () => {
-      axios.put(`${ALS_ENDPOINT_URL}/participants/${type}/${id}`, {
+      const egressHistTimerEnd = options.metrics.getHistogram(
+        'egress_callbackHandler',
+        'Egress - Operation handler',
+        ['success', 'operation']
+      ).startTimer()
+      await axios.put(`${ALS_ENDPOINT_URL}/participants/${type}/${id}`, {
         "fspId": ""
       },
       {
@@ -99,9 +101,10 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
           'FSPIOP-Source': FSP_ID,
           'FSPIOP-Destination': fspiopSourceHeader,
           'traceparent': traceparentHeader,
-          'tracestate': tracestateHeader + ',tx_callback_start_ts=' + Date.now()
+          'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
         }
       })
+      egressHistTimerEnd({ success: true, operation: 'fspiop_put_participants'})
     })();
     // Sync 202
     res.status(202)
@@ -111,7 +114,7 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
   })
 
   const handleCallback = (resource, req, res) => {
-    const histTimerEnd = depConfig.metrics.getHistogram(
+    const histTimerEnd = options.metrics.getHistogram(
       'ing_callbackHandler',
       'Ingress - Operation handler',
       ['success', 'operation']
@@ -126,15 +129,15 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
     const operationResponse = `${operation}_response`
     const tracestate = Utils.TraceUtils.getTraceStateMap(req.headers)
 
-    if (tracestate?.tx_end2end_start_ts === undefined || tracestate?.tx_callback_start_ts === undefined) {
-      return res.status(400).send('tx_end2end_start_ts or tx_callback_start_ts key/values not found in tracestate')
+    if (tracestate?[TRACESTATE_KEY_END2END_START_TS] === undefined || tracestate?[TRACESTATE_KEY_CALLBACK_START_TS] === undefined) {
+      return res.status(400).send(`${TRACESTATE_KEY_END2END_START_TS} or ${TRACESTATE_KEY_CALLBACK_START_TS} key/values not found in tracestate`)
     }
 
-    const e2eDelta = currentTime - tracestate.tx_end2end_start_ts
-    const requestDelta = tracestate.tx_callback_start_ts - tracestate.tx_end2end_start_ts
-    const responseDelta = currentTime - tracestate.tx_callback_start_ts
+    const e2eDelta = currentTime - tracestate[TRACESTATE_KEY_END2END_START_TS]
+    const requestDelta = tracestate[TRACESTATE_KEY_CALLBACK_START_TS] - tracestate[TRACESTATE_KEY_END2END_START_TS]
+    const responseDelta = currentTime - tracestate[TRACESTATE_KEY_CALLBACK_START_TS]
 
-    const performanceHistogram = depConfig.metrics.getHistogram(
+    const performanceHistogram = options.metrics.getHistogram(
       'tx_cb_perf',
       'Metrics for callbacks',
       ['success', 'path', 'operation']
@@ -171,7 +174,7 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
     )
     const traceId = Utils.TraceUtils.getTraceId(req.headers)
     const channel = '/' + traceId + '/' + req.method + req.path
-    depConfig.wsServer.notify(channel, isErrorOperation ? 'ERROR_CALLBACK_RECEIVED' : 'SUCCESS_CALLBACK_RECEIVED')
+    options.wsServer.notify(channel, isErrorOperation ? 'ERROR_CALLBACK_RECEIVED' : 'SUCCESS_CALLBACK_RECEIVED')
     histTimerEnd({ success: true, operation })
     res.status(202)
     return res.end()

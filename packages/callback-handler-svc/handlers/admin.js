@@ -1,11 +1,12 @@
 const express = require('express')
 
-const init = (depConfig, _userConfig, logger, options = undefined) => {
+const init = (config, logger, options = undefined) => {
   const router = express.Router()
+  const FSP_ID = env.get('FSPIOP_FSP_ID').default('perffsp2').asString()
 
   // Handle admin Get Participants request
   router.get('/participants/:id', (req, res) => {
-   const histTimerEnd = depConfig.metrics.getHistogram(
+   const histTimerEnd = options.metrics.getHistogram(
       'ing_callbackHandler',
       'Ingress - Operation handler',
       ['success', 'operation']
@@ -16,11 +17,11 @@ const init = (depConfig, _userConfig, logger, options = undefined) => {
 
     res.json(
       {
-        "name":"perffsp2",
-        "id":"http://central-ledger/participants/perffsp2",
+        "name": FSP_ID,
+        "id": `http://central-ledger/participants/${FSP_ID}`,
         "created":"\"2023-07-20T04:04:06.000Z\"",
         "isActive":1,
-        "links":{"self":"http://central-ledger/participants/perffsp2"},
+        "links":{"self":`http://central-ledger/participants/${FSP_ID}`},
         "accounts":[
           {"id":15,"ledgerAccountType":"POSITION","currency":"USD","isActive":1,"createdDate":null,"createdBy":"unknown"},
           {"id":16,"ledgerAccountType":"SETTLEMENT","currency":"USD","isActive":1,"createdDate":null,"createdBy":"unknown"},
@@ -37,13 +38,13 @@ const init = (depConfig, _userConfig, logger, options = undefined) => {
 
   // Handle admin Get Participants request
   router.get('/participants/:id/endpoints', (req, res) => {
-   const histTimerEnd = depConfig.metrics.getHistogram(
+   const histTimerEnd = options.metrics.getHistogram(
       'ing_callbackHandler',
       'Ingress - Operation handler',
       ['success', 'operation']
     ).startTimer()
-    const id = req.params.id
-    const host = req.get('host')
+   //  const id = req.params.id
+   //  const host = req.get('host')
     res.json(
       [
         {

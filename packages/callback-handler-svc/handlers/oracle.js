@@ -1,18 +1,19 @@
 const express = require('express')
 
-const init = (depConfig, _userConfig, logger, options = undefined) => {
+const init = (config, logger, options = undefined) => {
   const router = express.Router()
+  const FSP_ID = env.get('FSPIOP_FSP_ID').default('perffsp2').asString()
 
   // Handle Oracle GET Participants request
   router.get('/participants/:type/:id', (req, res) => {
-    const histTimerEnd = depConfig.metrics.getHistogram(
+    const histTimerEnd = options.metrics.getHistogram(
       'ing_callbackHandler',
       'Ingress - Operation handler',
       ['success', 'operation']
     ).startTimer()
     res.status(200)
     res.json({
-      "partyList":[{"fspId":"perffsp2","currency":"USD"}]
+      "partyList":[{"fspId":FSP_ID,"currency":"USD"}]
     })
     histTimerEnd({ success: true, operation: 'oracle_get_participants'})
   })

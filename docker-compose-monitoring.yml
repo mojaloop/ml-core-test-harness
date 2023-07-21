@@ -133,6 +133,8 @@ services:
       - ./packages/callback-handler-svc/handlers:/opt/app/dist/handlers
     environment:
       - LOG_LEVEL=debug
+      - FSPIOP_ALS_ENDPOINT_URL=http://account-lookup-service:4002
+      - FSPIOP_FSP_ID=perffsp2
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s

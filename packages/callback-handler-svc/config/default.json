@@ -5,11 +5,6 @@
     "ENABLED": true,
     "PORT": 3002
   },
-  "CALLBACK_ENDPOINTS": {
-    "ALS_ENDPOINT_URL": "http://account-lookup-service:4002",
-    "QUOTES_ENDPOINT_URL": "",
-    "TRANSFERS_ENDPOINT_URL": ""
-  },
   "INSTRUMENTATION": {
     "METRICS": {
       "DISABLED": false,

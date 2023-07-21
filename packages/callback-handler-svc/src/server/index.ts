@@ -45,11 +45,10 @@ const requireGlob = require('require-glob')
 const app = express()
 let appInstance: http.Server
 
-export type dependecyConfiguration = {
-  wsServer: WSServer
+export type options = {
+  wsServer: WSServer,
+  metrics: (typeof Metrics)
 }
-export type userConfiguration = typeof Config
-
 async function run (wsServer: WSServer): Promise<void> {
   const handlersList = await requireGlob('../../handlers/**.js')
   Logger.isInfoEnabled && Logger.info(`Handler imports found ${JSON.stringify(handlersList)}`)
@@ -58,7 +57,7 @@ async function run (wsServer: WSServer): Promise<void> {
   for (const key in handlersList) {
     if (Object.prototype.hasOwnProperty.call(handlersList[key], 'init')) {
       const handlerObject = handlersList[key]
-      const handlers = handlerObject.init({ wsServer, metrics: Metrics }, Config, Logger)
+      const handlers = handlerObject.init(Config, Logger, { wsServer, metrics: Metrics })
       app.use(handlers.basepath, handlers.router)
     }
   }
