@@ -130,7 +130,7 @@ services:
       - mojaloop-net
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/dist/config
-      - ./packages/callback-handler-svc/rules:/opt/app/dist/rules
+      - ./packages/callback-handler-svc/handlers:/opt/app/dist/handlers
     environment:
       - LOG_LEVEL=debug
     healthcheck:

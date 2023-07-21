@@ -58,7 +58,7 @@ async function run (wsServer: WSServer): Promise<void> {
   for (const key in handlersList) {
     if (Object.prototype.hasOwnProperty.call(handlersList[key], 'init')) {
       const handlerObject = handlersList[key]
-      const handlers = handlerObject.init({ wsServer }, Config, Logger)
+      const handlers = handlerObject.init({ wsServer, metrics: Metrics }, Config, Logger)
       app.use(handlers.basepath, handlers.router)
     }
   }

@@ -1,7 +1,36 @@
 const axios = require('axios')
 const express = require('express')
 const Metrics = require('@mojaloop/central-services-metrics')
-const Utils = require('@callback-handler-svc/utils')
+
+const getTraceStateMap = (headers) => {
+  const tracestate = headers.tracestate
+  if (tracestate === undefined) {
+    return {
+      tx_end2end_start_ts: undefined,
+      tx_callback_start_ts: undefined
+    }
+  }
+  let tracestates = {}
+  tracestate
+    .split(',')
+    .map(item => item.split('='))
+    .map(([k, v]) => {
+      return k.startsWith('tx_') ? { [k]: Number(v) } : { [k]: v }
+    })
+    .forEach(ts => {
+    tracestates = { ...tracestates, ...ts }
+    })
+  return tracestates
+}
+
+const getTraceId = (headers) => {
+  const traceparent = headers.traceparent
+  if (traceparent === undefined) {
+    return null
+  }
+  return traceparent.split('-')[1];
+}
+
 
 const init = (depConfig, userConfig, logger, options = undefined) => {
   // TODO: Need to parameterize the following endpoints
@@ -11,6 +40,12 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
 
   // Handle Payee GET Party
   router.get('/parties/:type/:id', (req, res) => {
+    const histTimerEnd = depConfig.metrics.getHistogram(
+      'ing_callbackHandler',
+      'Ingress - Operation handler',
+      ['success', 'operation']
+    ).startTimer()
+
     // Async callback
     const type = req.params.type
     const id = req.params.id
@@ -65,10 +100,17 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
     // Sync 202
     res.status(202)
     res.end()
+    histTimerEnd({ success: true, operation: 'fspiop_get_parties'})
   })
 
   // Handle Payee GET Participants
   router.get('/participants', (req, res) => {
+    const histTimerEnd = depConfig.metrics.getHistogram(
+      'ing_callbackHandler',
+      'Ingress - Operation handler',
+      ['success', 'operation']
+    ).startTimer()
+
     // Async callback
     const type = req.params.type
     const id = req.params.id
@@ -94,23 +136,25 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
     // Sync 202
     res.status(202)
     res.end()
+
+    histTimerEnd({ success: true, operation: 'fspiop_get_participants'})
   })
 
   const handleCallback = (resource, req, res) => {
-    const histTimerEnd = Metrics.getHistogram(
+    const histTimerEnd = depConfig.metrics.getHistogram(
       'ing_callbackHandler',
-      'Ingress - Wildcard operation handler',
+      'Ingress - Operation handler',
       ['success', 'operation']
     ).startTimer()
     const currentTime = Date.now()
     const path = req.path
     const httpMethod = req.method.toLowerCase()
     const isErrorOperation = path.endsWith('error')
-    const operation = `${httpMethod}_${resource}`
+    const operation = `fspiop_${httpMethod}_${resource}`
     const operationE2e = `${operation}_end2end`
     const operationRequest = `${operation}_request`
     const operationResponse = `${operation}_response`
-    const tracestate = Utils.TraceUtils.getTraceStateMap(req.headers)
+    const tracestate = getTraceStateMap(req.headers)
 
     if (tracestate?.tx_end2end_start_ts === undefined || tracestate?.tx_callback_start_ts === undefined) {
       return res.status(400).send('tx_end2end_start_ts or tx_callback_start_ts key/values not found in tracestate')
@@ -120,7 +164,7 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
     const requestDelta = tracestate.tx_callback_start_ts - tracestate.tx_end2end_start_ts
     const responseDelta = currentTime - tracestate.tx_callback_start_ts
 
-    const performanceHistogram = Metrics.getHistogram(
+    const performanceHistogram = depConfig.metrics.getHistogram(
       'tx_cb_perf',
       'Metrics for callbacks',
       ['success', 'path', 'operation']
@@ -155,7 +199,7 @@ const init = (depConfig, userConfig, logger, options = undefined) => {
         [operationResponse]: responseDelta
       }
     )
-    const traceId = Utils.TraceUtils.getTraceId(req.headers)
+    const traceId = getTraceId(req.headers)
     const channel = '/' + traceId + '/' + req.method + req.path
     depConfig.wsServer.notify(channel, isErrorOperation ? 'ERROR_CALLBACK_RECEIVED' : 'SUCCESS_CALLBACK_RECEIVED')
     histTimerEnd({ success: true, operation })

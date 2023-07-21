@@ -5,9 +5,15 @@ const init = (depConfig, _userConfig, logger, options = undefined) => {
 
   // Handle admin Get Participants request
   router.get('/participants/:id', (req, res) => {
+   const histTimerEnd = depConfig.metrics.getHistogram(
+      'ing_callbackHandler',
+      'Ingress - Operation handler',
+      ['success', 'operation']
+    ).startTimer()
     const type = req.params.type
     const id = req.params.id
     const host = req.get('host')
+
     res.json(
       {
         "name":"perffsp2",
@@ -25,49 +31,56 @@ const init = (depConfig, _userConfig, logger, options = undefined) => {
           {"id":21,"ledgerAccountType":"INTERCHANGE_FEE","currency":"INR","isActive":1,"createdDate":null,"createdBy":"unknown"},
           {"id":22,"ledgerAccountType":"INTERCHANGE_FEE_SETTLEMENT","currency":"INR","isActive":1,"createdDate":null,"createdBy":"unknown"}]
       })
+   histTimerEnd({ success: true, operation: 'admin_get_participants'})
+
   })
 
   // Handle admin Get Participants request
   router.get('/participants/:id/endpoints', (req, res) => {
+   const histTimerEnd = depConfig.metrics.getHistogram(
+      'ing_callbackHandler',
+      'Ingress - Operation handler',
+      ['success', 'operation']
+    ).startTimer()
     const id = req.params.id
     const host = req.get('host')
     res.json(
       [
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
-           "value":"http://callback-handler-svc:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}"
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-           "value":"http://callback-handler-svc:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/error"
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_GET",
-           "value":"http://callback-handler-svc:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}"
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_PUT",
-           "value":"http://callback-handler-svc:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}"
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
-           "value":"http://callback-handler-svc:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
-           "value":"http://callback-handler-svc:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
-           "value":"http://callback-handler-svc:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
-           "value":"http://callback-handler-svc:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
-           "value":"http://callback-handler-svc:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
         },
         {
            "type":"NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
@@ -83,18 +96,19 @@ const init = (depConfig, _userConfig, logger, options = undefined) => {
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
-           "value":"http://callback-handler-svc:3001/fspiop/participants/{{requestId}}"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{requestId}}"
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
-           "value":"http://callback-handler-svc:3001/fspiop/participants/{{requestId}}/error"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/participants/{{requestId}}/error"
         },
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
-           "value":"http://callback-handler-svc:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+           "value":"http://monitoring-callback-handler-svc-1:3001/fspiop/parties/{{partyIdType}}/{{partyIdentifier}}/error"
         }
      ]
     )
+    histTimerEnd({ success: true, operation: 'admin_get_participants_endpoints'})
   })
 
 
