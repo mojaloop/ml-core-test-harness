@@ -1,7 +1,7 @@
 const axios = require('axios')
 const express = require('express')
 const Utils = require('@callback-handler-svc/utils')
-const env = require('env-var');
+const env = require('env-var')
 
 const TRACESTATE_KEY_END2END_START_TS = 'tx_end2end_start_ts'
 const TRACESTATE_KEY_CALLBACK_START_TS = 'tx_callback_start_ts'
@@ -129,7 +129,7 @@ const init = (config, logger, options = undefined) => {
     const operationResponse = `${operation}_response`
     const tracestate = Utils.TraceUtils.getTraceStateMap(req.headers)
 
-    if (tracestate?[TRACESTATE_KEY_END2END_START_TS] === undefined || tracestate?[TRACESTATE_KEY_CALLBACK_START_TS] === undefined) {
+    if (tracestate === undefined || tracestate[TRACESTATE_KEY_END2END_START_TS] === undefined || tracestate[TRACESTATE_KEY_CALLBACK_START_TS] === undefined) {
       return res.status(400).send(`${TRACESTATE_KEY_END2END_START_TS} or ${TRACESTATE_KEY_CALLBACK_START_TS} key/values not found in tracestate`)
     }
 
