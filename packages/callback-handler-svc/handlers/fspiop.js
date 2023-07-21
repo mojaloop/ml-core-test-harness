@@ -1,4 +1,5 @@
 const axios = require('axios')
+const http = require('http')
 const express = require('express')
 const Utils = require('@callback-handler-svc/utils')
 const env = require('env-var')
@@ -9,6 +10,7 @@ const TRACESTATE_KEY_CALLBACK_START_TS = 'tx_callback_start_ts'
 const init = (config, logger, options = undefined) => {
   const ALS_ENDPOINT_URL = env.get('FSPIOP_ALS_ENDPOINT_URL').default('http://account-lookup-service:4002').asString()
   const FSP_ID = env.get('FSPIOP_FSP_ID').default('perffsp2').asString()
+  const HTTP_KEEPALIVE = env.get('FSPIOP_CALLBACK_HTTP_KEEPALIVE').default('true').asBool()
   const router = express.Router()
 
   // Handle Payee GET Party
@@ -60,7 +62,8 @@ const init = (config, logger, options = undefined) => {
           'FSPIOP-Destination': fspiopSourceHeader,
           'traceparent': traceparentHeader,
           'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
-        }
+        },
+        httpAgent: new http.Agent({ keepAlive: HTTP_KEEPALIVE }),
       })
       egressHistTimerEnd({ success: true, operation: 'fspiop_put_parties'})
     })();
@@ -102,7 +105,8 @@ const init = (config, logger, options = undefined) => {
           'FSPIOP-Destination': fspiopSourceHeader,
           'traceparent': traceparentHeader,
           'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
-        }
+        },
+        httpAgent: new http.Agent({ keepAlive: HTTP_KEEPALIVE }),
       })
       egressHistTimerEnd({ success: true, operation: 'fspiop_put_participants'})
     })();
