@@ -62,9 +62,7 @@ function getTraceId (headers: any): string | null {
   return traceparent.split('-')[1];
 }
 
-export default {
-  TraceUtils: {
-    getTraceStateMap,
-    getTraceId  
-  }
+export const TraceUtils = {
+  getTraceStateMap,
+  getTraceId  
 }

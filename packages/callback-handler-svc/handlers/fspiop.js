@@ -1,7 +1,7 @@
 const axios = require('axios')
 const http = require('http')
 const express = require('express')
-const Utils = require('@callback-handler-svc/utils')
+const { TraceUtils } = require('@callback-handler-svc/utils')
 const env = require('env-var')
 
 const TRACESTATE_KEY_END2END_START_TS = 'tx_end2end_start_ts'
@@ -12,6 +12,8 @@ const init = (config, logger, options = undefined) => {
   const FSP_ID = env.get('FSPIOP_FSP_ID').default('perffsp2').asString()
   const HTTP_KEEPALIVE = env.get('FSPIOP_CALLBACK_HTTP_KEEPALIVE').default('true').asBool()
   const router = express.Router()
+
+  const httpAgent = new http.Agent({ keepAlive: HTTP_KEEPALIVE })
 
   // Handle Payee GET Party
   router.get('/parties/:type/:id', (req, res) => {
@@ -63,7 +65,7 @@ const init = (config, logger, options = undefined) => {
           'traceparent': traceparentHeader,
           'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
         },
-        httpAgent: new http.Agent({ keepAlive: HTTP_KEEPALIVE }),
+        httpAgent,
       })
       egressHistTimerEnd({ success: true, operation: 'fspiop_put_parties'})
     })();
@@ -106,7 +108,7 @@ const init = (config, logger, options = undefined) => {
           'traceparent': traceparentHeader,
           'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
         },
-        httpAgent: new http.Agent({ keepAlive: HTTP_KEEPALIVE }),
+        httpAgent,
       })
       egressHistTimerEnd({ success: true, operation: 'fspiop_put_participants'})
     })();
@@ -131,7 +133,7 @@ const init = (config, logger, options = undefined) => {
     const operationE2e = `${operation}_end2end`
     const operationRequest = `${operation}_request`
     const operationResponse = `${operation}_response`
-    const tracestate = Utils.TraceUtils.getTraceStateMap(req.headers)
+    const tracestate = TraceUtils.getTraceStateMap(req.headers)
 
     if (tracestate === undefined || tracestate[TRACESTATE_KEY_END2END_START_TS] === undefined || tracestate[TRACESTATE_KEY_CALLBACK_START_TS] === undefined) {
       return res.status(400).send(`${TRACESTATE_KEY_END2END_START_TS} or ${TRACESTATE_KEY_CALLBACK_START_TS} key/values not found in tracestate`)
@@ -176,7 +178,7 @@ const init = (config, logger, options = undefined) => {
         [operationResponse]: responseDelta
       }
     )
-    const traceId = Utils.TraceUtils.getTraceId(req.headers)
+    const traceId = TraceUtils.getTraceId(req.headers)
     const channel = '/' + traceId + '/' + req.method + req.path
     options.wsServer.notify(channel, isErrorOperation ? 'ERROR_CALLBACK_RECEIVED' : 'SUCCESS_CALLBACK_RECEIVED')
     histTimerEnd({ success: true, operation })
