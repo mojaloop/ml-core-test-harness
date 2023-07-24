@@ -14,7 +14,7 @@ volumes:
 services:
 
   prometheus:
-    image: prom/prometheus:v2.45.0
+    image: prom/prometheus:${PROMETHEUS_VERSION}
     volumes:
       - ./docker/prometheus/:/etc/prometheus/
       - vol_prometheus_data:/prometheus/
@@ -84,7 +84,7 @@ services:
   #   #       - node.hostname == ${HOSTNAME}
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor:${CADVISER_VERSION}
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
@@ -100,7 +100,7 @@ services:
       mode: global
 
   grafana:
-    image: grafana/grafana:10.0.2
+    image: grafana/grafana:${GRAFANA_VERSION}
     user: "472"
     depends_on:
       - prometheus
@@ -111,7 +111,28 @@ services:
       - ./docker/grafana/provisioning/:/etc/grafana/provisioning/
     env_file:
       - ./docker/grafana/config.monitoring
+    environment:
+      GF_RENDERING_SERVER_URL: http://renderer:8081/render
+      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
+      GF_LOG_FILTERS: rendering:debug
     networks:
       - mojaloop-net
       - monitoring-net
     restart: always
+
+  renderer:
+    image: grafana/grafana-image-renderer:${GRAFANA_RENDERER_VERSION}
+    ports:
+      - 8081
+    environment:
+      # ENABLE_METRICS: 'true'
+      # VIRTUAL_HOST: renderer.loc
+      HTTP_HOST: renderer
+      # RENDERING_MODE: ${RENDERING_MODE}
+      # RENDERING_CLUSTERING_MODE: ${RENDERING_CLUSTERING_MODE}
+      # RENDERING_CLUSTERING_MAX_CONCURRENCY: ${RENDERING_CLUSTERING_MAX_CONCURRENCY}
+      # RENDERING_ARGS: --no-sandbox,--disable-setuid-sandbox,--disable-dev-shm-usage,--disable-accelerated-2d-canvas,--disable-gpu,--window-size=8000x8000
+    networks:
+      - monitoring-net
+    volumes:
+      - ./docker/renderer/config.json:/usr/src/app/config.json
