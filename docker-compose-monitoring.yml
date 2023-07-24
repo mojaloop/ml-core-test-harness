@@ -120,6 +120,7 @@ services:
       - monitoring-net
     restart: always
 
+  ## Ref: https://github.com/grafana/grafana-image-renderer
   renderer:
     image: grafana/grafana-image-renderer:${GRAFANA_RENDERER_VERSION}
     ports:
