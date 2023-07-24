@@ -3984,7 +3984,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": "10s",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [
@@ -4139,6 +4139,6 @@
   "timezone": "",
   "title": "Official k6 Test Result",
   "uid": "01npcT44k",
-  "version": 9,
+  "version": 10,
   "weekStart": ""
 }
