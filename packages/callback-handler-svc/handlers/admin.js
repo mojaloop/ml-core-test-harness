@@ -3,11 +3,11 @@ const env = require('env-var')
 
 const init = (config, logger, options = undefined) => {
   const router = express.Router()
-  const PAYER_FSP_ID = env.get('FSPIOP_PAYER_FSP_ID').default('perffsp2').asString()
-  const PAYEE_FSP_ID = env.get('FSPIOP_PAYEE_FSP_ID').default('perffsp2').asString()
-  const ADMIN_FSPIOP_PAYER_CALLBACK_URL = env.get('ADMIN_FSPIOP_PAYER_CALLBACK_URL').default('http://callback-handler-svc:3001/fspiop').asString()
-  const ADMIN_FSPIOP_PAYEE_CALLBACK_URL = env.get('ADMIN_FSPIOP_PAYEE_CALLBACK_URL').default('http://callback-handler-svc:3001/fspiop').asString()
-  const FSPIOP_ALS_ENDPOINT_URL = env.get('FSPIOP_ALS_ENDPOINT_URL').default('http://central-ledger').asString()
+  const PAYER_FSP_ID = env.get('CBH_FSPIOP_PAYER_FSP_ID').default('perffsp2').asString()
+  const PAYEE_FSP_ID = env.get('CBH_FSPIOP_PAYEE_FSP_ID').default('perffsp2').asString()
+  const ADMIN_FSPIOP_PAYER_CALLBACK_URL = env.get('CBH_ADMIN_FSPIOP_PAYER_CALLBACK_URL').default('http://callback-handler-svc:3001/fspiop').asString()
+  const ADMIN_FSPIOP_PAYEE_CALLBACK_URL = env.get('CBH_ADMIN_FSPIOP_PAYEE_CALLBACK_URL').default('http://callback-handler-svc:3001/fspiop').asString()
+  const FSPIOP_ALS_ENDPOINT_URL = env.get('CBH_FSPIOP_ALS_ENDPOINT_URL').default('http://central-ledger').asString()
 
   // Handle admin Get Participants request
   router.get('/participants/:id', (req, res) => {

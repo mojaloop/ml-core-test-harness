@@ -8,9 +8,9 @@ const TRACESTATE_KEY_END2END_START_TS = 'tx_end2end_start_ts'
 const TRACESTATE_KEY_CALLBACK_START_TS = 'tx_callback_start_ts'
 
 const init = (config, logger, options = undefined) => {
-  const FSPIOP_ALS_ENDPOINT_URL = env.get('FSPIOP_ALS_ENDPOINT_URL').default('http://account-lookup-service:4002').asString()
-  const FSP_ID = env.get('FSPIOP_FSP_ID').default('perffsp2').asString()
-  const HTTP_KEEPALIVE = env.get('FSPIOP_CALLBACK_HTTP_KEEPALIVE').default('true').asBool()
+  const FSPIOP_ALS_ENDPOINT_URL = env.get('CBH_FSPIOP_ALS_ENDPOINT_URL').default('http://account-lookup-service:4002').asString()
+  const FSP_ID = env.get('CBH_FSPIOP_FSP_ID').default('perffsp2').asString()
+  const HTTP_KEEPALIVE = env.get('CBH_FSPIOP_CALLBACK_HTTP_KEEPALIVE').default('true').asBool()
   const router = express.Router()
 
   const httpAgent = new http.Agent({ keepAlive: HTTP_KEEPALIVE })
