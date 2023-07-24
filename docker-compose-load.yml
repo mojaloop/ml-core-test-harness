@@ -17,12 +17,13 @@ services:
   k6:
     image: grafana/k6:0.45.0
     env_file:
-      - ./docker/k6/.env
+      - .env
+      - perf.env
     command:
       - run
       # - '--help' ## Useful to list run options
       - '--include-system-env-vars'
-      - '/scripts/test-ws.js'
+      - '/scripts/index.js'
     networks:
       - load-net
       - monitoring-net
@@ -34,4 +35,4 @@ services:
       - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true # Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/#options
       - K6_OUT=experimental-prometheus-rw # Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/
     volumes:
-      - ./docker/k6/scripts:/scripts
+      - ./packages/k6-tests:/scripts

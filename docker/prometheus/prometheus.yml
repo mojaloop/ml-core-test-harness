@@ -75,5 +75,9 @@ scrape_configs:
 
     static_configs:
       - targets: [
-          'callback-handler-svc:3001',
+          # 'callback-handler-svc:3001',
+          'callback-handler-svc-payer-sim:3001',
+          'callback-handler-svc-payee-sim:3001',
+          'callback-handler-svc-oracle-sim:3001',
+          'callback-handler-svc-cl-sim:3001',
         ]

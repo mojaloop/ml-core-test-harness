@@ -3,7 +3,6 @@ const env = require('env-var')
 
 const init = (config, logger, options = undefined) => {
   const router = express.Router()
-  const FSP_ID = env.get('FSPIOP_FSP_ID').default('perffsp2').asString()
 
   // Handle Oracle GET Participants request
   router.get('/participants/:type/:id', (req, res) => {
@@ -12,10 +11,16 @@ const init = (config, logger, options = undefined) => {
       'Ingress - Operation handler',
       ['success', 'operation']
     ).startTimer()
-    res.status(200)
-    res.json({
-      "partyList":[{"fspId":FSP_ID,"currency":"USD"}]
+    const id = req.params.id
+    res.status(200).json({
+      "partyList":[
+        {
+          "fspId":id,
+          "currency":"USD"
+        }
+      ]
     })
+
     histTimerEnd({ success: true, operation: 'oracle_get_participants'})
   })
 

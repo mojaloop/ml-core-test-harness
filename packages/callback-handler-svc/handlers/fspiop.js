@@ -8,7 +8,7 @@ const TRACESTATE_KEY_END2END_START_TS = 'tx_end2end_start_ts'
 const TRACESTATE_KEY_CALLBACK_START_TS = 'tx_callback_start_ts'
 
 const init = (config, logger, options = undefined) => {
-  const ALS_ENDPOINT_URL = env.get('FSPIOP_ALS_ENDPOINT_URL').default('http://account-lookup-service:4002').asString()
+  const FSPIOP_ALS_ENDPOINT_URL = env.get('FSPIOP_ALS_ENDPOINT_URL').default('http://account-lookup-service:4002').asString()
   const FSP_ID = env.get('FSPIOP_FSP_ID').default('perffsp2').asString()
   const HTTP_KEEPALIVE = env.get('FSPIOP_CALLBACK_HTTP_KEEPALIVE').default('true').asBool()
   const router = express.Router()
@@ -36,7 +36,7 @@ const init = (config, logger, options = undefined) => {
         'Egress - Operation handler',
         ['success', 'operation']
       ).startTimer()
-      await axios.put(`${ALS_ENDPOINT_URL}/parties/${type}/${id}`, {
+      await axios.put(`${FSPIOP_ALS_ENDPOINT_URL}/parties/${type}/${id}`, {
         "party": {
           "partyIdInfo": {
             "partyIdType": "MSISDN",
@@ -70,8 +70,7 @@ const init = (config, logger, options = undefined) => {
       egressHistTimerEnd({ success: true, operation: 'fspiop_put_parties'})
     })();
     // Sync 202
-    res.status(202)
-    res.end()
+    res.status(202).end()
     histTimerEnd({ success: true, operation: 'fspiop_get_parties'})
   })
 
@@ -96,7 +95,7 @@ const init = (config, logger, options = undefined) => {
         'Egress - Operation handler',
         ['success', 'operation']
       ).startTimer()
-      await axios.put(`${ALS_ENDPOINT_URL}/participants/${type}/${id}`, {
+      await axios.put(`${FSPIOP_ALS_ENDPOINT_URL}/participants/${type}/${id}`, {
         "fspId": ""
       },
       {
@@ -113,8 +112,7 @@ const init = (config, logger, options = undefined) => {
       egressHistTimerEnd({ success: true, operation: 'fspiop_put_participants'})
     })();
     // Sync 202
-    res.status(202)
-    res.end()
+    res.status(202).end()
 
     histTimerEnd({ success: true, operation: 'fspiop_get_participants'})
   })
@@ -182,8 +180,7 @@ const init = (config, logger, options = undefined) => {
     const channel = '/' + traceId + '/' + req.method + req.path
     options.wsServer.notify(channel, isErrorOperation ? 'ERROR_CALLBACK_RECEIVED' : 'SUCCESS_CALLBACK_RECEIVED')
     histTimerEnd({ success: true, operation })
-    res.status(202)
-    return res.end()
+    return res.status(202).end()
   }
 
   // Handle Payer PUT Party callback
