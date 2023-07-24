@@ -18,7 +18,20 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": true,
+      "title": "Image render",
+      "tooltip": "Image Render",
+      "type": "link",
+      "url": "/render/d/afe9dda2-878b-40c8-90df-072e7ecaaaee/supporting-services-callback-hander-service?height=1500&width=2000"
+    }
+  ],
   "liveNow": false,
   "panels": [
     {

@@ -18,7 +18,20 @@
   "graphTooltip": 1,
   "id": 1,
   "iteration": 1571330223815,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": true,
+      "title": "Image render",
+      "tooltip": "Image Render",
+      "type": "link",
+      "url": "/render/d/64nrElFmk/docker-prometheus-monitoring?height=2000&width=2000"
+    }
+  ],
   "panels": [
     {
       "collapsed": false,

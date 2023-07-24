@@ -26,7 +26,20 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 18030,
   "graphTooltip": 1,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": true,
+      "title": "Image render",
+      "tooltip": "Image Render",
+      "type": "link",
+      "url": "/render/d/01npcT44k/official-k6-test-result?height=4000&width=4000"
+    }
+  ],
   "liveNow": true,
   "panels": [
     {
@@ -3977,7 +3990,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "10s",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [
@@ -4125,13 +4138,13 @@
     ]
   },
   "time": {
-    "from": "now-5m",
-    "to": "now"
+    "from": "2023-07-24T14:30:51.059Z",
+    "to": "2023-07-24T14:44:39.111Z"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Official k6 Test Result",
   "uid": "01npcT44k",
-  "version": 1,
+  "version": 7,
   "weekStart": ""
 }

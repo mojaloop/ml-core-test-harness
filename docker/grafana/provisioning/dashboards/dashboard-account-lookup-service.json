@@ -18,7 +18,20 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": true,
+      "title": "Image render",
+      "tooltip": "Image Render",
+      "type": "link",
+      "url": "/render/d/a0bc6ab1-e6f8-4cd3-a173-89b9ae692807/dashboard-account-lookup-service?height=4000&width=2000"
+    }
+  ],
   "liveNow": false,
   "panels": [
     {
