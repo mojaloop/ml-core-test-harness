@@ -105,7 +105,7 @@ services:
     depends_on:
       - prometheus
     ports:
-      - 3000:3000
+      - 13000:3000
     volumes:
       - vol_grafana_data:/var/lib/grafana
       - ./docker/grafana/provisioning/:/etc/grafana/provisioning/
