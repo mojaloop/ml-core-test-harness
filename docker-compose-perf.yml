@@ -19,7 +19,7 @@ services:
     environment:
       - LOG_LEVEL=info
       - ALS_DISPLAY_ROUTES=false
-      - ALS_SWITCH_ENDPOINT=http://callback-handler-svc:3001/admin
+      - ALS_SWITCH_ENDPOINT=http://callback-handler-svc-cl-sim:3001/admin
       - WAIT4_CONFIG=./wait4.config.perf-als.js
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
