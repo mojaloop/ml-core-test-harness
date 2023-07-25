@@ -3779,7 +3779,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "moja_nodejs_heap_size_total_bytes{serviceName=~\"account-lookup.*\"}",
+          "expr": "moja_als_nodejs_heap_size_total_bytes{serviceName=~\"account-lookup.*\"}",
           "legendFormat": "heap_total-{{kubernetes_pod_name}}",
           "range": true,
           "refId": "A"
@@ -3790,7 +3790,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "moja_nodejs_heap_size_used_bytes{serviceName=~\"account-lookup.*\"}",
+          "expr": "moja_als_nodejs_heap_size_used_bytes{serviceName=~\"account-lookup.*\"}",
           "legendFormat": "heap_used-{{kubernetes_pod_name}}",
           "range": true,
           "refId": "B"
@@ -3801,7 +3801,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "moja_nodejs_external_memory_bytes{serviceName=~\"account-lookup.*\"}",
+          "expr": "moja_als_nodejs_external_memory_bytes{serviceName=~\"account-lookup.*\"}",
           "legendFormat": "ext_memory-{{kubernetes_pod_name}}",
           "range": true,
           "refId": "C"
@@ -3899,7 +3899,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum (rate (moja_process_cpu_seconds_total{serviceName=~\"account-lookup.*\"}[2m])) by (kubernetes_pod_name)",
+          "expr": "sum (rate (moja_als_process_cpu_seconds_total{serviceName=~\"account-lookup.*\"}[2m])) by (kubernetes_pod_name)",
           "format": "time_series",
           "hide": true,
           "intervalFactor": 1,
@@ -3941,7 +3941,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(moja_process_cpu_seconds_total{serviceName=~\"account-lookup.*\"}[30s]) * 100",
+          "expr": "rate(moja_als_process_cpu_seconds_total{serviceName=~\"account-lookup.*\"}[30s]) * 100",
           "legendFormat": "{{kubernetes_pod_name}}",
           "range": true,
           "refId": "B"
@@ -4149,7 +4149,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "avg(moja_nodejs_eventloop_lag_seconds{serviceName=~\"account-lookup.*\"}) by (app)",
+          "expr": "avg(moja_als_nodejs_eventloop_lag_seconds{serviceName=~\"account-lookup.*\"}) by (app)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{app}}",
