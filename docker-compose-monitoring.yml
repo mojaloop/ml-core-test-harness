@@ -137,3 +137,13 @@ services:
       - monitoring-net
     volumes:
       - ./docker/renderer/config.json:/usr/src/app/config.json
+
+  kafka-exporter:
+    networks:
+      - mojaloop-net
+      - monitoring-net
+    image: danielqsj/kafka-exporter:latest
+    ports:
+      - "9308:9308"
+    command:
+      - --kafka.server=kafka:9092

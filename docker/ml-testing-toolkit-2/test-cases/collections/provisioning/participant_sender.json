@@ -1259,7 +1259,7 @@
               "exec": [
                 "var uuid = require('uuid');",
                 "pm.environment.set('senderfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('senderfundsInPrepareAmount', 5000);"
+                "pm.environment.set('senderfundsInPrepareAmount', 50000000000000);"
               ]
             }
           }
@@ -1424,7 +1424,7 @@
               "exec": [
                 "var uuid = require('uuid');",
                 "pm.environment.set('senderfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('senderfundsInPrepareAmountCurrency2', 5000);"
+                "pm.environment.set('senderfundsInPrepareAmountCurrency2', 50000000000000);"
               ]
             }
           }
