@@ -50,8 +50,8 @@
     "PERF_FSP2_ID": "perffsp2",
     "PERF_FSP1_MSISDN": "19012345001",
     "PERF_FSP2_MSISDN": "19012345002",
-    "PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc:3001/fspiop",
-    "PERF_FSP2_CALLBACK_ENDPOINT_BASE_URL": "http://mojaloop-testing-toolkit:4040",
-    "PERF_ORACLE_ENDPOINT_BASE_URL": "http://callback-handler-svc:3001/oracle"
+    "PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payer-sim:3001/fspiop",
+    "PERF_FSP2_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payee-sim:3001/fspiop",
+    "PERF_ORACLE_ENDPOINT_BASE_URL": "http://callback-handler-svc-oracle-sim:3001/oracle"
   }
 }

@@ -105,7 +105,7 @@ services:
     depends_on:
       - prometheus
     ports:
-      - 13000:3000
+      - 9999:3000
     volumes:
       - vol_grafana_data:/var/lib/grafana
       - ./docker/grafana/provisioning/:/etc/grafana/provisioning/
@@ -137,6 +137,19 @@ services:
       - monitoring-net
     volumes:
       - ./docker/renderer/config.json:/usr/src/app/config.json
+
+  mysqlexporter-als:
+    image: prom/mysqld-exporter:v0.15.0
+    # ports: 
+    # - "9104:9104"
+    networks:
+      - mojaloop-net
+      - monitoring-net
+    environment: 
+    - MYSQLD_EXPORTER_PASSWORD=password
+    command:
+      - --mysqld.address=mysql-als:3306
+      - --mysqld.username=exporter
 
   kafka-exporter:
     networks:

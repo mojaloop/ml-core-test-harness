@@ -81,4 +81,5 @@ scrape_configs:
           'callback-handler-svc-payee-sim:3001',
           'callback-handler-svc-oracle-sim:3001',
           'callback-handler-svc-cl-sim:3001',
+          'mysqlexporter-als:9104',
         ]

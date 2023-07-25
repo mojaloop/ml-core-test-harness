@@ -58,39 +58,39 @@ const init = (config, logger, options = undefined) => {
     res.status(200).json(
       [
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
+           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}`
         },
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
+           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error`
         },
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTIES_GET",
+           "type":"FSPIOP_CALLBACK_URL_PARTIES_GET",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}`
         },
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTIES_PUT",
+           "type":"FSPIOP_CALLBACK_URL_PARTIES_PUT",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}`
         },
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
+           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
         },
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
+           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error`
         },
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
+           "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
         },
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
+           "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
         },
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
+           "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error`
         },
         {
@@ -106,15 +106,15 @@ const init = (config, logger, options = undefined) => {
            "value":"test@test.test"
         },
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
+           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{requestId}}`
         },
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{requestId}}/error`
         },
         {
-           "type":"ADMIN_FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
+           "type":"FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error`
         }
      ]

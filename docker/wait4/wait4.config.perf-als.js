@@ -57,8 +57,8 @@ module.exports = {
       name: 'account-lookup-service',
       wait4: [
         {
-          description: 'callback-handler api server',
-          uri: 'callback-handler-svc:3001',
+          description: 'callback-handler central ledger admin simulator',
+          uri: 'callback-handler-svc-cl-sim:3001',
           method: 'ncat',
 
           // we have to wait much longer for central-ledger
