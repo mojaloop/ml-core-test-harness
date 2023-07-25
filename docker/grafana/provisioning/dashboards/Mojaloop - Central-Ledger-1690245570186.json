@@ -1515,7 +1515,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1817,7 +1818,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1913,7 +1915,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2005,6 +2008,6 @@
   "timezone": "",
   "title": "Mojaloop - Central-Ledger",
   "uid": "5z9mkZ-pr",
-  "version": 8,
+  "version": 1,
   "weekStart": ""
 }

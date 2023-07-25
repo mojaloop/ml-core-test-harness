@@ -2925,7 +2925,7 @@
           "refId": "C"
         }
       ],
-      "title": "ML API - Memoy Usage by Pod",
+      "title": "ML API - Memory Usage by Pod",
       "type": "timeseries"
     },
     {
@@ -3333,6 +3333,6 @@
   "timezone": "",
   "title": "Mojaloop - ML-API",
   "uid": "5z9mkZ-msa",
-  "version": 7,
+  "version": 1,
   "weekStart": ""
 }

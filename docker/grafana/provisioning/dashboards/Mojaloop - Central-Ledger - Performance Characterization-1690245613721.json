@@ -303,7 +303,9 @@
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -1305,7 +1307,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "ops"
         },
         "overrides": []
       },
@@ -2520,6 +2522,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "expr": "rate(moja_cl_process_cpu_seconds_total{serviceName=~\"central.*\"}[2m]) * 100",
+          "hide": false,
           "legendFormat": "{{kubernetes_pod_name}}",
           "refId": "E"
         }
@@ -2789,6 +2792,6 @@
   "timezone": "",
   "title": "Mojaloop - Central-Ledger - Performance Characterization",
   "uid": "5z9mkZ-prSDsDA",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
