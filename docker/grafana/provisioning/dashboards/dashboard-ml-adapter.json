@@ -354,7 +354,9 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -556,7 +558,9 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -1508,7 +1512,9 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -1701,7 +1707,9 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -1975,7 +1983,9 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -2301,7 +2311,9 @@
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -2352,7 +2364,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(moja_ml_notification_event_sum{serviceName=~\"ml-handler-notification|ml-service\", success!='true'}[$__rate_interval]) / rate(moja_ml_notification_event_count{serviceName=~\"ml-handler-notification|ml-service\", success!='true'}[$__rate_interval])",
+          "expr": "rate(moja_ml_notification_event_sum{serviceName=~\"ml-handler-notification|ml-service\", success!='true'}[$__rate_interval]) / rate(moja_ml_notification_event_count{serviceName=~\"ml-handler-notification|ml-service\", success!='true'}[$__rate_interval]) >= 0",
           "hide": false,
           "range": true,
           "refId": "D"
@@ -2363,7 +2375,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(moja_ml_notification_event_sum{serviceName=~\"ml-handler-notification|ml-service\", success!='false'}[$__rate_interval]) / rate(moja_ml_notification_event_count{serviceName=~\"ml-handler-notification|ml-service\", success!='false'}[$__rate_interval])",
+          "expr": "rate(moja_ml_notification_event_sum{serviceName=~\"ml-handler-notification|ml-service\", success!='false'}[$__rate_interval]) / rate(moja_ml_notification_event_count{serviceName=~\"ml-handler-notification|ml-service\", success!='false'}[$__rate_interval]) >= 0",
           "hide": false,
           "range": true,
           "refId": "E"
@@ -2577,7 +2589,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46"
+                "color": "#299c46",
+                "value": null
               },
               {
                 "color": "rgba(237, 129, 40, 0.89)",
@@ -2668,7 +2681,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46"
+                "color": "#299c46",
+                "value": null
               },
               {
                 "color": "rgba(237, 129, 40, 0.89)",
@@ -2759,7 +2773,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46"
+                "color": "#299c46",
+                "value": null
               },
               {
                 "color": "rgba(237, 129, 40, 0.89)",
@@ -2894,7 +2909,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2923,7 +2939,9 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -3010,7 +3028,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3039,7 +3058,9 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -3170,7 +3191,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3277,7 +3299,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3327,7 +3350,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": "10s",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -3335,7 +3358,7 @@
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -3365,6 +3388,6 @@
   "timezone": "",
   "title": "Mojaloop - ML-API",
   "uid": "5z9mkZ-msa",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
