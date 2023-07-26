@@ -149,7 +149,7 @@
       "title": "Image render",
       "tooltip": "Image Render",
       "type": "link",
-      "url": "render/d/MQWgroiiz/mysql-overview?height=5500&width=2000&from=1690376607107&to=1690377903696"
+      "url": "/render/d/${__dashboard.uid}/${__dashboard}?height=6500&width=2000&from=1690376607107&to=1690377903696"
     }
   ],
   "liveNow": false,
@@ -577,7 +577,7 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 12,
         "x": 0,
         "y": 4
@@ -731,7 +731,7 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 12,
         "x": 12,
         "y": 4
@@ -880,7 +880,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 13
       },
       "id": 384,
       "panels": [],
@@ -913,10 +913,10 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 12,
         "x": 0,
-        "y": 12
+        "y": 14
       },
       "hiddenSeries": false,
       "id": 53,
@@ -1024,10 +1024,10 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 12,
         "x": 12,
-        "y": 12
+        "y": 14
       },
       "hiddenSeries": false,
       "id": 11,
@@ -1166,7 +1166,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 23
       },
       "id": 385,
       "panels": [],
@@ -1198,10 +1198,10 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 12,
         "x": 0,
-        "y": 20
+        "y": 24
       },
       "hiddenSeries": false,
       "id": 22,
@@ -1334,10 +1334,10 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 12,
         "x": 12,
-        "y": 20
+        "y": 24
       },
       "height": "250px",
       "hiddenSeries": false,
@@ -1502,7 +1502,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 33
       },
       "id": 386,
       "panels": [],
@@ -1538,7 +1538,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 28
+        "y": 34
       },
       "hiddenSeries": false,
       "id": 30,
@@ -1695,7 +1695,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 28
+        "y": 34
       },
       "hiddenSeries": false,
       "id": 48,
@@ -1791,7 +1791,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 41
       },
       "id": 387,
       "panels": [],
@@ -1827,7 +1827,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 36
+        "y": 42
       },
       "hiddenSeries": false,
       "id": 47,
@@ -1951,7 +1951,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 36
+        "y": 42
       },
       "hiddenSeries": false,
       "id": 32,
@@ -2063,7 +2063,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 49
       },
       "id": 388,
       "panels": [],
@@ -2099,7 +2099,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 44
+        "y": 50
       },
       "hiddenSeries": false,
       "id": 9,
@@ -2221,7 +2221,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 44
+        "y": 50
       },
       "height": "250px",
       "hiddenSeries": false,
@@ -2335,7 +2335,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 57
       },
       "id": 389,
       "panels": [],
@@ -2371,7 +2371,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 52
+        "y": 58
       },
       "hiddenSeries": false,
       "id": 50,
@@ -2579,7 +2579,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 59
+        "y": 65
       },
       "id": 390,
       "panels": [],
@@ -2615,7 +2615,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 60
+        "y": 66
       },
       "hiddenSeries": false,
       "id": 14,
@@ -2728,7 +2728,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 70
+        "y": 76
       },
       "hiddenSeries": false,
       "id": 39,
@@ -2839,7 +2839,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 78
+        "y": 84
       },
       "hiddenSeries": false,
       "id": 8,
@@ -2944,7 +2944,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 86
+        "y": 92
       },
       "hiddenSeries": false,
       "id": 28,
@@ -3048,7 +3048,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 93
+        "y": 99
       },
       "hiddenSeries": false,
       "id": 40,
@@ -3153,7 +3153,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 100
+        "y": 106
       },
       "hiddenSeries": false,
       "id": 49,
@@ -3249,7 +3249,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 107
+        "y": 113
       },
       "id": 391,
       "panels": [],
@@ -3285,7 +3285,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 108
+        "y": 114
       },
       "hiddenSeries": false,
       "id": 46,
@@ -3407,7 +3407,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 108
+        "y": 114
       },
       "height": "",
       "hiddenSeries": false,
@@ -3571,7 +3571,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 115
+        "y": 121
       },
       "id": 392,
       "panels": [],
@@ -3603,10 +3603,10 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 10,
         "w": 12,
         "x": 0,
-        "y": 116
+        "y": 122
       },
       "hiddenSeries": false,
       "id": 43,
@@ -3706,10 +3706,10 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 10,
         "w": 12,
         "x": 12,
-        "y": 116
+        "y": 122
       },
       "hiddenSeries": false,
       "id": 41,
@@ -3831,7 +3831,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 123
+        "y": 132
       },
       "id": 393,
       "panels": [],
@@ -3864,10 +3864,10 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 12,
         "w": 12,
         "x": 0,
-        "y": 124
+        "y": 133
       },
       "hiddenSeries": false,
       "id": 44,
@@ -3998,12 +3998,14 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:141",
           "format": "short",
           "logBase": 1,
           "min": 0,
           "show": true
         },
         {
+          "$$hashKey": "object:142",
           "format": "percentunit",
           "logBase": 1,
           "min": 0,
@@ -4031,10 +4033,10 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 12,
         "w": 12,
         "x": 12,
-        "y": 124
+        "y": 133
       },
       "hiddenSeries": false,
       "id": 42,
@@ -4151,7 +4153,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 131
+        "y": 145
       },
       "id": 394,
       "panels": [],
@@ -4184,10 +4186,10 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 24,
         "x": 0,
-        "y": 132
+        "y": 146
       },
       "hiddenSeries": false,
       "id": 54,
@@ -4455,6 +4457,6 @@
   "timezone": "browser",
   "title": "MySQL Overview",
   "uid": "MQWgroiiz",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }

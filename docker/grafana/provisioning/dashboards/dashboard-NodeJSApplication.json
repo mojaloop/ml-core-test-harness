@@ -1007,18 +1007,18 @@
         "options": [
           {
             "selected": false,
-            "text": "moja-cl",
-            "value": "moja-cl"
+            "text": "moja_cl",
+            "value": "moja_cl"
           },
           {
             "selected": false,
-            "text": "moja-ml",
-            "value": "moja-ml"
+            "text": "moja_ml",
+            "value": "moja_ml"
           },
           {
             "selected": false,
-            "text": "moja-als",
-            "value": "moja-als"
+            "text": "moja_als",
+            "value": "moja_als"
           },
           {
             "selected": true,
@@ -1026,7 +1026,7 @@
             "value": "cbs"
           }
         ],
-        "query": "moja-cl,moja-ml,moja-als,cbs",
+        "query": "moja_cl,moja_ml,moja_als,cbs",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
