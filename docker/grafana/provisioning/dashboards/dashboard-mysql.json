@@ -138,6 +138,18 @@
       "targetBlank": false,
       "title": "PMM",
       "type": "dashboards"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": true,
+      "title": "Image render",
+      "tooltip": "Image Render",
+      "type": "link",
+      "url": "render/d/MQWgroiiz/mysql-overview?height=5500&width=2000&from=1690376607107&to=1690377903696"
     }
   ],
   "liveNow": false,
@@ -2600,7 +2612,7 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 10,
         "w": 24,
         "x": 0,
         "y": 60
@@ -2713,10 +2725,10 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 24,
         "x": 0,
-        "y": 67
+        "y": 70
       },
       "hiddenSeries": false,
       "id": 39,
@@ -2824,10 +2836,10 @@
       "fillGradient": 0,
       "grid": {},
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 24,
         "x": 0,
-        "y": 74
+        "y": 78
       },
       "hiddenSeries": false,
       "id": 8,
@@ -2932,7 +2944,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 81
+        "y": 86
       },
       "hiddenSeries": false,
       "id": 28,
@@ -3036,7 +3048,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 88
+        "y": 93
       },
       "hiddenSeries": false,
       "id": 40,
@@ -3141,7 +3153,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 95
+        "y": 100
       },
       "hiddenSeries": false,
       "id": 49,
@@ -3237,7 +3249,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 102
+        "y": 107
       },
       "id": 391,
       "panels": [],
@@ -3273,7 +3285,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 103
+        "y": 108
       },
       "hiddenSeries": false,
       "id": 46,
@@ -3395,7 +3407,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 103
+        "y": 108
       },
       "height": "",
       "hiddenSeries": false,
@@ -3559,7 +3571,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 110
+        "y": 115
       },
       "id": 392,
       "panels": [],
@@ -3594,7 +3606,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 111
+        "y": 116
       },
       "hiddenSeries": false,
       "id": 43,
@@ -3697,7 +3709,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 111
+        "y": 116
       },
       "hiddenSeries": false,
       "id": 41,
@@ -3819,7 +3831,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 118
+        "y": 123
       },
       "id": 393,
       "panels": [],
@@ -3855,7 +3867,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 119
+        "y": 124
       },
       "hiddenSeries": false,
       "id": 44,
@@ -4022,7 +4034,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 119
+        "y": 124
       },
       "hiddenSeries": false,
       "id": 42,
@@ -4139,7 +4151,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 126
+        "y": 131
       },
       "id": 394,
       "panels": [],
@@ -4175,7 +4187,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 127
+        "y": 132
       },
       "hiddenSeries": false,
       "id": 54,
@@ -4378,8 +4390,8 @@
         "allFormat": "glob",
         "current": {
           "selected": false,
-          "text": "mysqlexporter:9104",
-          "value": "mysqlexporter:9104"
+          "text": "mysqlexporter-als:9104",
+          "value": "mysqlexporter-als:9104"
         },
         "datasource": {
           "type": "prometheus",
@@ -4443,6 +4455,6 @@
   "timezone": "browser",
   "title": "MySQL Overview",
   "uid": "MQWgroiiz",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

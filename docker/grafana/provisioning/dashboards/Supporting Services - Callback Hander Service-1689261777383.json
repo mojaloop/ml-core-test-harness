@@ -29,7 +29,7 @@
       "title": "Image render",
       "tooltip": "Image Render",
       "type": "link",
-      "url": "/render/d/afe9dda2-878b-40c8-90df-072e7ecaaaee/supporting-services-callback-hander-service?height=1500&width=2000"
+      "url": "/render/d/${__dashboard.uid}/${__dashboard}?height=2000&width=2000"
     }
   ],
   "liveNow": false,
@@ -93,7 +93,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 12,
         "x": 0,
         "y": 0
@@ -192,7 +192,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 12,
         "x": 12,
         "y": 0
@@ -291,10 +291,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 12
       },
       "id": 123134,
       "options": {
@@ -390,10 +390,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 12
       },
       "id": 123131,
       "options": {
@@ -535,7 +535,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 22
       },
       "hideTimeOverride": false,
       "id": 123127,
@@ -632,38 +632,13 @@
           },
           "unit": "s"
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "op:fspiop_put_parties_end2end - Success true"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 31
       },
       "id": 123130,
       "links": [],
@@ -707,7 +682,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "10s",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -715,8 +690,8 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
-    "to": "now"
+    "from": "2023-07-26T10:28:17.867Z",
+    "to": "2023-07-26T10:50:35.328Z"
   },
   "timepicker": {
     "hidden": false,

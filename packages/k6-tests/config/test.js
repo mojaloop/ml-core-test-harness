@@ -2,13 +2,15 @@
 
 const config = {
   "scenarios": { // define scenarios
-    "accountLookup": { // original scenaio for accountLookup
+    // warm-up
+    "accountLookup": { // original scenario for accountLookup
       "executor": "ramping-vus",
       "exec": "accountLookupScenarios",
       "startVUs": 1,
       "stages": [
-        { "duration": "30s", "target": 1 }
-        // { "duration": "5m", "target": 1 }
+        { "duration": "2m", "target": 1 },
+	      { "duration": "15m", "target": 1 },
+        { "duration": "2m", "target": 0 }
       ]
     },
     // "accountLookup": {
