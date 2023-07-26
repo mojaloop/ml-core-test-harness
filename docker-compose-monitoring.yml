@@ -140,23 +140,23 @@ services:
 
   mysqlexporter-als:
     image: prom/mysqld-exporter:v0.15.0
-    # ports: 
+    # ports:
     # - "9104:9104"
     networks:
       - mojaloop-net
       - monitoring-net
-    environment: 
+    environment:
     - MYSQLD_EXPORTER_PASSWORD=password
     command:
       - --mysqld.address=mysql-als:3306
       - --mysqld.username=exporter
 
   kafka-exporter:
-    networks:
-      - mojaloop-net
-      - monitoring-net
     image: danielqsj/kafka-exporter:latest
     ports:
       - "9308:9308"
+    networks:
+      - mojaloop-net
+      - monitoring-net
     command:
       - --kafka.server=kafka:9092
