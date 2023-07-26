@@ -110,7 +110,7 @@ services:
       - vol_grafana_data:/var/lib/grafana
       - ./docker/grafana/provisioning/:/etc/grafana/provisioning/
     env_file:
-      - ./docker/grafana/config.monitoring
+      - ./docker/grafana/config.env
     environment:
       GF_RENDERING_SERVER_URL: http://renderer:8081/render
       GF_RENDERING_CALLBACK_URL: http://grafana:3000/
@@ -124,11 +124,11 @@ services:
   renderer:
     image: grafana/grafana-image-renderer:${GRAFANA_RENDERER_VERSION}
     ports:
-      - 8081
+      - 8081:8081
     environment:
       # ENABLE_METRICS: 'true'
       # VIRTUAL_HOST: renderer.loc
-      HTTP_HOST: renderer
+      HTTP_HOST: 0.0.0.0
       # RENDERING_MODE: ${RENDERING_MODE}
       # RENDERING_CLUSTERING_MODE: ${RENDERING_CLUSTERING_MODE}
       # RENDERING_CLUSTERING_MAX_CONCURRENCY: ${RENDERING_CLUSTERING_MAX_CONCURRENCY}
