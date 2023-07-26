@@ -3350,7 +3350,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "10s",
+  "refresh": "5s",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -3363,6 +3363,7 @@
   },
   "timepicker": {
     "refresh_intervals": [
+      "5s",
       "10s",
       "30s",
       "1m",
@@ -3388,6 +3389,6 @@
   "timezone": "",
   "title": "Mojaloop - ML-API",
   "uid": "5z9mkZ-msa",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
