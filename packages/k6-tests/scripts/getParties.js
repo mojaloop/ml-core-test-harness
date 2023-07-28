@@ -70,8 +70,8 @@ export function getParties() {
         },
       };
 
-      // // OPTIONAL: Lets send the ADMIN GET /participants request to the Central-Ledger to validate payerFspId.
-      // // Useful when bypassing the ALS and testing directly against a Simulator.
+      // OPTIONAL: Lets send the ADMIN GET /participants request to the Central-Ledger to validate payerFspId.
+      // Useful when bypassing the ALS and testing directly against a Simulator.
       // const resAdminGetParticipantsForPayer = http.get(`${__ENV.K6_SCRIPT_ADMIN_ENDPOINT_URL}/participants/${payerFspId}`, params);
       // check(resAdminGetParticipantsForPayer, { 'ALS_ADMIN_GET_PARTICIPANTS_RESPONSE_IS_200' : (r) => r.status == 200 });
 
@@ -80,12 +80,12 @@ export function getParties() {
       // const resAdminGetParticipantsForPayee = http.get(`${__ENV.K6_SCRIPT_ADMIN_ENDPOINT_URL}/participants/${payeeFspId}`, params);
       // check(resAdminGetParticipantsForPayee, { 'ALS_ADMIN_GET_PARTICIPANTS_RESPONSE_IS_200' : (r) => r.status == 200 });
 
+      // // TODO: OPTIONAL: missing end-point call
+
       // // OPTIONAL: Lets send the ORACLE GET /participants request to the Oracle to resolve FSPID for payeeId.
       // // Useful when bypassing the ALS and testing directly against a Simulator.
       // const resOracleGetParticipantsForPayee = http.get(`${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL}/participants/MSISDN/${payeeId}`, params);
       // check(resOracleGetParticipantsForPayee, { 'ALS_ORACLE_GET_PARTICIPANTS_RESPONSE_IS_200' : (r) => r.status == 200 });
-
-      // TODO: OPTIONAL: missing end-point call
 
       // Lets send the FSPIOP GET /parties request to the ALS
       const res = http.get(`${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}/parties/MSISDN/${payeeId}`, params);
