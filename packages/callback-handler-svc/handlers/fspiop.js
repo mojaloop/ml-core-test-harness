@@ -22,6 +22,11 @@ const init = (config, logger, options = undefined) => {
       'Ingress - Operation handler',
       ['success', 'operation']
     ).startTimer()
+    const histTimerEnd1 = options.metrics.getHistogram(
+      'ing_callbackHandler',
+      'Ingress - Operation handler',
+      ['success', 'operation']
+    ).startTimer()
 
     // Async callback
     const type = req.params.type
@@ -68,6 +73,7 @@ const init = (config, logger, options = undefined) => {
         httpAgent,
       })
       egressHistTimerEnd({ success: true, operation: 'fspiop_put_parties'})
+      histTimerEnd1({ success: true, operation: 'fspiop_get_parties_with_callback'})
     })();
     // Sync 202
     res.status(202).end()
