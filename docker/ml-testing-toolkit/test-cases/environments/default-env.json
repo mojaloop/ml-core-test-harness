@@ -35,7 +35,7 @@
     "payerfsp": "pinkbankfsp",
     "toFspId": "greenbankfsp",
     "toIdType": "MSISDN",
-    "toIdValue": "27713803912",    
+    "toIdValue": "27713803912",
     "mobileSimPayerFsp": "pinkbankfsp",
     "mobileSimPayeeFsp": "greenbankfsp",
     "expectedPartiesVersion": "1.0",
@@ -45,6 +45,13 @@
     "acceptParties": "application/vnd.interoperability.parties+json;version=1.1",
     "contentTypeTransfers": "application/vnd.interoperability.transfers+json;version=1.1",
     "contentTypeParties": "application/vnd.interoperability.parties+json;version=1.1",
-    "NET_DEBIT_CAP": "50000"
+    "NET_DEBIT_CAP": "50000000",
+    "PERF_FSP1_ID": "perffsp1",
+    "PERF_FSP2_ID": "perffsp2",
+    "PERF_FSP1_MSISDN": "19012345001",
+    "PERF_FSP2_MSISDN": "19012345002",
+    "PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payer-sim:3001/fspiop",
+    "PERF_FSP2_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payee-sim:3001/fspiop",
+    "PERF_ORACLE_ENDPOINT_BASE_URL": "http://callback-handler-svc-oracle-sim:3001/oracle"
   }
 }

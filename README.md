@@ -155,7 +155,7 @@ You can use this repo to run functional tests inside the CICD of a core service
 
 The following commands can be added to the CICD pipeline
 
-```
+```bash
 git clone --depth 1 --branch v0.0.2 https://github.com/mojaloop/ml-core-test-harness.git
 cd ml-core-test-harness
 
@@ -167,3 +167,61 @@ cat ttk-tests-console.log
 ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 ```
 
+## Performance Characterization
+
+### Running ALS with dependencies
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile ttk-provisioning up -d
+```
+
+Stop Services
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
+### Monitoring
+
+Start Monitoring Services stack which uses:
+- [Prometheus](https://prometheus.io) for time series data store
+- [Grafana](https://grafana.com/) for visualization dashboards
+- [Node Exporter](https://github.com/prometheus/node_exporter) to instrument the Host machine
+- [CAdviser](https://github.com/google/cadvisor) to instrument the Docker containers running on Host machine
+
+```bash
+docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
+```
+
+Stop Monitoring Services
+
+```bash
+docker compose --project-name monitoring -f docker-compose-monitoring.yml down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
+TODO:
+- add note about network being created by docker-compose-perf.yml, or it can be done manually.
+
+### Load Tests
+
+[K6](https://k6.io) is being used to execute performance tests, with metrics being captured by [Prometheus](https://k6.io/docs/results-output/real-time/prometheus-remote-write) and displayed using [Grafana](https://k6.io/docs/results-output/real-time/prometheus-remote-write/#time-series-visualization).
+
+Tests can be defined in the [./docker/k6/scripts/test.js](./docker/k6/scripts/test.js), refer to [API load testing guide](https://k6.io/docs/testing-guides/api-load-testing/) for more information.
+
+Env configs are stored in the [./docker/k6/.env](./docker/k6/.env) environment configuration file, which can be referenced in by the [./docker/k6/scripts/test.js](./docker/k6/scripts/test.js).
+
+Start tests
+
+```bash
+docker compose --project-name load -f docker-compose-load.yml up
+```
+
+Cleanup tests
+
+```bash
+docker compose --project-name load -f docker-compose-load.yml down -v
+```

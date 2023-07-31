@@ -320,6 +320,82 @@
     "version": 1
   },
   {
+    "ruleId": 31,
+    "priority": 1,
+    "description": "get /parties/{Type}/{ID} for perfsp1",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 1,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "perffsp1",
+          "path": "FSPIOP-Source"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "const reqHeaders = request.headers;",
+            "const tracestate = reqHeaders.tracestate ? reqHeaders.tracestate : ''",
+            "const epoch = Date.now();",
+            "environment.tracestate = tracestate + ',tx_callback_start_ts=' + epoch"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "body": {
+          "party": {
+            "partyIdInfo": {
+              "fspId": "perffsp2"
+            },
+            "merchantClassificationCode": null,
+            "name": "Justin Pierre",
+            "personalInfo": {
+              "complexName": {
+                "firstName": "Justin",
+                "middleName": "Pierre",
+                "lastName": "Trudeau"
+              },
+              "dateOfBirth": "1971-12-25"
+            }
+          }
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.parties+json;version=1.1",
+          "FSPIOP-Source": "perffsp2",
+          "tracestate": "{$environment.tracestate}"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
     "ruleId": 1,
     "priority": 1,
     "description": "get /parties/{Type}/{ID}",
