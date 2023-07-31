@@ -70,8 +70,8 @@ export function getParties() {
         },
       };
 
-      // OPTIONAL: Lets send the ADMIN GET /participants request to the Central-Ledger to validate payerFspId.
-      // Useful when bypassing the ALS and testing directly against a Simulator.
+      // // OPTIONAL: Lets send the ADMIN GET /participants request to the Central-Ledger to validate payerFspId.
+      // // Useful when bypassing the ALS and testing directly against a Simulator.
       // const resAdminGetParticipantsForPayer = http.get(`${__ENV.K6_SCRIPT_ADMIN_ENDPOINT_URL}/participants/${payerFspId}`, params);
       // check(resAdminGetParticipantsForPayer, { 'ALS_ADMIN_GET_PARTICIPANTS_RESPONSE_IS_200' : (r) => r.status == 200 });
 
