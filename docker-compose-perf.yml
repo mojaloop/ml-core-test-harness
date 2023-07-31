@@ -13,25 +13,30 @@ services:
       - perf.env
     scale: 1
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/account-lookup-service.js /opt/app/config/default.json && /opt/app/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
-    #ports:
-    #  - "4001:4001"
-    #  - "4002:4002"
+    # ports:
+    #   - "4001:4001"
+    #   - "4002:4002"
     environment:
+      ## Wait 4 Config script
+      - WAIT4_CONFIG=./wait4.config.perf-als.js
       - LOG_LEVEL=info
-      ## Added for Test Scenario 5
+      ## Disable Logging by setting LOG_LEVEL to error
       # - LOG_LEVEL=error
-      ## Added for Test Scenario 5
+      ## Configuration for EVENT SDK ASYNC OVERRIDES - https://github.com/mojaloop/event-sdk#configuration
       # - EVENT_SDK_ASYNC_OVERRIDE_EVENTS=""
       # - EVENT_SDK_ASYNC_OVERRIDE_EVENTS=log,audit,trace
-      ## Added for Test Scenario 5
+      ## Disable EVENT SDK LOGs - https://github.com/mojaloop/event-sdk#configuration
       # - EVENT_SDK_LOG_FILTER=""
-      - ALS_DISPLAY_ROUTES=false
-      - ALS_SWITCH_ENDPOINT=http://callback-handler-svc-cl-sim:3001/admin
-      - WAIT4_CONFIG=./wait4.config.perf-als.js
+      ## Allows TraceID to be propogated - https://github.com/mojaloop/event-sdk#configuration
       - EVENT_SDK_TRACEID_PER_VENDOR=false
-      ## Added for Test Scenario 7
+      ## Disable API Routes from displaying on startup
+      - ALS_DISPLAY_ROUTES=false
+      ## Configure Switch Endpoint
+      - ALS_SWITCH_ENDPOINT=http://callback-handler-svc-cl-sim:3001/admin
+      ## Increase UV Threads for IO Operations - https://nodejs.org/api/cli.html#uv_threadpool_sizesize
       - UV_THREADPOOL_SIZE=16
-      - NODE_CACHE_ENABLED=true
+      ## Temporary Cache configuration for v14.2.4-snapshot.3 @ https://github.com/mojaloop/account-lookup-service/pull/461
+      # - NODE_CACHE_ENABLED=true
     networks:
       - mojaloop-net
     depends_on:
