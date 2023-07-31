@@ -100,8 +100,8 @@ services:
       - mojaloop-net
     image: docker.io/bitnami/kafka:3.4.0
     container_name: kafka
-    ports:
-      - "9092:9092"
+    # ports:
+    #   - "9092:9092"
     environment:
       # BITNAMI_DEBUG: "yes"
       ALLOW_PLAINTEXT_LISTENER: "yes"
@@ -133,8 +133,8 @@ services:
   mysql:
     image: mysql/mysql-server
     container_name: mysql
-    ports:
-      - "3306:3306"
+    # ports:
+    #   - "3306:3306"
     volumes:
       # Note: this fixes the permissions issue, but docker-compose up will fail on first attempt
       - ./docker/sql-init/:/docker-entrypoint-initdb.d/
@@ -274,8 +274,8 @@ services:
   mysql-als:
     image: mysql/mysql-server
     container_name: mysql-als
-    ports:
-      - "3307:3306"
+    # ports:
+    #   - "3307:3306"
     volumes:
       - ./docker/sql-als-init/:/docker-entrypoint-initdb.d/
     environment:
@@ -402,8 +402,8 @@ services:
       replicas: 1
     restart: on-failure
     hostname: kowl
-    ports:
-    - "8080:8080"
+    # ports:
+    # - "8080:8080"
     networks:
       - mojaloop-net
     environment:

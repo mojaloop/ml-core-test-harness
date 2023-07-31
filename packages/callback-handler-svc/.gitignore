@@ -40,7 +40,7 @@ jspm_packages/
 typings/
 
 # TypeScript dist folder
-dist/
+dist
 
 # Optional npm cache directory
 .npm
