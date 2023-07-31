@@ -1,35 +1,29 @@
 // Main configuration for Scripts
 
 const config = {
-  "scenarios": { // define scenarios
-    // warm-up
-    "accountLookup": { // original scenario for accountLookup
+  // # define scenarios
+  "scenarios": {
+    "accountLookup": { // # original scenario for accountLookup
       "executor": "ramping-vus",
       "exec": "accountLookupScenarios",
       "startVUs": 1,
       "stages": [
-        { "duration": "2m", "target": 1 },
-	      { "duration": "15m", "target": 1 },
+        { "duration": "2m", "target": 6 },
+        { "duration": "5m", "target": 6 },
         { "duration": "2m", "target": 0 }
       ]
     },
+    // # Example using "ramping-arrival-rate" executor
     // "accountLookup": {
     //   "executor": "ramping-arrival-rate",
     //   "exec": "accountLookupScenarios",
-    //   "preAllocatedVUs": 1,
+    //   "preAllocatedVUs": 10,
     //   "timeUnit": "1s",
     //   "startRate": 1,
     //   "stages": [
-    //     { "target": 1, "duration": "30s" },
-    //     // { "target": 200, "duration": "30s" },
-    //     // { "target": 200, "duration": "1m" },
-    //     // { "target": 0, "duration": "30s"},
-    //     // { "target": 300, "duration": "30s" },
-    //     // { "target": 0, "duration": "30s"},
-    //     // { "target": 100, "duration": "30s" },
-    //     // { "target": 100, "duration": "2m" },
-    //     // { "target": 0, "duration": "30s"},
-    //     // { "target": 10000, "duration": "10m" }
+    //     { "target": 400, "duration": "2m" },
+    //     { "target": 400, "duration": "15m" },
+    //     { "target": 0, "duration": "2m"},
     //   ]
     // }
   },
