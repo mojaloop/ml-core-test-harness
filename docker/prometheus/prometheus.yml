@@ -66,6 +66,7 @@ scrape_configs:
           ## Transfer Services
           'ml-api-adapter:3000',
           'central-ledger:3001',
+          'kafka-exporter:9308',
         ]
 
   - job_name: 'support-services'
