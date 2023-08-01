@@ -172,13 +172,27 @@ ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 ### Running ALS with dependencies
 
 ```bash
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile ttk-provisioning up -d
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test --profile ttk-provisioning-als up -d
 ```
 
 Stop Services
 
 ```bash
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services down -v
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
+### Running Services for Transfers characterization
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 2dfsp --profile ttk-provisioning-transfers up -d
+```
+
+Stop Services
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 2dfsp down -v
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose

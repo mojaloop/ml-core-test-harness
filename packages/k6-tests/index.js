@@ -1,4 +1,5 @@
 export { accountLookupScenarios } from './scenarios/accountLookup.js';
+export { postTransfersScenarios } from './scenarios/postTransfers.js';
 
 // export testConfig from __ENV.K6_SCRIPT_CONFIG_FILE || './config/test.js';
 
