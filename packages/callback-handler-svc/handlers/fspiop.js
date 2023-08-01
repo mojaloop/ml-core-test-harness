@@ -45,7 +45,7 @@ const init = (config, logger, options = undefined) => {
         "party": {
           "partyIdInfo": {
             "partyIdType": "MSISDN",
-            "partyIdentifier": "19012345002",
+            "partyIdentifier": id,
             "fspId": FSP_ID,
             "partySubIdOrType": "HEALTH_CARD"
           },

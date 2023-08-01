@@ -3,10 +3,7 @@ const env = require('env-var')
 
 const init = (config, logger, options = undefined) => {
   const router = express.Router()
-  const PAYER_FSP_ID = env.get('CBH_FSPIOP_PAYER_FSP_ID').default('perffsp2').asString()
-  const PAYEE_FSP_ID = env.get('CBH_FSPIOP_PAYEE_FSP_ID').default('perffsp2').asString()
-  const ADMIN_FSPIOP_PAYER_CALLBACK_URL = env.get('CBH_ADMIN_FSPIOP_PAYER_CALLBACK_URL').default('http://callback-handler-svc:3001/fspiop').asString()
-  const ADMIN_FSPIOP_PAYEE_CALLBACK_URL = env.get('CBH_ADMIN_FSPIOP_PAYEE_CALLBACK_URL').default('http://callback-handler-svc:3001/fspiop').asString()
+  const FSP_ENDPOINT_MAP = env.get('CBH_ADMIN_FSP_ENDPOINT_MAP').default('{}').asString()
   const FSPIOP_ALS_ENDPOINT_URL = env.get('CBH_FSPIOP_ALS_ENDPOINT_URL').default('http://central-ledger').asString()
 
   // Handle admin Get Participants request
@@ -49,85 +46,83 @@ const init = (config, logger, options = undefined) => {
       ['success', 'operation']
     ).startTimer()
 
-    const id = req.params.id
-    let ADMIN_FSPIOP_CALLBACK_URL = ADMIN_FSPIOP_PAYEE_CALLBACK_URL
-    if(id === PAYER_FSP_ID) {
-      ADMIN_FSPIOP_CALLBACK_URL = ADMIN_FSPIOP_PAYER_CALLBACK_URL
-    }
+   const id = req.params.id
+   const fspMap = JSON.parse(FSP_ENDPOINT_MAP)
+   const ADMIN_FSPIOP_CALLBACK_URL = fspMap[id]
 
-    res.status(200).json(
+   res.status(200).json(
       [
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}`
-        },
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error`
-        },
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTIES_GET",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}`
-        },
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTIES_PUT",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}`
-        },
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
-        },
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error`
-        },
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
-        },
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
-        },
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error`
-        },
-        {
-           "type":"NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
-           "value":"test@test.test"
-        },
-        {
-           "type":"SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
-           "value":"test@test.test"
-        },
-        {
-           "type":"NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
-           "value":"test@test.test"
-        },
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{requestId}}`
-        },
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{requestId}}/error`
-        },
-        {
-           "type":"FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
-           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error`
-        }
-     ]
-    )
-    histTimerEnd({ success: true, operation: 'admin_get_participants_endpoints'})
-  })
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}`
+         },
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error`
+         },
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTIES_GET",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}`
+         },
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTIES_PUT",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}`
+         },
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
+         },
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error`
+         },
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
+         },
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}`
+         },
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error`
+         },
+         {
+            "type":"NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+            "value":"test@test.test"
+         },
+         {
+            "type":"SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+            "value":"test@test.test"
+         },
+         {
+            "type":"NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+            "value":"test@test.test"
+         },
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{requestId}}`
+         },
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/participants/{{requestId}}/error`
+         },
+         {
+            "type":"FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
+            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error`
+         }
+      ]
+   )
+   histTimerEnd({ success: true, operation: 'admin_get_participants_endpoints'})
+   })
 
 
-  return {
-    name: 'admin',
-    basepath: '/admin',
-    router
-  }
+   return {
+      name: 'admin',
+      basepath: '/admin',
+      router
+   }
 }
 
 // require-glob has no ES support
