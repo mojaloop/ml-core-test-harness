@@ -89,6 +89,18 @@ const init = (config, logger, options = undefined) => {
             "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error`
          },
          {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
+            "value": `${ADMIN_FSPIOP_CALLBACK_URL}/transfers`
+          },
+          {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
+            "value": `${ADMIN_FSPIOP_CALLBACK_URL}/transfers/{{transferId}}`
+          },
+          {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
+            "value": `${ADMIN_FSPIOP_CALLBACK_URL}/transfers/{{transferId}}/error`
+          },
+         {
             "type":"NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
             "value":"test@test.test"
          },
