@@ -94,7 +94,7 @@
       },
       "gridPos": {
         "h": 12,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 0
       },
@@ -108,8 +108,10 @@
             "lastNotNull"
           ],
           "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "single",
@@ -123,9 +125,9 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(cbs_ing_callbackHandler_sum[$__rate_interval]) / rate(cbs_ing_callbackHandler_count[$__rate_interval]) >=0) by (operation, success)",
+          "expr": "sum(rate(cbs_ing_callbackHandler_sum[$__rate_interval]) / rate(cbs_ing_callbackHandler_count[$__rate_interval]) >=0) by (operation, success, instance)",
           "instant": false,
-          "legendFormat": "op: {{operation}} success: {{success}}",
+          "legendFormat": "{{instance}} op: {{operation}} success: {{success}}",
           "range": true,
           "refId": "A"
         }
@@ -192,10 +194,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 0
+        "h": 13,
+        "w": 24,
+        "x": 0,
+        "y": 12
       },
       "id": 123135,
       "options": {
@@ -207,8 +209,10 @@
             "lastNotNull"
           ],
           "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "single",
@@ -222,9 +226,9 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(cbs_ing_callbackHandler_count[$__rate_interval])) by (operation, success)",
+          "expr": "sum(rate(cbs_ing_callbackHandler_count[$__rate_interval])) by (operation, success, instance)",
           "instant": false,
-          "legendFormat": "op:{{operation}} success: {{success}}",
+          "legendFormat": "{{instance}}  op:{{operation}} success: {{success}}",
           "range": true,
           "refId": "A"
         }
@@ -291,10 +295,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 12,
+        "h": 12,
+        "w": 24,
         "x": 0,
-        "y": 12
+        "y": 25
       },
       "id": 123134,
       "options": {
@@ -306,8 +310,10 @@
             "lastNotNull"
           ],
           "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "single",
@@ -321,9 +327,9 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(cbs_egress_callbackHandler_sum[$__rate_interval]) / rate(cbs_egress_callbackHandler_count[$__rate_interval]) >=0) by (operation, success)",
+          "expr": "sum(rate(cbs_egress_callbackHandler_sum[$__rate_interval]) / rate(cbs_egress_callbackHandler_count[$__rate_interval]) >=0) by (operation, success, instance)",
           "instant": false,
-          "legendFormat": "op: {{operation}} success: {{success}}",
+          "legendFormat": "{{instance}}  op: {{operation}} success: {{success}}",
           "range": true,
           "refId": "A"
         }
@@ -391,9 +397,9 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 12
+        "w": 24,
+        "x": 0,
+        "y": 37
       },
       "id": 123131,
       "options": {
@@ -405,8 +411,10 @@
             "lastNotNull"
           ],
           "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "single",
@@ -420,9 +428,9 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(cbs_egress_callbackHandler_count[$__rate_interval])) by (operation, success)",
+          "expr": "sum(rate(cbs_egress_callbackHandler_count[$__rate_interval])) by (operation, success, instance)",
           "instant": false,
-          "legendFormat": "op:{{operation}} success: {{success}}",
+          "legendFormat": "{{instance}}  op:{{operation}} success: {{success}}",
           "range": true,
           "refId": "A"
         }
@@ -532,10 +540,10 @@
         ]
       },
       "gridPos": {
-        "h": 9,
+        "h": 11,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 47
       },
       "hideTimeOverride": false,
       "id": 123127,
@@ -550,7 +558,9 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -565,9 +575,9 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(cbs_tx_cb_perf_count[$__rate_interval])) by (operation, success)",
+          "expr": "sum(rate(cbs_tx_cb_perf_count[$__rate_interval])) by (operation, success, instance)",
           "hide": false,
-          "legendFormat": "op:{{operation}} - success:{{success}}",
+          "legendFormat": "{{instance}}  op:{{operation}} - success:{{success}}",
           "range": true,
           "refId": "A"
         }
@@ -635,10 +645,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 11,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 58
       },
       "id": 123130,
       "links": [],
@@ -652,7 +662,9 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -668,12 +680,12 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(rate(cbs_tx_cb_perf_sum[$__rate_interval]) / rate(cbs_tx_cb_perf_count[$__rate_interval]) >= 0) by (operation, success)",
+          "expr": "sum(rate(cbs_tx_cb_perf_sum[$__rate_interval]) / rate(cbs_tx_cb_perf_count[$__rate_interval]) >= 0) by (operation, success, instance)",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "op:{{operation}} - Success {{success}}",
+          "legendFormat": "{{instance}}  op:{{operation}} - Success {{success}}",
           "range": true,
           "refId": "A"
         }
@@ -682,7 +694,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": false,
+  "refresh": "5s",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -690,8 +702,8 @@
     "list": []
   },
   "time": {
-    "from": "2023-07-26T10:28:17.867Z",
-    "to": "2023-07-26T10:50:35.328Z"
+    "from": "now-5m",
+    "to": "now"
   },
   "timepicker": {
     "hidden": false,
@@ -723,6 +735,6 @@
   "timezone": "browser",
   "title": "Supporting Services - Callback Hander Service",
   "uid": "afe9dda2-878b-40c8-90df-072e7ecaaaee",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
