@@ -199,6 +199,15 @@ const init = (config, logger, options = undefined) => {
     return handleCallback('participants', req, res)
   })
 
+  // Handle Payee POST transfers
+  //router.post('/transfers', (req, res) => {
+  //})
+
+  // Handle Payer PUT transfers callback
+  //router.put('/participants/*', (req, res) => {
+  //  return handleCallback('transfers', req, res)
+  //})
+
   return {
     name: 'fspiop',
     basepath: '/fspiop',
