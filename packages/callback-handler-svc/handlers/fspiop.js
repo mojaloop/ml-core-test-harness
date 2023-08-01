@@ -9,6 +9,7 @@ const TRACESTATE_KEY_CALLBACK_START_TS = 'tx_callback_start_ts'
 
 const init = (config, logger, options = undefined) => {
   const FSPIOP_ALS_ENDPOINT_URL = env.get('CBH_FSPIOP_ALS_ENDPOINT_URL').default('http://account-lookup-service:4002').asString()
+  const FSPIOP_TRANSFERS_ENDPOINT_URL = env.get('CBH_FSPIOP_TRANSFERS_ENDPOINT_URL').default('http://ml-api-adapter:3000').asString()
   const FSP_ID = env.get('CBH_FSPIOP_FSP_ID').default('perffsp2').asString()
   const HTTP_KEEPALIVE = env.get('CBH_FSPIOP_CALLBACK_HTTP_KEEPALIVE').default('true').asBool()
   const router = express.Router()
@@ -123,6 +124,59 @@ const init = (config, logger, options = undefined) => {
     histTimerEnd({ success: true, operation: 'fspiop_get_participants'})
   })
 
+  // Handle Payee POST /transfers
+  router.post('/transfers', (req, res) => {
+    const histTimerEnd = options.metrics.getHistogram(
+      'ing_callbackHandler',
+      'Ingress - Operation handler',
+      ['success', 'operation']
+    ).startTimer()
+
+    // Async callback
+    const fspiopSourceHeader = req.headers['fspiop-source']
+    const traceparentHeader = req.headers['traceparent']
+    const tracestateHeader = req.headers['tracestate'];
+    const transferId = req.body.transferId;
+
+    (async () => {
+      const egressHistTimerEnd = options.metrics.getHistogram(
+        'egress_callbackHandler',
+        'Egress - Operation handler',
+        ['success', 'operation']
+      ).startTimer()
+      try {
+        await axios.put(`${FSPIOP_TRANSFERS_ENDPOINT_URL}/transfers/${transferId}`, {
+            "transferState": "COMMITTED",
+            "fulfilment": "zWiCZbcMiaPIW3pFDGAybWPgJiTGZ65ZBhPeOeleJPQ",
+            "completedTimestamp": (new Date()).toISOString()
+        },
+        {
+          headers: {
+            'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
+            // 'Accept': 'application/vnd.interoperability.parties+json;version=1.1',
+            Date: new Date(),
+            'FSPIOP-Source': FSP_ID,
+            'FSPIOP-Destination': fspiopSourceHeader,
+            'traceparent': traceparentHeader,
+            'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
+          },
+          httpAgent,
+        })
+        egressHistTimerEnd({ success: true, operation: 'fspiop_put_transfers'})
+      } catch(err) {
+        logger.error({
+          traceparent: req.headers.traceparent,
+          operation: 'fspiop_put_transfers',
+          err,
+        })
+        egressHistTimerEnd({ success: false, operation: 'fspiop_put_transfers'})
+      }
+    })();
+    // Sync 202
+    res.status(202).end()
+    histTimerEnd({ success: true, operation: 'fspiop_put_transfers'})
+  })
+
   const handleCallback = (resource, req, res) => {
     const histTimerEnd = options.metrics.getHistogram(
       'ing_callbackHandler',
@@ -199,14 +253,10 @@ const init = (config, logger, options = undefined) => {
     return handleCallback('participants', req, res)
   })
 
-  // Handle Payee POST transfers
-  //router.post('/transfers', (req, res) => {
-  //})
-
-  // Handle Payer PUT transfers callback
-  //router.put('/participants/*', (req, res) => {
-  //  return handleCallback('transfers', req, res)
-  //})
+  // Handle Payer PUT Transfers callback
+  router.put('/transfers/*', (req, res) => {
+    return handleCallback('transfers', req, res)
+  })
 
   return {
     name: 'fspiop',
