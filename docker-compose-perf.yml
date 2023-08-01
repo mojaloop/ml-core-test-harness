@@ -192,36 +192,6 @@ services:
   #     - callback-handler
   #     - all-services
 
-  callback-handler-svc-payee-sim:
-    scale: 1
-    image: mojaloop/callback-handler-svc:local
-    env_file:
-      - .env
-      - perf.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:local
-    # ports:
-    #   - "3001:3001"
-    networks:
-      - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
-    healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
-      timeout: 20s
-      retries: 30
-      interval: 15s
-    user: root
-    profiles:
-      - simulators
-      - callback-handler
-      - all-services
-
   callback-handler-svc-oracle-sim:
     scale: 1
     image: mojaloop/callback-handler-svc:local
@@ -257,7 +227,7 @@ services:
     image: mojaloop/callback-handler-svc:local
     env_file:
       - .env
-      - perf.env
+      - ./envs/cl-sim.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
@@ -282,12 +252,12 @@ services:
       - callback-handler
       - all-services
 
-  callback-handler-svc-payer-sim:
+  callback-handler-svc-payee-sim:
     scale: 1
     image: mojaloop/callback-handler-svc:local
     env_file:
       - .env
-      - perf.env
+      - ./envs/perffsp2.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
@@ -311,3 +281,209 @@ services:
       - simulators
       - callback-handler
       - all-services
+      - 2dfsp
+      - 4dfsp
+      - 8dfsp
+
+  callback-handler-svc-payee-sim-a:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+      - ./envs/perffsp4.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    # ports:
+    #   - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - 4dfsp
+      - 8dfsp
+
+  callback-handler-svc-payee-sim-b:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+      - ./envs/perffsp6.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    # ports:
+    #   - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - 8dfsp
+
+  callback-handler-svc-payee-sim-c:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+      - ./envs/perffsp8.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    # ports:
+    #   - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - 8dfsp
+
+  callback-handler-svc-payer-sim:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+      - ./envs/perffsp1.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    # ports:
+    #   - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - simulators
+      - callback-handler
+      - all-services
+      - 2dfsp
+      - 4dfsp
+      - 8dfsp
+
+  callback-handler-svc-payer-sim-a:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+      - ./envs/perffsp3.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    # ports:
+    #   - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - 4dfsp
+      - 8dfsp
+
+  callback-handler-svc-payer-sim-b:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+      - ./envs/perffsp5.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    # ports:
+    #   - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - 8dfsp
+
+  callback-handler-svc-payer-sim-c:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+      - ./envs/perffsp7.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    # ports:
+    #   - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - 8dfsp
