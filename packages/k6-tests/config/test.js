@@ -8,9 +8,9 @@ const config = {
       "exec": "accountLookupScenarios",
       "startVUs": 1,
       "stages": [
-        { "duration": "2m", "target": 6 },
-        { "duration": "5m", "target": 6 },
-        { "duration": "2m", "target": 0 }
+        { "duration": "1m", "target": 1 },
+        //{ "duration": "5m", "target": 6 },
+        //{ "duration": "2m", "target": 0 }
       ]
     },
     // # Example using "ramping-arrival-rate" executor

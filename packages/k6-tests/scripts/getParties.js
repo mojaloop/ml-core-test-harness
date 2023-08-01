@@ -14,21 +14,27 @@ console.log(`Env Vars -->
   K6_SCRIPT_FSPIOP_PAYEE_FSP_ID=${__ENV.K6_SCRIPT_FSPIOP_PAYEE_FSP_ID},
   K6_SCRIPT_CALLBACK_HANDLER_SERVICE_WS_URL=${__ENV.K6_SCRIPT_CALLBACK_HANDLER_SERVICE_WS_URL},
   K6_SCRIPT_ADMIN_ENDPOINT_URL=${__ENV.K6_SCRIPT_ADMIN_ENDPOINT_URL},
-  K6_SCRIPT_ORACLE_ENDPOINT_URL=${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL}
+  K6_SCRIPT_ORACLE_ENDPOINT_URL=${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL},
+  K6_SCRIPT_FSPIOP_FSP_PAYER_DETAILS=${__ENV.K6_SCRIPT_FSPIOP_FSP_PAYER_DETAILS}
+  K6_SCRIPT_FSPIOP_FSP_PAYEE_DETAILS=${__ENV.K6_SCRIPT_FSPIOP_FSP_PAYEE_DETAILS}
 `);
 
 export function getParties() {
   group("Get Parties", function () {
+    const payerFspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_PAYER_DETAILS)
+    const payeeFspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_PAYEE_DETAILS)
+    const payerFsp = payerFspList[Math.floor(Math.random()*payerFspList.length)]
+    const payeeFsp =  payeeFspList[Math.floor(Math.random()*payeeFspList.length)]
 
     const startTs = Date.now();
-
-    const payeeId = `${__ENV.K6_SCRIPT_FSPIOP_ALS_PAYEE_PARTYID}`;
-    const payerFspId = `${__ENV.K6_SCRIPT_FSPIOP_PAYER_FSP_ID}`;
-    const payeeFspId = `${__ENV.K6_SCRIPT_FSPIOP_PAYEE_FSP_ID}`;
+    const payeeId = payeeFsp['partyId'];
+    const payerFspId = payerFsp['fspId'];
+    const payeeFspId = payeeFsp['fspId'];
+    const wsUrl = payerFsp['wsUrl'];
     const traceParent = Trace();
     const traceId = traceParent.traceId;
     const wsChannel = `${traceParent.traceId}/PUT/parties/MSISDN/${payeeId}`;
-    const wsURL = `${__ENV.K6_SCRIPT_CALLBACK_HANDLER_SERVICE_WS_URL}/${wsChannel}`
+    const wsURL = `${wsUrl}/${wsChannel}`
     const ws = new WebSocket(wsURL);
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
 
@@ -63,7 +69,7 @@ export function getParties() {
         headers: {
           'Accept': 'application/vnd.interoperability.parties+json;version=1.1',
           'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',
-          'FSPIOP-Source': 'perffsp1',
+          'FSPIOP-Source': payerFspId,
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
           'tracestate': `tx_end2end_start_ts=${startTs}`
