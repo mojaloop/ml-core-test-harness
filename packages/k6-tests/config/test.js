@@ -3,9 +3,19 @@
 const config = {
   // # define scenarios
   "scenarios": {
-    "accountLookup": { // # original scenario for accountLookup
+    // "accountLookup": { // # original scenario for accountLookup
+    //   "executor": "ramping-vus",
+    //   "exec": "accountLookupScenarios",
+    //   "startVUs": 1,
+    //   "stages": [
+    //     { "duration": "1m", "target": 1 },
+    //     //{ "duration": "5m", "target": 6 },
+    //     //{ "duration": "2m", "target": 0 }
+    //   ]
+    // },
+    "postTransfers": { // # original scenario for accountLookup
       "executor": "ramping-vus",
-      "exec": "accountLookupScenarios",
+      "exec": "postTransfersScenarios",
       "startVUs": 1,
       "stages": [
         { "duration": "1m", "target": 1 },
