@@ -16,6 +16,11 @@ console.log(`Env Vars -->
 const payerFspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_PAYER_POOL)
 const payeeFspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_PAYEE_POOL)
 
+const ilpPacket = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ILPPACKET
+const condition = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CONDITION
+const amount = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_AMOUNT.toString()
+const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
+
 export function postTransfers() {
   group("Post Transfers", function () {
     const payerFsp = payerFspList[0]
@@ -78,12 +83,12 @@ export function postTransfers() {
         "payerFsp": payerFspId,
         "payeeFsp": payeeFspId,
         "amount": {
-          "amount": "2",
-          "currency": "USD"
+          amount,
+          currency
         },
         "expiration": "2030-01-01T00:00:00.000Z",
-        "ilpPacket": "AYIDGQAAAAAAACcQIWcuZ3JlZW5iYW5rZnNwLm1zaXNkbi4yNzcxMzgwMzkxMoIC62V5SjBjbUZ1YzJGamRHbHZia2xrSWpvaU1ERXhaR1EyTldZdE5UQXpNeTAwTVdNMkxUazFaR1l0T1RFeFl6WTRPVFExWWpobUlpd2ljWFZ2ZEdWSlpDSTZJbVF3TXpJMU1EVTJMVE0xTldFdE5EUmxNUzFpT1RnMExXWXdZVFExTmpFMFkyRXpPQ0lzSW5CaGVXVmxJanA3SW5CaGNuUjVTV1JKYm1adklqcDdJbkJoY25SNVNXUlVlWEJsSWpvaVRWTkpVMFJPSWl3aWNHRnlkSGxKWkdWdWRHbG1hV1Z5SWpvaU1qYzNNVE00TURNNU1USWlMQ0ptYzNCSlpDSTZJbWR5WldWdVltRnVhMlp6Y0NKOWZTd2ljR0Y1WlhJaU9uc2ljR0Z5ZEhsSlpFbHVabThpT25zaWNHRnlkSGxKWkZSNWNHVWlPaUpOVTBsVFJFNGlMQ0p3WVhKMGVVbGtaVzUwYVdacFpYSWlPaUkwTkRFeU16UTFOamM0T1NJc0ltWnpjRWxrSWpvaWNHbHVhMkpoYm10bWMzQWlmU3dpY0dWeWMyOXVZV3hKYm1adklqcDdJbU52YlhCc1pYaE9ZVzFsSWpwN0ltWnBjbk4wVG1GdFpTSTZJa1pwY25OMGJtRnRaUzFVWlhOMElpd2liR0Z6ZEU1aGJXVWlPaUpNWVhOMGJtRnRaUzFVWlhOMEluMHNJbVJoZEdWUFprSnBjblJvSWpvaU1UazROQzB3TVMwd01TSjlmU3dpWVcxdmRXNTBJanA3SW1OMWNuSmxibU41SWpvaVZWTkVJaXdpWVcxdmRXNTBJam9pTVRBd0luMHNJblJ5WVc1ellXTjBhVzl1Vkhsd1pTSTZleUp6WTJWdVlYSnBieUk2SWxSU1FVNVRSa1ZTSWl3aWFXNXBkR2xoZEc5eUlqb2lVRUZaUlZJaUxDSnBibWwwYVdGMGIzSlVlWEJsSWpvaVEwOU9VMVZOUlZJaWZYMAA",
-        "condition": "5m0gq_5dLQlTSSRKQmLpj0MZ1MtWLWgSu1oLGVTJyYs"
+        ilpPacket,
+        condition
       }
 
       // Lets send the FSPIOP POST /transfers request
