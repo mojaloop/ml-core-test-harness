@@ -231,7 +231,9 @@ Env configs are stored in the [./docker/k6/.env](./docker/k6/.env) environment c
 Start tests
 
 ```bash
-docker compose --project-name load -f docker-compose-load.yml up
+env K6_SCRIPT_CONFIG_FILE_NAME=transfers.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=accountLookup.json docker compose --project-name load -f docker-compose-load.yml up
 ```
 
 Cleanup tests

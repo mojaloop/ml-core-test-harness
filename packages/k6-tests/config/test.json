@@ -1,8 +1,8 @@
 {
   "scenarios": {
-    "accountLookup": {
+    "test": {
       "executor": "ramping-vus",
-      "exec": "accountLookupScenarios",
+      "exec": "testScenarios",
       "startVUs": 1,
       "stages": [
         { "duration": "10s", "target": 6 }
