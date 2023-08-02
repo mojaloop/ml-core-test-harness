@@ -11,17 +11,6 @@ module.exports = {
     "PASSWORD": "",
     "DATABASE": "mlos"
   },
-  "HANDLERS": {
-    "DISABLED": true,
-    "API": {
-        "DISABLED": false
-    },
-    "TIMEOUT": {
-        "DISABLED": true,
-        "TIMEXP": "*/15 * * * * *",
-        "TIMEZONE": "UTC"
-    }
-  },
   "KAFKA": {
     "CONSUMER": {
       "BULK": {

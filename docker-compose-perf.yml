@@ -93,7 +93,6 @@ services:
   ## Services for Transfer tests
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    container_name: central-ledger
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
     # ports:
     #   - "3001:3001"
@@ -108,7 +107,187 @@ services:
       - mojaloop-net
     depends_on:
       mysql:
+        condition: service_healthy
+      kafka:
         condition: service_started
+      objstore:
+        condition: service_started
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 30s
+      start_period: 30s
+    user: root
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+      - transfers-test
+
+  central-ledger-prepare:
+    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
+    # ports:
+    #   - "3001:3001"
+    volumes:
+       - ./docker/wait4:/opt/app/wait4
+       - ./docker/config-modifier:/opt/app/config-modifier
+    environment:
+      - LOG_LEVEL=info
+      - CLEDG_MONGODB__DISABLED=false
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      objstore:
+        condition: service_started
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 30s
+      start_period: 30s
+    user: root
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+      - transfers-test
+
+  central-ledger-position:
+    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
+    # ports:
+    #   - "3001:3001"
+    volumes:
+       - ./docker/wait4:/opt/app/wait4
+       - ./docker/config-modifier:/opt/app/config-modifier
+    environment:
+      - LOG_LEVEL=info
+      - CLEDG_MONGODB__DISABLED=false
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      objstore:
+        condition: service_started
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 30s
+      start_period: 30s
+    user: root
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+      - transfers-test
+
+  central-ledger-fulfil:
+    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
+    # ports:
+    #   - "3001:3001"
+    volumes:
+       - ./docker/wait4:/opt/app/wait4
+       - ./docker/config-modifier:/opt/app/config-modifier
+    environment:
+      - LOG_LEVEL=info
+      - CLEDG_MONGODB__DISABLED=false
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      objstore:
+        condition: service_started
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 30s
+      start_period: 30s
+    user: root
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+      - transfers-test
+
+  central-ledger-timeout:
+    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --timeout"
+    # ports:
+    #   - "3001:3001"
+    volumes:
+       - ./docker/wait4:/opt/app/wait4
+       - ./docker/config-modifier:/opt/app/config-modifier
+    environment:
+      - LOG_LEVEL=info
+      - CLEDG_MONGODB__DISABLED=false
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      objstore:
+        condition: service_started
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 30s
+      start_period: 30s
+    user: root
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+      - transfers-test
+
+  central-ledger-get:
+    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --get"
+    # ports:
+    #   - "3001:3001"
+    volumes:
+       - ./docker/wait4:/opt/app/wait4
+       - ./docker/config-modifier:/opt/app/config-modifier
+    environment:
+      - LOG_LEVEL=info
+      - CLEDG_MONGODB__DISABLED=false
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql:
+        condition: service_healthy
       kafka:
         condition: service_started
       objstore:
@@ -148,6 +327,8 @@ services:
       - agreement
       - all-services
       - transfers-test
+    logging:
+      driver: none
 
   kafka-provisioning:
     container_name: kafka-provisioning
@@ -264,9 +445,9 @@ services:
       - mojaloop-net
     depends_on:
       kafka:
-        condition: service_started
+        condition: service_healthy
       central-ledger:
-        condition: service_started
+        condition: service_healthy
     healthcheck:
       test: wget -q http://localhost:3000/health -O /dev/null || exit 1
       timeout: 30s

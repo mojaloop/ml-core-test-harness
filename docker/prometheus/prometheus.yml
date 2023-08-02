@@ -66,6 +66,11 @@ scrape_configs:
           ## Transfer Services
           'ml-api-adapter:3000',
           'central-ledger:3001',
+          'central-ledger-prepare:3001',
+          'central-ledger-position:3001',
+          'central-ledger-fulfil:3001',
+          'central-ledger-timeout:3001',
+          'central-ledger-get:3001',
           'kafka-exporter:9308',
         ]
 

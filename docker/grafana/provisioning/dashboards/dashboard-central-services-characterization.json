@@ -2642,10 +2642,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "avg(moja_cl_nodejs_eventloop_lag_seconds{serviceName=~\"central.*\"}) by (serviceName)",
+          "editorMode": "code",
+          "expr": "avg(moja_cl_nodejs_eventloop_lag_seconds{serviceName=~\"central.*\"}) by (instance, serviceName)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{serviceName}}",
+          "legendFormat": "{{instance}} {{serviceName}}",
+          "range": true,
           "refId": "B"
         }
       ],
