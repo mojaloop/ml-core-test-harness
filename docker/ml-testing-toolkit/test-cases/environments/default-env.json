@@ -62,14 +62,14 @@
     "PERF_FSP6_MSISDN": "19012345006",
     "PERF_FSP7_MSISDN": "19012345007",
     "PERF_FSP8_MSISDN": "19012345008",
-    "PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payer-sim:3001/fspiop",
-    "PERF_FSP2_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payee-sim:3001/fspiop",
-    "PERF_FSP3_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payer-sim-a:3001/fspiop",
-    "PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payee-sim-a:3001/fspiop",
-    "PERF_FSP5_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payer-sim-b:3001/fspiop",
-    "PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payee-sim-b:3001/fspiop",
-    "PERF_FSP7_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payer-sim-c:3001/fspiop",
-    "PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL": "http://callback-handler-svc-payee-sim-c:3001/fspiop",
+    "PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp1:3001/fspiop",
+    "PERF_FSP2_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp2:3001/fspiop",
+    "PERF_FSP3_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp3:3001/fspiop",
+    "PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp4:3001/fspiop",
+    "PERF_FSP5_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp5:3001/fspiop",
+    "PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp6:3001/fspiop",
+    "PERF_FSP7_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp7:3001/fspiop",
+    "PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp8:3001/fspiop",
     "PERF_ORACLE_ENDPOINT_BASE_URL": "http://callback-handler-svc-oracle-sim:3001/oracle"
   }
 }

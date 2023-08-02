@@ -9,17 +9,16 @@ import { randomIntBetween } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 console.log(`Env Vars -->
   K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
   K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL},
-  K6_SCRIPT_FSPIOP_FSP_PAYER_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_PAYER_POOL}
+  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}
   K6_SCRIPT_FSPIOP_FSP_PAYEE_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_PAYEE_POOL}
 `);
 
-const payerFspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_PAYER_POOL)
-const payeeFspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_PAYEE_POOL)
+const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function postTransfers() {
   group("Post Transfers", function () {
-    const payerFsp = payerFspList[0]
-    const payeeFsp =  payeeFspList[0]
+    const payerFsp = fspList[0]
+    const payeeFsp =  fspList[1]
     // const payerFsp = payerFspList[randomIntBetween(0, payerFspList.length-1)]
     // const payeeFsp =  payeeFspList[randomIntBetween(0, payeeFspList.length-1)]
 

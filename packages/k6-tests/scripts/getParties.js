@@ -17,16 +17,17 @@ console.log(`Env Vars -->
   K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL},
   K6_SCRIPT_ADMIN_ENDPOINT_URL=${__ENV.K6_SCRIPT_ADMIN_ENDPOINT_URL},
   K6_SCRIPT_ORACLE_ENDPOINT_URL=${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL},
-  K6_SCRIPT_FSPIOP_FSP_PAYER_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_PAYER_POOL}
-  K6_SCRIPT_FSPIOP_FSP_PAYEE_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_PAYEE_POOL}
+  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_PAYER_POOL}
 `);
+
+const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function getParties() {
   group("Get Parties", function () {
-    const payerFspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_PAYER_POOL)
-    const payeeFspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_PAYEE_POOL)
-    const payerFsp = payerFspList[Math.floor(Math.random()*payerFspList.length)]
-    const payeeFsp =  payeeFspList[Math.floor(Math.random()*payeeFspList.length)]
+    const payerFsp = fspList[0]
+    const payeeFsp =  fspList[1]
+    //const payerFsp = payerFspList[Math.floor(Math.random()*payerFspList.length)]
+    //const payeeFsp =  payeeFspList[Math.floor(Math.random()*payeeFspList.length)]
 
     const startTs = Date.now();
     const payeeId = payeeFsp['partyId'];

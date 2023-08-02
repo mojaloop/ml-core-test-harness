@@ -1,14 +1,14 @@
 module.exports = {
   "HOSTNAME": "http://central-ledger",
   "DATABASE": {
-    "HOST": "mysql"
+    "HOST": "mysql-cl"
   },
   "MIGRATIONS": {
     "DISABLED": true,
     "RUN_DATA_MIGRATIONS": true
   },
   "MONGODB": {
-    "DISABLED": false,
+    "DISABLED": true,
     "HOST": "objstore",
     "PORT": 27017,
     "USER": "",

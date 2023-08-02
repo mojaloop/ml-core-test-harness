@@ -93,25 +93,27 @@ services:
   ## Services for Transfer tests
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
     # ports:
     #   - "3001:3001"
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
+      ## Wait 4 Config script
+      - WAIT4_CONFIG=./wait4.config.perf-cl.js
       - LOG_LEVEL=info
-      - CLEDG_MONGODB__DISABLED=false
+      - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
     depends_on:
-      mysql:
+      mysql-cl:
         condition: service_healthy
       kafka:
         condition: service_started
-      objstore:
-        condition: service_started
+      # objstore:
+      #   condition: service_started
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -127,9 +129,9 @@ services:
       - all-services
       - transfers-test
 
-  central-ledger-prepare:
+  central-handler-prepare:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -137,19 +139,19 @@ services:
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
       - LOG_LEVEL=info
-      - CLEDG_MONGODB__DISABLED=false
+      - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
     depends_on:
       central-ledger:
         condition: service_healthy
-      mysql:
+      mysql-cl:
         condition: service_healthy
       kafka:
         condition: service_started
-      objstore:
-        condition: service_started
+      # objstore:
+      #   condition: service_started
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -165,9 +167,9 @@ services:
       - all-services
       - transfers-test
 
-  central-ledger-position:
+  central-handler-position:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -175,19 +177,19 @@ services:
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
       - LOG_LEVEL=info
-      - CLEDG_MONGODB__DISABLED=false
+      - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
     depends_on:
       central-ledger:
         condition: service_healthy
-      mysql:
+      mysql-cl:
         condition: service_healthy
       kafka:
         condition: service_started
-      objstore:
-        condition: service_started
+      # objstore:
+      #   condition: service_started
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -203,9 +205,9 @@ services:
       - all-services
       - transfers-test
 
-  central-ledger-fulfil:
+  central-handler-fulfil:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -213,19 +215,19 @@ services:
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
       - LOG_LEVEL=info
-      - CLEDG_MONGODB__DISABLED=false
+      - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
     depends_on:
       central-ledger:
         condition: service_healthy
-      mysql:
+      mysql-cl:
         condition: service_healthy
       kafka:
         condition: service_started
-      objstore:
-        condition: service_started
+      # objstore:
+      #   condition: service_started
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -241,9 +243,9 @@ services:
       - all-services
       - transfers-test
 
-  central-ledger-timeout:
+  central-handler-timeout:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --timeout"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --timeout"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -251,19 +253,19 @@ services:
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
       - LOG_LEVEL=info
-      - CLEDG_MONGODB__DISABLED=false
+      - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
     depends_on:
       central-ledger:
         condition: service_healthy
-      mysql:
+      mysql-cl:
         condition: service_healthy
       kafka:
         condition: service_started
-      objstore:
-        condition: service_started
+      # objstore:
+      #   condition: service_started
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -279,9 +281,9 @@ services:
       - all-services
       - transfers-test
 
-  central-ledger-get:
+  central-handler-get:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --get"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --get"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -289,19 +291,19 @@ services:
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
       - LOG_LEVEL=info
-      - CLEDG_MONGODB__DISABLED=false
+      - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
     depends_on:
       central-ledger:
         condition: service_healthy
-      mysql:
+      mysql-cl:
         condition: service_healthy
       kafka:
         condition: service_started
-      objstore:
-        condition: service_started
+      # objstore:
+      #   condition: service_started
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -317,9 +319,9 @@ services:
       - all-services
       - transfers-test
 
-  central-ledger-admin:
+  central-handler-admin:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --admin"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --admin"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -327,19 +329,19 @@ services:
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
       - LOG_LEVEL=info
-      - CLEDG_MONGODB__DISABLED=false
+      - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
     depends_on:
       central-ledger:
         condition: service_healthy
-      mysql:
+      mysql-cl:
         condition: service_healthy
       kafka:
         condition: service_started
-      objstore:
-        condition: service_started
+      # objstore:
+      #   condition: service_started
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -355,26 +357,26 @@ services:
       - all-services
       - transfers-test
 
-  objstore:
-    image: mongo:6.0.5
-    container_name: objstore
-    ports:
-      - "27017:27017"
-    networks:
-      - mojaloop-net
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
-    profiles:
-      - central-ledger
-      - transfer
-      - discovery
-      - agreement
-      - all-services
-      - transfers-test
+  # objstore:
+  #   image: mongo:6.0.5
+  #   container_name: objstore
+  #   ports:
+  #     - "27017:27017"
+  #   networks:
+  #     - mojaloop-net
+  #   healthcheck:
+  #     test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+  #     interval: 10s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 40s
+  #   profiles:
+  #     - central-ledger
+  #     - transfer
+  #     - discovery
+  #     - agreement
+  #     - all-services
+  #     - transfers-test
 
   kafka-provisioning:
     container_name: kafka-provisioning
@@ -446,14 +448,14 @@ services:
       - all-services
       - transfers-test
 
-  mysql:
+  mysql-cl:
     image: mysql/mysql-server
-    container_name: mysql
+    container_name: mysql-cl
     # ports:
     #   - "3306:3306"
     volumes:
       # Note: this fixes the permissions issue, but docker-compose up will fail on first attempt
-      - ./docker/sql-init/:/docker-entrypoint-initdb.d/
+      - ./docker/sql-cl-init/:/docker-entrypoint-initdb.d/
     environment:
       - MYSQL_USER=${DBUSER:-central_ledger}
       - MYSQL_PASSWORD=${DBPASS:-password}
@@ -462,7 +464,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "mysql"]
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "mysql-cl"]
       timeout: 20s
       retries: 10
       start_period: 40s
@@ -599,17 +601,17 @@ services:
         condition: service_healthy
       central-ledger:
         condition: service_healthy
-      central-ledger-prepare:
+      central-handler-prepare:
         condition: service_healthy
-      central-ledger-fulfil:
+      central-handler-fulfil:
         condition: service_healthy
-      central-ledger-position:
+      central-handler-position:
         condition: service_healthy
-      central-ledger-timeout:
+      central-handler-timeout:
         condition: service_healthy
-      central-ledger-get:
+      central-handler-get:
         condition: service_healthy
-      central-ledger-admin:
+      central-handler-admin:
         condition: service_healthy
     networks:
       - mojaloop-net
@@ -683,126 +685,7 @@ services:
       - all-services
       - als-test
 
-  callback-handler-svc-payee-sim:
-    scale: 1
-    image: mojaloop/callback-handler-svc:local
-    env_file:
-      - .env
-      - ./envs/perffsp2.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:local
-    # ports:
-    #   - "3001:3001"
-    networks:
-      - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
-    healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
-      timeout: 20s
-      retries: 30
-      interval: 15s
-    user: root
-    profiles:
-      - simulators
-      - callback-handler
-      - all-services
-      - als-test
-      - 2dfsp
-      - 4dfsp
-      - 8dfsp
-
-  callback-handler-svc-payee-sim-a:
-    scale: 1
-    image: mojaloop/callback-handler-svc:local
-    env_file:
-      - .env
-      - ./envs/perffsp4.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:local
-    # ports:
-    #   - "3001:3001"
-    networks:
-      - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
-    healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
-      timeout: 20s
-      retries: 30
-      interval: 15s
-    user: root
-    profiles:
-      - 4dfsp
-      - 8dfsp
-
-  callback-handler-svc-payee-sim-b:
-    scale: 1
-    image: mojaloop/callback-handler-svc:local
-    env_file:
-      - .env
-      - ./envs/perffsp6.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:local
-    # ports:
-    #   - "3001:3001"
-    networks:
-      - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
-    healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
-      timeout: 20s
-      retries: 30
-      interval: 15s
-    user: root
-    profiles:
-      - 8dfsp
-
-  callback-handler-svc-payee-sim-c:
-    scale: 1
-    image: mojaloop/callback-handler-svc:local
-    env_file:
-      - .env
-      - ./envs/perffsp8.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:local
-    # ports:
-    #   - "3001:3001"
-    networks:
-      - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
-    healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
-      timeout: 20s
-      retries: 30
-      interval: 15s
-    user: root
-    profiles:
-      - 8dfsp
-
-  callback-handler-svc-payer-sim:
+  sim-perffsp1:
     scale: 1
     image: mojaloop/callback-handler-svc:local
     env_file:
@@ -836,7 +719,41 @@ services:
       - 4dfsp
       - 8dfsp
 
-  callback-handler-svc-payer-sim-a:
+  sim-perffsp2:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+      - ./envs/perffsp2.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    # ports:
+    #   - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - simulators
+      - callback-handler
+      - all-services
+      - als-test
+      - 2dfsp
+      - 4dfsp
+      - 8dfsp
+
+  sim-perffsp3:
     scale: 1
     image: mojaloop/callback-handler-svc:local
     env_file:
@@ -865,7 +782,36 @@ services:
       - 4dfsp
       - 8dfsp
 
-  callback-handler-svc-payer-sim-b:
+  sim-perffsp4:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+      - ./envs/perffsp4.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    # ports:
+    #   - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - 4dfsp
+      - 8dfsp
+
+  sim-perffsp5:
     scale: 1
     image: mojaloop/callback-handler-svc:local
     env_file:
@@ -893,12 +839,68 @@ services:
     profiles:
       - 8dfsp
 
-  callback-handler-svc-payer-sim-c:
+  sim-perffsp6:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+      - ./envs/perffsp6.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    # ports:
+    #   - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - 8dfsp
+
+  sim-perffsp7:
     scale: 1
     image: mojaloop/callback-handler-svc:local
     env_file:
       - .env
       - ./envs/perffsp7.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:local
+    # ports:
+    #   - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment:
+      - LOG_LEVEL=info
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - 8dfsp
+
+  sim-perffsp8:
+    scale: 1
+    image: mojaloop/callback-handler-svc:local
+    env_file:
+      - .env
+      - ./envs/perffsp8.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:

@@ -150,6 +150,23 @@ services:
     command:
       - --mysqld.address=mysql-als:3306
       - --mysqld.username=exporter
+    profiles:
+      - als-test
+
+  mysqlexporter-cl:
+    image: prom/mysqld-exporter:v0.15.0
+    # ports:
+    # - "9104:9104"
+    networks:
+      - mojaloop-net
+      - monitoring-net
+    environment:
+    - MYSQLD_EXPORTER_PASSWORD=password
+    command:
+      - --mysqld.address=mysql-cl:3306
+      - --mysqld.username=exporter
+    profiles:
+      - transfers-test
 
   kafka-exporter:
     image: danielqsj/kafka-exporter:latest

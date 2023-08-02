@@ -212,7 +212,17 @@ docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
 Stop Monitoring Services
 
 ```bash
-docker compose --project-name monitoring -f docker-compose-monitoring.yml down -v
+docker compose --project-name monitoring --profile als-test -f docker-compose-monitoring.yml down -v
+```
+
+Start monitoring with account lookup service mysql exporter
+```bash
+docker compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml up -d
+```
+
+Start monitoring with central ledger mysql exporter
+```bash
+docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose

@@ -1,15 +1,26 @@
 module.exports = {
   "HOSTNAME": "http://central-ledger",
   "DATABASE": {
-    "HOST": "mysql"
+    "HOST": "mysql-cl"
   },
   "MONGODB": {
-    "DISABLED": false,
+    "DISABLED": true,
     "HOST": "objstore",
     "PORT": 27017,
     "USER": "",
     "PASSWORD": "",
     "DATABASE": "mlos"
+  },
+  "HANDLERS": {
+    "DISABLED": true,
+    "API": {
+        "DISABLED": false
+    },
+    "TIMEOUT": {
+        "DISABLED": true,
+        "TIMEXP": "*/15 * * * * *",
+        "TIMEZONE": "UTC"
+    }
   },
   "KAFKA": {
     "CONSUMER": {
