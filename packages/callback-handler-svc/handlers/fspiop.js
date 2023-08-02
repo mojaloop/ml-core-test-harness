@@ -208,22 +208,19 @@ const init = (config, logger, options = undefined) => {
     const performanceHistogram = options.metrics.getHistogram(
       'tx_cb_perf',
       'Metrics for callbacks',
-      ['success', 'path', 'operation']
+      ['success', 'operation']
     )
 
     performanceHistogram.observe({
       success: (!isErrorOperation).toString(),
-      path,
       operation: operationE2e
     }, e2eDelta / 1000)
     performanceHistogram.observe({
       success: (!isErrorOperation).toString(),
-      path,
       operation: operationRequest
     }, requestDelta / 1000)
     performanceHistogram.observe({
       success: (!isErrorOperation).toString(),
-      path,
       operation: operationResponse
     }, responseDelta / 1000)
 
