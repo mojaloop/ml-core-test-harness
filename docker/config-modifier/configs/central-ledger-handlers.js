@@ -3,6 +3,10 @@ module.exports = {
   "DATABASE": {
     "HOST": "mysql"
   },
+  "MIGRATIONS": {
+    "DISABLED": true,
+    "RUN_DATA_MIGRATIONS": true
+  },
   "MONGODB": {
     "DISABLED": false,
     "HOST": "objstore",
