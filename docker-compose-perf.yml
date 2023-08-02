@@ -537,6 +537,7 @@ services:
       - ml-api-adapter
       - transfer
       - all-services
+      - transfers-test
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:

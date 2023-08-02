@@ -65,6 +65,7 @@ scrape_configs:
           # 'quoting-service:3002' // Currently no metrics end-point exposed
           ## Transfer Services
           'ml-api-adapter:3000',
+          'ml-handler-notification:3000',
           'central-ledger:3001',
           'central-ledger-prepare:3001',
           'central-ledger-position:3001',
