@@ -234,9 +234,28 @@ TODO:
 
 [K6](https://k6.io) is being used to execute performance tests, with metrics being captured by [Prometheus](https://k6.io/docs/results-output/real-time/prometheus-remote-write) and displayed using [Grafana](https://k6.io/docs/results-output/real-time/prometheus-remote-write/#time-series-visualization).
 
-Tests can be defined in the [./docker/k6/scripts/test.js](./docker/k6/scripts/test.js), refer to [API load testing guide](https://k6.io/docs/testing-guides/api-load-testing/) for more information.
+Tests can be defined in the [./packages/k6-tests/scripts/test.js](./packages/k6-tests/scripts/test.js), refer to [API load testing guide](https://k6.io/docs/testing-guides/api-load-testing/) for more information.
 
-Env configs are stored in the [./docker/k6/.env](./docker/k6/.env) environment configuration file, which can be referenced in by the [./docker/k6/scripts/test.js](./docker/k6/scripts/test.js).
+Env configs are stored in the [./perf.env](./perf.env) environment configuration file..
+
+Note: Transfer testing
+
+Depending on the profile you started the performance docker compose with i.e `--profile transfers-test --profile {2/4/8}dfsp`
+You will need to edit `K6_SCRIPT_FSPIOP_FSP_POOL` json string in `./perf.env` to contain 2/4/8 dfsps depending on your test.
+For reference here are the provisioned dfsps with an associated partyId available for use.
+
+```
+[
+  {"partyId":19012345001,"fspId":"perffsp1","wsUrl":"ws://sim-perffsp1:3002"},
+  {"partyId":19012345002,"fspId":"perffsp2","wsUrl":"ws://sim-perffsp2:3002"},
+  {"partyId":19012345003,"fspId":"perffsp3","wsUrl":"ws://sim-perffsp3:3002"},
+  {"partyId":19012345004,"fspId":"perffsp4","wsUrl":"ws://sim-perffsp4:3002"},
+  {"partyId":19012345005,"fspId":"perffsp5","wsUrl":"ws://sim-perffsp5:3002"},
+  {"partyId":19012345006,"fspId":"perffsp6","wsUrl":"ws://sim-perffsp6:3002"},
+  {"partyId":19012345007,"fspId":"perffsp7","wsUrl":"ws://sim-perffsp7:3002"},
+  {"partyId":19012345008,"fspId":"perffsp8","wsUrl":"ws://sim-perffsp8:3002"},
+]
+```
 
 Start tests
 
