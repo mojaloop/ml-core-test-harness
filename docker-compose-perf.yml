@@ -480,7 +480,7 @@ services:
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
     container_name: ml-api-adapter
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-api-adapter.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-api-adapter-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
     # ports:
     #   - "3000:3000"
     volumes:
@@ -508,6 +508,35 @@ services:
       - transfer
       - all-services
       - transfers-test
+
+  ml-handler-notification:
+    image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-handler-notification.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/handlers/index.js handler --notification"
+    # ports:
+    #   - "3000:3000"
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+    environment:
+      - LOG_LEVEL=info
+    networks:
+      - mojaloop-net
+    depends_on:
+      kafka:
+        condition: service_started
+      central-ledger:
+        condition: service_started
+    healthcheck:
+      test: wget -q http://localhost:3000/health -O /dev/null || exit 1
+      timeout: 30s
+      retries: 30
+      interval: 30s
+      start_period: 30s
+    user: root
+    profiles:
+      - ml-api-adapter
+      - transfer
+      - all-services
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
