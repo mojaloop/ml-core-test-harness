@@ -243,6 +243,8 @@ Start tests
 ```bash
 env K6_SCRIPT_CONFIG_FILE_NAME=transfers.json docker compose --project-name load -f docker-compose-load.yml up
 ( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=transfers_unidirectional.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
 env K6_SCRIPT_CONFIG_FILE_NAME=accountLookup.json docker compose --project-name load -f docker-compose-load.yml up
 ```
 

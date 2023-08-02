@@ -10,7 +10,6 @@ console.log(`Env Vars -->
   K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
   K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL},
   K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}
-  K6_SCRIPT_FSPIOP_FSP_PAYEE_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_PAYEE_POOL}
 `);
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
@@ -20,12 +19,19 @@ const condition = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CONDITION
 const amount = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 
-export function postTransfers() {
+export function postTransfers(unidirectional) {
   group("Post Transfers", function () {
-    const payerFsp = fspList[0]
-    const payeeFsp =  fspList[1]
-    // const payerFsp = payerFspList[randomIntBetween(0, payerFspList.length-1)]
-    // const payeeFsp =  payeeFspList[randomIntBetween(0, payeeFspList.length-1)]
+    let payerFsp
+    let payeeFsp
+
+    if (unidirectional) {
+      payerFsp = fspList[0]
+      payeeFsp =  fspList[1]
+    } else {
+      const randomSortedFsp = fspList.concat().sort(() => .5 - Math.random()).slice(0, 2);
+      payerFsp = randomSortedFsp[0]
+      payeeFsp =  randomSortedFsp[1]
+    }
 
     const startTs = Date.now();
     const transferId = crypto.randomUUID();
