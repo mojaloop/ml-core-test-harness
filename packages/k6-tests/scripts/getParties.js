@@ -3,7 +3,7 @@ import { check, fail, sleep, group } from 'k6';
 import crypto from "k6/crypto";
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/experimental/timers';
-import { randomIntBetween } from "https://jslib.k6.io/k6-utils/1.1.0/index.js";
+import { randomItem } from "https://jslib.k6.io/k6-utils/1.1.0/index.js";
 import { Trace } from "../common/trace.js";
 
 
