@@ -1,6 +1,5 @@
-export { accountLookupScenarios } from './scenarios/accountLookup.js';
-export { postTransfersScenarios } from './scenarios/postTransfers.js';
-export { postTransfersUnidirectionalScenarios } from './scenarios/postTransfersUnidirectional.js';
+export { fspiopDiscoveryScenarios } from './scenarios/fspiopDiscovery.js';
+export { fspiopTransfersScenarios } from './scenarios/fspiopTransfers.js';
 
 const configFile = __ENV.K6_SCRIPT_CONFIG_FILE_NAME ? './config/' + __ENV.K6_SCRIPT_CONFIG_FILE_NAME : './config/test.json';
 const testConfig = JSON.parse(open(configFile));

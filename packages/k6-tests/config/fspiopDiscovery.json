@@ -1,11 +1,14 @@
 {
   "scenarios": {
-    "postTransfers": {
+    "fspiopDiscovery": {
       "executor": "ramping-vus",
-      "exec": "postTransfersScenarios",
+      "exec": "fspiopDiscoveryScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
       "startVUs": 1,
       "stages": [
-        { "duration": "1m", "target": 1 }
+        { "duration": "10s", "target": 6 }
       ]
     }
   },

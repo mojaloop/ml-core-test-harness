@@ -24,10 +24,16 @@ const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function getParties() {
   group("Get Parties", function () {
-    const payerFsp = fspList[0]
-    const payeeFsp =  fspList[1]
-    //const payerFsp = payerFspList[Math.floor(Math.random()*payerFspList.length)]
-    //const payeeFsp =  payeeFspList[Math.floor(Math.random()*payeeFspList.length)]
+    let payerFsp
+    let payeeFsp
+    if (__ENV.UNIDIRECTIONAL === "true" || __ENV.UNIDIRECTIONAL === "TRUE") {
+      payerFsp = fspList[0]
+      payeeFsp =  fspList[1]
+    } else {
+      const randomSortedFsp = fspList.concat().sort(() => randomItem([-1,1])).slice(0, 2);
+      payerFsp = randomSortedFsp[0]
+      payeeFsp =  randomSortedFsp[1]
+    }
 
     const startTs = Date.now();
     const payeeId = payeeFsp['partyId'];
@@ -69,6 +75,10 @@ export function getParties() {
     ws.onopen = () => {
       console.info(traceId, `WS open on URL: ${wsURL}`);
       const params = {
+        tags: {
+          payerFspId,
+          payeeFspId
+        },
         headers: {
           'Accept': 'application/vnd.interoperability.parties+json;version=1.1',
           'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',

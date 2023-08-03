@@ -4,7 +4,7 @@ import { check, fail, sleep, group } from 'k6';
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/experimental/timers';
 import { Trace } from "../common/trace.js";
-import { randomIntBetween } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
+import { randomItem } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
 console.log(`Env Vars -->
   K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
@@ -19,16 +19,16 @@ const condition = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CONDITION
 const amount = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 
-export function postTransfers(unidirectional) {
+export function postTransfers() {
   group("Post Transfers", function () {
     let payerFsp
     let payeeFsp
 
-    if (unidirectional) {
+    if (__ENV.UNIDIRECTIONAL === "true" || __ENV.UNIDIRECTIONAL === "TRUE") {
       payerFsp = fspList[0]
       payeeFsp =  fspList[1]
     } else {
-      const randomSortedFsp = fspList.concat().sort(() => .5 - Math.random()).slice(0, 2);
+      const randomSortedFsp = fspList.concat().sort(() => randomItem([-1,1])).slice(0, 2);
       payerFsp = randomSortedFsp[0]
       payeeFsp =  randomSortedFsp[1]
     }
@@ -73,6 +73,10 @@ export function postTransfers(unidirectional) {
     ws.onopen = () => {
       console.info(traceId, `WS open on URL: ${wsURL}`);
       const params = {
+        tags: {
+          payerFspId,
+          payeeFspId
+        },
         headers: {
           'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
           'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',

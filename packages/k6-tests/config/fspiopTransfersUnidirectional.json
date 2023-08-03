@@ -1,8 +1,11 @@
 {
   "scenarios": {
-    "postTransfers": {
+    "fspiopTransfers": {
       "executor": "ramping-vus",
-      "exec": "postTransfersUnidirectionalScenarios",
+      "exec": "fspiopTransfersScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "true"
+      },
       "startVUs": 1,
       "stages": [
         { "duration": "1m", "target": 1 }
