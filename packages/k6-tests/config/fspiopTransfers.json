@@ -1,0 +1,20 @@
+{
+  "scenarios": {
+    "fspiopTransfers": {
+      "executor": "ramping-vus",
+      "exec": "fspiopTransfersScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "startVUs": 1,
+      "stages": [
+        { "duration": "1m", "target": 1 }
+      ]
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}

@@ -172,13 +172,27 @@ ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 ### Running ALS with dependencies
 
 ```bash
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile ttk-provisioning up -d
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test --profile ttk-provisioning-als up -d
 ```
 
 Stop Services
 
 ```bash
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services down -v
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
+### Running Services for Transfers characterization
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 2dfsp --profile ttk-provisioning-transfers up -d
+```
+
+Stop Services
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 2dfsp down -v
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
@@ -198,7 +212,17 @@ docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
 Stop Monitoring Services
 
 ```bash
-docker compose --project-name monitoring -f docker-compose-monitoring.yml down -v
+docker compose --project-name monitoring --profile als-test -f docker-compose-monitoring.yml down -v
+```
+
+Start monitoring with account lookup service mysql exporter
+```bash
+docker compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml up -d
+```
+
+Start monitoring with central ledger mysql exporter
+```bash
+docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
@@ -210,14 +234,37 @@ TODO:
 
 [K6](https://k6.io) is being used to execute performance tests, with metrics being captured by [Prometheus](https://k6.io/docs/results-output/real-time/prometheus-remote-write) and displayed using [Grafana](https://k6.io/docs/results-output/real-time/prometheus-remote-write/#time-series-visualization).
 
-Tests can be defined in the [./docker/k6/scripts/test.js](./docker/k6/scripts/test.js), refer to [API load testing guide](https://k6.io/docs/testing-guides/api-load-testing/) for more information.
+Tests can be defined in the [./packages/k6-tests/scripts/test.js](./packages/k6-tests/scripts/test.js), refer to [API load testing guide](https://k6.io/docs/testing-guides/api-load-testing/) for more information.
 
-Env configs are stored in the [./docker/k6/.env](./docker/k6/.env) environment configuration file, which can be referenced in by the [./docker/k6/scripts/test.js](./docker/k6/scripts/test.js).
+Env configs are stored in the [./perf.env](./perf.env) environment configuration file..
+
+Note: Transfer testing
+
+Depending on the profile you started the performance docker compose with i.e `--profile transfers-test --profile {2/4/8}dfsp`
+You will need to edit `K6_SCRIPT_FSPIOP_FSP_POOL` json string in `./perf.env` to contain 2/4/8 dfsps depending on your test.
+For reference here are the provisioned dfsps with an associated partyId available for use.
+
+```
+[
+  {"partyId":19012345001,"fspId":"perffsp1","wsUrl":"ws://sim-perffsp1:3002"},
+  {"partyId":19012345002,"fspId":"perffsp2","wsUrl":"ws://sim-perffsp2:3002"},
+  {"partyId":19012345003,"fspId":"perffsp3","wsUrl":"ws://sim-perffsp3:3002"},
+  {"partyId":19012345004,"fspId":"perffsp4","wsUrl":"ws://sim-perffsp4:3002"},
+  {"partyId":19012345005,"fspId":"perffsp5","wsUrl":"ws://sim-perffsp5:3002"},
+  {"partyId":19012345006,"fspId":"perffsp6","wsUrl":"ws://sim-perffsp6:3002"},
+  {"partyId":19012345007,"fspId":"perffsp7","wsUrl":"ws://sim-perffsp7:3002"},
+  {"partyId":19012345008,"fspId":"perffsp8","wsUrl":"ws://sim-perffsp8:3002"},
+]
+```
 
 Start tests
 
 ```bash
-docker compose --project-name load -f docker-compose-load.yml up
+env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfers.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfersUnidirectional.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDiscovery.json docker compose --project-name load -f docker-compose-load.yml up
 ```
 
 Cleanup tests

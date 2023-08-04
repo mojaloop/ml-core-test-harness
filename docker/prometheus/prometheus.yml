@@ -65,7 +65,13 @@ scrape_configs:
           # 'quoting-service:3002' // Currently no metrics end-point exposed
           ## Transfer Services
           'ml-api-adapter:3000',
+          'ml-handler-notification:3000',
           'central-ledger:3001',
+          'central-ledger-prepare:3001',
+          'central-ledger-position:3001',
+          'central-ledger-fulfil:3001',
+          'central-ledger-timeout:3001',
+          'central-ledger-get:3001',
           'kafka-exporter:9308',
         ]
 
@@ -77,9 +83,16 @@ scrape_configs:
     static_configs:
       - targets: [
           # 'callback-handler-svc:3001',
-          'callback-handler-svc-payer-sim:3001',
-          'callback-handler-svc-payee-sim:3001',
+          'sim-perffsp1:3001',
+          'sim-perffsp2:3001',
+          'sim-perffsp3:3001',
+          'sim-perffsp4:3001',
+          'sim-perffsp5:3001',
+          'sim-perffsp6:3001',
+          'sim-perffsp7:3001',
+          'sim-perffsp8:3001',
           'callback-handler-svc-oracle-sim:3001',
           'callback-handler-svc-cl-sim:3001',
           'mysqlexporter-als:9104',
+          'mysqlexporter-cl:9104'
         ]

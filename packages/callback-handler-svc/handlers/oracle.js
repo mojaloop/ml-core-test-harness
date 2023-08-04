@@ -11,11 +11,23 @@ const init = (config, logger, options = undefined) => {
       'Ingress - Operation handler',
       ['success', 'operation']
     ).startTimer()
+
+    const partyToFspIdMap = {
+      "19012345001": 'perffsp1',
+      "19012345002": 'perffsp2',
+      "19012345003": 'perffsp3',
+      "19012345004": 'perffsp4',
+      "19012345005": 'perffsp5',
+      "19012345006": 'perffsp6',
+      "19012345007": 'perffsp7',
+      "19012345008": 'perffsp8'
+    }
+
     const id = req.params.id
     res.status(200).json({
       "partyList":[
         {
-          "fspId":id,
+          "fspId": partyToFspIdMap[id],
           "currency":"USD"
         }
       ]

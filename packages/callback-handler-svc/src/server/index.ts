@@ -50,6 +50,13 @@ export type options = {
   wsServer: WSServer,
   metrics: (typeof Metrics)
 }
+app.use(express.json({
+  type: [
+    'application/json',
+    'application/*+json',
+  ]
+}))
+
 async function run (wsServer: WSServer): Promise<void> {
   const handlersList = await requireGlob(path.join(process.cwd(), './handlers/**.js'))
   Logger.isInfoEnabled && Logger.info(`Handler imports found ${JSON.stringify(handlersList)}`)
@@ -68,7 +75,6 @@ async function run (wsServer: WSServer): Promise<void> {
     Metrics.setup(Config.INSTRUMENTATION.METRICS.config)
   }
 
-  app.use(express.json())
   app.get('/health', (_req, res) => {
     res.json({
       status: 'OK'
