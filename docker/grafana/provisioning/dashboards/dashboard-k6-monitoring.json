@@ -910,7 +910,7 @@
           {
             "matcher": {
               "id": "byFrameRefID",
-              "options": "F"
+              "options": "G"
             },
             "properties": [
               {
@@ -918,6 +918,13 @@
                 "value": "ops"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": ""
+            },
+            "properties": []
           }
         ]
       },
@@ -1033,6 +1040,22 @@
           "legendFormat": "Iteration Rate - {{testid}} - {{scenario}}",
           "range": true,
           "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum by(testid, payerFspId, payeeFspId) (rate(k6_http_reqs_total{testid=~\"$testid\"}[$__rate_interval]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Requests Rate   - {{testid}} - {{payerFspId}} -> {{payeeFspId}}",
+          "range": true,
+          "refId": "G"
         }
       ],
       "type": "timeseries"
@@ -2002,7 +2025,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue"
+                "color": "blue",
+                "value": null
               }
             ]
           },
@@ -2768,7 +2792,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2963,7 +2988,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4761,9 +4787,13 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": [
+            "1691162724495"
+          ],
+          "value": [
+            "1691162724495"
+          ]
         },
         "datasource": {
           "type": "prometheus",
