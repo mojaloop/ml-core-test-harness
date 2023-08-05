@@ -52,10 +52,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -143,10 +139,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -232,10 +224,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -259,10 +247,40 @@
           ],
           "show": false
         },
+        "frameIndex": 1,
         "showHeader": true
       },
       "pluginVersion": "10.0.2",
       "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "ANALYZE TABLE transfer;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
         {
           "dataset": "performance_schema",
           "datasource": {
@@ -273,7 +291,7 @@
           "format": "table",
           "rawQuery": true,
           "rawSql": "SELECT table_schema \"DB Name\",\n        ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) \"DB Size in MB\" \nFROM information_schema.tables \nGROUP BY table_schema; ",
-          "refId": "A",
+          "refId": "B",
           "sql": {
             "columns": [
               {
