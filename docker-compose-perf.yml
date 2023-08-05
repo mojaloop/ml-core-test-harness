@@ -642,10 +642,10 @@ services:
         condition: service_healthy
       central-handler-position:
         condition: service_healthy
-      central-handler-timeout:
-        condition: service_healthy
-      central-handler-get:
-        condition: service_healthy
+      # central-handler-timeout:
+      #   condition: service_healthy
+      # central-handler-get:
+      #   condition: service_healthy
       central-handler-admin:
         condition: service_healthy
     networks:
