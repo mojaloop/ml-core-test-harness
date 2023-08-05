@@ -113,6 +113,7 @@ services:
       - ./docker/grafana/config.env
     environment:
       GF_SECURITY_DATA_SOURCE_PROXY_WHITELIST: mysql-cl:3306
+      GRAFANA_CL_MYSQL_PASSWORD: password
       GF_RENDERING_SERVER_URL: http://renderer:8081/render
       GF_RENDERING_CALLBACK_URL: http://grafana:3000/
       GF_LOG_FILTERS: rendering:debug

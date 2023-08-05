@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 11,
+  "id": 5,
   "links": [
     {
       "asDropdown": false,
@@ -323,13 +323,13 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Central Ledger DB",
   "uid": "d17cf1dd-8fbc-4841-a957-214387249f19",
-  "version": 5,
+  "version": 1,
   "weekStart": ""
 }

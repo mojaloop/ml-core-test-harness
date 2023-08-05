@@ -48,3 +48,12 @@ datasources:
   version: 1
   # <bool> allow users to edit datasources from the UI.
   editable: true
+- name: MySQL
+  type: mysql
+  url: mysql-cl:3306
+  user: central_ledger
+  uid: e6f1763f-dc6a-4521-8254-0dbe1515b837
+  jsonData:
+    database: central_ledger
+  secureJsonData:
+    password: ${GRAFANA_CL_MYSQL_PASSWORD}
