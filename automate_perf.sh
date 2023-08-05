@@ -9,7 +9,7 @@ declare -a dashboards=("dashboard-account-lookup-service" "Docker%20Prometheus%2
 echo "Start Time : $(date +"%T")"
 startTestSeconds=$(date +"%s")
 
-env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDiscovery.json docker compose --project-name load -f docker-compose-load.yml up -d
+env K6_SCRIPT_CONFIG_FILE_NAME=$K6_SCENARIO_CONFIG docker compose --project-name load -f docker-compose-load.yml up -d
 
 # Replace 'your_container_name' with the actual name of your Docker container
 CONTAINER_NAME="load-k6-1"
