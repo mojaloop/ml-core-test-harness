@@ -3,7 +3,7 @@
 source ./automate_perf.env
 
 # define the list of dashboards
-declare -a dashboards=("dashboard-account-lookup-service" "Docker%20Prometheus%20Monitoring")
+declare -a dashboards=("dashboard-account-lookup-service" "Docker%20Prometheus%20Monitoring" "NodeJS%20Application%20Dashboard" "Official%20k6%20Test%20Result")
 
 # store current time in a variable
 echo "Start Time : $(date +"%T")"
