@@ -272,3 +272,17 @@ Cleanup tests
 ```bash
 docker compose --project-name load -f docker-compose-load.yml down -v
 ```
+
+### Automate Load Tests
+This section describes the process to automate capturing of grafana rendered dashboards after running the performance testing scenarios. 
+
+The main script that contains the logic for this is automate_perf.sh. Before running this script, the required variables are provided as environment variables that are defined in automate_perf.env. As this file contains login credentials, to avoid credential exposure a sample file called automate_perf_sample.env is available at the root level. Make a copy of this file, rename it to automate_perf.env and update the variable values.
+
+Once automate_perf.env is ready, the next step is to make sure that the services for test harness and monitoring are up and running. The relevant docker-compose commands for these 2 steps are listed above in Performance Characterization section.
+
+Once the required services are up and running, run automate_perf.sh from terminal. Once the script is completed successfully, a results folder is created at the main root level. In there another folder based on date is created and it creates subfolders for the different scenarios that are executed. The different dashboards that will be collected are specified in the script itself.
+
+Run the script:
+```bash
+./automate_perf.sh
+```
