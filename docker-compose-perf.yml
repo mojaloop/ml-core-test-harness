@@ -243,81 +243,82 @@ services:
       - all-services
       - transfers-test
 
-  central-handler-timeout:
-    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --timeout"
-    # ports:
-    #   - "3001:3001"
-    volumes:
-       - ./docker/wait4:/opt/app/wait4
-       - ./docker/config-modifier:/opt/app/config-modifier
-    environment:
-      - LOG_LEVEL=info
-      - CLEDG_MONGODB__DISABLED=true
-      - EVENT_SDK_TRACEID_PER_VENDOR=false
-    networks:
-      - mojaloop-net
-    depends_on:
-      central-ledger:
-        condition: service_healthy
-      mysql-cl:
-        condition: service_healthy
-      kafka:
-        condition: service_started
-      # objstore:
-      #   condition: service_started
-    healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
-      timeout: 20s
-      retries: 30
-      interval: 30s
-      start_period: 30s
-    user: root
-    profiles:
-      - central-ledger
-      - transfer
-      - discovery
-      - agreement
-      - all-services
-      - transfers-test
 
-  central-handler-get:
-    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --get"
-    # ports:
-    #   - "3001:3001"
-    volumes:
-       - ./docker/wait4:/opt/app/wait4
-       - ./docker/config-modifier:/opt/app/config-modifier
-    environment:
-      - LOG_LEVEL=info
-      - CLEDG_MONGODB__DISABLED=true
-      - EVENT_SDK_TRACEID_PER_VENDOR=false
-    networks:
-      - mojaloop-net
-    depends_on:
-      central-ledger:
-        condition: service_healthy
-      mysql-cl:
-        condition: service_healthy
-      kafka:
-        condition: service_started
-      # objstore:
-      #   condition: service_started
-    healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
-      timeout: 20s
-      retries: 30
-      interval: 30s
-      start_period: 30s
-    user: root
-    profiles:
-      - central-ledger
-      - transfer
-      - discovery
-      - agreement
-      - all-services
-      - transfers-test
+  # central-handler-timeout:
+  #   image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+  #   command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --timeout"
+  #   # ports:
+  #   #   - "3001:3001"
+  #   volumes:
+  #      - ./docker/wait4:/opt/app/wait4
+  #      - ./docker/config-modifier:/opt/app/config-modifier
+  #   environment:
+  #     - LOG_LEVEL=info
+  #     - CLEDG_MONGODB__DISABLED=true
+  #     - EVENT_SDK_TRACEID_PER_VENDOR=false
+  #   networks:
+  #     - mojaloop-net
+  #   depends_on:
+  #     central-ledger:
+  #       condition: service_healthy
+  #     mysql-cl:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_started
+  #     # objstore:
+  #     #   condition: service_started
+  #   healthcheck:
+  #     test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+  #     timeout: 20s
+  #     retries: 30
+  #     interval: 30s
+  #     start_period: 30s
+  #   user: root
+  #   profiles:
+  #     - central-ledger
+  #     - transfer
+  #     - discovery
+  #     - agreement
+  #     - all-services
+  #     - transfers-test
+
+  # central-handler-get:
+  #   image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+  #   command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --get"
+  #   # ports:
+  #   #   - "3001:3001"
+  #   volumes:
+  #      - ./docker/wait4:/opt/app/wait4
+  #      - ./docker/config-modifier:/opt/app/config-modifier
+  #   environment:
+  #     - LOG_LEVEL=info
+  #     - CLEDG_MONGODB__DISABLED=true
+  #     - EVENT_SDK_TRACEID_PER_VENDOR=false
+  #   networks:
+  #     - mojaloop-net
+  #   depends_on:
+  #     central-ledger:
+  #       condition: service_healthy
+  #     mysql-cl:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_started
+  #     # objstore:
+  #     #   condition: service_started
+  #   healthcheck:
+  #     test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+  #     timeout: 20s
+  #     retries: 30
+  #     interval: 30s
+  #     start_period: 30s
+  #   user: root
+  #   profiles:
+  #     - central-ledger
+  #     - transfer
+  #     - discovery
+  #     - agreement
+  #     - all-services
+  #     - transfers-test
 
   central-handler-admin:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -476,6 +477,9 @@ services:
       - agreement
       - all-services
       - transfers-test
+    ## In memory storage - Ref: https://docs.docker.com/storage/tmpfs/
+    tmpfs:
+      - /var/lib/mysql
 
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
@@ -489,6 +493,7 @@ services:
     environment:
       - LOG_LEVEL=info
       - EVENT_SDK_TRACEID_PER_VENDOR=false
+      - MLAPI_TRANSFERS__SEND_TRANSFER_CONFIRMATION_TO_PAYEE=false
     networks:
       - mojaloop-net
     depends_on:
@@ -637,10 +642,10 @@ services:
         condition: service_healthy
       central-handler-position:
         condition: service_healthy
-      central-handler-timeout:
-        condition: service_healthy
-      central-handler-get:
-        condition: service_healthy
+      # central-handler-timeout:
+      #   condition: service_healthy
+      # central-handler-get:
+      #   condition: service_healthy
       central-handler-admin:
         condition: service_healthy
     networks:
