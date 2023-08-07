@@ -8,6 +8,9 @@ declare -a dashboards=("dashboard-account-lookup-service" "Docker%20Prometheus%2
 # store current time in a variable
 echo "Start Time : $(date +"%T")"
 startTestSeconds=$(date +"%s")
+# get milliseconds
+startTestMilliseconds=$(date +"%3N")
+
 
 env K6_SCRIPT_CONFIG_FILE_NAME=$K6_SCENARIO_CONFIG docker compose --project-name load -f docker-compose-load.yml up -d
 
@@ -27,6 +30,8 @@ while true; do
       echo "Container '${CONTAINER_NAME}' is stopped."
       echo "End Time : $(date +"%T")"
       endTestSeconds=$(date +"%s")
+      # get milliseconds
+      endTestMilliseconds=$(date +"%3N")
       break
     else
       echo "Container '${CONTAINER_NAME}' not found."
@@ -40,6 +45,7 @@ done
 
 # Calculate the difference in seconds
 difference=$((endTestSeconds - startTestSeconds))
+
 
 s=$difference
 ((h=s/3600))
@@ -62,7 +68,9 @@ sleep 10
 for dashboard in "${dashboards[@]}"
 do
    echo "$dashboard"
+   dashboard_string=$(echo $dashboard | sed 's/%20/ /g' | tr -d ' ')
+   echo "$dashboard_string"
    dashboardUrl=$(curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/api/search\?query\=$dashboard | jq -r '.[].url')
-   curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl\?height\=4000\&width\=2000\&from\=now-5m\&to\=now > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard.png
+   curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl\?height\=4000\&width\=2000\&from\=$startTestMilliseconds\&to\=$endTestMilliseconds > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string.png
 done
 
