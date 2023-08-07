@@ -71,6 +71,15 @@ do
    dashboard_string=$(echo $dashboard | sed 's/%20/ /g' | tr -d ' ')
    echo "$dashboard_string"
    dashboardUrl=$(curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/api/search\?query\=$dashboard | jq -r '.[].url')
-   curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl\?height\=4000\&width\=2000\&from\=$startTestMilliseconds\&to\=$endTestMilliseconds > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string.png
+   #check if dashboard is NodeJSApplicationDashboard
+    if [[ $dashboard_string == *"NodeJSApplicationDashboard"* ]]; then
+        curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl\?height\=4000\&width\=2000\&from\=$startTestMilliseconds\&to\=$endTestMilliseconds\&var-prefix\=moja_als\&var-instance\=All\&var-serviceName\=All\&var-podName\=All > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string-moja_als.png
+        curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl\?height\=4000\&width\=2000\&from\=$startTestMilliseconds\&to\=$endTestMilliseconds\&var-prefix\=moja_cl\&var-instance\=All\&var-serviceName\=All\&var-podName\=All > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string-moja_cl.png
+        curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl\?height\=4000\&width\=2000\&from\=$startTestMilliseconds\&to\=$endTestMilliseconds\&var-prefix\=moja_ml\&var-instance\=All\&var-serviceName\=All\&var-podName\=All > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string-moja_ml.png
+        curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl\?height\=4000\&width\=2000\&from\=$startTestMilliseconds\&to\=$endTestMilliseconds\&var-prefix\=cbs\&var-instance\=All\&var-serviceName\=All\&var-podName\=All > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string-cbs.png
+    else
+        curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl\?height\=4000\&width\=2000\&from\=$startTestMilliseconds\&to\=$endTestMilliseconds > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string.png
+    fi
+   
 done
 
