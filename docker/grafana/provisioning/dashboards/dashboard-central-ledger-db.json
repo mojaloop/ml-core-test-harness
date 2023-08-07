@@ -376,7 +376,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT central_ledger.transferStateChange.transferStateId AS transferState, COUNT(central_ledger.transfer.transferId)\nFROM central_ledger.transfer\nLEFT JOIN central_ledger.transferStateChange ON central_ledger.transfer.transferId=central_ledger.transferStateChange.transferId \nWHERE central_ledger.transferStateChange.createdDate between $__timeFrom() AND $__timeTo() \nGROUP BY central_ledger.transferStateChange.transferStateId",
+          "rawSql": "SELECT COUNT(central_ledger.transfer.transferId), central_ledger.transferStateChange.transferStateId\nFROM central_ledger.transfer \nLEFT JOIN central_ledger.transferStateChange ON central_ledger.transfer.transferId=central_ledger.transferStateChange.transferId  \nWHERE central_ledger.transferStateChange.transferStateChangeId IN (\n  SELECT MAX(central_ledger.transferStateChange.transferStateChangeId)\n  FROM central_ledger.transfer \n  LEFT JOIN central_ledger.transferStateChange ON central_ledger.transfer.transferId=central_ledger.transferStateChange.transferId \n  WHERE central_ledger.transferStateChange.createdDate between $__timeFrom() AND $__timeTo() \n  GROUP BY central_ledger.transfer.transferId\n) \nGROUP BY central_ledger.transferStateChange.transferStateId",
           "refId": "A",
           "sql": {
             "columns": [
@@ -397,11 +397,11 @@
           }
         }
       ],
-      "title": "TransferState Change Breakdown",
+      "title": "Last Transfer State Count",
       "type": "table"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -409,13 +409,13 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
-    "to": "now"
+    "from": "2023-07-29T03:33:07.521Z",
+    "to": "2023-08-14T03:33:07.521Z"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Central Ledger DB",
   "uid": "d17cf1dd-8fbc-4841-a957-214387249f19",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
