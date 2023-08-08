@@ -3,16 +3,29 @@
 source ./automate_perf.env
 
 # define the list of dashboards
-declare -a dashboards=("dashboard-account-lookup-service" "Docker%20Prometheus%20Monitoring" "NodeJS%20Application%20Dashboard" "Official%20k6%20Test%20Result")
+declare -a dashboards=(\
+  "dashboard-account-lookup-service" \
+  "Central%20Ledger%20DB" \
+  "Kafka%20Exporter%20Overview" \
+  "mojaloop-central-ledger" \
+  "Mojaloop%20-%20Central-Ledger%20-%20Performance%20Characterization" \
+  "Mojaloop%20-%20ML-API" \
+  "Docker%20Prometheus%20Monitoring" \
+  "NodeJS%20Application%20Dashboard" \
+  "Official%20k6%20Test%20Result" \
+  "MySQL%20Overview" \
+  "Supporting%20Services%20-%20Callback%20Hander%20Service"
+  )
 
 # store current time in a variable
 echo "Start Time : $(date +"%T")"
 startTestSeconds=$(date +"%s")
 # get milliseconds
-startTestMilliseconds=$(date +"%3N")
+echo "Epoch Start Time : $(date +"%s%3N")"
+startTestMilliseconds=$(date +"%s%3N")
 
 
-env K6_SCRIPT_CONFIG_FILE_NAME=$K6_SCENARIO_CONFIG docker compose --project-name load -f docker-compose-load.yml up -d
+env K6_SCRIPT_CONFIG_FILE_NAME=$K6_SCENARIO_CONFIG docker compose --project-name load -f docker-compose-load.yml up
 
 # Replace 'your_container_name' with the actual name of your Docker container
 CONTAINER_NAME="load-k6-1"
@@ -31,7 +44,8 @@ while true; do
       echo "End Time : $(date +"%T")"
       endTestSeconds=$(date +"%s")
       # get milliseconds
-      endTestMilliseconds=$(date +"%3N")
+      echo "Epoch End Time plus 2 minutes : $(date +"%s%3N")"
+      endTestMilliseconds=$(date -d '+2 minutes' +"%s%3N")
       break
     else
       echo "Container '${CONTAINER_NAME}' not found."
@@ -80,6 +94,7 @@ do
     else
         curl http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl\?height\=4000\&width\=2000\&from\=$startTestMilliseconds\&to\=$endTestMilliseconds > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string.png
     fi
-   
+
 done
 
+echo "Epoch &from=${startTestMilliseconds}&to=${endTestMilliseconds}"
