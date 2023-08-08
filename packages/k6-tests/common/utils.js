@@ -1,4 +1,5 @@
 import { check, fail } from "k6";
+import { randomItem } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
 export function checkStatus({ response, expectedStatus, expectedContent, failOnError, printOnError, dynamicIds }) {
   if (isEmpty(expectedStatus) && isEmpty(expectedContent)) {
@@ -54,3 +55,18 @@ function isEmpty(str) {
   return (!str || str.length === 0);
 }
 
+export function getTwoItemsFromArray(inputArray) {
+  
+  // Option 1
+  // const outputArray = inputArray.concat().sort(() => randomItem([-1,1])).slice(0, 2);
+  
+  // Option 2
+  const tempArray = [ ...inputArray ]
+  const outputArray = []
+  const selectedItem1 = randomItem(tempArray)
+  outputArray.push(selectedItem1)
+  tempArray.splice(tempArray.indexOf(selectedItem1), 1);
+  outputArray.push(randomItem(tempArray))
+
+  return outputArray
+}

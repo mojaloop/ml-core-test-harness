@@ -93,6 +93,7 @@ services:
   ## Services for Transfer tests
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    scale: 1
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
     # ports:
     #   - "3001:3001"
@@ -131,6 +132,7 @@ services:
 
   central-handler-prepare:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    scale: 2
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
     # ports:
     #   - "3001:3001"
@@ -169,6 +171,7 @@ services:
 
   central-handler-position:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    scale: 8
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
     # ports:
     #   - "3001:3001"
@@ -207,6 +210,7 @@ services:
 
   central-handler-fulfil:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    scale: 2
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
     # ports:
     #   - "3001:3001"
@@ -322,6 +326,7 @@ services:
 
   central-handler-admin:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    scale: 2
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --admin"
     # ports:
     #   - "3001:3001"
@@ -384,6 +389,8 @@ services:
     networks:
       - mojaloop-net
     image: docker.io/bitnami/kafka:3.4.0
+    env_file:
+      - perf.env
     depends_on:
       - kafka
     entrypoint: [ '/bin/sh', '-c' ]
@@ -392,16 +399,16 @@ services:
       # blocks until kafka is reachable
       kafka-topics.sh --bootstrap-server kafka:29092 --list
       echo -e 'Creating kafka topics'
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-prepare --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-position --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-fulfil --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-notification-event --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-get --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-admin-transfer --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-prepare --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-fulfil --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-processing --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-get --replication-factor 1 --partitions 1
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-prepare --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-position --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-fulfil --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-notification-event --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-get --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-admin-transfer --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-prepare --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-fulfil --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-processing --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-get --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
       echo -e 'Successfully created the following topics:'
       kafka-topics.sh --bootstrap-server kafka:29092 --list
       "
@@ -483,7 +490,8 @@ services:
 
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
-    container_name: ml-api-adapter
+    scale: 2
+    # container_name: ml-api-adapter
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-api-adapter-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
     # ports:
     #   - "3000:3000"
@@ -516,6 +524,7 @@ services:
 
   ml-handler-notification:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
+    scale: 4
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-handler-notification.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/handlers/index.js handler --notification"
     # ports:
     #   - "3000:3000"
