@@ -286,3 +286,8 @@ Run the script:
 ```bash
 ./automate_perf.sh
 ```
+
+To capture results without running tests, use the following command
+```
+./automate_perf.sh -c -s <Start Time in Milliseconds> -e <End time in Milliseconds>
+```
