@@ -4,19 +4,19 @@ Help()
 {
   # Display Help
   echo "Usage: automate_perf.sh [ -c | --capture-results-only ]
-              [ -cst | --capture-start-time ]
-              [ -cet | --capture-end-time ]
+              [ -f | --capture-from-time ]
+              [ -t | --capture-to-time ]
               [ -h | --help  ]"
   echo "options:"
-  echo "-c | --capture-results-only     Capture dashboards only, skip test execution."
-  echo "-s | --capture-start-time     Start time for capturing results"
-  echo "-e | --capture-end-time       End time for capturing results"
+  echo "-c | --capture-results-only   Capture dashboards only, skip test execution."
+  echo "-f | --capture-from-time      From time for capturing results"
+  echo "-t | --capture-to-time        To time for capturing results"
   echo "h     Print this Help."
   exit;
 }
 
-SHORT=c,s:,e:,h
-LONG=capture-results-only,capture-start-time:,capture-end-time:,help
+SHORT=c,f:,t:,h
+LONG=capture-results-only,capture-from-time:,capture-to-time:,help
 OPTS=$(getopt -a -n automate_perf.sh --options $SHORT --longoptions $LONG -- "$@")
 
 VALID_ARGUMENTS=$# # Returns the count of arguments that are in short or long options
@@ -34,12 +34,12 @@ do
       captureResultsOnly="true"
       shift 1
       ;;
-    -s | --capture-start-time )
-      captureStartTime="$2"
+    -f | --capture-from-time )
+      captureFromTime="$2"
       shift 2
       ;;
-    -e | --capture-end-time )
-      captureEndTime="$2"
+    -t | --capture-to-time )
+      captureToTime="$2"
       shift 2
       ;;
     -h | --help)
@@ -57,9 +57,9 @@ do
   esac
 done
 
-if [ "$captureResultsOnly" ] && ([ -z "$captureStartTime" ] || [ -z "$captureEndTime" ])
+if [ "$captureResultsOnly" ] && ([ -z "$captureFromTime" ] || [ -z "$captureToTime" ])
 then
-  echo "ERROR: Start Time and End Time should be provided in capture-result-only mode"
+  echo "ERROR: capture-from-time and capture-to-time should be provided in capture-result-only mode"
   echo
   Help
 fi
@@ -82,7 +82,7 @@ declare -a dashboards=(\
   )
 
 # # create a directory to store the results with date timestamp in the name, check if the directory exists
-resultsSubDir="$(date +"%Y-%m-%d")"
+resultsSubDir="$(date +"%Y%m%d")"
 
 if [ ! -d "results/$resultsSubDir/$K6_SCENARIO_NAME" ]; then
   mkdir -p results/$resultsSubDir/$K6_SCENARIO_NAME
@@ -97,7 +97,10 @@ then
   echo "Epoch Start Time : $(date +"%s%3N")"
   startTestMilliseconds=$(date +"%s%3N")
 
-  env K6_SCRIPT_CONFIG_FILE_NAME=$K6_SCENARIO_CONFIG docker compose --project-name load -f docker-compose-load.yml up > results/$resultsSubDir/$K6_SCENARIO_NAME/load-k6-1.log
+  if [ ! -d "results/$resultsSubDir/$K6_SCENARIO_NAME/logs" ]; then
+    mkdir -p results/$resultsSubDir/$K6_SCENARIO_NAME/logs
+  fi
+  env K6_SCRIPT_CONFIG_FILE_NAME=$K6_SCENARIO_CONFIG docker compose --project-name load -f docker-compose-load.yml up > results/$resultsSubDir/$K6_SCENARIO_NAME/logs/load-k6-1.log
 
   # Replace 'your_container_name' with the actual name of your Docker container
   CONTAINER_NAME="load-k6-1"
@@ -144,10 +147,13 @@ then
   # Add sleep 10s for grafana to catchup with the metrics
   sleep 10
 else
-  startTestMilliseconds=$captureStartTime
-  endTestMilliseconds=$captureEndTime
+  startTestMilliseconds=$captureFromTime
+  endTestMilliseconds=$captureToTime
 fi
 
+if [ ! -d "results/$resultsSubDir/$K6_SCENARIO_NAME/images" ]; then
+  mkdir -p results/$resultsSubDir/$K6_SCENARIO_NAME/images
+fi
 # loop through the array
 for dashboard in "${dashboards[@]}"
 do
@@ -158,15 +164,20 @@ do
   dashboardUrl=$(curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/api/search?query=$dashboard" | jq -r '.[].url')
   #check if dashboard is NodeJSApplicationDashboard
   if [[ $dashboard_string == *"NodeJSApplicationDashboard"* ]]; then
-      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=5000&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds&var-prefix=moja_als&var-instance=All&var-serviceName=All&var-podName=All" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string-moja_als.png
-      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=5000&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds&var-prefix=moja_cl&var-instance=All&var-serviceName=All&var-podName=All" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string-moja_cl.png
-      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=5000&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds&var-prefix=moja_ml&var-instance=All&var-serviceName=All&var-podName=All" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string-moja_ml.png
-      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=5000&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds&var-prefix=cbs&var-instance=All&var-serviceName=All&var-podName=All" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string-cbs.png
+      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=5000&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds&var-prefix=moja_als&var-instance=All&var-serviceName=All&var-podName=All" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/images/$dashboard_string-moja_als.png
+      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=5000&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds&var-prefix=moja_cl&var-instance=All&var-serviceName=All&var-podName=All" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/images/$dashboard_string-moja_cl.png
+      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=5000&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds&var-prefix=moja_ml&var-instance=All&var-serviceName=All&var-podName=All" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/images/$dashboard_string-moja_ml.png
+      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=5000&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds&var-prefix=cbs&var-instance=All&var-serviceName=All&var-podName=All" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/images/$dashboard_string-cbs.png
   elif [[ $dashboard_string == *"MySQLOverview"* ]]; then
-      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=6500&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string.png
+      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=6500&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/images/$dashboard_string.png
   else
-      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=5000&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/$dashboard_string.png
+      curl "http://$GRAFANA_USERNAME:$GRAFANA_PASSWORD@$GRAFANA_HOSTNAME:$GRAFANA_PORT/render$dashboardUrl?height=5000&width=2000&from=$startTestMilliseconds&to=$endTestMilliseconds" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/images/$dashboard_string.png
   fi
 done
+
+# Generate an empty README
+echo "# Scenario ${K6_SCENARIO_NAME} \n
+Params: &from=${startTestMilliseconds}&to=${endTestMilliseconds}
+" > ./results/$resultsSubDir/$K6_SCENARIO_NAME/README.md
 
 echo "Epoch &from=${startTestMilliseconds}&to=${endTestMilliseconds}"

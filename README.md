@@ -289,5 +289,5 @@ Run the script:
 
 To capture results without running tests, use the following command
 ```
-./automate_perf.sh -c -s <Start Time in Milliseconds> -e <End time in Milliseconds>
+./automate_perf.sh -c -f <From Time in Milliseconds> -t <To time in Milliseconds>
 ```
