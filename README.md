@@ -186,13 +186,13 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-t
 ### Running Services for Transfers characterization
 
 ```bash
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 2dfsp --profile ttk-provisioning-transfers up -d
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 8dfsp --profile ttk-provisioning-transfers up -d
 ```
 
 Stop Services
 
 ```bash
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 2dfsp down -v
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 8dfsp down -v
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose

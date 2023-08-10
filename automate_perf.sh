@@ -176,7 +176,7 @@ do
 done
 
 # Generate an empty README
-echo "# Scenario ${K6_SCENARIO_NAME} \n
+echo "# Scenario ${K6_SCENARIO_NAME}: ${K6_SCENARIO_DESCRIPTION}
 Params: &from=${startTestMilliseconds}&to=${endTestMilliseconds}
 " > ./results/$resultsSubDir/$K6_SCENARIO_NAME/README.md
 

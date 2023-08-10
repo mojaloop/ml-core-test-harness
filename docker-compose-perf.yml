@@ -19,9 +19,9 @@ services:
     environment:
       ## Wait 4 Config script
       - WAIT4_CONFIG=./wait4.config.perf-als.js
-      - LOG_LEVEL=info
-      ## Disable Logging by setting LOG_LEVEL to error
       # - LOG_LEVEL=error
+      ## Disable Logging by setting LOG_LEVEL to error
+      - LOG_LEVEL=error
       ## Configuration for EVENT SDK ASYNC OVERRIDES - https://github.com/mojaloop/event-sdk#configuration
       # - EVENT_SDK_ASYNC_OVERRIDE_EVENTS=""
       # - EVENT_SDK_ASYNC_OVERRIDE_EVENTS=log,audit,trace
@@ -91,9 +91,49 @@ services:
       - /var/lib/mysql
 
   ## Services for Transfer tests
+  central-ledger-migrator:
+    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    env_file:
+      - .env
+      - perf.env
+    scale: 1
+    command: sh -c "npm run migrate"
+    # ports:
+    #   - "3001:3001"
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+    environment:
+      ## Wait 4 Config script
+      - WAIT4_CONFIG=./wait4.config.perf-cl.js
+      # - LOG_LEVEL=error
+      - CLEDG_MONGODB__DISABLED=true
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+      - CLEDG_DATABASE__HOST=mysql-cl
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql-cl:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      # objstore:
+      #   condition: service_started
+    user: root
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+      - transfers-test
+
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    scale: 1
+    env_file:
+      - .env
+      - perf.env
+    scale: 2
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
     # ports:
     #   - "3001:3001"
@@ -103,7 +143,7 @@ services:
     environment:
       ## Wait 4 Config script
       - WAIT4_CONFIG=./wait4.config.perf-cl.js
-      - LOG_LEVEL=info
+      # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
@@ -113,6 +153,8 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      central-ledger-migrator:
+        condition: service_completed_successfully
       # objstore:
       #   condition: service_started
     healthcheck:
@@ -132,6 +174,9 @@ services:
 
   central-handler-prepare:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    env_file:
+      - .env
+      - perf.env
     scale: 2
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
     # ports:
@@ -140,7 +185,7 @@ services:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
-      - LOG_LEVEL=info
+      # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
@@ -171,6 +216,9 @@ services:
 
   central-handler-position:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    env_file:
+      - .env
+      - perf.env
     scale: 8
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
     # ports:
@@ -179,7 +227,7 @@ services:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
-      - LOG_LEVEL=info
+      # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
@@ -210,6 +258,9 @@ services:
 
   central-handler-fulfil:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    env_file:
+      - .env
+      - perf.env
     scale: 2
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
     # ports:
@@ -218,7 +269,7 @@ services:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
-      - LOG_LEVEL=info
+      # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
@@ -257,7 +308,7 @@ services:
   #      - ./docker/wait4:/opt/app/wait4
   #      - ./docker/config-modifier:/opt/app/config-modifier
   #   environment:
-  #     - LOG_LEVEL=info
+      # - LOG_LEVEL=error
   #     - CLEDG_MONGODB__DISABLED=true
   #     - EVENT_SDK_TRACEID_PER_VENDOR=false
   #   networks:
@@ -295,7 +346,7 @@ services:
   #      - ./docker/wait4:/opt/app/wait4
   #      - ./docker/config-modifier:/opt/app/config-modifier
   #   environment:
-  #     - LOG_LEVEL=info
+      # - LOG_LEVEL=error
   #     - CLEDG_MONGODB__DISABLED=true
   #     - EVENT_SDK_TRACEID_PER_VENDOR=false
   #   networks:
@@ -326,7 +377,10 @@ services:
 
   central-handler-admin:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
-    scale: 2
+    env_file:
+      - .env
+      - perf.env
+    scale: 1 # We dont need to scale this unless we are testing funds-in/out
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --admin"
     # ports:
     #   - "3001:3001"
@@ -334,7 +388,7 @@ services:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
-      - LOG_LEVEL=info
+      # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
@@ -461,6 +515,8 @@ services:
     container_name: mysql-cl
     # ports:
     #   - "3306:3306"
+    # command:
+    #   "--log-output=TABLE --slow-query-log=1 --long-query-time=0.01"
     volumes:
       # Note: this fixes the permissions issue, but docker-compose up will fail on first attempt
       - ./docker/sql-cl-init/:/docker-entrypoint-initdb.d/
@@ -490,6 +546,9 @@ services:
 
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
+    env_file:
+      - .env
+      - perf.env
     scale: 2
     # container_name: ml-api-adapter
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-api-adapter-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
@@ -499,9 +558,9 @@ services:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
     environment:
-      - LOG_LEVEL=info
+      # - LOG_LEVEL=error
       - EVENT_SDK_TRACEID_PER_VENDOR=false
-      - MLAPI_TRANSFERS__SEND_TRANSFER_CONFIRMATION_TO_PAYEE=false
+      # - MLAPI_TRANSFERS__SEND_TRANSFER_CONFIRMATION_TO_PAYEE=false
     networks:
       - mojaloop-net
     depends_on:
@@ -524,15 +583,19 @@ services:
 
   ml-handler-notification:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
+    env_file:
+      - .env
+      - perf.env
     scale: 4
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-handler-notification.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/handlers/index.js handler --notification"
     # ports:
     #   - "3000:3000"
+    #   - "9229:9229"
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
-    environment:
-      - LOG_LEVEL=info
+    environment: {}
+      # - LOG_LEVEL=error
     networks:
       - mojaloop-net
     depends_on:
@@ -684,8 +747,8 @@ services:
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/config
       - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
+    environment: {}
+      # - LOG_LEVEL=error
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -715,8 +778,8 @@ services:
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/config
       - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
+    environment: {}
+      # - LOG_LEVEL=error
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -728,6 +791,7 @@ services:
       - callback-handler
       - all-services
       - als-test
+      - transfers-test
 
   sim-perffsp1:
     scale: 1
@@ -746,8 +810,8 @@ services:
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/config
       - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
+    environment: {}
+      # - LOG_LEVEL=error
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -780,8 +844,8 @@ services:
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/config
       - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
+    environment: {}
+      # - LOG_LEVEL=error
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -814,8 +878,8 @@ services:
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/config
       - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
+    environment: {}
+      # - LOG_LEVEL=error
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -843,8 +907,8 @@ services:
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/config
       - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
+    environment: {}
+      # - LOG_LEVEL=error
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -872,8 +936,8 @@ services:
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/config
       - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
+    environment: {}
+      # - LOG_LEVEL=error
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -900,8 +964,8 @@ services:
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/config
       - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
+    environment: {}
+      # - LOG_LEVEL=error
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -928,8 +992,8 @@ services:
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/config
       - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
+    environment: {}
+      # - LOG_LEVEL=error
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -956,8 +1020,8 @@ services:
     volumes:
       - ./packages/callback-handler-svc/config:/opt/app/config
       - ./packages/callback-handler-svc/handlers:/opt/app/handlers
-    environment:
-      - LOG_LEVEL=info
+    environment: {}
+      # - LOG_LEVEL=error
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
