@@ -41,4 +41,4 @@ for (let partNumCount=1; partNumCount<=ATTEMPTS; partNumCount++) {
   }
 }
 
-if (!isResult) console.error(`Unable to find a solution after ${ATTEMPTS} attempts!`)
+if (!isResult) console.error(`Unable to find a no-colission solution after ${ATTEMPTS} attempts!`)

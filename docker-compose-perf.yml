@@ -1033,13 +1033,13 @@ services:
 
 
   ## Debug utilities
-  kowl:
-    image: quay.io/cloudhut/kowl:v1.4.0
-    container_name: cl_kowl
+  kafka-debug-console:
+    # image: quay.io/cloudhut/kowl:v1.4.0
+    image: docker.redpanda.com/redpandadata/console:latest
     deploy:
       replicas: 1
     restart: on-failure
-    hostname: kowl
+    hostname: kafka-debug-console
     ports:
     - "9080:8080"
     networks:
