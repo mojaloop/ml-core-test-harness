@@ -186,13 +186,13 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-t
 ### Running Services for Transfers characterization
 
 ```bash
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 2dfsp --profile ttk-provisioning-transfers up -d
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 8dfsp --profile ttk-provisioning-transfers up -d
 ```
 
 Stop Services
 
 ```bash
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 2dfsp down -v
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 8dfsp down -v
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
@@ -217,12 +217,12 @@ docker compose --project-name monitoring --profile als-test -f docker-compose-mo
 
 Start monitoring with account lookup service mysql exporter
 ```bash
-docker compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml up -d
+docker compose --project-name monitoring --profile als-test -f docker-compose-monitoring.yml up -d
 ```
 
 Start monitoring with central ledger mysql exporter
 ```bash
-docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
+docker compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml up -d
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
@@ -274,7 +274,7 @@ docker compose --project-name load -f docker-compose-load.yml down -v
 ```
 
 ### Automate Load Tests
-This section describes the process to automate capturing of grafana rendered dashboards after running the performance testing scenarios. 
+This section describes the process to automate capturing of grafana rendered dashboards after running the performance testing scenarios.
 
 The main script that contains the logic for this is automate_perf.sh. Before running this script, the required variables are provided as environment variables that are defined in automate_perf.env. As this file contains login credentials, to avoid credential exposure a sample file called automate_perf_sample.env is available at the root level. Make a copy of this file, rename it to automate_perf.env and update the variable values.
 
@@ -285,4 +285,9 @@ Once the required services are up and running, run automate_perf.sh from termina
 Run the script:
 ```bash
 ./automate_perf.sh
+```
+
+To capture results without running tests, use the following command
+```
+./automate_perf.sh -c -f <From Time in Milliseconds> -t <To time in Milliseconds>
 ```

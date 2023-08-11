@@ -2,6 +2,9 @@ module.exports = {
   "HOSTNAME": "http://ml-handler-notification",
   "ENDPOINT_SOURCE_URL": "http://central-ledger:3001",
   "ENDPOINT_HEALTH_URL": "http://central-ledger:3001/health",
+  "TRANSFERS": {
+    "SEND_TRANSFER_CONFIRMATION_TO_PAYEE": false
+  },
   "KAFKA": {
     "CONSUMER": {
       "NOTIFICATION": {

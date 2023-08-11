@@ -4,7 +4,7 @@ import { check, fail, sleep, group } from 'k6';
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/experimental/timers';
 import { Trace } from "../common/trace.js";
-import { randomItem } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
+import { getTwoItemsFromArray } from "../common/utils.js";
 
 console.log(`Env Vars -->
   K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
@@ -28,9 +28,9 @@ export function postTransfers() {
       payerFsp = fspList[0]
       payeeFsp =  fspList[1]
     } else {
-      const randomSortedFsp = fspList.concat().sort(() => randomItem([-1,1])).slice(0, 2);
-      payerFsp = randomSortedFsp[0]
-      payeeFsp =  randomSortedFsp[1]
+      const selectedFsps = getTwoItemsFromArray(fspList)
+      payerFsp = selectedFsps[0]
+      payeeFsp =  selectedFsps[1]
     }
 
     const startTs = Date.now();
@@ -81,6 +81,7 @@ export function postTransfers() {
           'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
           'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
           'FSPIOP-Source': payerFspId,
+          'FSPIOP-Destination': payeeFspId,
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
           'tracestate': `tx_end2end_start_ts=${startTs}`

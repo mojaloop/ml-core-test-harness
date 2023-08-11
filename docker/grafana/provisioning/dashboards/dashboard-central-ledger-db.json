@@ -90,7 +90,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(transferId) FROM central_ledger.transferStateChange WHERE transferStateId = 'COMMITTED' AND createdDate between $__timeFrom() AND $__timeTo()",
+          "rawSql": "SELECT COUNT(t1.transferId) \nFROM central_ledger.transferStateChange t1 \nWHERE transferStateId = 'COMMITTED' \nAND createdDate between $__timeFrom() \nAND $__timeTo() AND t1.createdDate = (\n  SELECT MAX(t2.createdDate)\n  FROM central_ledger.transferStateChange t2\n  WHERE t2.transferId = t1.transferId\n)\n                               ",
           "refId": "A",
           "sql": {
             "columns": [
@@ -313,9 +313,96 @@
       ],
       "title": "Panel Title",
       "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "e6f1763f-dc6a-4521-8254-0dbe1515b837"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(central_ledger.transfer.transferId), central_ledger.transferStateChange.transferStateId\nFROM central_ledger.transfer \nLEFT JOIN central_ledger.transferStateChange ON central_ledger.transfer.transferId=central_ledger.transferStateChange.transferId  \nWHERE central_ledger.transferStateChange.transferStateChangeId IN (\n  SELECT MAX(central_ledger.transferStateChange.transferStateChangeId)\n  FROM central_ledger.transfer \n  LEFT JOIN central_ledger.transferStateChange ON central_ledger.transfer.transferId=central_ledger.transferStateChange.transferId \n  WHERE central_ledger.transferStateChange.createdDate between $__timeFrom() AND $__timeTo() \n  GROUP BY central_ledger.transfer.transferId\n) \nGROUP BY central_ledger.transferStateChange.transferStateId",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Last Transfer State Count",
+      "type": "table"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
