@@ -4,8 +4,10 @@ murmurhash = require('murmurhash');
 const FSP_PREFIX = 'perffsp'
 const FSP_NUM = 8
 
-const MAX_INTEGER_SIGNED = 0x7fffffff // ref: https://www.tabnine.com/code/java/methods/org.apache.kafka.common.utils.Utils/murmur2
+const MAX_INTEGER_SIGNED = 0x7fffffff // ref: https://github.com/apache/pinot/blob/master/pinot-segment-spi/src/main/java/org/apache/pinot/segment/spi/partition/MurmurPartitionFunction.java#L45
 const KAFKA_SEED = 0x9747b28c // ref: https://github.com/a0x8o/kafka/blob/master/clients/src/main/java/org/apache/kafka/common/utils/Utils.java#L481
+
+const ATTEMPTS = parseInt(process.env.ATTEMPTS) || 100
 
 function getPartitionAllocationMap(totalPartitions, breakOnCollision = false) {
   let partitionFspMap = {}
@@ -29,12 +31,14 @@ function getPartitionAllocationMap(totalPartitions, breakOnCollision = false) {
 // const PARTITION_NUM = 17
 // const result  = getPartitionAllocationMap(PARTITION_NUM)
 // console.log(`Partition allocation for ${PARTITION_NUM} partitions`,result)
-
-for (let partNumCount=1; partNumCount<=100; partNumCount++) {
+let isResult = false
+for (let partNumCount=1; partNumCount<=ATTEMPTS; partNumCount++) {
   const result  = getPartitionAllocationMap(partNumCount, true)
   if (result) {
+    isResult = true
     console.log(`Partition allocation for ${partNumCount} partitions`,result)
     break
   }
 }
 
+if (!isResult) console.error(`Unable to find a solution after ${ATTEMPTS} attempts!`)
