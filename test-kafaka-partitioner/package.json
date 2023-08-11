@@ -1,0 +1,17 @@
+{
+  "name": "test-kafaka-partitioner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "install": "^0.13.0",
+    "murmurhash": "^2.0.1",
+    "npm": "^9.8.1",
+    "utf8": "^3.0.0"
+  }
+}
