@@ -3,14 +3,38 @@ murmurhash = require('murmurhash');
 
 const FSP_PREFIX = 'perffsp'
 const FSP_NUM = 8
-const PARTITION_NUM = 17
 
-let fspPartitionMap = {}
+const MAX_INTEGER_SIGNED = 0x7fffffff // ref: https://www.tabnine.com/code/java/methods/org.apache.kafka.common.utils.Utils/murmur2
+const KAFKA_SEED = 0x9747b28c // ref: https://github.com/a0x8o/kafka/blob/master/clients/src/main/java/org/apache/kafka/common/utils/Utils.java#L481
 
-for (let i=1; i<=FSP_NUM; i++) {
-  const fsp = FSP_PREFIX + i
-  const hash = murmurhash.v2(utf8.encode(fsp), 0x9747b28c)
-  fspPartitionMap[fsp] = (hash & 0x7fffffff) % PARTITION_NUM;
+function getPartitionAllocationMap(totalPartitions, breakOnCollision = false) {
+  let partitionFspMap = {}
+  
+  for (let i=1; i<=FSP_NUM; i++) {
+    const fsp = FSP_PREFIX + i
+    const hash = murmurhash.v2(utf8.encode(fsp), KAFKA_SEED)
+    const selectedPartition = (hash & MAX_INTEGER_SIGNED) % totalPartitions;
+    if (partitionFspMap[selectedPartition]) {
+      if(breakOnCollision) {
+        return null
+      }
+      partitionFspMap[selectedPartition].push(fsp)
+    } else {
+      partitionFspMap[selectedPartition] = [ fsp ]
+    }
+  }
+  return partitionFspMap
 }
 
-console.log(`Partition allocation for ${PARTITION_NUM} partitions`,fspPartitionMap)
+// const PARTITION_NUM = 17
+// const result  = getPartitionAllocationMap(PARTITION_NUM)
+// console.log(`Partition allocation for ${PARTITION_NUM} partitions`,result)
+
+for (let partNumCount=1; partNumCount<=100; partNumCount++) {
+  const result  = getPartitionAllocationMap(partNumCount, true)
+  if (result) {
+    console.log(`Partition allocation for ${partNumCount} partitions`,result)
+    break
+  }
+}
+
