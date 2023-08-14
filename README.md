@@ -2,7 +2,8 @@
 
 Run `Mojaloop` in your local machine using docker-compose without need for a `Kubernetes` cluster.
 
-## Pre-requisites:
+## Pre-requisites
+
 - git
 - docker
 - docker-compose
@@ -11,7 +12,7 @@ Run `Mojaloop` in your local machine using docker-compose without need for a `Ku
 
 Execute the following commands to run mojaloop in local machine
 
-```
+```bash
 git clone https://github.com/mojaloop/ml-core-test-harness.git
 cd ml-core-test-harness
 docker-compose --profile all-services --profile ttk-provisioning --profile ttk-tests up
@@ -22,7 +23,7 @@ You can check the status of the containers using the command `docker ps`.
 
 You should see the following output after some time. That means all your mojaloop services are up and test FSPs are onboarded successfully. Now you can run a P2P transfer.
 
-```
+```log
 ┌───────────────────────────────────────────────────┐
 │                      SUMMARY                      │
 ├───────────────────┬───────────────────────────────┤
@@ -52,7 +53,7 @@ You can see all the test reports at http://localhost:9660/admin/reports and late
 
 After all services been started, if you want to execute the P2P transfer from the command line again, use the following command in a separate terminal session.
 
-```
+```bash
 docker-compose --project-name ttk-test-only --profile ttk-tests up --no-deps
 ```
 
@@ -92,61 +93,74 @@ http://localhost:9660/mobilesimulator
 | agreement | Services used for agreement | - |
 | transfer | Services used for transfer | - |
 
-
 ## Running various services with different profile combinations
 
 ### Core services without provisioning
-```
+
+```bash
 docker-compose --profile all-services up
 ```
 
 ### Core services with debug utilities
-```
+
+```bash
 docker-compose --profile all-services --profile debug up
 ```
 
 ### Central ledger
-```
+
+```bash
 docker-compose --profile central-ledger up
 ```
 
 ### Quoting Service
-```
+
+```bash
 docker-compose --profile quoting-service --profile central-ledger up
 ```
+
 Note: We need to include central-ledger profile also here because its a dependency for quoting service
 
 ### Account lookup service
-```
+
+```bash
 docker-compose --profile account-lookup-service --profile central-ledger up
 ```
+
 Note: We need to include central-ledger profile also here because its a dependency for account lookup service
 
 ### ML API Adapter
-```
+
+```bash
 docker-compose --profile ml-api-adapter --profile central-ledger up
 ```
+
 Note: We need to include central-ledger profile also here because its a dependency for ml-api-adapter
 
 ### Discovery
-```
+
+```bash
 docker-compose --profile discovery up
 ```
 
 ### Agreement
-```
+
+```bash
 docker-compose --profile agreement up
 ```
 
 ### Transfer
-```
+
+```bash
 docker-compose --profile transfer up
 ```
 
 ### Settlements
+
 TODO: Add settlement related services
 
 ### Bulk
+
 TODO: Add bulk related services
 
 ## Functional tests inside CICD
@@ -172,13 +186,27 @@ ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 ### Running ALS with dependencies
 
 ```bash
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile ttk-provisioning up -d
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test --profile ttk-provisioning-als up -d
 ```
 
 Stop Services
 
 ```bash
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services down -v
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
+### Running Services for Transfers characterization
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 8dfsp --profile ttk-provisioning-transfers up -d
+```
+
+Stop Services
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile transfers-test --profile 8dfsp down -v
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
@@ -186,6 +214,7 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-s
 ### Monitoring
 
 Start Monitoring Services stack which uses:
+
 - [Prometheus](https://prometheus.io) for time series data store
 - [Grafana](https://grafana.com/) for visualization dashboards
 - [Node Exporter](https://github.com/prometheus/node_exporter) to instrument the Host machine
@@ -198,30 +227,88 @@ docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
 Stop Monitoring Services
 
 ```bash
-docker compose --project-name monitoring -f docker-compose-monitoring.yml down -v
+docker compose --project-name monitoring --profile als-test -f docker-compose-monitoring.yml down -v
+```
+
+Start monitoring with account lookup service mysql exporter
+
+```bash
+docker compose --project-name monitoring --profile als-test -f docker-compose-monitoring.yml up -d
+```
+
+Start monitoring with central ledger mysql exporter
+
+```bash
+docker compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml up -d
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
 TODO:
+
 - add note about network being created by docker-compose-perf.yml, or it can be done manually.
 
 ### Load Tests
 
 [K6](https://k6.io) is being used to execute performance tests, with metrics being captured by [Prometheus](https://k6.io/docs/results-output/real-time/prometheus-remote-write) and displayed using [Grafana](https://k6.io/docs/results-output/real-time/prometheus-remote-write/#time-series-visualization).
 
-Tests can be defined in the [./docker/k6/scripts/test.js](./docker/k6/scripts/test.js), refer to [API load testing guide](https://k6.io/docs/testing-guides/api-load-testing/) for more information.
+Tests can be defined in the [./packages/k6-tests/scripts/test.js](./packages/k6-tests/scripts/test.js), refer to [API load testing guide](https://k6.io/docs/testing-guides/api-load-testing/) for more information.
 
-Env configs are stored in the [./docker/k6/.env](./docker/k6/.env) environment configuration file, which can be referenced in by the [./docker/k6/scripts/test.js](./docker/k6/scripts/test.js).
+Env configs are stored in the [./perf.env](./perf.env) environment configuration file..
+
+Note: Transfer testing
+
+Depending on the profile you started the performance docker compose with i.e `--profile transfers-test --profile {2/4/8}dfsp`
+You will need to edit `K6_SCRIPT_FSPIOP_FSP_POOL` json string in `./perf.env` to contain 2/4/8 dfsps depending on your test.
+For reference here are the provisioned dfsps with an associated partyId available for use.
+
+```json
+[
+  {"partyId":19012345001,"fspId":"perffsp1","wsUrl":"ws://sim-perffsp1:3002"},
+  {"partyId":19012345002,"fspId":"perffsp2","wsUrl":"ws://sim-perffsp2:3002"},
+  {"partyId":19012345003,"fspId":"perffsp3","wsUrl":"ws://sim-perffsp3:3002"},
+  {"partyId":19012345004,"fspId":"perffsp4","wsUrl":"ws://sim-perffsp4:3002"},
+  {"partyId":19012345005,"fspId":"perffsp5","wsUrl":"ws://sim-perffsp5:3002"},
+  {"partyId":19012345006,"fspId":"perffsp6","wsUrl":"ws://sim-perffsp6:3002"},
+  {"partyId":19012345007,"fspId":"perffsp7","wsUrl":"ws://sim-perffsp7:3002"},
+  {"partyId":19012345008,"fspId":"perffsp8","wsUrl":"ws://sim-perffsp8:3002"},
+]
+```
 
 Start tests
 
 ```bash
-docker compose --project-name load -f docker-compose-load.yml up
+env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfers.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfersUnidirectional.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDiscovery.json docker compose --project-name load -f docker-compose-load.yml up
 ```
 
 Cleanup tests
 
 ```bash
 docker compose --project-name load -f docker-compose-load.yml down -v
+```
+
+### Automate Load Tests
+
+This section describes the process to automate capturing of grafana rendered dashboards after running the performance testing scenarios.
+
+The main script that contains the logic for this is automate_perf.sh. Before running this script, the required variables are provided as environment variables that are defined in automate_perf.env. As this file contains login credentials, to avoid credential exposure a sample file called automate_perf_sample.env is available at the root level. Make a copy of this file, rename it to automate_perf.env and update the variable values.
+
+Once automate_perf.env is ready, the next step is to make sure that the services for test harness and monitoring are up and running. The relevant docker-compose commands for these 2 steps are listed above in Performance Characterization section.
+
+Once the required services are up and running, run automate_perf.sh from terminal. Once the script is completed successfully, a results folder is created at the main root level. In there another folder based on date is created and it creates subfolders for the different scenarios that are executed. The different dashboards that will be collected are specified in the script itself.
+
+Run the script:
+
+```bash
+./automate_perf.sh
+```
+
+To capture results without running tests, use the following command
+
+```bash
+./automate_perf.sh -c -f <From Time in Milliseconds> -t <To time in Milliseconds>
 ```

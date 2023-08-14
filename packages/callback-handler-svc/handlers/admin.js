@@ -3,10 +3,7 @@ const env = require('env-var')
 
 const init = (config, logger, options = undefined) => {
   const router = express.Router()
-  const PAYER_FSP_ID = env.get('CBH_FSPIOP_PAYER_FSP_ID').default('perffsp2').asString()
-  const PAYEE_FSP_ID = env.get('CBH_FSPIOP_PAYEE_FSP_ID').default('perffsp2').asString()
-  const ADMIN_FSPIOP_PAYER_CALLBACK_URL = env.get('CBH_ADMIN_FSPIOP_PAYER_CALLBACK_URL').default('http://callback-handler-svc:3001/fspiop').asString()
-  const ADMIN_FSPIOP_PAYEE_CALLBACK_URL = env.get('CBH_ADMIN_FSPIOP_PAYEE_CALLBACK_URL').default('http://callback-handler-svc:3001/fspiop').asString()
+  const FSP_ENDPOINT_MAP = env.get('CBH_ADMIN_FSP_ENDPOINT_MAP').default('{}').asString()
   const FSPIOP_ALS_ENDPOINT_URL = env.get('CBH_FSPIOP_ALS_ENDPOINT_URL').default('http://central-ledger').asString()
 
   // Handle admin Get Participants request
@@ -49,13 +46,11 @@ const init = (config, logger, options = undefined) => {
       ['success', 'operation']
     ).startTimer()
 
-    const id = req.params.id
-    let ADMIN_FSPIOP_CALLBACK_URL = ADMIN_FSPIOP_PAYEE_CALLBACK_URL
-    if(id === PAYER_FSP_ID) {
-      ADMIN_FSPIOP_CALLBACK_URL = ADMIN_FSPIOP_PAYER_CALLBACK_URL
-    }
+   const id = req.params.id
+   const fspMap = JSON.parse(FSP_ENDPOINT_MAP)
+   const ADMIN_FSPIOP_CALLBACK_URL = fspMap[id]
 
-    res.status(200).json(
+   res.status(200).json(
       [
         {
            "type":"FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
@@ -116,18 +111,34 @@ const init = (config, logger, options = undefined) => {
         {
            "type":"FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
            "value":`${ADMIN_FSPIOP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error`
-        }
+        },
+        {
+           "type":"FSPIOP_CALLBACK_URL_QUOTES",
+           "value":`${ADMIN_FSPIOP_CALLBACK_URL}`
+        },
+        {
+           "type":"FSPIOP_CALLBACK_URL_TRANSFER_POST",
+           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/transfers`
+        },
+        {
+           "type":"FSPIOP_CALLBACK_URL_TRANSFER_PUT",
+           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/transfers/{{transferId}}`
+        },
+        {
+           "type":"FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
+           "value":`${ADMIN_FSPIOP_CALLBACK_URL}/transfers/{{transferId}}/error`
+        },
      ]
     )
     histTimerEnd({ success: true, operation: 'admin_get_participants_endpoints'})
   })
 
 
-  return {
-    name: 'admin',
-    basepath: '/admin',
-    router
-  }
+   return {
+      name: 'admin',
+      basepath: '/admin',
+      router
+   }
 }
 
 // require-glob has no ES support

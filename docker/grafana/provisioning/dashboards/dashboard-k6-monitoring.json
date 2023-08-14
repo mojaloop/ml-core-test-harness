@@ -37,7 +37,7 @@
       "title": "Image render",
       "tooltip": "Image Render",
       "type": "link",
-      "url": "/render/d/${__dashboard.uid}/${__dashboard}?height=4500&width=4000"
+      "url": "/render/d/${__dashboard.uid}/${__dashboard}?height=5000&width=4000"
     }
   ],
   "liveNow": true,
@@ -910,7 +910,7 @@
           {
             "matcher": {
               "id": "byFrameRefID",
-              "options": "F"
+              "options": "G"
             },
             "properties": [
               {
@@ -922,7 +922,7 @@
         ]
       },
       "gridPos": {
-        "h": 17,
+        "h": 28,
         "w": 24,
         "x": 0,
         "y": 6
@@ -955,9 +955,9 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "k6_vus{testid=~\"$testid\"}",
+          "expr": "avg by(testid) (k6_vus{testid=~\"$testid\"})",
           "hide": false,
           "instant": false,
           "interval": "",
@@ -1002,7 +1002,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "(histogram_sum(rate(k6_http_req_duration_seconds{testid=~\"$testid\"}[$__rate_interval]))\n/\nhistogram_count(rate(k6_http_req_duration_seconds{testid=~\"$testid\"}[$__rate_interval]))) ",
+          "expr": "avg by(testid) ((histogram_sum(rate(k6_http_req_duration_seconds{testid=~\"$testid\"}[$__rate_interval]))\n/\nhistogram_count(rate(k6_http_req_duration_seconds{testid=~\"$testid\"}[$__rate_interval]))))",
           "hide": false,
           "legendFormat": "Response Time (avg)  - {{testid}} - {{scenario}} - {{name}}",
           "range": true,
@@ -1014,7 +1014,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "(histogram_sum(rate(k6_iteration_duration_seconds{testid=~\"$testid\"}[$__rate_interval]))\n/\nhistogram_count(rate(k6_iteration_duration_seconds{testid=~\"$testid\"}[$__rate_interval]))) ",
+          "expr": "avg by(testid) ((histogram_sum(rate(k6_iteration_duration_seconds{testid=~\"$testid\"}[$__rate_interval]))\n/\nhistogram_count(rate(k6_iteration_duration_seconds{testid=~\"$testid\"}[$__rate_interval]))) )",
           "hide": false,
           "instant": false,
           "legendFormat": "Iteration Duration (avg)  - {{testid}} - {{scenario}} - {{name}}",
@@ -1033,6 +1033,38 @@
           "legendFormat": "Iteration Rate - {{testid}} - {{scenario}}",
           "range": true,
           "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum by(testid, payeeFspId) (rate(k6_http_reqs_total{testid=~\"$testid\"}[$__rate_interval]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Requests Rate   - {{testid}} -> {{payeeFspId}}",
+          "range": true,
+          "refId": "G"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum by(testid, payerFspId, payeeFspId) (rate(k6_http_reqs_total{testid=~\"$testid\"}[$__rate_interval]))",
+          "format": "time_series",
+          "hide": true,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Requests Rate   - {{testid}} - {{payerFspId}} -> {{payeeFspId}}",
+          "range": true,
+          "refId": "H"
         }
       ],
       "type": "timeseries"
@@ -1094,7 +1126,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 23
+        "y": 34
       },
       "id": 85,
       "interval": "1s",
@@ -1222,7 +1254,7 @@
         "h": 10,
         "w": 9,
         "x": 4,
-        "y": 23
+        "y": 34
       },
       "id": 18,
       "interval": "5s",
@@ -1375,7 +1407,7 @@
         "h": 10,
         "w": 11,
         "x": 13,
-        "y": 23
+        "y": 34
       },
       "id": 78,
       "interval": "5",
@@ -1491,7 +1523,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 28
+        "y": 39
       },
       "id": 92,
       "interval": "1s",
@@ -1555,8 +1587,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               },
               {
                 "color": "#EAB839",
@@ -1625,7 +1656,7 @@
         "h": 7,
         "w": 13,
         "x": 0,
-        "y": 33
+        "y": 44
       },
       "id": 104,
       "interval": "1",
@@ -1782,8 +1813,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1835,7 +1865,7 @@
         "h": 7,
         "w": 11,
         "x": 13,
-        "y": 33
+        "y": 44
       },
       "id": 107,
       "interval": "1",
@@ -1963,7 +1993,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 51
       },
       "id": 32,
       "panels": [],
@@ -2510,7 +2540,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 52
       },
       "id": 43,
       "interval": "1",
@@ -2784,7 +2814,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 50
+        "y": 61
       },
       "id": 41,
       "interval": "1s",
@@ -2979,7 +3009,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 72
       },
       "id": 121,
       "interval": "1s",
@@ -3132,7 +3162,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 72
+        "y": 83
       },
       "id": 54,
       "interval": "5s",
@@ -3338,7 +3368,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 79
+        "y": 90
       },
       "id": 35,
       "panels": [],
@@ -3450,7 +3480,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 80
+        "y": 91
       },
       "id": 116,
       "interval": "5s",
@@ -4178,7 +4208,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 87
+        "y": 98
       },
       "id": 122,
       "interval": "1",
@@ -4644,7 +4674,7 @@
         "h": 13,
         "w": 24,
         "x": 0,
-        "y": 94
+        "y": 105
       },
       "id": 117,
       "interval": "5",
@@ -4761,9 +4791,13 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": {
           "type": "prometheus",
@@ -4886,6 +4920,6 @@
   "timezone": "",
   "title": "Official k6 Test Result",
   "uid": "01npcT44k",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }

@@ -112,6 +112,8 @@ services:
     env_file:
       - ./docker/grafana/config.env
     environment:
+      GF_SECURITY_DATA_SOURCE_PROXY_WHITELIST: mysql-cl:3306
+      GRAFANA_CL_MYSQL_PASSWORD: password
       GF_RENDERING_SERVER_URL: http://renderer:8081/render
       GF_RENDERING_CALLBACK_URL: http://grafana:3000/
       GF_LOG_FILTERS: rendering:debug
@@ -150,6 +152,23 @@ services:
     command:
       - --mysqld.address=mysql-als:3306
       - --mysqld.username=exporter
+    profiles:
+      - als-test
+
+  mysqlexporter-cl:
+    image: prom/mysqld-exporter:v0.15.0
+    # ports:
+    # - "9104:9104"
+    networks:
+      - mojaloop-net
+      - monitoring-net
+    environment:
+    - MYSQLD_EXPORTER_PASSWORD=password
+    command:
+      - --mysqld.address=mysql-cl:3306
+      - --mysqld.username=exporter
+    profiles:
+      - transfers-test
 
   kafka-exporter:
     image: danielqsj/kafka-exporter:latest

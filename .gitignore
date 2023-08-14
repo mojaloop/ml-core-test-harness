@@ -1,3 +1,7 @@
 
 # General Ignore
 **/*IGNORE*
+
+**/results/**
+
+automate_perf.env

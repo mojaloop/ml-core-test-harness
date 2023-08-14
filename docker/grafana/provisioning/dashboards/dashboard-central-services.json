@@ -806,11 +806,11 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "avg(rate(moja_cl_transfer_prepare_sum{serviceName=~\"central-handler-prepare|central-service\"}[$__rate_interval]) / rate(moja_cl_transfer_prepare_count{serviceName=~\"central-handler-prepare|central-service\"}[$__rate_interval]) >=0) by (kubernetes_pod_name, success)",
+          "expr": "avg(rate(moja_cl_transfer_prepare_sum{serviceName=~\"central-handler-prepare|central-service\"}[$__rate_interval]) / rate(moja_cl_transfer_prepare_count{serviceName=~\"central-handler-prepare|central-service\"}[$__rate_interval]) >=0) by (kubernetes_pod_name, success, instance)",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "Transfer Prepare - {{kubernetes_pod_name}}  success:{{success}}",
+          "legendFormat": "Transfer Prepare - {{kubernetes_pod_name}} {{instance}}  success:{{success}}",
           "range": true,
           "refId": "A"
         },
@@ -820,11 +820,11 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "avg(rate(moja_cl_transfer_position_sum{serviceName=~\"central-handler-position|central-service\"}[$__rate_interval]) / rate(moja_cl_transfer_position_count{serviceName=~\"central-handler-position|central-service\"}[$__rate_interval]) >=0) by (kubernetes_pod_name, success)",
+          "expr": "avg(rate(moja_cl_transfer_position_sum{serviceName=~\"central-handler-position|central-service\"}[$__rate_interval]) / rate(moja_cl_transfer_position_count{serviceName=~\"central-handler-position|central-service\"}[$__rate_interval]) >=0) by (kubernetes_pod_name, success, instance)",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "Transfer Position - {{kubernetes_pod_name}}  success:{{success}}",
+          "legendFormat": "Transfer Position - {{kubernetes_pod_name}} {{instance}} success:{{success}}",
           "range": true,
           "refId": "E"
         },
@@ -834,9 +834,9 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "avg(rate(moja_cl_transfer_fulfil_sum{serviceName=~\"central-handler-fulfil|central-service\"}[$__rate_interval]) / rate(moja_cl_transfer_fulfil_count{serviceName=~\"central-handler-fulfil|central-service\"}[$__rate_interval]) >=0) by (kubernetes_pod_name, success)",
+          "expr": "avg(rate(moja_cl_transfer_fulfil_sum{serviceName=~\"central-handler-fulfil|central-service\"}[$__rate_interval]) / rate(moja_cl_transfer_fulfil_count{serviceName=~\"central-handler-fulfil|central-service\"}[$__rate_interval]) >=0) by (kubernetes_pod_name, success, instance)",
           "hide": false,
-          "legendFormat": "Transfer Fulfil - {{kubernetes_pod_name}}  success:{{success}}",
+          "legendFormat": "Transfer Fulfil - {{kubernetes_pod_name}} {{instance}}  success:{{success}}",
           "range": true,
           "refId": "F"
         }
@@ -1818,7 +1818,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1840,9 +1841,14 @@
       "links": [],
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
+          "calcs": [
+            "min",
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
           "showLegend": true
         },
         "tooltip": {
@@ -1857,10 +1863,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "avg(moja_cl_nodejs_eventloop_lag_seconds{serviceName=~\"central.*\"}) by (serviceName)",
+          "editorMode": "code",
+          "expr": "avg(moja_cl_nodejs_eventloop_lag_seconds{serviceName=~\"central.*\"}) by (serviceName, instance)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{serviceName}}",
+          "legendFormat": "{{serviceName}} {{instance}}",
+          "range": true,
           "refId": "B"
         }
       ],
@@ -1914,7 +1922,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1977,7 +1986,7 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -2006,7 +2015,7 @@
     ]
   },
   "timezone": "",
-  "title": "Mojaloop - Central-Ledger",
+  "title": "mojaloop-central-ledger",
   "uid": "5z9mkZ-pr",
   "version": 2,
   "weekStart": ""
