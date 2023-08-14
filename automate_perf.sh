@@ -21,6 +21,9 @@ OPTS=$(getopt -a -n automate_perf.sh --options $SHORT --longoptions $LONG -- "$@
 
 VALID_ARGUMENTS=$# # Returns the count of arguments that are in short or long options
 
+# Replace 'your_container_name' with the actual name of your Docker container
+CONTAINER_NAME="load-k6-1"
+
 # if [ "$VALID_ARGUMENTS" -eq 0 ]; then
 #   Help
 # fi
@@ -100,10 +103,7 @@ then
   if [ ! -d "results/$resultsSubDir/$K6_SCENARIO_NAME/logs" ]; then
     mkdir -p results/$resultsSubDir/$K6_SCENARIO_NAME/logs
   fi
-  env K6_SCRIPT_CONFIG_FILE_NAME=$K6_SCENARIO_CONFIG docker compose --project-name load -f docker-compose-load.yml up > results/$resultsSubDir/$K6_SCENARIO_NAME/logs/load-k6-1.log
-
-  # Replace 'your_container_name' with the actual name of your Docker container
-  CONTAINER_NAME="load-k6-1"
+  env K6_SCRIPT_CONFIG_FILE_NAME=$K6_SCENARIO_CONFIG docker compose --project-name load -f docker-compose-load.yml up > results/$resultsSubDir/$K6_SCENARIO_NAME/logs/$CONTAINER_NAME.log
 
   # Interval in seconds between status checks
   CHECK_INTERVAL=1
