@@ -179,3 +179,18 @@ services:
       - monitoring-net
     command:
       - --kafka.server=kafka:9092
+
+  ## Debug utilities
+  kafka-debug-console:
+    # image: quay.io/cloudhut/kowl:v1.4.0
+    image: docker.redpanda.com/redpandadata/console:latest
+    deploy:
+      replicas: 1
+    restart: on-failure
+    hostname: kafka-debug-console
+    ports:
+    - "9080:8080"
+    networks:
+      - mojaloop-net
+    environment:
+      - KAFKA_BROKERS=kafka:29092
