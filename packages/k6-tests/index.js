@@ -1,5 +1,6 @@
 export { fspiopDiscoveryScenarios } from './scenarios/fspiopDiscovery.js';
 export { fspiopTransfersScenarios } from './scenarios/fspiopTransfers.js';
+export { fspiopTransfersNoCallbackScenarios } from './scenarios/fspiopTransfersNoCallback.js';
 
 const configFile = __ENV.K6_SCRIPT_CONFIG_FILE_NAME ? './config/' + __ENV.K6_SCRIPT_CONFIG_FILE_NAME : './config/test.json';
 const testConfig = JSON.parse(open(configFile));
