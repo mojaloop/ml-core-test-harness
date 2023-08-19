@@ -141,41 +141,41 @@ const init = (config, logger, options = undefined) => {
     const traceparentHeader = req.headers['traceparent']
     const tracestateHeader = req.headers['tracestate'];
     const transferId = req.body.transferId;
-
-    (async () => {
-      const egressHistTimerEnd = options.metrics.getHistogram(
-        'egress_callbackHandler',
-        'Egress - Operation handler',
-        ['success', 'operation']
-      ).startTimer()
-      try {
-        await axios.put(`${FSPIOP_TRANSFERS_ENDPOINT_URL}/transfers/${transferId}`, {
-            "transferState": "COMMITTED",
-            "fulfilment": FULFILMENT,
-            "completedTimestamp": (new Date()).toISOString()
-        },
-        {
-          headers: {
-            'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
-            'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
-            Date: (new Date()).toUTCString(),
-            'FSPIOP-Source': FSP_ID,
-            'FSPIOP-Destination': fspiopSourceHeader,
-            'traceparent': traceparentHeader,
-            'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
-          },
-          httpAgent,
-        })
-        egressHistTimerEnd({ success: true, operation: 'fspiop_put_transfers'})
-      } catch(err) {
-        logger.error({
-          traceparent: req.headers.traceparent,
-          operation: 'fspiop_put_transfers',
-          err,
-        })
-        egressHistTimerEnd({ success: false, operation: 'fspiop_put_transfers'})
-      }
-    })();
+    // TODO: uncomment
+    // (async () => {
+    //   const egressHistTimerEnd = options.metrics.getHistogram(
+    //     'egress_callbackHandler',
+    //     'Egress - Operation handler',
+    //     ['success', 'operation']
+    //   ).startTimer()
+    //   try {
+    //     await axios.put(`${FSPIOP_TRANSFERS_ENDPOINT_URL}/transfers/${transferId}`, {
+    //         "transferState": "COMMITTED",
+    //         "fulfilment": FULFILMENT,
+    //         "completedTimestamp": (new Date()).toISOString()
+    //     },
+    //     {
+    //       headers: {
+    //         'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
+    //         'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
+    //         Date: (new Date()).toUTCString(),
+    //         'FSPIOP-Source': FSP_ID,
+    //         'FSPIOP-Destination': fspiopSourceHeader,
+    //         'traceparent': traceparentHeader,
+    //         'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
+    //       },
+    //       httpAgent,
+    //     })
+    //     egressHistTimerEnd({ success: true, operation: 'fspiop_put_transfers'})
+    //   } catch(err) {
+    //     logger.error({
+    //       traceparent: req.headers.traceparent,
+    //       operation: 'fspiop_put_transfers',
+    //       err,
+    //     })
+    //     egressHistTimerEnd({ success: false, operation: 'fspiop_put_transfers'})
+    //   }
+    // })();
     // Sync 202
     res.status(202).end()
     histTimerEnd({ success: true, operation: 'fspiop_put_transfers'})
