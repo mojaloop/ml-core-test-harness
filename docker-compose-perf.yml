@@ -613,14 +613,14 @@ services:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
     environment: {}
-      # - LOG_LEVEL=debug
+      # - LOG_LEVEL=error
     networks:
       - mojaloop-net
     depends_on:
       kafka:
         condition: service_started
       central-ledger:
-          condition: service_started
+        condition: service_started
     healthcheck:
       test: wget -q http://localhost:3000/health -O /dev/null || exit 1
       timeout: 30s

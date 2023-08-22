@@ -176,7 +176,7 @@ const init = (config, logger, options = undefined) => {
         egressHistTimerEnd({ success: false, operation: 'fspiop_put_transfers'})
       }
     })();
-    Sync 202
+    // Sync 202
     res.status(202).end()
     histTimerEnd({ success: true, operation: 'fspiop_put_transfers'})
   })
