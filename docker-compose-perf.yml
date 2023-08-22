@@ -11,7 +11,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 1
+    deploy:
+      mode: replicated
+      replicas: ${ALS_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/account-lookup-service.js /opt/app/config/default.json && /opt/app/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
     # ports:
     #   - "4001:4001"
@@ -96,7 +98,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 1
+    deploy:
+      mode: replicated
+      replicas: 1
     command: sh -c "npm run migrate"
     # ports:
     #   - "3001:3001"
@@ -132,7 +136,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 1
+    deploy:
+      mode: replicated
+      replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
     # ports:
     #   - "3001:3001"
@@ -177,7 +183,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 1
+    deploy:
+      mode: replicated
+      replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
     # ports:
     #   - "3001:3001"
@@ -219,7 +227,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 1
+    deploy:
+      mode: replicated
+      replicas: ${CENTRAL_LEDGER_POSITION_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
     # ports:
     #   - "3001:3001"
@@ -261,7 +271,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 1
+    deploy:
+      mode: replicated
+      replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
     # ports:
     #   - "3001:3001"
@@ -380,7 +392,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 1 # We dont need to scale this unless we are testing funds-in/out
+    deploy:
+      mode: replicated
+      replicas: 1 # We dont need to scale this unless we are testing funds-in/out
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --admin"
     # ports:
     #   - "3001:3001"
@@ -479,9 +493,8 @@ services:
       - mojaloop-net
     image: docker.io/bitnami/kafka:3.4.0
     container_name: kafka
-    ports:
-      - "9092:9092"
-    #  - "29092:29092"
+    # ports:
+    #   - "9092:9092"
     environment:
       # BITNAMI_DEBUG: "yes"
       ALLOW_PLAINTEXT_LISTENER: "yes"
@@ -550,7 +563,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 1
+    deploy:
+      mode: replicated
+      replicas: ${ML_API_ADAPTER_REPLICAS}
     # container_name: ml-api-adapter
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-api-adapter-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
     # ports:
@@ -587,7 +602,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 2
+    deploy:
+      mode: replicated
+      replicas: ${ML_NOTIFICATION_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-handler-notification.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/handlers/index.js handler --notification"
     # ports:
     #   - "3000:3000"
@@ -596,14 +613,14 @@ services:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
     environment: {}
-      # - LOG_LEVEL=error
+      # - LOG_LEVEL=debug
     networks:
       - mojaloop-net
     depends_on:
       kafka:
         condition: service_started
-      # central-ledger:
-      #   condition: service_started
+      central-ledger:
+          condition: service_started
     healthcheck:
       test: wget -q http://localhost:3000/health -O /dev/null || exit 1
       timeout: 30s
@@ -732,8 +749,10 @@ services:
       - ttk-provisioning-transfers
 
   callback-handler-svc-oracle-sim:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - perf.env
@@ -763,8 +782,10 @@ services:
       - als-test
 
   callback-handler-svc-cl-sim:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/cl-sim.env
@@ -795,8 +816,10 @@ services:
       - transfers-test
 
   sim-perffsp1:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp1.env
@@ -805,7 +828,7 @@ services:
       cache_from:
         - mojaloop/callback-handler-svc:local
     # ports:
-    #    - "3001:3001"
+    #   - "3001:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -829,8 +852,10 @@ services:
       - 8dfsp
 
   sim-perffsp2:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp2.env
@@ -839,7 +864,7 @@ services:
       cache_from:
         - mojaloop/callback-handler-svc:local
     # ports:
-    #    - "3001:3001"
+    #   - "3001:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -863,8 +888,10 @@ services:
       - 8dfsp
 
   sim-perffsp3:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp3.env
@@ -892,8 +919,10 @@ services:
       - 8dfsp
 
   sim-perffsp4:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp4.env
@@ -921,8 +950,10 @@ services:
       - 8dfsp
 
   sim-perffsp5:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp5.env
@@ -949,8 +980,10 @@ services:
       - 8dfsp
 
   sim-perffsp6:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp6.env
@@ -977,8 +1010,10 @@ services:
       - 8dfsp
 
   sim-perffsp7:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp7.env
@@ -1005,8 +1040,10 @@ services:
       - 8dfsp
 
   sim-perffsp8:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp8.env
