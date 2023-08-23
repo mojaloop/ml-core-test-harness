@@ -11,7 +11,8 @@ module.exports = {
         "EVENT": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "kafka:29092",
+              "enable.auto.commit": false
             }
           }
         }
