@@ -18,6 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 2,
   "links": [
     {
       "asDropdown": false,
@@ -231,6 +232,19 @@
           "legendFormat": "{{instance}}  op:{{operation}} success: {{success}}",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(cbs_ing_callbackHandler_count[$__rate_interval])) by (operation, success)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Total op:{{operation}} success: {{success}}",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Handler Ingress - Processed Per Second",
@@ -631,8 +645,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "transparent",
-                "value": null
+                "color": "transparent"
               },
               {
                 "color": "red",
@@ -735,6 +748,6 @@
   "timezone": "browser",
   "title": "Supporting Services - Callback Hander Service",
   "uid": "afe9dda2-878b-40c8-90df-072e7ecaaaee",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }

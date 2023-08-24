@@ -11,7 +11,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 1
+    deploy:
+      mode: replicated
+      replicas: ${ALS_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/account-lookup-service.js /opt/app/config/default.json && /opt/app/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
     # ports:
     #   - "4001:4001"
@@ -96,7 +98,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 1
+    deploy:
+      mode: replicated
+      replicas: 1
     command: sh -c "npm run migrate"
     # ports:
     #   - "3001:3001"
@@ -132,7 +136,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 4
+    deploy:
+      mode: replicated
+      replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
     # ports:
     #   - "3001:3001"
@@ -177,7 +183,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 4
+    deploy:
+      mode: replicated
+      replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
     # ports:
     #   - "3001:3001"
@@ -219,7 +227,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 8
+    deploy:
+      mode: replicated
+      replicas: ${CENTRAL_LEDGER_POSITION_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
     # ports:
     #   - "3001:3001"
@@ -261,7 +271,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 4
+    deploy:
+      mode: replicated
+      replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
     # ports:
     #   - "3001:3001"
@@ -380,7 +392,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 1 # We dont need to scale this unless we are testing funds-in/out
+    deploy:
+      mode: replicated
+      replicas: 1 # We dont need to scale this unless we are testing funds-in/out
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --admin"
     # ports:
     #   - "3001:3001"
@@ -453,16 +467,16 @@ services:
       # blocks until kafka is reachable
       kafka-topics.sh --bootstrap-server kafka:29092 --list
       echo -e 'Creating kafka topics'
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-prepare --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-position --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-fulfil --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-notification-event --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-get --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-admin-transfer --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
-      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-prepare --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
-      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-fulfil --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
-      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-processing --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
-      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-get --replication-factor 1 --partitions $$KAFKA_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-prepare --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-position --replication-factor 1 --partitions $$KAFKA_POSITION_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-fulfil --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-notification-event --replication-factor 1 --partitions $$KAFKA_NOTIFICATION_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-get --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-admin-transfer --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-prepare --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-fulfil --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-processing --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-get --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
       echo -e 'Successfully created the following topics:'
       kafka-topics.sh --bootstrap-server kafka:29092 --list
       "
@@ -486,7 +500,7 @@ services:
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_CFG_LISTENERS: CONTROLLER://:9093,LISTENER_DOCKER://kafka:29092,LISTENER_EXTERN://:9092
-      KAFKA_CFG_ADVERTISED_LISTENERS: LISTENER_DOCKER://kafka:29092,LISTENER_EXTERN://:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: LISTENER_DOCKER://kafka:29092,LISTENER_EXTERN://localhost:9092
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,LISTENER_DOCKER:PLAINTEXT,LISTENER_EXTERN:PLAINTEXT
       KAFKA_CFG_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -549,7 +563,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 4
+    deploy:
+      mode: replicated
+      replicas: ${ML_API_ADAPTER_REPLICAS}
     # container_name: ml-api-adapter
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-api-adapter-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
     # ports:
@@ -586,7 +602,9 @@ services:
     env_file:
       - .env
       - perf.env
-    scale: 4
+    deploy:
+      mode: replicated
+      replicas: ${ML_NOTIFICATION_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-handler-notification.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/handlers/index.js handler --notification"
     # ports:
     #   - "3000:3000"
@@ -731,8 +749,10 @@ services:
       - ttk-provisioning-transfers
 
   callback-handler-svc-oracle-sim:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - perf.env
@@ -762,8 +782,10 @@ services:
       - als-test
 
   callback-handler-svc-cl-sim:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/cl-sim.env
@@ -794,8 +816,10 @@ services:
       - transfers-test
 
   sim-perffsp1:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp1.env
@@ -828,8 +852,10 @@ services:
       - 8dfsp
 
   sim-perffsp2:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp2.env
@@ -862,8 +888,10 @@ services:
       - 8dfsp
 
   sim-perffsp3:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp3.env
@@ -891,8 +919,10 @@ services:
       - 8dfsp
 
   sim-perffsp4:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp4.env
@@ -920,8 +950,10 @@ services:
       - 8dfsp
 
   sim-perffsp5:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp5.env
@@ -948,8 +980,10 @@ services:
       - 8dfsp
 
   sim-perffsp6:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp6.env
@@ -976,8 +1010,10 @@ services:
       - 8dfsp
 
   sim-perffsp7:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp7.env
@@ -1004,8 +1040,10 @@ services:
       - 8dfsp
 
   sim-perffsp8:
-    scale: 1
     image: mojaloop/callback-handler-svc:local
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp8.env
@@ -1030,23 +1068,3 @@ services:
     user: root
     profiles:
       - 8dfsp
-
-
-  ## Debug utilities
-  kafka-debug-console:
-    # image: quay.io/cloudhut/kowl:v1.4.0
-    image: docker.redpanda.com/redpandadata/console:latest
-    deploy:
-      replicas: 1
-    restart: on-failure
-    hostname: kafka-debug-console
-    ports:
-    - "9080:8080"
-    networks:
-      - mojaloop-net
-    environment:
-      - KAFKA_BROKERS=kafka:29092
-    depends_on:
-      - kafka
-    profiles:
-      - debug
