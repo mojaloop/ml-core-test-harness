@@ -95,6 +95,13 @@
       "type": "als_admin",
       "version": "1.1",
       "folderPath": "als_admin_1.1"
+    },
+    {
+      "type": "compl_api_spec_draft-1",
+      "version": "0.1",
+      "folderPath": "compl_api_spec_draft-1_0.1",
+      "asynchronous": false,
+      "additionalApi": true
     }
   ]
 }

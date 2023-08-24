@@ -1,7 +1,7 @@
 [
   {
     "type": "response",
-    "version": 1.0,
+    "version": 1,
     "ruleId": 1,
     "priority": 1,
     "description": "post /settlementWindows/{id}",
@@ -40,7 +40,7 @@
   },
   {
     "type": "response",
-    "version": 1.0,
+    "version": 1,
     "ruleId": 3,
     "priority": 1,
     "description": "post /settlements",
@@ -107,7 +107,7 @@
   },
   {
     "type": "response",
-    "version": 1.0,
+    "version": 1,
     "ruleId": 4,
     "priority": 1,
     "description": "get /settlements/{id}",
@@ -174,7 +174,7 @@
   },
   {
     "type": "response",
-    "version": 1.0,
+    "version": 1,
     "ruleId": 5,
     "priority": 1,
     "description": "get /settlementWindows",
@@ -216,5 +216,131 @@
       "delay": 0,
       "type": "FIXED_RESPONSE"
     }
+  },
+  {
+    "ruleId": 6,
+    "priority": 1,
+    "description": "GET /compliaince-check/ID: Happy path case - scenario",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 0,
+      "type": "compl_api_spec_draft-1",
+      "asynchronous": false,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/compl_api_spec_draft-1_0.1/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/compl_api_spec_draft-1_0.1/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/compl_api_spec_draft-1_0.1/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/compl_api_spec_draft-1_0.1/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/compl_api_spec_draft-1_0.1/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "pathParams",
+          "operator": "equal",
+          "value": "987654320",
+          "path": "ID"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/compliance-check/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": null,
+      "path": null,
+      "params": {
+        "body": {
+          "id": 10,
+          "weightedScore": 0,
+          "listOfChecks": [
+            "KYC"
+          ],
+          "rulesList": [
+            "string"
+          ],
+          "status": "completed",
+          "additionalInfo": "string"
+        },
+        "statusCode": "200",
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "FIXED_RESPONSE"
+    },
+    "type": "response",
+    "version": 1
+  },
+  {
+    "ruleId": 7,
+    "priority": 1,
+    "description": "GET /compliaince-check/ID: Failure scenario",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 0,
+      "type": "compl_api_spec_draft-1",
+      "asynchronous": false,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/compl_api_spec_draft-1_0.1/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/compl_api_spec_draft-1_0.1/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/compl_api_spec_draft-1_0.1/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/compl_api_spec_draft-1_0.1/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/compl_api_spec_draft-1_0.1/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "pathParams",
+          "operator": "equal",
+          "value": "987654321",
+          "path": "ID"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/compliance-check/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": null,
+      "path": null,
+      "params": {
+        "body": {
+          "id": 101010,
+          "weightedScore": 90,
+          "listOfChecks": [
+            "KYC",
+            "AML"
+          ],
+          "rulesList": [
+            "Rule-501",
+            "Rule-502"
+          ],
+          "status": "completed",
+          "additionalInfo": "Risk level reflected in weighted score"
+        },
+        "statusCode": "200",
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "FIXED_RESPONSE"
+    },
+    "type": "response",
+    "version": 1
   }
 ]
