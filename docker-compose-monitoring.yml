@@ -44,7 +44,7 @@ services:
     #       - node.hostname == ${HOSTNAME}
 
   node-exporter:
-    image: quay.io/prometheus/node-exporter:latest
+    image: quay.io/prometheus/node-exporter:${NODE_EXPORTER_VERSION}
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -141,7 +141,7 @@ services:
       - ./docker/renderer/config.json:/usr/src/app/config.json
 
   mysqlexporter-als:
-    image: prom/mysqld-exporter:v0.15.0
+    image: prom/mysqld-exporter:${MYSQLD_EXPORTER_VERSION}
     # ports:
     # - "9104:9104"
     networks:
@@ -156,7 +156,7 @@ services:
       - als-test
 
   mysqlexporter-cl:
-    image: prom/mysqld-exporter:v0.15.0
+    image: prom/mysqld-exporter:${MYSQLD_EXPORTER_VERSION}
     # ports:
     # - "9104:9104"
     networks:
@@ -171,7 +171,7 @@ services:
       - transfers-test
 
   kafka-exporter:
-    image: danielqsj/kafka-exporter:latest
+    image: danielqsj/kafka-exporter:${KAFKA_EXPORTER_VERSION}
     ports:
       - "9308:9308"
     networks:
@@ -180,14 +180,12 @@ services:
     command:
       - --kafka.server=kafka:9092
 
-  ## Debug utilities
-  kafka-debug-console:
-    # image: quay.io/cloudhut/kowl:v1.4.0
-    image: docker.redpanda.com/redpandadata/console:latest
+  kafka-mon-ui:
+    image: docker.redpanda.com/redpandadata/console:${DEP_KAfKA_UI_VERSION}
     deploy:
       replicas: 1
     restart: on-failure
-    hostname: kafka-debug-console
+    hostname: kafka-mon-ui
     ports:
     - "9080:8080"
     networks:

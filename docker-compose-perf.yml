@@ -61,7 +61,7 @@ services:
       - als-test
 
   mysql-als:
-    image: mysql/mysql-server
+    image: mysql/mysql-server:${DEP_MYSQL_VERSION}
     env_file:
       - .env
       - perf.env
@@ -432,7 +432,7 @@ services:
       - transfers-test
 
   # objstore:
-  #   image: mongo:6.0.5
+  #   image: mongo:${DEP_MONGO_VERSION}
   #   container_name: objstore
   #   ports:
   #     - "27017:27017"
@@ -456,7 +456,7 @@ services:
     container_name: kafka-provisioning
     networks:
       - mojaloop-net
-    image: docker.io/bitnami/kafka:3.4.0
+    image: docker.io/bitnami/kafka:${DEP_KAFKA_VERSION}
     env_file:
       - perf.env
     depends_on:
@@ -491,7 +491,7 @@ services:
   kafka:
     networks:
       - mojaloop-net
-    image: docker.io/bitnami/kafka:3.4.0
+    image: docker.io/bitnami/kafka:${DEP_KAFKA_VERSION}
     container_name: kafka
     # ports:
     #   - "9092:9092"
@@ -525,7 +525,7 @@ services:
       - transfers-test
 
   mysql-cl:
-    image: mysql/mysql-server
+    image: mysql/mysql-server:${DEP_MYSQL_VERSION}
     container_name: mysql-cl
     # ports:
     #   - "3306:3306"
@@ -636,7 +636,7 @@ services:
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
-    image: mojaloop/ml-testing-toolkit:v16.1.1
+    image: mojaloop/ml-testing-toolkit:${TEST_TTK_SVC_VERSION}
     env_file:
       - .env
       - perf.env
@@ -666,7 +666,7 @@ services:
       - transfers-test
 
   mojaloop-testing-toolkit-ui:
-    image: mojaloop/ml-testing-toolkit-ui:v15.3.0
+    image: mojaloop/ml-testing-toolkit-ui:${TEST_TTK_UI_VERSION}
     env_file:
       - .env
       - perf.env
@@ -687,7 +687,7 @@ services:
       - transfers-test
 
   ttk-provisioning-als:
-    image: mojaloop/ml-testing-toolkit-client-lib:v1.2.0
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
     env_file:
       - .env
       - perf.env
@@ -711,7 +711,7 @@ services:
       - ttk-provisioning-als
 
   ttk-provisioning-transfers:
-    image: mojaloop/ml-testing-toolkit-client-lib:v1.2.0
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
     env_file:
       - .env
       - perf.env
@@ -749,7 +749,7 @@ services:
       - ttk-provisioning-transfers
 
   callback-handler-svc-oracle-sim:
-    image: mojaloop/callback-handler-svc:local
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -759,7 +759,7 @@ services:
     build:
       context: ./packages/callback-handler-svc
       cache_from:
-        - mojaloop/callback-handler-svc:local
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # ports:
     #   - "3001:3001"
     networks:
@@ -782,7 +782,7 @@ services:
       - als-test
 
   callback-handler-svc-cl-sim:
-    image: mojaloop/callback-handler-svc:local
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -792,7 +792,7 @@ services:
     build:
       context: ./packages/callback-handler-svc
       cache_from:
-        - mojaloop/callback-handler-svc:local
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # ports:
     #   - "3001:3001"
     networks:
@@ -816,7 +816,7 @@ services:
       - transfers-test
 
   sim-perffsp1:
-    image: mojaloop/callback-handler-svc:local
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -826,7 +826,7 @@ services:
     build:
       context: ./packages/callback-handler-svc
       cache_from:
-        - mojaloop/callback-handler-svc:local
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # ports:
     #   - "3001:3001"
     networks:
@@ -852,7 +852,7 @@ services:
       - 8dfsp
 
   sim-perffsp2:
-    image: mojaloop/callback-handler-svc:local
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -862,7 +862,7 @@ services:
     build:
       context: ./packages/callback-handler-svc
       cache_from:
-        - mojaloop/callback-handler-svc:local
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # ports:
     #   - "3001:3001"
     networks:
@@ -888,7 +888,7 @@ services:
       - 8dfsp
 
   sim-perffsp3:
-    image: mojaloop/callback-handler-svc:local
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -898,7 +898,7 @@ services:
     build:
       context: ./packages/callback-handler-svc
       cache_from:
-        - mojaloop/callback-handler-svc:local
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # ports:
     #   - "3001:3001"
     networks:
@@ -919,7 +919,7 @@ services:
       - 8dfsp
 
   sim-perffsp4:
-    image: mojaloop/callback-handler-svc:local
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -929,7 +929,7 @@ services:
     build:
       context: ./packages/callback-handler-svc
       cache_from:
-        - mojaloop/callback-handler-svc:local
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # ports:
     #   - "3001:3001"
     networks:
@@ -950,7 +950,7 @@ services:
       - 8dfsp
 
   sim-perffsp5:
-    image: mojaloop/callback-handler-svc:local
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -960,7 +960,7 @@ services:
     build:
       context: ./packages/callback-handler-svc
       cache_from:
-        - mojaloop/callback-handler-svc:local
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # ports:
     #   - "3001:3001"
     networks:
@@ -980,7 +980,7 @@ services:
       - 8dfsp
 
   sim-perffsp6:
-    image: mojaloop/callback-handler-svc:local
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -990,7 +990,7 @@ services:
     build:
       context: ./packages/callback-handler-svc
       cache_from:
-        - mojaloop/callback-handler-svc:local
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # ports:
     #   - "3001:3001"
     networks:
@@ -1010,7 +1010,7 @@ services:
       - 8dfsp
 
   sim-perffsp7:
-    image: mojaloop/callback-handler-svc:local
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -1020,7 +1020,7 @@ services:
     build:
       context: ./packages/callback-handler-svc
       cache_from:
-        - mojaloop/callback-handler-svc:local
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # ports:
     #   - "3001:3001"
     networks:
@@ -1040,7 +1040,7 @@ services:
       - 8dfsp
 
   sim-perffsp8:
-    image: mojaloop/callback-handler-svc:local
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -1050,7 +1050,7 @@ services:
     build:
       context: ./packages/callback-handler-svc
       cache_from:
-        - mojaloop/callback-handler-svc:local
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # ports:
     #   - "3001:3001"
     networks:
