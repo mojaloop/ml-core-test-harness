@@ -43,7 +43,7 @@ services:
       - all-services
 
   objstore:
-    image: mongo:6.0.5
+    image: mongo:${DEP_MONGO_VERSION}
     container_name: objstore
     ports:
       - "27017:27017"
@@ -66,28 +66,12 @@ services:
     container_name: kafka-provisioning
     networks:
       - mojaloop-net
-    image: docker.io/bitnami/kafka:3.4.0
+    image: docker.io/bitnami/kafka:${DEP_KAFKA_VERSION}
     depends_on:
       - kafka
-    entrypoint: [ '/bin/sh', '-c' ]
-    command: |
-      "
-      # blocks until kafka is reachable
-      kafka-topics.sh --bootstrap-server kafka:29092 --list
-      echo -e 'Creating kafka topics'
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-prepare --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-position --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-fulfil --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-notification-event --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-get --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-admin-transfer --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-prepare --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-fulfil --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-processing --replication-factor 1 --partitions 1
-      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-get --replication-factor 1 --partitions 1
-      echo -e 'Successfully created the following topics:'
-      kafka-topics.sh --bootstrap-server kafka:29092 --list
-      "
+    volumes:
+      - ./docker/kafka/scripts:/tmp/kafka/scripts
+    command: bash /tmp/kafka/scripts/provision.sh
     profiles:
       - central-ledger
       - transfer
@@ -98,7 +82,7 @@ services:
   kafka:
     networks:
       - mojaloop-net
-    image: docker.io/bitnami/kafka:3.4.0
+    image: docker.io/bitnami/kafka:${DEP_KAFKA_VERSION}
     container_name: kafka
     # ports:
     #   - "9092:9092"
@@ -131,7 +115,7 @@ services:
       - all-services
 
   mysql:
-    image: mysql/mysql-server
+    image: mysql/mysql-server:${DEP_MYSQL_VERSION}
     container_name: mysql
     # ports:
     #   - "3306:3306"
@@ -215,7 +199,7 @@ services:
       - all-services
 
   simulator:
-    image: mojaloop/simulator:v11.1.3
+    image: mojaloop/simulator:${TEST_SIMULATOR_VERSION}
     container_name: simulator
     # ports:
     #   - "8444:8444"
@@ -272,7 +256,7 @@ services:
       - all-services
 
   mysql-als:
-    image: mysql/mysql-server
+    image: mysql/mysql-server:${DEP_MYSQL_VERSION}
     container_name: mysql-als
     # ports:
     #   - "3307:3306"
@@ -298,7 +282,7 @@ services:
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
-    image: mojaloop/ml-testing-toolkit:v16.1.1
+    image: mojaloop/ml-testing-toolkit:${TEST_TTK_SVC_VERSION}
     volumes:
       - "./docker/ml-testing-toolkit/spec_files:/opt/app/spec_files"
       - "./docker/ml-testing-toolkit/test-cases:/opt/app/examples"
@@ -323,7 +307,7 @@ services:
       - all-services
 
   mojaloop-testing-toolkit-ui:
-    image: mojaloop/ml-testing-toolkit-ui:v15.3.0
+    image: mojaloop/ml-testing-toolkit-ui:${TEST_TTK_UI_VERSION}
     ports:
       - "9660:6060"
     environment:
@@ -339,7 +323,7 @@ services:
       - all-services
 
   ttk-provisioning:
-    image: mojaloop/ml-testing-toolkit-client-lib:v1.2.0
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
@@ -360,13 +344,13 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --save-report true --report-format html --report-target file://reports/ttk-provisioning-report.html"
     user: root
     profiles:
       - ttk-provisioning
 
   ttk-tests:
-    image: mojaloop/ml-testing-toolkit-client-lib:v1.2.0
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
@@ -389,21 +373,20 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/tests -e environments/default-env.json --report-format html --save-report --report-target file://reports/ttk-func-tests-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/tests -e environments/default-env.json --report-format html --save-report true --report-target file://reports/ttk-func-tests-report.html"
     user: root
     profiles:
       - ttk-tests
 
   ## Debug utilities
-  kowl:
-    image: quay.io/cloudhut/kowl:v1.4.0
-    container_name: cl_kowl
+  kafka-debug-ui:
+    image: docker.redpanda.com/redpandadata/console:${DEP_KAfKA_UI_VERSION}
     deploy:
       replicas: 1
     restart: on-failure
-    hostname: kowl
-    # ports:
-    # - "8080:8080"
+    hostname: kafka-debug-ui
+    ports:
+      - "8080:8080"
     networks:
       - mojaloop-net
     environment:
