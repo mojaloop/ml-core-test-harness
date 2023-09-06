@@ -2481,6 +2481,38 @@
           "range": true,
           "refId": "D",
           "step": 4
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sort_desc(sum (rate(container_network_receive_packets_total{image!=\"\"}[1m] ) ))",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "All - receive (total)",
+          "metric": "container_network_transmit_bytes_total",
+          "range": true,
+          "refId": "E",
+          "step": 4
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sort_desc(sum (rate(container_network_receive_errors_total{image!=\"\"}[1m] ) ))",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "All - receive (error)",
+          "metric": "container_network_transmit_bytes_total",
+          "range": true,
+          "refId": "F",
+          "step": 4
         }
       ],
       "thresholds": [],
@@ -2638,6 +2670,38 @@
           "metric": "container_network_transmit_bytes_total",
           "range": true,
           "refId": "D",
+          "step": 4
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sort_desc(sum (rate(container_network_transmit_packets_total{image!=\"\"}[1m] ) ))",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "All - transmit (total)",
+          "metric": "container_network_transmit_bytes_total",
+          "range": true,
+          "refId": "E",
+          "step": 4
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sort_desc(sum (rate(container_network_transmit_errors_total{image!=\"\"}[1m] ) ))",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "All - transmit (error)",
+          "metric": "container_network_transmit_bytes_total",
+          "range": true,
+          "refId": "F",
           "step": 4
         }
       ],
@@ -3061,6 +3125,6 @@
   "timezone": "browser",
   "title": "Docker Prometheus Monitoring",
   "uid": "64nrElFmk",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
