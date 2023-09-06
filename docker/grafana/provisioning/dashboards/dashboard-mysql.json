@@ -38,6 +38,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
+  "id": 10,
   "links": [
     {
       "icon": "dashboard",
@@ -149,7 +150,7 @@
       "title": "Image render",
       "tooltip": "Image Render",
       "type": "link",
-      "url": "/render/d/${__dashboard.uid}/${__dashboard}?height=6500&width=2000&from=1690376607107&to=1690377903696"
+      "url": "/render/d/${__dashboard.uid}/${__dashboard}?height=6500&width=2000"
     }
   ],
   "liveNow": false,
@@ -4392,8 +4393,8 @@
         "allFormat": "glob",
         "current": {
           "selected": false,
-          "text": "mysqlexporter-als:9104",
-          "value": "mysqlexporter-als:9104"
+          "text": "mysqlexporter-cl:9104",
+          "value": "mysqlexporter-cl:9104"
         },
         "datasource": {
           "type": "prometheus",
@@ -4457,6 +4458,6 @@
   "timezone": "browser",
   "title": "MySQL Overview",
   "uid": "MQWgroiiz",
-  "version": 4,
+  "version": 1,
   "weekStart": ""
 }
