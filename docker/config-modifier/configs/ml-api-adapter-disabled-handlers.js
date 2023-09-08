@@ -13,6 +13,13 @@ module.exports = {
       "NOTIFICATION": {
         "EVENT": {
           "config": {
+            "options": {
+              "mode": 2,
+              "batchSize": 4,
+              "syncConcurrency": 4,
+              "syncSingleMessage": true,
+              "sync": true
+            },
             "rdkafkaConf": {
               "metadata.broker.list": "kafka:29092"
             }
@@ -24,22 +31,37 @@ module.exports = {
       "TRANSFER": {
         "PREPARE": {
           "config": {
+            "options": {
+              "sync": true
+            },
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "kafka:29092",
+              "queue.buffering.max.ms": 0,
+              "compression.codec": "lz4",
             }
           }
         },
         "FULFIL": {
           "config": {
+            "options": {
+              "sync": true
+            },
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "kafka:29092",
+              "queue.buffering.max.ms": 0,
+              "compression.codec": "lz4",
             }
           }
         },
         "GET": {
           "config": {
+            "options": {
+              "sync": true
+            },
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "kafka:29092",
+              "queue.buffering.max.ms": 0,
+              "compression.codec": "lz4",
             }
           }
         }

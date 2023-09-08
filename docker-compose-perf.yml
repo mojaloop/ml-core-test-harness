@@ -567,7 +567,7 @@ services:
       mode: replicated
       replicas: ${ML_API_ADAPTER_REPLICAS}
     # container_name: ml-api-adapter
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-api-adapter-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/${ML_API_CONFIG_FILE} /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
     # ports:
     #   - "3000:3000"
     volumes:
