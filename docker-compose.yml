@@ -323,7 +323,8 @@ services:
       - all-services
 
   mojaloop-testing-toolkit-ui:
-    image: mojaloop/ml-testing-toolkit-ui:v15.3.0
+    # image: mojaloop/ml-testing-toolkit-ui:v15.3.0
+    image: g20-tech-sprint-demo-2
     ports:
       - "9660:6060"
     environment:

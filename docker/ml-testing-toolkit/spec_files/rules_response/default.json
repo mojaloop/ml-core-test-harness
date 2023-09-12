@@ -261,13 +261,13 @@
           "id": 10,
           "weightedScore": 0,
           "listOfChecks": [
-            "KYC"
+            "KYC, AML"
           ],
           "rulesList": [
-            "string"
+            "501,502"
           ],
           "status": "completed",
-          "additionalInfo": "string"
+          "additionalInfo": "No concerning issues found"
         },
         "statusCode": "200",
         "scripts": {
