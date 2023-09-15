@@ -2,7 +2,7 @@ import http from 'k6/http';
 import { crypto } from "k6/experimental/webcrypto";
 import { check, fail, sleep, group } from 'k6';
 import { Trace } from "../common/trace.js";
-import { getTwoItemsFromArray } from "../common/utils.js";
+import { getTwoItemsFromArray, getRandomItemFromArray } from "../common/utils.js";
 
 console.log(`Env Vars -->
   K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL},
@@ -10,6 +10,18 @@ console.log(`Env Vars -->
 `);
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
+// const endpointList = [
+//   'http://ml-api-adapter:3000',
+//   'http://ml-api-adapter:3000'
+// ]
+const endpointList = [
+  'http://ml-core-ml-api-adapter-1:3000',
+  'http://ml-core-ml-api-adapter-2:3000'
+]
+// const endpointList = [
+//   'http://ml-core-ml-api-adapter-1:3000',
+//   'http://ml-core-ml-api-adapter2-1:3000'
+// ]
 
 const ilpPacket = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ILPPACKET
 const condition = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CONDITION
@@ -29,6 +41,8 @@ export function postTransfersNoCallback() {
       payerFsp = selectedFsps[0]
       payeeFsp =  selectedFsps[1]
     }
+
+    const endpoint = getRandomItemFromArray(endpointList)
 
     const startTs = Date.now();
     const transferId = crypto.randomUUID();
@@ -67,7 +81,7 @@ export function postTransfersNoCallback() {
     }
 
     // Lets send the FSPIOP POST /transfers request
-    const res = http.post(`${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL}/transfers`, JSON.stringify(body), params);
+    const res = http.post(`${endpoint}/transfers`, JSON.stringify(body), params);
     check(res, { 'TRANSFERS_FSPIOP_POST_TRANSFERS_RESPONSE_IS_202' : (r) => r.status == 202 });
 
   });

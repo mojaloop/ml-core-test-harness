@@ -65,7 +65,7 @@ module.exports = {
         "FULFIL": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "kafka2:29092"
             }
           }
         },
@@ -108,7 +108,7 @@ module.exports = {
         "FULFIL": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "kafka2:29092"
             }
           }
         },
@@ -124,7 +124,7 @@ module.exports = {
         "EVENT": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "kafka2:29092"
             }
           }
         }

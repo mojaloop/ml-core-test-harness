@@ -70,3 +70,7 @@ export function getTwoItemsFromArray(inputArray) {
 
   return outputArray
 }
+
+export function getRandomItemFromArray(inputArray) {
+  return randomItem(inputArray)
+}

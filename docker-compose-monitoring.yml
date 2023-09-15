@@ -192,3 +192,18 @@ services:
       - mojaloop-net
     environment:
       - KAFKA_BROKERS=kafka:29092
+
+  ## Debug utilities
+  kafka-debug-console2:
+    # image: quay.io/cloudhut/kowl:v1.4.0
+    image: docker.redpanda.com/redpandadata/console:latest
+    deploy:
+      replicas: 1
+    restart: on-failure
+    hostname: kafka-debug-console2
+    ports:
+    - "9081:8080"
+    networks:
+      - mojaloop-net
+    environment:
+      - KAFKA_BROKERS=kafka2:29092

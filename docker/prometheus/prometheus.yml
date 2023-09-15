@@ -101,6 +101,14 @@ scrape_configs:
           'ml-core-central-handler-timeout-3:3001',
           'ml-core-central-handler-timeout-4:3001',
           # 'central-handler-get:3001',
+          'ml-core-central-handler-position-commit-1:3001',
+          'ml-core-central-handler-position-commit-2:3001',
+          'ml-core-central-handler-position-commit-3:3001',
+          'ml-core-central-handler-position-commit-4:3001',
+          'ml-core-central-handler-position-commit-5:3001',
+          'ml-core-central-handler-position-commit-6:3001',
+          'ml-core-central-handler-position-commit-7:3001',
+          'ml-core-central-handler-position-commit-8:3001',
         ]
 
   - job_name: 'support-services'

@@ -266,6 +266,50 @@ services:
       - all-services
       - transfers-test
 
+  central-handler-position-commit:
+    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    env_file:
+      - .env
+      - perf.env
+    deploy:
+      mode: replicated
+      replicas: ${CENTRAL_LEDGER_POSITION_REPLICAS}
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers-commit.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
+    # ports:
+    #   - "3001:3001"
+    volumes:
+       - ./docker/wait4:/opt/app/wait4
+       - ./docker/config-modifier:/opt/app/config-modifier
+    environment:
+      # - LOG_LEVEL=error
+      - CLEDG_MONGODB__DISABLED=true
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+    networks:
+      - mojaloop-net
+    depends_on:
+      central-ledger:
+        condition: service_healthy
+      mysql-cl:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      # objstore:
+      #   condition: service_started
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 30s
+      start_period: 30s
+    user: root
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+      - transfers-test
+
   central-handler-fulfil:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
     env_file:
@@ -274,7 +318,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers-fulfil.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -512,6 +556,78 @@ services:
       KAFKA_ENABLE_KRAFT: "true"
     healthcheck:
       test: ["CMD" ,"/opt/bitnami/kafka/bin/kafka-broker-api-versions.sh","--bootstrap-server","kafka:9092"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+      - transfers-test
+
+  kafka2-provisioning:
+    container_name: kafka2-provisioning
+    networks:
+      - mojaloop-net
+    image: docker.io/bitnami/kafka:3.4.0
+    env_file:
+      - perf.env
+    depends_on:
+      - kafka2
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics.sh --bootstrap-server kafka2:29092 --list
+      echo -e 'Creating kafka topics'
+      kafka-topics.sh --bootstrap-server kafka2:29092 --create --if-not-exists --topic topic-transfer-prepare --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka2:29092 --create --if-not-exists --topic topic-transfer-position --replication-factor 1 --partitions $$KAFKA_POSITION_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka2:29092 --create --if-not-exists --topic topic-transfer-fulfil --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka2:29092 --create --if-not-exists --topic topic-notification-event --replication-factor 1 --partitions $$KAFKA_NOTIFICATION_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka2:29092 --create --if-not-exists --topic topic-transfer-get --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka2:29092 --create --if-not-exists --topic topic-admin-transfer --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka2:29092 --create --if-not-exists --topic topic-bulk-prepare --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka2:29092 --create --if-not-exists --topic topic-bulk-fulfil --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka2:29092 --create --if-not-exists --topic topic-bulk-processing --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      # kafka-topics.sh --bootstrap-server kafka2:29092 --create --if-not-exists --topic topic-bulk-get --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      echo -e 'Successfully created the following topics:'
+      kafka-topics.sh --bootstrap-server kafka2:29092 --list
+      "
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+      - transfers-test
+
+  kafka2:
+    networks:
+      - mojaloop-net
+    image: docker.io/bitnami/kafka:3.4.0
+    container_name: kafka2
+    # ports:
+    #   - "9092:9092"
+    environment:
+      # BITNAMI_DEBUG: "yes"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_CFG_LISTENERS: CONTROLLER://:9093,LISTENER_DOCKER://kafka2:29092,LISTENER_EXTERN://:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: LISTENER_DOCKER://kafka2:29092,LISTENER_EXTERN://localhost:9092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,LISTENER_DOCKER:PLAINTEXT,LISTENER_EXTERN:PLAINTEXT
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CFG_MESSAGE_MAX_BYTES: 200000000
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@127.0.0.1:9093
+      KAFKA_ENABLE_KRAFT: "true"
+    healthcheck:
+      test: ["CMD" ,"/opt/bitnami/kafka/bin/kafka-broker-api-versions.sh","--bootstrap-server","kafka2:9092"]
       timeout: 20s
       retries: 10
       start_period: 40s
