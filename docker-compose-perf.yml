@@ -748,6 +748,29 @@ services:
     profiles:
       - ttk-provisioning-transfers
 
+  ttk-provisioning-simulators:
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
+    env_file:
+      - .env
+      - perf.env
+      - .iac_env
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - 'sed -e "s/K6_CALLBACK_FQDN/$$K6_CALLBACK_FQDN/g" environments/simulators-remote-k8s-env.json > environments/env.json && npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning/participants_perffsp -e environments/env.json --report-format html --report-target file://reports/ttk-provisioning-report.html'
+    user: root
+    profiles:
+      - ttk-provisioning-simulators
+
   callback-handler-svc-oracle-sim:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
@@ -827,8 +850,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25001:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -863,8 +886,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25002:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -899,8 +922,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25003:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -930,8 +953,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25004:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -961,8 +984,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25005:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -991,8 +1014,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25006:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1021,8 +1044,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25007:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1051,8 +1074,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25008:3001"
     networks:
       - mojaloop-net
     volumes:

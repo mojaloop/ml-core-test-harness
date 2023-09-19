@@ -312,3 +312,17 @@ To capture results without running tests, use the following command
 ```bash
 ./automate_perf.sh -c -f <From Time in Milliseconds> -t <To time in Milliseconds>
 ```
+
+### Running Services for testing remote Kubernetes
+
+```bash
+docker-compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-simulators up -d
+```
+
+Stop Services
+
+```bash
+docker-compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-simulators down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
