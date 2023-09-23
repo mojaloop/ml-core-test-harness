@@ -316,13 +316,19 @@ To capture results without running tests, use the following command
 ### Running Services for testing remote Kubernetes
 
 ```bash
-docker-compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-simulators up -d
+../docker-compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-remote-k8s up -d
+
+../docker-compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml up -d
+```
+
+```
+env K6_SCRIPT_CONFIG_FILE_NAME=fspiopSingleTransfer.json ../docker-compose --project-name load -f docker-compose-load.yml up
 ```
 
 Stop Services
 
 ```bash
-docker-compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-simulators down -v
+docker-compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-remote-k8s down -v
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
