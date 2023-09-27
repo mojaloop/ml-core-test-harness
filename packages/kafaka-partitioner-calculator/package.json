@@ -12,6 +12,7 @@
   "dependencies": {
     "install": "^0.13.0",
     "murmurhash": "^2.0.1",
+    "mysql": "^2.18.1",
     "utf8": "^3.0.0"
   }
 }
