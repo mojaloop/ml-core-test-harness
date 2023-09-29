@@ -10,13 +10,17 @@ const TRACESTATE_KEY_CALLBACK_START_TS = 'tx_callback_start_ts'
 // ILP Packet: AYIDGQAAAAAAACcQIWcuZ3JlZW5iYW5rZnNwLm1zaXNkbi4yNzcxMzgwMzkxMoIC62V5SjBjbUZ1YzJGamRHbHZia2xrSWpvaU1ERXhaR1EyTldZdE5UQXpNeTAwTVdNMkxUazFaR1l0T1RFeFl6WTRPVFExWWpobUlpd2ljWFZ2ZEdWSlpDSTZJbVF3TXpJMU1EVTJMVE0xTldFdE5EUmxNUzFpT1RnMExXWXdZVFExTmpFMFkyRXpPQ0lzSW5CaGVXVmxJanA3SW5CaGNuUjVTV1JKYm1adklqcDdJbkJoY25SNVNXUlVlWEJsSWpvaVRWTkpVMFJPSWl3aWNHRnlkSGxKWkdWdWRHbG1hV1Z5SWpvaU1qYzNNVE00TURNNU1USWlMQ0ptYzNCSlpDSTZJbWR5WldWdVltRnVhMlp6Y0NKOWZTd2ljR0Y1WlhJaU9uc2ljR0Z5ZEhsSlpFbHVabThpT25zaWNHRnlkSGxKWkZSNWNHVWlPaUpOVTBsVFJFNGlMQ0p3WVhKMGVVbGtaVzUwYVdacFpYSWlPaUkwTkRFeU16UTFOamM0T1NJc0ltWnpjRWxrSWpvaWNHbHVhMkpoYm10bWMzQWlmU3dpY0dWeWMyOXVZV3hKYm1adklqcDdJbU52YlhCc1pYaE9ZVzFsSWpwN0ltWnBjbk4wVG1GdFpTSTZJa1pwY25OMGJtRnRaUzFVWlhOMElpd2liR0Z6ZEU1aGJXVWlPaUpNWVhOMGJtRnRaUzFVWlhOMEluMHNJbVJoZEdWUFprSnBjblJvSWpvaU1UazROQzB3TVMwd01TSjlmU3dpWVcxdmRXNTBJanA3SW1OMWNuSmxibU41SWpvaVZWTkVJaXdpWVcxdmRXNTBJam9pTVRBd0luMHNJblJ5WVc1ellXTjBhVzl1Vkhsd1pTSTZleUp6WTJWdVlYSnBieUk2SWxSU1FVNVRSa1ZTSWl3aWFXNXBkR2xoZEc5eUlqb2lVRUZaUlZJaUxDSnBibWwwYVdGMGIzSlVlWEJsSWpvaVEwOU9VMVZOUlZJaWZYMAA
 // Condition: 5m0gq_5dLQlTSSRKQmLpj0MZ1MtWLWgSu1oLGVTJyYs
 const FULFILMENT = 'lnYe4rYwLthWbzhVyX5cAuDfL1Ulw4WdaTgyGDREysw'
+const instance = axios.create()
 
 const init = (config, logger, options = undefined) => {
   const FSPIOP_ALS_ENDPOINT_URL = env.get('CBH_FSPIOP_ALS_ENDPOINT_URL').default('http://account-lookup-service:4002').asString()
   const FSPIOP_TRANSFERS_ENDPOINT_URL = env.get('CBH_FSPIOP_TRANSFERS_ENDPOINT_URL').default('http://ml-api-adapter:3000').asString()
+  const FSPIOP_QUOTES_ENDPOINT_URL = env.get('CBH_FSPIOP_QUOTES_ENDPOINT_URL').default('http://quoting-service:3002').asString()
   const FSP_ID = env.get('CBH_FSPIOP_FSP_ID').default('perffsp2').asString()
   const HTTP_KEEPALIVE = env.get('CBH_FSPIOP_CALLBACK_HTTP_KEEPALIVE').default('true').asBool()
   const router = express.Router()
+  const ilpPacket = env.get('CBH_FSPIOP_QUOTES_ILPPACKET').asString()
+  const condition = env.get('CBH_FSPIOP_QUOTES_CONDITION').asString()
 
   const httpAgent = new http.Agent({ keepAlive: HTTP_KEEPALIVE })
 
@@ -46,7 +50,7 @@ const init = (config, logger, options = undefined) => {
         'Egress - Operation handler',
         ['success', 'operation']
       ).startTimer()
-      await axios.put(`${FSPIOP_ALS_ENDPOINT_URL}/parties/${type}/${id}`, {
+      await instance.put(`${FSPIOP_ALS_ENDPOINT_URL}/parties/${type}/${id}`, {
         "party": {
           "partyIdInfo": {
             "partyIdType": "MSISDN",
@@ -106,7 +110,7 @@ const init = (config, logger, options = undefined) => {
         'Egress - Operation handler',
         ['success', 'operation']
       ).startTimer()
-      await axios.put(`${FSPIOP_ALS_ENDPOINT_URL}/participants/${type}/${id}`, {
+      await instance.put(`${FSPIOP_ALS_ENDPOINT_URL}/participants/${type}/${id}`, {
         "fspId": ""
       },
       {
@@ -149,7 +153,7 @@ const init = (config, logger, options = undefined) => {
         ['success', 'operation']
       ).startTimer()
       try {
-        await axios.put(`${FSPIOP_TRANSFERS_ENDPOINT_URL}/transfers/${transferId}`, {
+        await instance.put(`${FSPIOP_TRANSFERS_ENDPOINT_URL}/transfers/${transferId}`, {
             "transferState": "COMMITTED",
             "fulfilment": FULFILMENT,
             "completedTimestamp": (new Date()).toISOString()
@@ -178,7 +182,7 @@ const init = (config, logger, options = undefined) => {
     })();
     // Sync 202
     res.status(202).end()
-    histTimerEnd({ success: true, operation: 'fspiop_put_transfers'})
+    histTimerEnd({ success: true, operation: 'fspiop_post_transfers'})
   })
 
   const handleCallback = (resource, req, res) => {
@@ -239,6 +243,7 @@ const init = (config, logger, options = undefined) => {
     )
     const traceId = TraceUtils.getTraceId(req.headers)
     const channel = '/' + traceId + '/' + req.method + req.path
+    logger.info(channel)
     options.wsServer.notify(channel, isErrorOperation ? 'ERROR_CALLBACK_RECEIVED' : 'SUCCESS_CALLBACK_RECEIVED')
     histTimerEnd({ success: true, operation })
     return res.status(202).end()
@@ -257,6 +262,77 @@ const init = (config, logger, options = undefined) => {
   // Handle Payer PUT Transfers callback
   router.put('/transfers/*', (req, res) => {
     return handleCallback('transfers', req, res)
+  })
+
+
+  // Handle Payee POST /quotes
+  router.post('/quotes', (req, res) => {
+    const histTimerEnd = options.metrics.getHistogram(
+      'ing_callbackHandler',
+      'Ingress - Operation handler',
+      ['success', 'operation']
+    ).startTimer()
+
+    delete instance.defaults.headers.common.Accept
+
+    // Async callback
+    const fspiopSourceHeader = req.headers['fspiop-source']
+    const traceparentHeader = req.headers['traceparent']
+    const tracestateHeader = req.headers['tracestate'];
+    const quoteId = req.body.quoteId;
+
+    (async () => {
+      const egressHistTimerEnd = options.metrics.getHistogram(
+        'egress_callbackHandler',
+        'Egress - Operation handler',
+        ['success', 'operation']
+      ).startTimer()
+      try {
+        const quoteBody = req.body
+        const quoteTransferAmount = quoteBody.amount.amount
+        const quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()
+
+        // Important to remove the Accept header, otherwise axios will add a default one to the request
+        // and the validation will fail
+        await instance.put(`${FSPIOP_QUOTES_ENDPOINT_URL}/quotes/${quoteId}`, {
+          "transferAmount": {
+            "currency": `${quoteBody.amount.currency}`,
+            "amount": `${quoteTransferAmount}`
+          },
+          "ilpPacket": ilpPacket,
+          "condition": condition,
+          "expiration": quoteExpiration
+        },
+        {
+          headers: {
+            'Content-Type': 'application/vnd.interoperability.quotes+json;version=1.0',
+            Date: (new Date()).toUTCString(),
+            'FSPIOP-Source': FSP_ID,
+            'FSPIOP-Destination': fspiopSourceHeader,
+            'traceparent': traceparentHeader,
+            'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
+          },
+          httpAgent
+        })
+        egressHistTimerEnd({ success: true, operation: 'fspiop_put_quotes'})
+      } catch(err) {
+        logger.error(JSON.stringify(err))
+        logger.error({
+          traceparent: req.headers.traceparent,
+          operation: 'fspiop_put_quotes',
+          err,
+        })
+        egressHistTimerEnd({ success: false, operation: 'fspiop_put_quotes'})
+      }
+    })();
+    // Sync 202
+    res.status(202).end()
+    histTimerEnd({ success: true, operation: 'fspiop_post_quotes'})
+  })
+
+  // Handle Payer PUT Quotes callback
+  router.put('/quotes/*', (req, res) => {
+    return handleCallback('quotes', req, res)
   })
 
   return {

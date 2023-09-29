@@ -100,6 +100,10 @@ scrape_configs:
           'ml-core-central-handler-timeout-2:3001',
           'ml-core-central-handler-timeout-3:3001',
           'ml-core-central-handler-timeout-4:3001',
+          'ml-core-quoting-service-1:3002',
+          'ml-core-quoting-service-2:3002',
+          'ml-core-quoting-service-3:3002',
+          'ml-core-quoting-service-4:3002',
           # 'central-handler-get:3001',
         ]
 

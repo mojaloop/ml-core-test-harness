@@ -169,6 +169,7 @@ services:
       - --mysqld.username=exporter
     profiles:
       - transfers-test
+      - quotes-test
 
   kafka-exporter:
     image: danielqsj/kafka-exporter:${KAFKA_EXPORTER_VERSION}
