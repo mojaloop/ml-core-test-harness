@@ -212,7 +212,7 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile trans
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
 
-### Running Services for Transfers characterization
+### Running Services for Quotes characterization
 
 ```bash
 docker compose --project-name ml-core -f docker-compose-perf.yml --profile quotes-test --profile 8dfsp --profile ttk-provisioning-quotes up -d
@@ -225,6 +225,11 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile quote
 ```
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
+### Configuration for Transfers with batch support
+- Set CENTRAL_LEDGER_POSITION_BATCH_REPLICAS to desired count in `.env` file
+- Enable line `CLEDG_KAFKA__EVENT_TYPE_ACTION_TOPIC_MAP__POSITION__PREPARE=topic-transfer-position-batch` in `perf.env` file
+- Set `CENTRAL_LEDGER_VERSION` to `v17.2.0` or higher
 
 ### Monitoring
 
