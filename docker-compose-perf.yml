@@ -836,8 +836,6 @@ services:
         condition: service_healthy
       central-ledger:
         condition: service_healthy
-      # central-handler-admin:
-      #   condition: service_healthy
     networks:
       - mojaloop-net
     command:
