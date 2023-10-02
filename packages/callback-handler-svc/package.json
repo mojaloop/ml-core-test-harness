@@ -36,7 +36,7 @@
     "@callback-handler-svc/utils": "file:./dist/local-packages/utils",
     "@mojaloop/central-services-logger": "11.2.0",
     "@mojaloop/central-services-metrics": "12.0.5",
-    "axios": "^1.4.0",
+    "axios": "1.5.0",
     "convict": "^6.2.4",
     "env-var": "^7.3.1",
     "express": "^4.17.2",

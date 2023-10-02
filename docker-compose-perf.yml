@@ -118,8 +118,6 @@ services:
     depends_on:
       mysql-cl:
         condition: service_healthy
-      kafka:
-        condition: service_started
       # objstore:
       #   condition: service_started
     user: root
@@ -130,6 +128,7 @@ services:
       - agreement
       - all-services
       - transfers-test
+      - quotes-test
 
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -177,6 +176,7 @@ services:
       - agreement
       - all-services
       - transfers-test
+      - quotes-test
 
   central-handler-prepare:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -471,6 +471,35 @@ services:
       - all-services
       - transfers-test
 
+  quoting-service:
+    image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service-perf.js /opt/app/config/default.json && node src/index.js"
+    deploy:
+      mode: replicated
+      replicas: ${QS_REPLICAS}
+    networks:
+      - mojaloop-net
+    # ports:
+    #   - "3002:3002"
+    depends_on:
+      mysql-cl:
+        condition: service_started
+      central-ledger:
+        condition: service_started
+    environment:
+      ## Allows TraceID to be propogated - https://github.com/mojaloop/event-sdk#configuration
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+    volumes:
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: wget -q http://localhost:3002/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - quotes-test
+
   # objstore:
   #   image: mongo:${DEP_MONGO_VERSION}
   #   container_name: objstore
@@ -564,6 +593,7 @@ services:
       - agreement
       - all-services
       - transfers-test
+      - quotes-test
 
   mysql-cl:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
@@ -595,6 +625,7 @@ services:
       - agreement
       - all-services
       - transfers-test
+      - quotes-test
     ## In memory storage - Ref: https://docs.docker.com/storage/tmpfs/
     tmpfs:
       - /var/lib/mysql
@@ -705,6 +736,7 @@ services:
       - all-services
       - als-test
       - transfers-test
+      - quotes-test
 
   mojaloop-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:${TEST_TTK_UI_VERSION}
@@ -726,6 +758,7 @@ services:
       - all-services
       - als-test
       - transfers-test
+      - quotes-test
 
   ttk-provisioning-als:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
@@ -788,6 +821,30 @@ services:
     user: root
     profiles:
       - ttk-provisioning-transfers
+
+  ttk-provisioning-quotes:
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
+    env_file:
+      - .env
+      - perf.env
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+      central-ledger:
+        condition: service_healthy
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+    user: root
+    profiles:
+      - ttk-provisioning-quotes
 
   callback-handler-svc-oracle-sim:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
@@ -855,6 +912,7 @@ services:
       - all-services
       - als-test
       - transfers-test
+      - quotes-test
 
   sim-perffsp1:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
