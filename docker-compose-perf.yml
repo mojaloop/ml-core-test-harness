@@ -118,8 +118,6 @@ services:
     depends_on:
       mysql-cl:
         condition: service_healthy
-      kafka:
-        condition: service_started
       # objstore:
       #   condition: service_started
     user: root
@@ -472,18 +470,17 @@ services:
       - agreement
       - all-services
       - transfers-test
-      - quotes-test
 
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service-perf.js /opt/app/config/default.json && node src/index.js"
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: ${QS_REPLICAS}
     networks:
       - mojaloop-net
-    ports:
-      - "3002:3002"
+    # ports:
+    #   - "3002:3002"
     depends_on:
       mysql-cl:
         condition: service_started
@@ -671,7 +668,6 @@ services:
       - transfer
       - all-services
       - transfers-test
-      - quotes-test
 
   ml-handler-notification:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
@@ -709,7 +705,6 @@ services:
       - transfer
       - all-services
       - transfers-test
-      - quotes-test
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
@@ -841,8 +836,8 @@ services:
         condition: service_healthy
       central-ledger:
         condition: service_healthy
-      central-handler-admin:
-        condition: service_healthy
+      # central-handler-admin:
+      #   condition: service_healthy
     networks:
       - mojaloop-net
     command:
@@ -885,7 +880,6 @@ services:
       - callback-handler
       - all-services
       - als-test
-      - quotes-test
 
   callback-handler-svc-cl-sim:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}

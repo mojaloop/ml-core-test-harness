@@ -21,7 +21,7 @@ const init = (config, logger, options = undefined) => {
   const router = express.Router()
   const ilpPacket = env.get('CBH_FSPIOP_QUOTES_ILPPACKET').asString()
   const condition = env.get('CBH_FSPIOP_QUOTES_CONDITION').asString()
-
+  const quoteExpirationWindow = env.get('CBH_QUOTE_EXPIRATION_WINDOW').asInt()
   const httpAgent = new http.Agent({ keepAlive: HTTP_KEEPALIVE })
 
   // Handle Payee GET Party
@@ -290,7 +290,7 @@ const init = (config, logger, options = undefined) => {
       try {
         const quoteBody = req.body
         const quoteTransferAmount = quoteBody.amount.amount
-        const quoteExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()
+        const quoteExpiration = new Date(new Date().getTime() + quoteExpirationWindow).toISOString()
 
         // Important to remove the Accept header, otherwise axios will add a default one to the request
         // and the validation will fail
