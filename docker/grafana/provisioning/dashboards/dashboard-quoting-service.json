@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 13,
+  "id": 1,
   "links": [
     {
       "asDropdown": false,
@@ -1015,7 +1015,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "always",
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1041,32 +1041,7 @@
           },
           "unit": "ops"
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "quote_checkDuplicateQuoteRequest success:false"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 16,
@@ -1714,7 +1689,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -1722,8 +1697,8 @@
     "list": []
   },
   "time": {
-    "from": "2023-10-05T02:48:06.000Z",
-    "to": "2023-10-05T02:54:03.000Z"
+    "from": "now-30m",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "",
