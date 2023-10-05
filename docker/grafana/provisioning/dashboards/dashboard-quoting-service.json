@@ -181,7 +181,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(moja_qs_database_get_cache_value[$__rate_interval])) by (queryName, hit) ",
+          "expr": "sum(rate(moja_qs_database_get_cache_value_count[$__rate_interval])) by (queryName, hit) ",
           "hide": false,
           "legendFormat": "{{queryName}}-{{hit}}",
           "range": true,
@@ -1030,8 +1030,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1128,8 +1127,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46",
-                "value": null
+                "color": "#299c46"
               },
               {
                 "color": "rgba(237, 129, 40, 0.89)",
@@ -1254,8 +1252,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1379,8 +1376,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1535,8 +1531,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1636,8 +1631,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1704,6 +1698,6 @@
   "timezone": "",
   "title": "Mojaloop - Quoting Service",
   "uid": "a4373cfa-5295-430d-9e53-a59c008ffa6c",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
