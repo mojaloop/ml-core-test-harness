@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 14,
+  "id": 10,
   "links": [
     {
       "asDropdown": false,
@@ -247,7 +247,7 @@
           ],
           "show": false
         },
-        "frameIndex": 2,
+        "frameIndex": 3,
         "showHeader": true
       },
       "pluginVersion": "10.0.2",
@@ -616,7 +616,7 @@
       "type": "stat"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -624,13 +624,13 @@
     "list": []
   },
   "time": {
-    "from": "2023-10-05T02:05:23.353Z",
-    "to": "2023-10-05T02:09:31.114Z"
+    "from": "now-5m",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Central Ledger DB",
   "uid": "d17cf1dd-8fbc-4841-a957-214387249f18",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
