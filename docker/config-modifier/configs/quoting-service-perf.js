@@ -4,5 +4,5 @@ module.exports = {
     "HOST": "mysql-cl"
   },
   "SIMPLE_ROUTING_MODE": false,
-  "SWITCH_ENDPOINT": "http://central-ledger:3001"
+  "SWITCH_ENDPOINT": "http://callback-handler-svc-cl-sim:3001/admin"
 }
