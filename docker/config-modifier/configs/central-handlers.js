@@ -75,6 +75,16 @@ module.exports = {
               "metadata.broker.list": "kafka:29092"
             }
           }
+        },
+        "POSITION_BATCH": {
+          "config": {
+            "options": {
+              "batchSize": 50
+            },
+            "rdkafkaConf": {
+              "metadata.broker.list": "kafka:29092"
+            }
+          }
         }
       },
       "ADMIN": {
