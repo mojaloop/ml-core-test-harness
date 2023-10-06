@@ -827,7 +827,7 @@ services:
     env_file:
       - .env
       - perf.env
-      - .iac_env
+      - perf.override.env
     volumes:
       - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
       - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"

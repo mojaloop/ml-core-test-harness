@@ -1,5 +1,0 @@
-K6_SCRIPT_ADMIN_ENDPOINT_URL=https://int.dev.labsk8s58.mojaloop.live/admin
-K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL=https://int.dev.labsk8s58.mojaloop.live/als-admin
-K6_SCRIPT_ORACLE_ENDPOINT_URL=https://int.dev.labsk8s58.mojaloop.live/oracle
-K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=https://int.dev.labsk8s58.mojaloop.live
-K6_CALLBACK_FQDN=test-harness.dev.labsk8s58.mojaloop.live
