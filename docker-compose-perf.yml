@@ -840,7 +840,7 @@ services:
     command:
       - sh
       - -c
-      - 'sed -e "s~K6_CALLBACK_FQDN~$$K6_CALLBACK_FQDN~g" -e "s~K6_SCRIPT_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ADMIN_ENDPOINT_URL~g" -e "s~K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~g" environments/remote-k8s-env.json > environments/env.json && npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/env.json --report-format html --report-target file://reports/ttk-provisioning-report.html'
+      - 'sed -e "s~K6_CALLBACK_FQDN~$$K6_CALLBACK_FQDN~g" -e "s~K6_SCRIPT_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ADMIN_ENDPOINT_URL~g" -e "s~K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~g" environments/remote-k8s-env.json > /tmp/env.json && npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e /tmp/env.json --report-format html --report-target file://reports/ttk-provisioning-report.html'
     user: root
     profiles:
       - ttk-provisioning-remote-k8s
