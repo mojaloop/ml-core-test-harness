@@ -945,6 +945,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp1.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
@@ -981,6 +982,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp2.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
@@ -1017,6 +1019,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp3.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
@@ -1048,6 +1051,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp4.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
@@ -1079,6 +1083,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp5.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
@@ -1109,6 +1114,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp6.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
@@ -1139,6 +1145,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp7.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
@@ -1169,6 +1176,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp8.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
