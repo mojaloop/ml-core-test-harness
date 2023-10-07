@@ -473,15 +473,15 @@ services:
 
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service-perf.js /opt/app/config/default.json && node --inspect=0.0.0.0 src/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service-perf.js /opt/app/config/default.json && node src/index.js"
     deploy:
       mode: replicated
       replicas: ${QS_REPLICAS}
     networks:
       - mojaloop-net
-    ports:
-      - "3002:3002"
-      - "9229:9229"
+    # ports:
+    #   - "3002:3002"
+    #   - "9229:9229"
     depends_on:
       mysql-cl:
         condition: service_started
