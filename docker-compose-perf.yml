@@ -481,6 +481,7 @@ services:
       - mojaloop-net
     # ports:
     #   - "3002:3002"
+    #   - "9229:9229"
     depends_on:
       mysql-cl:
         condition: service_started
@@ -758,7 +759,6 @@ services:
       - all-services
       - als-test
       - transfers-test
-      - quotes-test
 
   ttk-provisioning-als:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
