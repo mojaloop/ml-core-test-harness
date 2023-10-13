@@ -247,7 +247,7 @@ docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
 Stop Monitoring Services
 
 ```bash
-docker compose --project-name monitoring --profile als-test -f docker-compose-monitoring.yml down -v
+docker compose --project-name monitoring --profile als-test --profile transfers-test -f docker-compose-monitoring.yml down -v
 ```
 
 Start monitoring with account lookup service mysql exporter
