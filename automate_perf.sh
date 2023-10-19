@@ -82,7 +82,7 @@ declare -a dashboards=(\
   "Official%20k6%20Test%20Result" \
   "MySQL%20Overview" \
   "Supporting%20Services%20-%20Callback%20Hander%20Service" \
-  "mojaloop-quoting-service"
+  "Mojaloop%20-%20Quoting%20Service"
   )
 
 # # create a directory to store the results with date timestamp in the name, check if the directory exists
