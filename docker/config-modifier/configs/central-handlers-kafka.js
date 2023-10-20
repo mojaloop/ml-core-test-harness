@@ -25,6 +25,9 @@ module.exports = {
       "BULK": {
         "PREPARE": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
               "metadata.broker.list": "kafka:29092"
             }
@@ -32,6 +35,9 @@ module.exports = {
         },
         "PROCESSING": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
               "metadata.broker.list": "kafka:29092"
             }
@@ -39,6 +45,9 @@ module.exports = {
         },
         "FULFIL": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
               "metadata.broker.list": "kafka:29092"
             }
@@ -46,6 +55,9 @@ module.exports = {
         },
         "GET": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
               "metadata.broker.list": "kafka:29092"
             }
@@ -55,6 +67,9 @@ module.exports = {
       "TRANSFER": {
         "PREPARE": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
               "metadata.broker.list": "kafka:29092"
             }
@@ -62,6 +77,9 @@ module.exports = {
         },
         "GET": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
               "metadata.broker.list": "kafka:29092"
             }
@@ -69,6 +87,9 @@ module.exports = {
         },
         "FULFIL": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
               "metadata.broker.list": "kafka:29092"
             }
@@ -76,15 +97,8 @@ module.exports = {
         },
         "POSITION": {
           "config": {
-            "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
-            }
-          }
-        },
-        "POSITION_BATCH": {
-          "config": {
             "options": {
-              "batchSize": 50
+              "sync": false,
             },
             "rdkafkaConf": {
               "metadata.broker.list": "kafka:29092"
@@ -95,6 +109,9 @@ module.exports = {
       "ADMIN": {
         "TRANSFER": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
               "metadata.broker.list": "kafka:29092"
             }
@@ -106,7 +123,12 @@ module.exports = {
       "BULK": {
         "PROCESSING": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
+              "queue.buffering.max.messages": 0,
+              "compression.codec": "lz4",
               "metadata.broker.list": "kafka:29092"
             }
           }
@@ -115,21 +137,36 @@ module.exports = {
       "TRANSFER": {
         "PREPARE": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
+              "queue.buffering.max.messages": 0,
+              "compression.codec": "lz4",
               "metadata.broker.list": "kafka:29092"
             }
           }
         },
         "FULFIL": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
+              "queue.buffering.max.messages": 0,
+              "compression.codec": "lz4",
               "metadata.broker.list": "kafka:29092"
             }
           }
         },
         "POSITION": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
+              "queue.buffering.max.messages": 0,
+              "compression.codec": "lz4",
               "metadata.broker.list": "kafka:29092"
             }
           }
@@ -138,7 +175,12 @@ module.exports = {
       "NOTIFICATION": {
         "EVENT": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
+              "queue.buffering.max.messages": 0,
+              "compression.codec": "lz4",
               "metadata.broker.list": "kafka:29092"
             }
           }
@@ -147,7 +189,12 @@ module.exports = {
       "ADMIN": {
         "TRANSFER": {
           "config": {
+            "options": {
+              "sync": false,
+            },
             "rdkafkaConf": {
+              "queue.buffering.max.messages": 0,
+              "compression.codec": "lz4",
               "metadata.broker.list": "kafka:29092"
             }
           }

@@ -138,7 +138,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_SVC /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -186,7 +186,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_PREPARE /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -230,7 +230,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_POSITION_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_POSITION /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -274,7 +274,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_POSITION_BATCH_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --positionbatch"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_POSITION_BATCH /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --positionbatch"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -314,7 +314,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_FULFIL /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -435,7 +435,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1 # We dont need to scale this unless we are testing funds-in/out
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --admin"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_ADMIN /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --admin"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -640,7 +640,7 @@ services:
       mode: replicated
       replicas: ${ML_API_ADAPTER_REPLICAS}
     # container_name: ml-api-adapter
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-api-adapter-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_ML_API_ADAPTER /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
     # ports:
     #   - "3000:3000"
     volumes:
@@ -649,7 +649,7 @@ services:
     environment:
       # - LOG_LEVEL=error
       - EVENT_SDK_TRACEID_PER_VENDOR=false
-      # - MLAPI_TRANSFERS__SEND_TRANSFER_CONFIRMATION_TO_PAYEE=false
+      - MLAPI_TRANSFERS__SEND_TRANSFER_CONFIRMATION_TO_PAYEE=false
     networks:
       - mojaloop-net
     depends_on:
@@ -678,7 +678,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${ML_NOTIFICATION_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-handler-notification.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/handlers/index.js handler --notification"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_ML_HANDLER_NOTIFY /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/handlers/index.js handler --notification"
     # ports:
     #   - "3000:3000"
     #   - "9229:9229"
