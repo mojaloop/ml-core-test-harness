@@ -578,7 +578,7 @@
           "body": {
             "oracleIdType": "MSISDN",
             "endpoint": {
-              "value": "{$inputs.HOST_SIMULATOR}/oracle",
+              "value": "{$inputs.PERF_ORACLE_ENDPOINT_BASE_URL}",
               "endpointType": "URL"
             },
             "currency": "{$inputs.currency}",
