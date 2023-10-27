@@ -226,6 +226,23 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile quote
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
+### Running Services for Full E2E (Discovery+Agreement+Transfers) characterization
+
+- Set `ALS_SWITCH_ENDPOINT` to "http://central-ledger:3001" in perf.env
+- Set `QS_SWITCH_ENDPOINT` to "http://central-ledger:3001" in perf.env
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile 8dfsp --profile ttk-provisioning-e2e up -d
+```
+
+Stop Services
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile 8dfsp down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
 ### Configuration for Transfers with batch support
 - Set CENTRAL_LEDGER_POSITION_BATCH_REPLICAS to desired count in `.env` file
 - Enable line `CLEDG_KAFKA__EVENT_TYPE_ACTION_TOPIC_MAP__POSITION__PREPARE=topic-transfer-position-batch` in `perf.env` file
@@ -270,6 +287,13 @@ docker compose --project-name monitoring --profile quotes-test -f docker-compose
 
 since the quoting service uses the central ledger database.
 
+Start monitoring with all exporters
+
+```bash
+docker compose --project-name monitoring --profile als-test --profile quotes-test --profile transfers-test -f docker-compose-monitoring.yml up -d
+```
+
+
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
 TODO:
@@ -313,6 +337,8 @@ env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfersUnidirectional.json docker compose
 env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDiscovery.json docker compose --project-name load -f docker-compose-load.yml up
 ( or )
 env K6_SCRIPT_CONFIG_FILE_NAME=fspiopQuotes.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=fspiopE2E.json docker compose --project-name load -f docker-compose-load.yml up
 ```
 
 Cleanup tests
