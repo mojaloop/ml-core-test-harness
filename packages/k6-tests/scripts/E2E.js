@@ -36,7 +36,7 @@ export function E2E() {
       payeeFsp =  selectedFsps[1]
     }
 
-    const startTs = Date.now();
+    const startTsParties = Date.now();
     const payeeId = payeeFsp['partyId'];
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
@@ -72,6 +72,7 @@ export function E2E() {
       clearTimersParties();
       wsParties.close();
 
+      const startTsQuotes = Date.now();
       const quoteId = crypto.randomUUID();
       const transactionId = crypto.randomUUID();
       const wsChannelQuotes = `${traceParent.traceId}/PUT/quotes/${quoteId}`;
@@ -101,6 +102,7 @@ export function E2E() {
         clearTimersQuotes();
         wsQuotes.close();
 
+        const startTsTransfers = Date.now();
         const transferId = crypto.randomUUID();
         const wsChannelTransfers = `${traceParent.traceId}/PUT/transfers/${transferId}`;
         const wsURLTransfers = `${wsUrl}/${wsChannelTransfers}`
@@ -144,7 +146,7 @@ export function E2E() {
               'FSPIOP-Destination': payeeFspId,
               'Date': (new Date()).toUTCString(),
               'traceparent': traceParent.toString(),
-              'tracestate': `tx_end2end_start_ts=${startTs}`
+              'tracestate': `tx_end2end_start_ts=${startTsTransfers}`
             },
           };
 
@@ -200,7 +202,7 @@ export function E2E() {
             'FSPIOP-Destination': payeeFspId,
             'Date': (new Date()).toUTCString(),
             'traceparent': traceParent.toString(),
-            'tracestate': `tx_end2end_start_ts=${startTs}`
+            'tracestate': `tx_end2end_start_ts=${startTsQuotes}`
           },
         };
 
@@ -259,7 +261,7 @@ export function E2E() {
           'FSPIOP-Source': payerFspId,
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
-          'tracestate': `tx_end2end_start_ts=${startTs}`
+          'tracestate': `tx_end2end_start_ts=${startTsParties}`
         },
       };
 
