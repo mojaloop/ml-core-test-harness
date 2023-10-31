@@ -387,3 +387,7 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-t
 docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test --profile quotes-test down -v
 ```
 
+### On CL mysql machine
+```
+docker compose --project-name ml-core -f docker-compose-perf.yml up -d mysql-cl
+```
