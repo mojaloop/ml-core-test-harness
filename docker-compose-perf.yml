@@ -565,8 +565,8 @@ services:
       - mojaloop-net
     image: docker.io/bitnami/kafka:${DEP_KAFKA_VERSION}
     container_name: kafka
-    # ports:
-    #   - "9092:9092"
+    ports:
+      - "9092:9092"
     environment:
       # BITNAMI_DEBUG: "yes"
       ALLOW_PLAINTEXT_LISTENER: "yes"
