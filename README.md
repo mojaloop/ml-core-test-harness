@@ -389,12 +389,16 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-t
 
 ### On CL mysql machine
 ```
-docker compose --project-name ml-core -f docker-compose-perf.yml up -d mysql-cl
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile mysql-cl up -d
+
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile mysql-cl down -v
 ```
 
 ### On Kafka machine
 ```
-docker compose --project-name ml-core -f docker-compose-perf.yml up -d kafka
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile kafka up -d
+
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile kafka down -v
 ```
 
 ### On ML-API, ML Notification, CL Admin API machine

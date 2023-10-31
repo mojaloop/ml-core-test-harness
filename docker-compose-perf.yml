@@ -568,6 +568,7 @@ services:
     container_name: kafka
     ports:
       - "9092:9092"
+      - "29092:29092"
     environment:
       # BITNAMI_DEBUG: "yes"
       ALLOW_PLAINTEXT_LISTENER: "yes"
@@ -597,6 +598,7 @@ services:
       - all-services
       - transfers-test
       # - quotes-test
+      - kafka
 
   mysql-cl:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
@@ -629,6 +631,7 @@ services:
       - all-services
       - transfers-test
       # - quotes-test
+      - mysql-cl
     ## In memory storage - Ref: https://docs.docker.com/storage/tmpfs/
     tmpfs:
       - /var/lib/mysql
