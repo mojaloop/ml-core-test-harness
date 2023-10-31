@@ -128,7 +128,7 @@ services:
       - agreement
       - all-services
       - transfers-test
-      - quotes-test
+      # - quotes-test
 
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -176,7 +176,7 @@ services:
       - agreement
       - all-services
       - transfers-test
-      - quotes-test
+      # - quotes-test
 
   central-handler-prepare:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -479,14 +479,14 @@ services:
       replicas: ${QS_REPLICAS}
     networks:
       - mojaloop-net
-    # ports:
-    #   - "3002:3002"
+    ports:
+      - "3002:3002"
     #   - "9229:9229"
-    depends_on:
-      mysql-cl:
-        condition: service_started
-      central-ledger:
-        condition: service_started
+    # depends_on:
+    #   mysql-cl:
+    #     condition: service_started
+    #   central-ledger:
+    #     condition: service_started
     environment:
       ## Allows TraceID to be propogated - https://github.com/mojaloop/event-sdk#configuration
       - EVENT_SDK_TRACEID_PER_VENDOR=false
@@ -595,7 +595,7 @@ services:
       - agreement
       - all-services
       - transfers-test
-      - quotes-test
+      # - quotes-test
 
   mysql-cl:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
@@ -627,7 +627,7 @@ services:
       - agreement
       - all-services
       - transfers-test
-      - quotes-test
+      # - quotes-test
     ## In memory storage - Ref: https://docs.docker.com/storage/tmpfs/
     tmpfs:
       - /var/lib/mysql
@@ -736,9 +736,9 @@ services:
     profiles:
       - testing-toolkit
       - all-services
-      - als-test
+      # - als-test
       - transfers-test
-      - quotes-test
+      # - quotes-test
 
   mojaloop-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:${TEST_TTK_UI_VERSION}
@@ -758,7 +758,7 @@ services:
     profiles:
       - testing-toolkit
       - all-services
-      - als-test
+      # - als-test
       - transfers-test
 
   ttk-provisioning-als:
@@ -935,9 +935,9 @@ services:
       - simulators
       - callback-handler
       - all-services
-      - als-test
+      # - als-test
       - transfers-test
-      - quotes-test
+      # - quotes-test
 
   sim-perffsp1:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
@@ -970,7 +970,7 @@ services:
       - simulators
       - callback-handler
       - all-services
-      - als-test
+      # - als-test
       - 2dfsp
       - 4dfsp
       - 8dfsp
@@ -1006,7 +1006,7 @@ services:
       - simulators
       - callback-handler
       - all-services
-      - als-test
+      # - als-test
       - 2dfsp
       - 4dfsp
       - 8dfsp

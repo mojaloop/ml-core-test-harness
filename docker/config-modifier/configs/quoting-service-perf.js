@@ -1,8 +1,8 @@
 module.exports = {
-  "HOSTNAME": "http://quoting-service",
+  "HOSTNAME": "http://10.10.100.70",
   "DATABASE": {
-    "HOST": "mysql-cl"
+    "HOST": "10.10.100.73"
   },
   "SIMPLE_ROUTING_MODE": false,
-  "SWITCH_ENDPOINT": "http://callback-handler-svc-cl-sim:3001/admin"
+  "SWITCH_ENDPOINT": "http://10.10.100.74:3001"
 }

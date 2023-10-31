@@ -379,5 +379,11 @@ docker compose --project-name monitoring  -f docker-compose-monitoring.yml up -d
 docker compose --project-name ml-core -f docker-compose-perf.yml --profile 8dfsp up -d
 ```
 
+### On ALS, Quotes machine
 
+```
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test --profile quotes-test up -d
+
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test --profile quotes-test down -v
+```
 
