@@ -630,6 +630,7 @@ services:
       - all-services
       - transfers-test
       # - quotes-test
+      - mysql-cl
     ## In memory storage - Ref: https://docs.docker.com/storage/tmpfs/
     tmpfs:
       - /var/lib/mysql
