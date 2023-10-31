@@ -396,3 +396,10 @@ docker compose --project-name ml-core -f docker-compose-perf.yml up -d mysql-cl
 ```
 docker compose --project-name ml-core -f docker-compose-perf.yml up -d kafka
 ```
+
+### On ML-API, ML Notification, CL Admin API machine
+```
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile distributed-adapter up -d
+
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile distributed-adapter down -v
+```

@@ -11,7 +11,7 @@ module.exports = {
         "EVENT": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092",
+              "metadata.broker.list": "10.10.100.72:29092",
               "enable.auto.commit": false
             }
           }
@@ -23,21 +23,21 @@ module.exports = {
         "PREPARE": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:29092"
             }
           }
         },
         "FULFIL": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:29092"
             }
           }
         },
         "GET": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:29092"
             }
           }
         }

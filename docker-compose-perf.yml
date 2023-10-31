@@ -139,8 +139,8 @@ services:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_SVC /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "3001:3001"
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
@@ -153,13 +153,13 @@ services:
       # - CLEDG_CACHE__CACHE_ENABLED=false
     networks:
       - mojaloop-net
-    depends_on:
-      mysql-cl:
-        condition: service_healthy
-      kafka:
-        condition: service_started
-      central-ledger-migrator:
-        condition: service_completed_successfully
+    depends_on: {}
+      #mysql-cl:
+      #  condition: service_healthy
+      #kafka:
+      #  condition: service_started
+      #central-ledger-migrator:
+      #  condition: service_completed_successfully
       # objstore:
       #   condition: service_started
     healthcheck:
@@ -177,6 +177,7 @@ services:
       - all-services
       - transfers-test
       # - quotes-test
+      - distributed-adapter
 
   central-handler-prepare:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -642,8 +643,8 @@ services:
       replicas: ${ML_API_ADAPTER_REPLICAS}
     # container_name: ml-api-adapter
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_ML_API_ADAPTER /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
-    # ports:
-    #   - "3000:3000"
+    ports:
+      - "3000:3000"
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
@@ -654,8 +655,8 @@ services:
     networks:
       - mojaloop-net
     depends_on:
-      kafka:
-        condition: service_healthy
+      #kafka:
+      #  condition: service_healthy
       central-ledger:
         condition: service_healthy
     healthcheck:
@@ -670,6 +671,7 @@ services:
       - transfer
       - all-services
       - transfers-test
+      - distributed-adapter
 
   ml-handler-notification:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
@@ -680,9 +682,9 @@ services:
       mode: replicated
       replicas: ${ML_NOTIFICATION_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_ML_HANDLER_NOTIFY /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/handlers/index.js handler --notification"
-    # ports:
-    #   - "3000:3000"
-    #   - "9229:9229"
+    ports:
+      - "4000:3000"
+    #  - "9229:9229"
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
@@ -691,8 +693,8 @@ services:
     networks:
       - mojaloop-net
     depends_on:
-      kafka:
-        condition: service_started
+      #kafka:
+      #  condition: service_started
       central-ledger:
         condition: service_started
     healthcheck:
@@ -707,6 +709,7 @@ services:
       - transfer
       - all-services
       - transfers-test
+      - distributed-adapter
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:

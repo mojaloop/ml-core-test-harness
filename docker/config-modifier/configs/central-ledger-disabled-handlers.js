@@ -1,7 +1,7 @@
 module.exports = {
   "HOSTNAME": "http://central-ledger",
   "DATABASE": {
-    "HOST": "mysql-cl"
+    "HOST": "10.10.100.73"
   },
   "MIGRATIONS": {
     "DISABLED": true,

@@ -19,12 +19,12 @@ module.exports = {
       wait4: [
         {
           description: 'Kafka broker',
-          uri: 'kafka:29092',
+          uri: '10.10.100.72:29092',
           method: 'ncat'
         },
         {
           description: 'MySQL ledger',
-          uri: 'mysql-cl:3306',
+          uri: '10.10.100.73:3306',
           method: 'mysql',
           // customized RC setup
           rc: {
