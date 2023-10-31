@@ -368,3 +368,16 @@ To capture results without running tests, use the following command
 ```bash
 ./automate_perf.sh -c -f <From Time in Milliseconds> -t <To time in Milliseconds>
 ```
+
+
+## Test Notes
+
+### On load and monitoring machine
+```
+docker compose --project-name monitoring  -f docker-compose-monitoring.yml up -d
+
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile 8dfsp up -d
+```
+
+
+

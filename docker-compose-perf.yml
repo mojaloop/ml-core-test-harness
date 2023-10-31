@@ -951,8 +951,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "13001:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -987,8 +987,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "13002:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1023,8 +1023,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "13003:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1054,8 +1054,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "13004:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1085,8 +1085,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "13005:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1115,8 +1115,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "13006:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1145,8 +1145,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "13007:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1175,8 +1175,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "13008:3001"
     networks:
       - mojaloop-net
     volumes:

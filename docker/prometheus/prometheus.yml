@@ -52,74 +52,74 @@ scrape_configs:
     static_configs:
       - targets: ['node-exporter:9100']
 
-  - job_name: 'mojaloop-services'
+  # - job_name: 'mojaloop-services'
 
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 10s
+  #   # Override the global default and scrape targets from this job every 5 seconds.
+  #   scrape_interval: 10s
 
-    static_configs:
-      - targets: [
-          ## Discovery Services
-          'ml-core-account-lookup-service-1:4001',
-          'ml-core-account-lookup-service-2:4001',
-          'ml-core-account-lookup-service-3:4001',
-          'ml-core-account-lookup-service-4:4001',
-          ## Agreement Services
-          # 'quoting-service:3002' // Currently no metrics end-point exposed
-          ## Transfer Services
-          'ml-core-ml-api-adapter-1:3000',
-          'ml-core-ml-api-adapter-2:3000',
-          'ml-core-ml-api-adapter-3:3000',
-          'ml-core-ml-api-adapter-4:3000',
-          'ml-core-ml-handler-notification-1:3000',
-          'ml-core-ml-handler-notification-2:3000',
-          'ml-core-ml-handler-notification-3:3000',
-          'ml-core-ml-handler-notification-4:3000',
-          'central-ledger:3001',
-          'ml-core-central-handler-prepare-1:3001',
-          'ml-core-central-handler-prepare-2:3001',
-          'ml-core-central-handler-prepare-3:3001',
-          'ml-core-central-handler-prepare-4:3001',
-          'ml-core-central-handler-position-1:3001',
-          'ml-core-central-handler-position-2:3001',
-          'ml-core-central-handler-position-3:3001',
-          'ml-core-central-handler-position-4:3001',
-          'ml-core-central-handler-position-5:3001',
-          'ml-core-central-handler-position-6:3001',
-          'ml-core-central-handler-position-7:3001',
-          'ml-core-central-handler-position-8:3001',
-          'ml-core-central-handler-position-batch-1:3001',
-          'ml-core-central-handler-position-batch-2:3001',
-          'ml-core-central-handler-position-batch-3:3001',
-          'ml-core-central-handler-position-batch-4:3001',
-          'ml-core-central-handler-position-batch-5:3001',
-          'ml-core-central-handler-position-batch-6:3001',
-          'ml-core-central-handler-position-batch-7:3001',
-          'ml-core-central-handler-position-batch-8:3001',
-          'ml-core-central-handler-fulfil-1:3001',
-          'ml-core-central-handler-fulfil-2:3001',
-          'ml-core-central-handler-fulfil-3:3001',
-          'ml-core-central-handler-fulfil-4:3001',
-          'ml-core-central-handler-admin-1:3001',
-          'ml-core-central-handler-admin-2:3001',
-          'ml-core-central-handler-admin-3:3001',
-          'ml-core-central-handler-admin-4:3001',
-          'ml-core-central-handler-timeout-1:3001',
-          'ml-core-central-handler-timeout-2:3001',
-          'ml-core-central-handler-timeout-3:3001',
-          'ml-core-central-handler-timeout-4:3001',
-          'ml-core-quoting-service-1:3002',
-          'ml-core-quoting-service-2:3002',
-          'ml-core-quoting-service-3:3002',
-          'ml-core-quoting-service-4:3002',
-          'ml-core-quoting-service-5:3002',
-          'ml-core-quoting-service-6:3002',
-          'ml-core-quoting-service-7:3002',
-          'ml-core-quoting-service-8:3002',
-          'ml-core-quoting-service-9:3002',
-          'ml-core-quoting-service-10:3002',
-          # 'central-handler-get:3001',
-        ]
+  #   static_configs:
+  #     - targets: [
+  #         ## Discovery Services
+  #         'ml-core-account-lookup-service-1:4001',
+  #         'ml-core-account-lookup-service-2:4001',
+  #         'ml-core-account-lookup-service-3:4001',
+  #         'ml-core-account-lookup-service-4:4001',
+  #         ## Agreement Services
+  #         # 'quoting-service:3002' // Currently no metrics end-point exposed
+  #         ## Transfer Services
+  #         'ml-core-ml-api-adapter-1:3000',
+  #         'ml-core-ml-api-adapter-2:3000',
+  #         'ml-core-ml-api-adapter-3:3000',
+  #         'ml-core-ml-api-adapter-4:3000',
+  #         'ml-core-ml-handler-notification-1:3000',
+  #         'ml-core-ml-handler-notification-2:3000',
+  #         'ml-core-ml-handler-notification-3:3000',
+  #         'ml-core-ml-handler-notification-4:3000',
+  #         'central-ledger:3001',
+  #         'ml-core-central-handler-prepare-1:3001',
+  #         'ml-core-central-handler-prepare-2:3001',
+  #         'ml-core-central-handler-prepare-3:3001',
+  #         'ml-core-central-handler-prepare-4:3001',
+  #         'ml-core-central-handler-position-1:3001',
+  #         'ml-core-central-handler-position-2:3001',
+  #         'ml-core-central-handler-position-3:3001',
+  #         'ml-core-central-handler-position-4:3001',
+  #         'ml-core-central-handler-position-5:3001',
+  #         'ml-core-central-handler-position-6:3001',
+  #         'ml-core-central-handler-position-7:3001',
+  #         'ml-core-central-handler-position-8:3001',
+  #         'ml-core-central-handler-position-batch-1:3001',
+  #         'ml-core-central-handler-position-batch-2:3001',
+  #         'ml-core-central-handler-position-batch-3:3001',
+  #         'ml-core-central-handler-position-batch-4:3001',
+  #         'ml-core-central-handler-position-batch-5:3001',
+  #         'ml-core-central-handler-position-batch-6:3001',
+  #         'ml-core-central-handler-position-batch-7:3001',
+  #         'ml-core-central-handler-position-batch-8:3001',
+  #         'ml-core-central-handler-fulfil-1:3001',
+  #         'ml-core-central-handler-fulfil-2:3001',
+  #         'ml-core-central-handler-fulfil-3:3001',
+  #         'ml-core-central-handler-fulfil-4:3001',
+  #         'ml-core-central-handler-admin-1:3001',
+  #         'ml-core-central-handler-admin-2:3001',
+  #         'ml-core-central-handler-admin-3:3001',
+  #         'ml-core-central-handler-admin-4:3001',
+  #         'ml-core-central-handler-timeout-1:3001',
+  #         'ml-core-central-handler-timeout-2:3001',
+  #         'ml-core-central-handler-timeout-3:3001',
+  #         'ml-core-central-handler-timeout-4:3001',
+  #         'ml-core-quoting-service-1:3002',
+  #         'ml-core-quoting-service-2:3002',
+  #         'ml-core-quoting-service-3:3002',
+  #         'ml-core-quoting-service-4:3002',
+  #         'ml-core-quoting-service-5:3002',
+  #         'ml-core-quoting-service-6:3002',
+  #         'ml-core-quoting-service-7:3002',
+  #         'ml-core-quoting-service-8:3002',
+  #         'ml-core-quoting-service-9:3002',
+  #         'ml-core-quoting-service-10:3002',
+  #         # 'central-handler-get:3001',
+  #       ]
 
   - job_name: 'support-services'
 
@@ -142,7 +142,7 @@ scrape_configs:
           'ml-core-callback-handler-svc-cl-sim-2:3001',
           'ml-core-callback-handler-svc-cl-sim-3:3001',
           'ml-core-callback-handler-svc-cl-sim-4:3001',
-          'mysqlexporter-als:9104',
-          'mysqlexporter-cl:9104',
-          'kafka-exporter:9308',
+          # 'mysqlexporter-als:9104',
+          # 'mysqlexporter-cl:9104',
+          # 'kafka-exporter:9308',
         ]
