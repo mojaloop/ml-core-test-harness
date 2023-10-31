@@ -600,8 +600,8 @@ services:
   mysql-cl:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
     container_name: mysql-cl
-    # ports:
-    #   - "3306:3306"
+    ports:
+      - "3306:3306"
     # command: "--log-output=TABLE --slow-query-log=1 --long-query-time=0.01"
     command: "--disable-log-bin"
     volumes:
