@@ -394,5 +394,7 @@ docker compose --project-name ml-core -f docker-compose-perf.yml up -d mysql-cl
 
 ### On Kafka machine
 ```
-docker compose --project-name ml-core -f docker-compose-perf.yml up -d kafka
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile kafka up -d
+
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile kafka down -v
 ```

@@ -597,6 +597,7 @@ services:
       - all-services
       - transfers-test
       # - quotes-test
+      - kafka
 
   mysql-cl:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
