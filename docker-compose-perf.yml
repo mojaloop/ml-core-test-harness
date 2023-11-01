@@ -59,6 +59,21 @@ services:
       - discovery
       - all-services
       - als-test
+      - distributed-qs-als-service
+
+  distributed-als-load-balancer:
+    image: nginx:latest
+    volumes:
+      - ./docker/load-balancers/distributed-als.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - account-lookup-service
+    ports:
+      - "4001:4001"
+    user: root
+    profiles:
+      - distributed-qs-als-service
+    networks:
+      - mojaloop-net
 
   mysql-als:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
@@ -88,6 +103,7 @@ services:
       - discovery
       - all-services
       - als-test
+      - distributed-qs-als-service
     ## In memory storage - Ref: https://docs.docker.com/storage/tmpfs/
     tmpfs:
       - /var/lib/mysql
@@ -495,8 +511,8 @@ services:
       replicas: ${QS_REPLICAS}
     networks:
       - mojaloop-net
-    ports:
-      - "3002:3002"
+    #ports:
+    #  - "3002:3002"
     #   - "9229:9229"
     # depends_on:
     #   mysql-cl:
@@ -517,6 +533,21 @@ services:
     profiles:
       - all-services
       - quotes-test
+      - distributed-qs-als-service
+
+  distributed-qs-load-balancer:
+    image: nginx:latest
+    volumes:
+      - ./docker/load-balancers/distributed-qs.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - quoting-service
+    ports:
+      - "3002:3002"
+    user: root
+    profiles:
+      - distributed-qs-als-service
+    networks:
+      - mojaloop-net
 
   # objstore:
   #   image: mongo:${DEP_MONGO_VERSION}
@@ -938,6 +969,7 @@ services:
       - callback-handler
       - all-services
       - als-test
+      - distributed-qs-als-service
 
   callback-handler-svc-cl-sim:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}

@@ -382,9 +382,9 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile 8dfsp
 ### On ALS, Quotes machine
 
 ```
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test --profile quotes-test up -d
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile distributed-qs-als-service up -d
 
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test --profile quotes-test down -v
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile distributed-qs-als-service down -v
 ```
 
 ### On CL mysql machine

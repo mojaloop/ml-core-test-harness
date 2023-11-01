@@ -56,15 +56,15 @@ module.exports = {
     {
       name: 'account-lookup-service',
       wait4: [
-        {
-          description: 'callback-handler central ledger admin simulator',
-          uri: 'callback-handler-svc-cl-sim:3001',
-          method: 'ncat',
+        //{
+        //  description: 'callback-handler central ledger admin simulator',
+        //  uri: 'callback-handler-svc-cl-sim:3001',
+        //  method: 'ncat',
 
           // we have to wait much longer for central-ledger
           // to spin up so we overload `retires` default parameter value
-          retries: 60
-        },
+        //  retries: 60
+        //},
         {
           description: 'MySQL ALS',
           uri: 'mysql-als:3306',
