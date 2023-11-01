@@ -823,6 +823,29 @@ services:
     profiles:
       - ttk-provisioning-transfers
 
+  ttk-provisioning-remote-k8s:
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
+    env_file:
+      - .env
+      - perf.env
+      - perf.override.env
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - 'sed -e "s~K6_CALLBACK_FQDN~$$K6_CALLBACK_FQDN~g" -e "s~K6_SCRIPT_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ADMIN_ENDPOINT_URL~g" -e "s~K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~g" -e "s~K6_SCRIPT_ALS_ENDPOINT_URL~$$K6_SCRIPT_ALS_ENDPOINT_URL~g" environments/remote-k8s-env.json > /tmp/env.json && npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e /tmp/env.json --report-format html --report-target file://reports/ttk-provisioning-report.html'
+    user: root
+    profiles:
+      - ttk-provisioning-remote-k8s
+
   ttk-provisioning-quotes:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
     env_file:
@@ -947,12 +970,13 @@ services:
     env_file:
       - .env
       - ./envs/perffsp1.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25001:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -983,12 +1007,13 @@ services:
     env_file:
       - .env
       - ./envs/perffsp2.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25002:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1019,12 +1044,13 @@ services:
     env_file:
       - .env
       - ./envs/perffsp3.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25003:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1050,12 +1076,13 @@ services:
     env_file:
       - .env
       - ./envs/perffsp4.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25004:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1081,12 +1108,13 @@ services:
     env_file:
       - .env
       - ./envs/perffsp5.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25005:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1111,12 +1139,13 @@ services:
     env_file:
       - .env
       - ./envs/perffsp6.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25006:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1141,12 +1170,13 @@ services:
     env_file:
       - .env
       - ./envs/perffsp7.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25007:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -1171,12 +1201,13 @@ services:
     env_file:
       - .env
       - ./envs/perffsp8.env
+      - perf.override.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "25008:3001"
     networks:
       - mojaloop-net
     volumes:
