@@ -407,3 +407,10 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile distr
 
 docker compose --project-name ml-core -f docker-compose-perf.yml --profile distributed-adapter down -v
 ```
+
+### On CL Handlers Machine
+```
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile distributed-handlers up -d
+
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile distributed-handlers down -v
+```

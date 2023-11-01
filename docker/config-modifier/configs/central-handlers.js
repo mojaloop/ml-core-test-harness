@@ -1,7 +1,7 @@
 module.exports = {
   "HOSTNAME": "http://central-ledger",
   "DATABASE": {
-    "HOST": "mysql-cl"
+    "HOST": "10.10.100.73"
   },
   "MIGRATIONS": {
     "DISABLED": true,
@@ -26,28 +26,28 @@ module.exports = {
         "PREPARE": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         },
         "PROCESSING": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         },
         "FULFIL": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         },
         "GET": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         }
@@ -56,28 +56,28 @@ module.exports = {
         "PREPARE": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         },
         "GET": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         },
         "FULFIL": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         },
         "POSITION": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         },
@@ -87,7 +87,7 @@ module.exports = {
               "batchSize": 50
             },
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         }
@@ -96,7 +96,7 @@ module.exports = {
         "TRANSFER": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         }
@@ -107,7 +107,7 @@ module.exports = {
         "PROCESSING": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         }
@@ -116,21 +116,21 @@ module.exports = {
         "PREPARE": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         },
         "FULFIL": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         },
         "POSITION": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         }
@@ -139,7 +139,7 @@ module.exports = {
         "EVENT": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         }
@@ -148,7 +148,7 @@ module.exports = {
         "TRANSFER": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "10.10.100.72:9092"
             }
           }
         }

@@ -187,7 +187,7 @@ services:
       - perf.env
     deploy:
       mode: replicated
-      replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
+      replicas: ${CENTRAL_LEDGER_PREPARE_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_PREPARE /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
     # ports:
     #   - "3001:3001"
@@ -195,18 +195,20 @@ services:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
+      ## Wait 4 Config script
+      - WAIT4_CONFIG=./wait4.config.perf-cl.js
       # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
-    depends_on:
-      central-ledger:
-        condition: service_healthy
-      mysql-cl:
-        condition: service_healthy
-      kafka:
-        condition: service_started
+    #depends_on:
+      #central-ledger:
+      #  condition: service_healthy
+      #mysql-cl:
+      #  condition: service_healthy
+      #kafka:
+      #  condition: service_started
       # objstore:
       #   condition: service_started
     healthcheck:
@@ -223,6 +225,7 @@ services:
       - agreement
       - all-services
       - transfers-test
+      - distributed-handlers
 
   central-handler-position:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -239,6 +242,8 @@ services:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
+        ## Wait 4 Config script
+      - WAIT4_CONFIG=./wait4.config.perf-cl.js
       # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
@@ -283,18 +288,20 @@ services:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
+        ## Wait 4 Config script
+      - WAIT4_CONFIG=./wait4.config.perf-cl.js
       # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
-    depends_on:
-      central-ledger-migrator:
-        condition: service_completed_successfully
-      mysql-cl:
-        condition: service_healthy
-      kafka:
-        condition: service_started
+    #depends_on:
+    #  central-ledger-migrator:
+    #    condition: service_completed_successfully
+    #  mysql-cl:
+    #    condition: service_healthy
+    #  kafka:
+    #    condition: service_started
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -307,6 +314,7 @@ services:
       - transfer
       - all-services
       - transfers-test
+      - distributed-handlers
 
   central-handler-fulfil:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -315,7 +323,7 @@ services:
       - perf.env
     deploy:
       mode: replicated
-      replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
+      replicas: ${CENTRAL_LEDGER_FULFIL_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_FULFIL /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
     # ports:
     #   - "3001:3001"
@@ -323,18 +331,20 @@ services:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
+        ## Wait 4 Config script
+      - WAIT4_CONFIG=./wait4.config.perf-cl.js
       # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
-    depends_on:
-      central-ledger:
-        condition: service_healthy
-      mysql-cl:
-        condition: service_healthy
-      kafka:
-        condition: service_started
+    #depends_on:
+      #central-ledger:
+      #  condition: service_healthy
+      #mysql-cl:
+      #  condition: service_healthy
+      #kafka:
+      #  condition: service_started
       # objstore:
       #   condition: service_started
     healthcheck:
@@ -351,6 +361,7 @@ services:
       - agreement
       - all-services
       - transfers-test
+      - distributed-handlers
 
 
   # central-handler-timeout:
@@ -444,18 +455,20 @@ services:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
     environment:
+      ## Wait 4 Config script
+      - WAIT4_CONFIG=./wait4.config.perf-cl.js
       # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
-    depends_on:
-      central-ledger:
-        condition: service_healthy
-      mysql-cl:
-        condition: service_healthy
-      kafka:
-        condition: service_started
+    #depends_on:
+      #central-ledger:
+      #  condition: service_healthy
+      #mysql-cl:
+      #  condition: service_healthy
+      #kafka:
+      #  condition: service_started
       # objstore:
       #   condition: service_started
     healthcheck:
@@ -472,6 +485,7 @@ services:
       - agreement
       - all-services
       - transfers-test
+      - distributed-handlers
 
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
