@@ -620,6 +620,7 @@ services:
       - agreement
       - all-services
       - transfers-test
+      - kafka
 
   kafka:
     networks:
