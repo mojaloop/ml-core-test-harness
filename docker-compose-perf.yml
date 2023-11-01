@@ -115,9 +115,9 @@ services:
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
-    depends_on:
-      mysql-cl:
-        condition: service_healthy
+    #depends_on:
+      #mysql-cl:
+      #  condition: service_healthy
       # objstore:
       #   condition: service_started
     user: root
@@ -129,6 +129,7 @@ services:
       - all-services
       - transfers-test
       # - quotes-test
+      - distributed-adapter
 
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -153,13 +154,13 @@ services:
       # - CLEDG_CACHE__CACHE_ENABLED=false
     networks:
       - mojaloop-net
-    depends_on: {}
+    depends_on:
       #mysql-cl:
       #  condition: service_healthy
       #kafka:
       #  condition: service_started
-      #central-ledger-migrator:
-      #  condition: service_completed_successfully
+      central-ledger-migrator:
+        condition: service_completed_successfully
       # objstore:
       #   condition: service_started
     healthcheck:
@@ -636,6 +637,20 @@ services:
     tmpfs:
       - /var/lib/mysql
 
+  distributed-adapter-load-balancer:
+    image: nginx:latest
+    volumes:
+      - ./docker/load-balancers/distributed-adapter.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - ml-api-adapter
+    ports:
+      - "3000:3000"
+    user: root
+    profiles:
+      - distributed-adapter
+    networks:
+      - mojaloop-net
+
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
     env_file:
@@ -646,8 +661,8 @@ services:
       replicas: ${ML_API_ADAPTER_REPLICAS}
     # container_name: ml-api-adapter
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_ML_API_ADAPTER /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
-    ports:
-      - "3000:3000"
+    #ports:
+    #  - "3000:3000"
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
@@ -685,8 +700,8 @@ services:
       mode: replicated
       replicas: ${ML_NOTIFICATION_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_ML_HANDLER_NOTIFY /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/handlers/index.js handler --notification"
-    ports:
-      - "4000:3000"
+    #ports:
+    #  - "4000:3000"
     #  - "9229:9229"
     volumes:
       - ./docker/wait4:/opt/app/wait4
