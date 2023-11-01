@@ -925,8 +925,8 @@ services:
     depends_on:
       mojaloop-testing-toolkit:
         condition: service_healthy
-      central-ledger:
-        condition: service_healthy
+      # central-ledger:
+      #   condition: service_healthy
     networks:
       - mojaloop-net
     command:
@@ -936,6 +936,30 @@ services:
     user: root
     profiles:
       - ttk-provisioning-e2e
+
+  ttk-provisioning-e2e-distributed:
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
+    env_file:
+      - .env
+      - perf.env
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+      # central-ledger:
+      #   condition: service_healthy
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/distributed-env.json --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+    user: root
+    profiles:
+      - ttk-provisioning-e2e-distributed
 
   callback-handler-svc-oracle-sim:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
