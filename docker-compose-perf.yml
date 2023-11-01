@@ -34,7 +34,7 @@ services:
       ## Disable API Routes from displaying on startup
       - ALS_DISPLAY_ROUTES=false
       ## Configure Switch Endpoint
-      - ALS_SWITCH_ENDPOINT=http://callback-handler-svc-cl-sim:3001/admin
+      # - ALS_SWITCH_ENDPOINT=http://callback-handler-svc-cl-sim:3001/admin
       ## Increase UV Threads for IO Operations - https://nodejs.org/api/cli.html#uv_threadpool_sizesize
       - UV_THREADPOOL_SIZE=16
       ## Temporary Cache configuration for v14.2.4-snapshot.3 @ https://github.com/mojaloop/account-lookup-service/pull/461
