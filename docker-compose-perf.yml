@@ -61,14 +61,28 @@ services:
       - als-test
       - distributed-qs-als-service
 
-  distributed-als-load-balancer:
+  distributed-als-load-balancer-admin:
     image: nginx:latest
     volumes:
-      - ./docker/load-balancers/distributed-als.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/load-balancers/distributed-als-admin.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - account-lookup-service
     ports:
       - "4001:4001"
+    user: root
+    profiles:
+      - distributed-qs-als-service
+    networks:
+      - mojaloop-net
+
+  distributed-als-load-balancer-api:
+    image: nginx:latest
+    volumes:
+      - ./docker/load-balancers/distributed-als-api.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - account-lookup-service
+    ports:
+      - "4002:4002"
     user: root
     profiles:
       - distributed-qs-als-service
@@ -949,8 +963,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "3001:3001"
     networks:
       - mojaloop-net
     volumes:
