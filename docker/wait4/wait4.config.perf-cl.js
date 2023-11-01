@@ -19,7 +19,7 @@ module.exports = {
       wait4: [
         {
           description: 'Kafka broker',
-          uri: '10.10.100.72:29092',
+          uri: '10.10.100.72:9092',
           method: 'ncat'
         },
         {

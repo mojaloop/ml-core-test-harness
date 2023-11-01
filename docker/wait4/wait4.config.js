@@ -82,7 +82,7 @@ module.exports = {
       name: 'ml-api-adapter',
       wait4: [
         {
-          uri: '10.10.100.72:29092',
+          uri: '10.10.100.72:9092',
           method: 'ncat',
           // Seems to take longer on circleci to start up
           retries: 60
