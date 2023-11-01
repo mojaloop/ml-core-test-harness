@@ -256,6 +256,76 @@
     "version": 1
   },
   {
+    "ruleId": 32,
+    "priority": 1,
+    "description": "get /parties/{Type}/{ID} for FXP",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop_fxp",
+      "asynchronous": true
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "pathParams",
+          "operator": "equal",
+          "value": "2551234567890",
+          "path": "ID"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}",
+      "params": {
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+          "FSPIOP-Source": "greenbankfsp",
+          "Date": "{$request.headers.date}"
+        },
+        "body": {
+          "party": {
+            "partyIdInfo": {
+              "partyIdType": "MSISDN",
+              "partyIdentifier": "{$request.params.ID}",
+              "fspId": "greenbankfsp"
+            },
+            "merchantClassificationCode": "1234",
+            "name": "Yaro",
+            "personalInfo": {
+              "complexName": {
+                "firstName": "Yaro",
+                "lastName": "Smith"
+              },
+              "dateOfBirth": "1966-06-16",
+              "kycInformation": "<Encrypted KYC Data>"
+            },
+            "supportedCurrencies": [
+              "TZS"
+            ]
+          }
+        },
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
     "ruleId": 20,
     "priority": 1,
     "description": "get /parties/{Type}/{ID} for pinkbank",
@@ -1099,88 +1169,20 @@
     }
   },
   {
-    "ruleId": 21,
-    "priority": 1,
-    "description": "get /fxParties/{Type}/{ID}",
-    "apiVersion": {
-      "minorVersion": 0,
-      "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
-    },
-    "conditions": {
-      "all": [
-        {
-          "fact": "operationPath",
-          "operator": "equal",
-          "value": "/fxParties/{Type}/{ID}"
-        },
-        {
-          "fact": "method",
-          "operator": "equal",
-          "value": "get"
-        }
-      ]
-    },
-    "event": {
-      "method": "put",
-      "path": "/fxParties/{Type}/{ID}",
-      "params": {
-        "scripts": {
-          "scriptingEngine": "postman"
-        }
-      },
-      "type": "MOCK_CALLBACK"
-    },
-    "type": "callback",
-    "version": 1
-  },
-  {
-    "ruleId": 22,
-    "priority": 1,
-    "description": "get /fxParties/{Type}/{ID}/{SubId}",
-    "apiVersion": {
-      "minorVersion": 0,
-      "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
-    },
-    "conditions": {
-      "all": [
-        {
-          "fact": "operationPath",
-          "operator": "equal",
-          "value": "/fxParties/{Type}/{ID}/{SubId}"
-        },
-        {
-          "fact": "method",
-          "operator": "equal",
-          "value": "get"
-        }
-      ]
-    },
-    "event": {
-      "method": "put",
-      "path": "/fxParties/{Type}/{ID}/{SubId}",
-      "params": {
-        "scripts": {
-          "scriptingEngine": "postman"
-        }
-      },
-      "type": "MOCK_CALLBACK"
-    },
-    "type": "callback",
-    "version": 1
-  },
-  {
     "ruleId": 23,
     "priority": 1,
     "description": "post /fxQuotes",
     "apiVersion": {
       "minorVersion": 0,
       "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
+      "type": "fspiop_fxp",
+      "asynchronous": true,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/fspiop_fxp_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_fxp_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_fxp_2.0/trigger_templates"
     },
     "conditions": {
       "all": [
@@ -1201,44 +1203,44 @@
       "path": "/fxQuotes/{ID}",
       "params": {
         "scripts": {
-          "scriptingEngine": "postman"
-        }
-      },
-      "type": "MOCK_CALLBACK"
-    },
-    "type": "callback",
-    "version": 1
-  },
-  {
-    "ruleId": 24,
-    "priority": 1,
-    "description": "get /fxQuotes/{ID}",
-    "apiVersion": {
-      "minorVersion": 0,
-      "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
-    },
-    "conditions": {
-      "all": [
-        {
-          "fact": "operationPath",
-          "operator": "equal",
-          "value": "/fxQuotes/{ID}"
+          "scriptingEngine": "javascript"
         },
-        {
-          "fact": "method",
-          "operator": "equal",
-          "value": "get"
-        }
-      ]
-    },
-    "event": {
-      "method": "put",
-      "path": "/fxQuotes/{ID}",
-      "params": {
-        "scripts": {
-          "scriptingEngine": "postman"
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}"
+        },
+        "body": {
+          "condition": "n2cwS3w4ekGlvNYoXg2uBAqssu3FCoXjADE2mziU5jU",
+          "conversionTerms": {
+            "conversionId": "581f68ef-b54f-416f-9161-ac34e889a84b",
+            "determiningTransferId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+            "initiatingFsp": "PayerFSP",
+            "counterPartyFsp": "FDH_FX",
+            "amountType": "SEND",
+            "sourceAmount": {
+              "currency": "BWP",
+              "amount": "300"
+            },
+            "targetAmount": {
+              "currency": "TZS",
+              "amount": "48000"
+            },
+            "charges": [
+              {
+                "chargeType": "string",
+                "sourceAmount": {
+                  "currency": "BWP",
+                  "amount": "33"
+                },
+                "targetAmount": {
+                  "currency": "TZS",
+                  "amount": "6000"
+                }
+              }
+            ],
+            "expiration": "2023-12-25T14:17:09.663+01:00"
+          }
         }
       },
       "type": "MOCK_CALLBACK"
@@ -1253,8 +1255,14 @@
     "apiVersion": {
       "minorVersion": 0,
       "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
+      "type": "fspiop_fxp",
+      "asynchronous": true,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/fspiop_fxp_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_fxp_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_fxp_2.0/trigger_templates"
     },
     "conditions": {
       "all": [
@@ -1276,6 +1284,16 @@
       "params": {
         "scripts": {
           "scriptingEngine": "postman"
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.body.counterPartyFsp}"
+        },
+        "body": {
+          "fulfilment": "WLctttbu2HvTsa1XWvUoGRcQozHsqeu9Ahl2JW9Bsu8",
+          "completedTimestamp": "2023-12-25T14:17:09.663+01:00",
+          "conversionState": "RESERVED"
         }
       },
       "type": "MOCK_CALLBACK"
@@ -1284,21 +1302,27 @@
     "version": 1
   },
   {
-    "ruleId": 26,
+    "ruleId": 33,
     "priority": 1,
-    "description": "get /fxTransfers/{ID}",
+    "description": "get /services/FXP",
     "apiVersion": {
       "minorVersion": 0,
       "majorVersion": 2,
-      "type": "fx-api",
-      "asynchronous": true
+      "type": "fspiop_fxp",
+      "asynchronous": true,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/fspiop_fxp_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_fxp_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_fxp_2.0/trigger_templates"
     },
     "conditions": {
       "all": [
         {
           "fact": "operationPath",
           "operator": "equal",
-          "value": "/fxTransfers/{ID}"
+          "value": "/services/FXP"
         },
         {
           "fact": "method",
@@ -1309,10 +1333,20 @@
     },
     "event": {
       "method": "put",
-      "path": "/fxTransfers/{ID}",
+      "path": "/services/FXP",
       "params": {
         "scripts": {
           "scriptingEngine": "postman"
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}"
+        },
+        "body": {
+          "providers": [
+            "FDH_FX"
+          ]
         }
       },
       "type": "MOCK_CALLBACK"

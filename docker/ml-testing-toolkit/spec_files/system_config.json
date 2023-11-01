@@ -77,6 +77,24 @@
       "asynchronous": true
     },
     {
+      "type": "fspiop_fxp",
+      "version": "2.0",
+      "folderPath": "fspiop_fxp_2.0",
+      "asynchronous": true
+    },
+    {
+      "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+      "version": "2.1",
+      "folderPath": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1",
+      "asynchronous": false
+    },
+    {
+      "type": "sdk-scheme-adapter-outbound-v2_1_0-openapi3-snippets",
+      "version": "2.1",
+      "folderPath": "sdk-scheme-adapter-outbound-v2_1_0-openapi3-snippets_2.1",
+      "asynchronous": false
+    },
+    {
       "type": "settlements",
       "version": "1.0",
       "folderPath": "settlements_1.0"
