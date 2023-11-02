@@ -279,13 +279,13 @@ services:
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
       - mojaloop-net
-    depends_on:
-      central-ledger:
-        condition: service_healthy
-      mysql-cl:
-        condition: service_healthy
-      kafka:
-        condition: service_started
+    #depends_on:
+      #central-ledger:
+      #  condition: service_healthy
+      #mysql-cl:
+      #  condition: service_healthy
+      #kafka:
+      #  condition: service_started
       # objstore:
       #   condition: service_started
     healthcheck:
@@ -302,6 +302,7 @@ services:
       - agreement
       - all-services
       - transfers-test
+      - distributed-handlers
 
   central-handler-position-batch:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_BATCH_VERSION}
