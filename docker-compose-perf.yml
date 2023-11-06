@@ -161,6 +161,20 @@ services:
       # - quotes-test
       - distributed-adapter
 
+  distributed-cl-admin-load-balancer:
+    image: nginx:latest
+    volumes:
+      - ./docker/load-balancers/distributed-cl-admin.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - central-ledger
+    ports:
+      - "3001:3001"
+    user: root
+    profiles:
+      - distributed-adapter
+    networks:
+      - mojaloop-net
+
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
     env_file:
@@ -170,8 +184,8 @@ services:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_SVC /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
-    ports:
-      - "3001:3001"
+    #ports:
+    #  - "3001:3001"
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier

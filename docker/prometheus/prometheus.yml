@@ -53,7 +53,10 @@ scrape_configs:
       - targets: ['node-exporter:9100']
 
   - job_name: 'mojaloop-services'
+  - job_name: 'mojaloop-services'
 
+    #   # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 10s
     #   # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 10s
 
