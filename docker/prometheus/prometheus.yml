@@ -53,10 +53,7 @@ scrape_configs:
       - targets: ['node-exporter:9100']
 
   - job_name: 'mojaloop-services'
-  - job_name: 'mojaloop-services'
 
-    #   # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 10s
     #   # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 10s
 
@@ -74,6 +71,10 @@ scrape_configs:
           'ml-core-ml-api-adapter-2:3000',
           'ml-core-ml-api-adapter-3:3000',
           'ml-core-ml-api-adapter-4:3000',
+          'ml-core-ml-api-adapter-5:3000',
+          'ml-core-ml-api-adapter-6:3000',
+          'ml-core-ml-api-adapter-7:3000',
+          'ml-core-ml-api-adapter-8:3000',
           'ml-core-ml-handler-notification-1:3000',
           'ml-core-ml-handler-notification-2:3000',
           'ml-core-ml-handler-notification-3:3000',
@@ -86,7 +87,12 @@ scrape_configs:
           'ml-core-ml-handler-notification-10:3000',
           'ml-core-ml-handler-notification-11:3000',
           'ml-core-ml-handler-notification-12:3000',
-          'central-ledger:3001',
+          'ml-core-central-ledger-1:3001',
+          'ml-core-central-ledger-2:3001',
+          'ml-core-central-ledger-3:3001',
+          'ml-core-central-ledger-4:3001',
+          'ml-core-central-ledger-5:3001',
+          'ml-core-central-ledger-6:3001',
           'ml-core-central-handler-prepare-1:3001',
           'ml-core-central-handler-prepare-2:3001',
           'ml-core-central-handler-prepare-3:3001',
