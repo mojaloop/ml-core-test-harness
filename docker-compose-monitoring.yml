@@ -5,7 +5,7 @@ networks:
     name: monitoring-net
   mojaloop-net:
     name: mojaloop-net
-    # external: true
+    external: true
 
 volumes:
     vol_prometheus_data: {}
