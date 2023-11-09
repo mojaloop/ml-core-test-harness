@@ -186,7 +186,7 @@ ls reports/ttk-func-tests-report.html reports/ttk-provisioning-report.html
 ### Running ALS with dependencies
 
 ```bash
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test --profile ttk-provisioning-als up -d
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile als-test --profile 8dfsp --profile ttk-provisioning-als up -d
 ```
 
 Stop Services

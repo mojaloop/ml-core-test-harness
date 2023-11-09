@@ -3,5 +3,6 @@ module.exports = {
     "HOST": "mysql-als",
     "SCHEMA": "account_lookup"
   },
-  "SWITCH_ENDPOINT": "http://central-ledger:3001"
+  "SWITCH_ENDPOINT": "http://central-ledger:3001",
+  "ASYNC_CONCURRENCY": 1
 }

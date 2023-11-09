@@ -875,7 +875,7 @@ services:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 4
     env_file:
       - .env
       - perf.env
@@ -908,7 +908,7 @@ services:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 4
     env_file:
       - .env
       - ./envs/cl-sim.env
