@@ -36,9 +36,10 @@ services:
       ## Configure Switch Endpoint
       # - ALS_SWITCH_ENDPOINT=http://callback-handler-svc-cl-sim:3001/admin
       ## Increase UV Threads for IO Operations - https://nodejs.org/api/cli.html#uv_threadpool_sizesize
-      - UV_THREADPOOL_SIZE=16
+      - UV_THREADPOOL_SIZE=24
       ## Temporary Cache configuration for v14.2.4-snapshot.3 @ https://github.com/mojaloop/account-lookup-service/pull/461
       # - NODE_CACHE_ENABLED=true
+      - ALS_ASYNC_CONCURRENCY=5
     networks:
       - mojaloop-net
     depends_on:
@@ -62,32 +63,32 @@ services:
       - distributed-qs-als-service
 
   distributed-als-load-balancer-admin:
-    image: nginx:latest
-    volumes:
-      - ./docker/load-balancers/distributed-als-admin.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - account-lookup-service
+    image: haproxy
     ports:
-      - "4001:4001"
+      - "4001:8100"
     user: root
+    volumes:
+        - ./docker/load-balancers/haproxy-als-admin.cfg:/usr/local/etc/haproxy/haproxy.cfg
     profiles:
       - distributed-qs-als-service
     networks:
       - mojaloop-net
+    depends_on:
+      - account-lookup-service
 
   distributed-als-load-balancer-api:
-    image: nginx:latest
-    volumes:
-      - ./docker/load-balancers/distributed-als-api.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - account-lookup-service
+    image: haproxy
     ports:
-      - "4002:4002"
+      - "4002:8100"
     user: root
+    volumes:
+        - ./docker/load-balancers/haproxy-als-api.cfg:/usr/local/etc/haproxy/haproxy.cfg
     profiles:
       - distributed-qs-als-service
     networks:
       - mojaloop-net
+    depends_on:
+      - account-lookup-service
 
   mysql-als:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
@@ -532,6 +533,20 @@ services:
       - transfers-test
       - distributed-handlers
 
+  distributed-load-balancer-quoting-service:
+    image: haproxy
+    ports:
+        - "3002:8100"
+    user: root
+    volumes:
+        - ./docker/load-balancers/haproxy-quotes.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    profiles:
+      - distributed-qs-als-service
+    networks:
+      - mojaloop-net
+    depends_on:
+      - quoting-service
+
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service-perf.js /opt/app/config/default.json && node src/index.js"
@@ -563,20 +578,6 @@ services:
       - all-services
       - quotes-test
       - distributed-qs-als-service
-
-  distributed-qs-load-balancer:
-    image: nginx:latest
-    volumes:
-      - ./docker/load-balancers/distributed-qs.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - quoting-service
-    ports:
-      - "3002:3002"
-    user: root
-    profiles:
-      - distributed-qs-als-service
-    networks:
-      - mojaloop-net
 
   # objstore:
   #   image: mongo:${DEP_MONGO_VERSION}
@@ -712,19 +713,19 @@ services:
     tmpfs:
       - /var/lib/mysql
 
-  distributed-adapter-load-balancer:
-    image: nginx:latest
-    volumes:
-      - ./docker/load-balancers/distributed-adapter.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - ml-api-adapter
+  distributed-load-balancer-ml-api-adapter:
+    image: haproxy
     ports:
-      - "3000:3000"
+        - "3000:8100"
     user: root
+    volumes:
+        - ./docker/load-balancers/haproxy-ml-adapter.cfg:/usr/local/etc/haproxy/haproxy.cfg
     profiles:
       - distributed-adapter
     networks:
       - mojaloop-net
+    depends_on:
+      - ml-api-adapter
 
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
@@ -971,7 +972,7 @@ services:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 4
     env_file:
       - .env
       - perf.env
@@ -979,8 +980,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    ports:
-      - "3001:3001"
+    #ports:
+    #  - "3001:3001"
     networks:
       - mojaloop-net
     volumes:
