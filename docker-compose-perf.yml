@@ -162,19 +162,19 @@ services:
       # - quotes-test
       - distributed-adapter
 
-  distributed-cl-admin-load-balancer:
-    image: nginx:latest
-    volumes:
-      - ./docker/load-balancers/distributed-cl-admin.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - central-ledger
+  distributed-load-balancer-cl-admin:
+    image: haproxy
     ports:
-      - "3001:3001"
+        - "3001:8100"
     user: root
+    volumes:
+        - ./docker/load-balancers/haproxy-cl-admin.cfg:/usr/local/etc/haproxy/haproxy.cfg
     profiles:
       - distributed-adapter
     networks:
       - mojaloop-net
+    depends_on:
+      - central-ledger
 
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
