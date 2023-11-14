@@ -385,6 +385,9 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile 8dfsp
 docker compose --project-name ml-core -f docker-compose-perf.yml --profile distributed-qs-als-service up -d
 
 docker compose --project-name ml-core -f docker-compose-perf.yml --profile distributed-qs-als-service down -v
+
+docker compose --project-name monitoring --profile als-test --profile quotes-test -f docker-compose-monitoring.yml up -d
+docker compose --project-name monitoring --profile als-test --profile quotes-test -f docker-compose-monitoring.yml down -v
 ```
 
 ### On CL mysql machine
