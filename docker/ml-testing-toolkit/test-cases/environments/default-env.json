@@ -6,6 +6,7 @@
     "HOST_CENTRAL_LEDGER": "http://central-ledger:3001",
     "HOST_ML_API_ADAPTER": "http://ml-api-adapter:3000",
     "HOST_QUOTING_SERVICE": "http://quoting-service:3002",
+    "HOST_FXP_SERVICES": "http://mojaloop-testing-toolkit:4040",
     "HOST_SIMULATOR": "http://simulator:8444",
     "ENABLE_WS_ASSERTIONS": true,
     "WS_ASSERTION_TIMEOUT": 5000,
@@ -70,6 +71,16 @@
     "PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp6:3001/fspiop",
     "PERF_FSP7_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp7:3001/fspiop",
     "PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp8:3001/fspiop",
-    "PERF_ORACLE_ENDPOINT_BASE_URL": "http://callback-handler-svc-oracle-sim:3001/oracle"
+    "PERF_ORACLE_ENDPOINT_BASE_URL": "http://callback-handler-svc-oracle-sim:3001/oracle",
+    "FXP_TO_PARTY_ID": "2551234567890",
+    "FXP_PAYER_DFSP_ID": "pinkbankfsp",
+    "FXP_PAYEE_DFSP_ID": "greenbankfsp",
+    "FXP_ID": "FDH_FX",
+    "FXP_TESTFXP1_ID": "testfxp1",
+    "FXP_EXPIRATION": "2023-12-25T14:17:09.663+01:00",
+    "FXP_SOURCE_CURRENCY": "BWP",
+    "FXP_TARGET_CURRENCY": "TZS",
+    "FXP_CONVERSION_REQUEST_ID": "828cc75f-1654-415e-8fcd-df76cc9329b9",
+    "FXP_TRANSFER_ID": "d9ce59d4-3598-4396-8630-581bb0551451"
   }
 }
