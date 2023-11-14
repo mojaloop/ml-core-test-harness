@@ -376,7 +376,8 @@ To capture results without running tests, use the following command
 ```
 docker compose --project-name monitoring  -f docker-compose-monitoring.yml up -d
 
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile 8dfsp up -d
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-e2e-distributed up -d
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-e2e-distributed down -v
 ```
 
 ### On ALS, Quotes machine
