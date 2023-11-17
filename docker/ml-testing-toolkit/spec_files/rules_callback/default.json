@@ -1283,7 +1283,10 @@
       "path": "/fxTransfers/{ID}",
       "params": {
         "scripts": {
-          "scriptingEngine": "postman"
+          "exec": [
+            "environment.completedTimestamp = new Date().toISOString()"
+          ],
+          "scriptingEngine": "javascript"
         },
         "headers": {
           "Content-Type": "{$request.headers.content-type}",
@@ -1292,7 +1295,7 @@
         },
         "body": {
           "fulfilment": "WLctttbu2HvTsa1XWvUoGRcQozHsqeu9Ahl2JW9Bsu8",
-          "completedTimestamp": "2023-12-25T14:17:09.663+01:00",
+          "completedTimestamp": "{$environment.completedTimestamp}",
           "conversionState": "RESERVED"
         }
       },
