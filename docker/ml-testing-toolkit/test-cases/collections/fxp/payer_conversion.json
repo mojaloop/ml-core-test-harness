@@ -214,7 +214,7 @@
               "amountType": "SEND",
               "sourceAmount": {
                 "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
-                "amount": "300"
+                "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
               },
               "targetAmount": {
                 "currency": "{$inputs.FXP_TARGET_CURRENCY}"
@@ -351,8 +351,8 @@
             },
             "amountType": "SEND",
             "amount": {
-              "amount": "{$inputs.amount}",
-              "currency": "{$inputs.FXP_TARGET_CURRENCY}"
+              "amount": "{$inputs.FXP_SOURCE_AMOUNT}",
+              "currency": "{$inputs.FXP_SOURCE_CURRENCY}"
             },
             "transactionType": {
               "scenario": "TRANSFER",
@@ -599,11 +599,11 @@
             "amountType": "SEND",
             "sourceAmount": {
               "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
-              "amount": "300"
+              "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
             },
             "targetAmount": {
               "currency": "{$inputs.FXP_TARGET_CURRENCY}",
-              "amount": "{$inputs.amount}"
+              "amount": "{$inputs.FXP_TARGET_AMOUNT}"
             },
             "condition": "{$inputs.condition}",
             "expiration": "{$requestVariables.expiration}"
@@ -705,7 +705,7 @@
                 "id": 1,
                 "description": "Position should be changed",
                 "exec": [
-                  "expect(environment.payerPositionBalanceAfterFxTransfer-environment.payerPositionBalanceBeforeFxTransfer).to.equal(300)"
+                  "expect(environment.payerPositionBalanceAfterFxTransfer-environment.payerPositionBalanceBeforeFxTransfer).to.equal(+environment.FXP_SOURCE_AMOUNT)"
                 ]
               }
             ]
@@ -866,8 +866,8 @@
             "payeeFsp": "{$inputs.FXP_PAYEE_DFSP_ID}",
             "payerFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
             "amount": {
-              "currency": "{$inputs.FXP_TARGET_CURRENCY}",
-              "amount": "{$inputs.amount}"
+              "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
+              "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
             },
             "ilpPacket": "{$prev.5.callback.body.ilpPacket}",
             "condition": "{$prev.5.callback.body.condition}",
@@ -1048,28 +1048,28 @@
                 "id": 1,
                 "description": "Payer position should be changed",
                 "exec": [
-                  "expect(environment.payerPositionBalanceAfterFxTransfer-environment.payerPositionBalanceBeforeFxTransfer).to.equal(300)"
+                  "expect(environment.payerPositionBalanceAfterFxTransfer-environment.payerPositionBalanceBeforeFxTransfer).to.equal(+environment.FXP_SOURCE_AMOUNT)"
                 ]
               },
               {
                 "id": 2,
                 "description": "Payee position should be changed",
                 "exec": [
-                  "expect(environment.payeePositionBalanceAfterTransfer-environment.payeePositionBalanceBeforeFxTransfer).to.equal(-environment.amount)"
+                  "expect(environment.payeePositionBalanceAfterTransfer-environment.payeePositionBalanceBeforeFxTransfer).to.equal(-environment.FXP_TARGET_AMOUNT)"
                 ]
               },
               {
                 "id": 3,
                 "description": "FXP Source currency position should be changed",
                 "exec": [
-                  "expect(environment.fxpSourceCurrencyPositionBalanceAfterTransfer-environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer).to.equal(-300)"
+                  "expect(environment.fxpSourceCurrencyPositionBalanceAfterTransfer-environment.fxpSourceCurrencyPositionBalanceBeforeFxTransfer).to.equal(-environment.FXP_SOURCE_AMOUNT)"
                 ]
               },
               {
                 "id": 4,
                 "description": "FXP Target currency position should be changed",
                 "exec": [
-                  "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer-environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer).to.equal(100)"
+                  "expect(environment.fxpTargetCurrencyPositionBalanceAfterTransfer-environment.fxpTargetCurrencyPositionBalanceBeforeFxTransfer).to.equal(+environment.FXP_TARGET_AMOUNT)"
                 ]
               }
             ]
