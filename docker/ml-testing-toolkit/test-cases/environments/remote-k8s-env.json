@@ -1,8 +1,10 @@
 {
   "inputValues": {
-    "HOST_ACCOUNT_LOOKUP_SERVICE": "K6_SCRIPT_ALS_ENDPOINT_URL",
+    "HOST_ACCOUNT_LOOKUP_SERVICE": "K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL",
     "HOST_ACCOUNT_LOOKUP_ADMIN": "K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL",
     "HOST_CENTRAL_LEDGER": "K6_SCRIPT_ADMIN_ENDPOINT_URL",
+    "HOST_QUOTING_SERVICE": "K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL",
+    "HOST_SIMULATOR": "K6_SCRIPT_ORACLE_ENDPOINT_URL",
     "accept": "application/vnd.interoperability.parties+json;version=1.0",
     "acceptParticipants": "application/vnd.interoperability.participants+json;version=1.0",
     "acceptQuotes": "application/vnd.interoperability.quotes+json;version=1.0",

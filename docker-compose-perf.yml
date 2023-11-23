@@ -840,7 +840,7 @@ services:
     command:
       - sh
       - -c
-      - 'sed -e "s~K6_CALLBACK_FQDN~$$K6_CALLBACK_FQDN~g" -e "s~K6_SCRIPT_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ADMIN_ENDPOINT_URL~g" -e "s~K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~g" -e "s~K6_SCRIPT_ALS_ENDPOINT_URL~$$K6_SCRIPT_ALS_ENDPOINT_URL~g" environments/remote-k8s-env.json > /tmp/env.json && npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e /tmp/env.json --report-format html --report-target file://reports/ttk-provisioning-report.html'
+      - 'sed -e "s~K6_CALLBACK_FQDN~$$K6_CALLBACK_FQDN~g" -e "s~K6_SCRIPT_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ADMIN_ENDPOINT_URL~g" -e "s~K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~g" -e "s~K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL~$$K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL~g" -e "s~K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL~$$K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL~g" -e "s~K6_SCRIPT_ORACLE_ENDPOINT_URL~$$K6_SCRIPT_ORACLE_ENDPOINT_URL~g" environments/remote-k8s-env.json > /tmp/env.json && npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e /tmp/env.json --report-format html --report-target file://reports/ttk-provisioning-report.html'
     user: root
     profiles:
       - ttk-provisioning-remote-k8s
@@ -881,8 +881,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "30000:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -901,6 +901,7 @@ services:
       - callback-handler
       - all-services
       - als-test
+      - oracle
 
   callback-handler-svc-cl-sim:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}

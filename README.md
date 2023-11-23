@@ -355,23 +355,23 @@ For executing performance test scenarios against a Mojaloop deployment, follow t
 
 3. **Run Simulators and TTK Provisioning:**
    ```bash
-   docker-compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-remote-k8s up -d
+   docker compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-remote-k8s --profile oracle up -d
    ```
 
 4. **Run Monitoring Services:**
    ```bash
-   docker-compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml up -d
+   docker compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml up -d
    ```
 
 5. **Execute Single Transfer Test Case:**
    ```bash
-   env K6_SCRIPT_CONFIG_FILE_NAME=fspiopSingleTransfer.json docker-compose --project-name load -f docker-compose-load.yml up
+   env K6_SCRIPT_CONFIG_FILE_NAME=fspiopSingleTransfer.json docker compose --project-name load -f docker-compose-load.yml up
    ```
 
 6. **Stop Services:**
    ```bash
-   docker-compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-remote-k8s down -v
-   docker-compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml down -v
+   docker compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-remote-k8s down -v
+   docker compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml down -v
    ```
 
 > **Note:** The `-v` argument is optional and will delete any volume data created by the monitoring Docker Compose.

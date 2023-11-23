@@ -1,0 +1,20 @@
+{
+  "scenarios": {
+    "fspiopQuotesNoCallbackConstantRate": {
+      "executor": "constant-arrival-rate",
+      "exec": "fspiopQuotesNoCallbackConstantRateScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "preAllocatedVUs": 200,
+      "timeUnit": "1s",
+      "duration": "5m",
+      "rate": 1000
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}
