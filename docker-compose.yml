@@ -280,6 +280,39 @@ services:
       - discovery
       - all-services
 
+
+  fx-provider:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: fx-provider
+    env_file: envs/fx-provider.env
+    ports:
+      - "14000:4000"
+      - "14001:4001"
+      - "19229:9229"
+    depends_on:
+      - redis
+      - kafka
+      - mojaloop-testing-toolkit
+    command: yarn nx run modules-api-svc:start:debug
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fxp
+
+  redis:
+    image: "redis:6.2.4-alpine"
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fxp
+
+
   ## Testing Toolkit
   mojaloop-testing-toolkit:
     image: mojaloop/ml-testing-toolkit:${TEST_TTK_SVC_VERSION}
@@ -305,6 +338,7 @@ services:
     profiles:
       - testing-toolkit
       - all-services
+      - fxp
 
   mojaloop-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:${TEST_TTK_UI_VERSION}
@@ -321,6 +355,7 @@ services:
     profiles:
       - testing-toolkit
       - all-services
+      - fxp
 
   ttk-provisioning:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}

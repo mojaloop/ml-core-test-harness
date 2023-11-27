@@ -86,7 +86,8 @@
       "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
       "version": "2.1",
       "folderPath": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1",
-      "asynchronous": false
+      "asynchronous": false,
+      "prefix": "/backend"
     },
     {
       "type": "sdk-scheme-adapter-outbound-v2_1_0-openapi3-snippets",
