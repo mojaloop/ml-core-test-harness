@@ -210,7 +210,7 @@
             "conversionTerms": {
               "conversionId": "581f68ef-b54f-416f-9161-ac34e889a84b",
               "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
-              "counterPartyFsp": "{$inputs.FXP_ID}",
+              "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
               "amountType": "SEND",
               "sourceAmount": {
                 "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
