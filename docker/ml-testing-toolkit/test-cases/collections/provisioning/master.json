@@ -27,6 +27,13 @@
       "labels": [
         "perf"
       ]
+    },
+    {
+      "name": "participants_fx",
+      "type": "folder",
+      "labels": [
+        "fx"
+      ]
     }
   ]
 }
