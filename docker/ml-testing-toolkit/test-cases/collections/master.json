@@ -1,0 +1,16 @@
+{
+  "order": [
+    {
+      "name": "provisioning-perf-als",
+      "type": "folder"
+    },
+    {
+      "name": "provisioning",
+      "type": "folder"
+    },
+    {
+      "name": "tests",
+      "type": "folder"
+    }
+  ]
+}

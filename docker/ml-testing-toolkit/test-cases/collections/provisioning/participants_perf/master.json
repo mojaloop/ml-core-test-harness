@@ -1,0 +1,36 @@
+{
+  "order": [
+    {
+      "name": "participant_perffsp1.json",
+      "type": "file"
+    },
+    {
+      "name": "participant_perffsp2.json",
+      "type": "file"
+    },
+    {
+      "name": "participant_perffsp3.json",
+      "type": "file"
+    },
+    {
+      "name": "participant_perffsp4.json",
+      "type": "file"
+    },
+    {
+      "name": "participant_perffsp5.json",
+      "type": "file"
+    },
+    {
+      "name": "participant_perffsp6.json",
+      "type": "file"
+    },
+    {
+      "name": "participant_perffsp7.json",
+      "type": "file"
+    },
+    {
+      "name": "participant_perffsp8.json",
+      "type": "file"
+    }
+  ]
+}
