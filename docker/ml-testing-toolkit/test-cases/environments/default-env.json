@@ -7,6 +7,7 @@
     "HOST_ML_API_ADAPTER": "http://ml-api-adapter:3000",
     "HOST_QUOTING_SERVICE": "http://quoting-service:3002",
     "HOST_FXP_SERVICES": "http://mojaloop-testing-toolkit:4040",
+    "CALLBACK_ENDPOINT_TESTFXP1": "http://fx-provider1-sdk:4000",
     "HOST_SIMULATOR": "http://simulator:8444",
     "ENABLE_WS_ASSERTIONS": true,
     "WS_ASSERTION_TIMEOUT": 5000,
@@ -87,8 +88,6 @@
     "FXP_SOURCE_CURRENCY": "BWP",
     "FXP_TARGET_CURRENCY": "TZS",
     "FXP_SOURCE_AMOUNT": "300",
-    "FXP_TARGET_AMOUNT": "48000",
-    "FXP_CONVERSION_REQUEST_ID": "828cc75f-1654-415e-8fcd-df76cc9329b9",
-    "FXP_TRANSFER_ID": "d9ce59d4-3598-4396-8630-581bb0551451"
+    "FXP_TARGET_AMOUNT": "48000"
   }
 }

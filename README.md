@@ -368,3 +368,13 @@ To capture results without running tests, use the following command
 ```bash
 ./automate_perf.sh -c -f <From Time in Milliseconds> -t <To time in Milliseconds>
 ```
+
+### FX Tests
+
+```
+docker-compose --profile all-services --profile fx --profile ttk-provisioning-fx --profile ttk-tests --profile debug up -d
+```
+
+```
+docker-compose --profile all-services --profile fx --profile ttk-provisioning-fx --profile ttk-tests --profile debug down -v
+```

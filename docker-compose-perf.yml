@@ -818,7 +818,7 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --labels std,perf --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
     user: root
     profiles:
       - ttk-provisioning-transfers
@@ -842,7 +842,7 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --labels std,perf --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
     user: root
     profiles:
       - ttk-provisioning-quotes
@@ -866,7 +866,7 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/perf-e2e-env.json --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/perf-e2e-env.json --labels std,perf --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
     user: root
     profiles:
       - ttk-provisioning-e2e
