@@ -295,6 +295,34 @@ services:
       - all-services
       - fx
 
+  fx-payerdfsp-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    env_file: envs/fx-payerdfsp-sdk.env
+    depends_on:
+      - redis
+      - mojaloop-testing-toolkit
+    command: yarn nx run modules-api-svc:start:debug
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  fx-payeedfsp-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    env_file: envs/fx-payeedfsp-sdk.env
+    depends_on:
+      - redis
+      - mojaloop-testing-toolkit
+    command: yarn nx run modules-api-svc:start:debug
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
   redis:
     image: "redis:6.2.4-alpine"
     container_name: redis
