@@ -62,14 +62,14 @@
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 2,
-            "type": "fspiop_fxp",
+            "type": "fspiop",
             "asynchronous": true,
             "additionalApi": true,
-            "specFile": "spec_files/api_definitions/fspiop_fxp_2.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/fspiop_fxp_2.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_fxp_2.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
           },
           "operationPath": "/parties/{Type}/{ID}",
           "path": "/parties/MSISDN/{$inputs.toIdValue}",
@@ -133,15 +133,15 @@
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 2,
-            "type": "fspiop_fxp",
+            "type": "fspiop",
             "asynchronous": true,
             "prefix": "/v2",
             "additionalApi": true,
-            "specFile": "spec_files/api_definitions/fspiop_fxp_2.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/fspiop_fxp_2.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_fxp_2.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
           },
           "operationPath": "/services/FXP",
           "path": "/services/FXP",
@@ -194,13 +194,13 @@
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 2,
-            "type": "fspiop_fxp",
+            "type": "fspiop",
             "asynchronous": true,
-            "specFile": "spec_files/api_definitions/fspiop_fxp_2.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/fspiop_fxp_2.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_fxp_2.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
           },
           "operationPath": "/fxQuotes",
           "path": "/fxQuotes",
@@ -305,13 +305,13 @@
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 2,
-            "type": "fspiop_fxp",
+            "type": "fspiop",
             "asynchronous": true,
-            "specFile": "spec_files/api_definitions/fspiop_fxp_2.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/fspiop_fxp_2.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_fxp_2.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
           },
           "operationPath": "/quotes",
           "path": "/quotes",
@@ -573,13 +573,13 @@
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 2,
-            "type": "fspiop_fxp",
+            "type": "fspiop",
             "asynchronous": true,
-            "specFile": "spec_files/api_definitions/fspiop_fxp_2.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/fspiop_fxp_2.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_fxp_2.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
           },
           "operationPath": "/fxTransfers",
           "path": "/fxTransfers",
@@ -852,13 +852,13 @@
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 2,
-            "type": "fspiop_fxp",
+            "type": "fspiop",
             "asynchronous": true,
-            "specFile": "spec_files/api_definitions/fspiop_fxp_2.0/api_spec.yaml",
-            "callbackMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/callback_map.json",
-            "responseMapFile": "spec_files/api_definitions/fspiop_fxp_2.0/response_map.json",
-            "jsfRefFile": "spec_files/api_definitions/fspiop_fxp_2.0/mockRef.json",
-            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_fxp_2.0/trigger_templates"
+            "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
           },
           "operationPath": "/transfers",
           "path": "/transfers",

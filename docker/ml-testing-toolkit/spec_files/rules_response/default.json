@@ -330,12 +330,15 @@
         "body": {
           "homeTransactionId": "{$request.body.homeTransactionId}",
           "fulfilment": "WLctttbu2HvTsa1XWvUoGRcQozHsqeu9Ahl2JW9Bsu8",
-          "completedTimestamp": "2023-11-24T08:38:08.699-04:00",
+          "completedTimestamp": "{$environment.completedTimestamp}",
           "conversionState": "RESERVED"
         },
         "statusCode": "200",
         "scripts": {
-          "scriptingEngine": "postman"
+          "exec": [
+            "environment.completedTimestamp = new Date().toISOString()"
+          ],
+          "scriptingEngine": "javascript"
         }
       },
       "type": "FIXED_RESPONSE"
