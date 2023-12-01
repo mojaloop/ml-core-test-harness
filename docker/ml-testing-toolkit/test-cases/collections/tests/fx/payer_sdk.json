@@ -110,7 +110,7 @@
               },
               {
                 "id": 2,
-                "description": "Current state should be WAITING_FOR_QUOTE_ACCEPTANCE",
+                "description": "Current state should be WAITING_FOR_CONVERSION_ACCEPTANCE",
                 "exec": [
                   "expect(response.body.currentState).to.equal('WAITING_FOR_CONVERSION_ACCEPTANCE')"
                 ]
@@ -133,10 +133,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-outbound-v2_1_0-openapi3-snippets_2.1/trigger_templates"
           },
           "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.1.request.callback.transferId}",
+          "path": "/transfers/{$prev.1.response.body.transferId}",
           "method": "put",
           "params": {
-            "transferId": "{$prev.1.request.callback.transferId}"
+            "transferId": "{$prev.1.response.body.transferId}"
           },
           "url": "{$inputs.SDK_OUTBOUND_ENDPOINT_FXPAYERDFSP}",
           "body": {
@@ -177,10 +177,10 @@
             "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-outbound-v2_1_0-openapi3-snippets_2.1/trigger_templates"
           },
           "operationPath": "/transfers/{transferId}",
-          "path": "/transfers/{$prev.1.request.callback.transferId}",
+          "path": "/transfers/{$prev.1.response.body.transferId}",
           "method": "put",
           "params": {
-            "transferId": "{$prev.1.request.callback.transferId}"
+            "transferId": "{$prev.1.response.body.transferId}"
           },
           "url": "{$inputs.SDK_OUTBOUND_ENDPOINT_FXPAYERDFSP}",
           "body": {
@@ -198,9 +198,9 @@
               },
               {
                 "id": 2,
-                "description": "Current state should be WAITING_FOR_QUOTE_ACCEPTANCE",
+                "description": "Current state should be COMPLETED",
                 "exec": [
-                  "expect(response.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
+                  "expect(response.body.currentState).to.equal('COMPLETED')"
                 ]
               }
             ]

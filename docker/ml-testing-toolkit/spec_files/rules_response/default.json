@@ -258,26 +258,26 @@
             "determiningTransferId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
             "initiatingFsp": "{$request.body.conversionTerms.initiatingFsp}",
             "counterPartyFsp": "{$request.body.conversionTerms.counterPartyFsp}",
-            "amountType": "RECEIVE",
+            "amountType": "SEND",
             "sourceAmount": {
-              "currency": "BWP",
-              "amount": "300"
+              "currency": "{$request.body.conversionTerms.sourceAmount.currency}",
+              "amount": "{$environment.sourceAmountValue}"
             },
             "targetAmount": {
-              "currency": "TZS",
-              "amount": "48000"
+              "currency": "{$request.body.conversionTerms.targetAmount.currency}",
+              "amount": "{$environment.targetAmountValue}"
             },
             "expiration": "{$request.body.conversionTerms.expiration}",
             "charges": [
               {
                 "chargeType": "string",
                 "sourceAmount": {
-                  "currency": "BWP",
-                  "amount": "1.5"
+                  "currency": "{$request.body.conversionTerms.sourceAmount.currency}",
+                  "amount": "33"
                 },
                 "targetAmount": {
-                  "currency": "TZS",
-                  "amount": "123.45"
+                  "currency": "{$request.body.conversionTerms.targetAmount.currency}",
+                  "amount": "6000"
                 }
               }
             ]
@@ -285,7 +285,12 @@
         },
         "statusCode": "200",
         "scripts": {
-          "scriptingEngine": "postman"
+          "exec": [
+            "const fxQuoteBody = JSON.parse(request.body)",
+            "environment.sourceAmountValue = fxQuoteBody.conversionTerms.sourceAmount.amount || 300",
+            "environment.targetAmountValue = fxQuoteBody.conversionTerms.targetAmount.amount || 48000"
+          ],
+          "scriptingEngine": "javascript"
         }
       },
       "type": "FIXED_RESPONSE"
@@ -329,7 +334,6 @@
       "params": {
         "body": {
           "homeTransactionId": "{$request.body.homeTransactionId}",
-          "fulfilment": "WLctttbu2HvTsa1XWvUoGRcQozHsqeu9Ahl2JW9Bsu8",
           "completedTimestamp": "{$environment.completedTimestamp}",
           "conversionState": "RESERVED"
         },
@@ -445,6 +449,58 @@
         "statusCode": "200",
         "scripts": {
           "scriptingEngine": "postman"
+        }
+      },
+      "type": "FIXED_RESPONSE"
+    },
+    "type": "response",
+    "version": 1
+  },
+  {
+    "ruleId": 10,
+    "priority": 1,
+    "description": "post /transfers",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 2,
+      "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+      "asynchronous": false,
+      "prefix": "/backend",
+      "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": null,
+      "path": null,
+      "params": {
+        "body": {
+          "completedTimestamp": "{$environment.completedTimestamp}",
+          "homeTransactionId": "123",
+          "transferState": "COMMITTED"
+        },
+        "statusCode": "200",
+        "scripts": {
+          "exec": [
+            "environment.completedTimestamp = new Date().toISOString()"
+          ],
+          "scriptingEngine": "javascript"
         }
       },
       "type": "FIXED_RESPONSE"
