@@ -211,6 +211,43 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile trans
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
+
+### Running Services for Quotes characterization
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile quotes-test --profile 8dfsp --profile ttk-provisioning-quotes up -d
+```
+
+Stop Services
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile quotes-test --profile 8dfsp down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
+### Running Services for Full E2E (Discovery+Agreement+Transfers) characterization
+
+- Set `ALS_SWITCH_ENDPOINT` to "http://central-ledger:3001" in perf.env
+- Set `QS_SWITCH_ENDPOINT` to "http://central-ledger:3001" in perf.env
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile 8dfsp --profile ttk-provisioning-e2e up -d
+```
+
+Stop Services
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile 8dfsp down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
+### Configuration for Transfers with batch support
+- Set CENTRAL_LEDGER_POSITION_BATCH_REPLICAS to desired count in `.env` file
+- Enable line `CLEDG_KAFKA__EVENT_TYPE_ACTION_TOPIC_MAP__POSITION__PREPARE=topic-transfer-position-batch` in `perf.env` file
+- Set `CENTRAL_LEDGER_VERSION` to `v17.2.0` or higher
+
 ### Monitoring
 
 Start Monitoring Services stack which uses:
@@ -227,7 +264,7 @@ docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
 Stop Monitoring Services
 
 ```bash
-docker compose --project-name monitoring --profile als-test -f docker-compose-monitoring.yml down -v
+docker compose --project-name monitoring --profile als-test --profile transfers-test -f docker-compose-monitoring.yml down -v
 ```
 
 Start monitoring with account lookup service mysql exporter
@@ -241,6 +278,21 @@ Start monitoring with central ledger mysql exporter
 ```bash
 docker compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml up -d
 ```
+
+or
+
+```bash
+docker compose --project-name monitoring --profile quotes-test -f docker-compose-monitoring.yml up -d
+```
+
+since the quoting service uses the central ledger database.
+
+Start monitoring with all exporters
+
+```bash
+docker compose --project-name monitoring --profile als-test --profile quotes-test --profile transfers-test -f docker-compose-monitoring.yml up -d
+```
+
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
@@ -256,7 +308,7 @@ Tests can be defined in the [./packages/k6-tests/scripts/test.js](./packages/k6-
 
 Env configs are stored in the [./perf.env](./perf.env) environment configuration file..
 
-Note: Transfer testing
+Note: Transfer testing and quote testing
 
 Depending on the profile you started the performance docker compose with i.e `--profile transfers-test --profile {2/4/8}dfsp`
 You will need to edit `K6_SCRIPT_FSPIOP_FSP_POOL` json string in `./perf.env` to contain 2/4/8 dfsps depending on your test.
@@ -283,6 +335,10 @@ env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfers.json docker compose --project-nam
 env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfersUnidirectional.json docker compose --project-name load -f docker-compose-load.yml up
 ( or )
 env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDiscovery.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=fspiopQuotes.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=fspiopE2E.json docker compose --project-name load -f docker-compose-load.yml up
 ```
 
 Cleanup tests

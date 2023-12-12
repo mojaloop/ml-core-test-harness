@@ -1,7 +1,6 @@
 import http from 'k6/http';
 import { crypto } from "k6/experimental/webcrypto";
 import { check, fail, sleep, group } from 'k6';
-import exec from 'k6/execution';
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/experimental/timers';
 import { Trace } from "../common/trace.js";
@@ -9,21 +8,16 @@ import { getTwoItemsFromArray } from "../common/utils.js";
 
 console.log(`Env Vars -->
   K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
-  K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL},
-  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL},
-  K6_SCRIPT_ABORT_ON_ERROR=${__ENV.K6_SCRIPT_ABORT_ON_ERROR}
+  K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL},
+  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}
 `);
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
+const amount = __ENV.K6_SCRIPT_FSPIOP_QUOTES_AMOUNT.toString()
+const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 
-const ilpPacket = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ILPPACKET
-const condition = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CONDITION
-const amount = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_AMOUNT.toString()
-const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
-const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
-
-export function postTransfers() {
-  group("Post Transfers", function () {
+export function postQuotes() {
+  group("Post Quotes", function () {
     let payerFsp
     let payeeFsp
 
@@ -37,13 +31,14 @@ export function postTransfers() {
     }
 
     const startTs = Date.now();
-    const transferId = crypto.randomUUID();
+    const quoteId = crypto.randomUUID();
+    const transactionId = crypto.randomUUID();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
     const wsUrl = payerFsp['wsUrl'];
     const traceParent = Trace();
     const traceId = traceParent.traceId;
-    const wsChannel = `${traceParent.traceId}/PUT/transfers/${transferId}`;
+    const wsChannel = `${traceParent.traceId}/PUT/quotes/${quoteId}`;
     const wsURL = `${wsUrl}/${wsChannel}`
     const ws = new WebSocket(wsURL);
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
@@ -60,14 +55,14 @@ export function postTransfers() {
 
     ws.onerror((err) => {
       console.error(traceId, err);
-      check(err, { 'TRANSFERS_E2E_FSPIOP_POST_TRANSFERS_SUCCESS': (cbMessage) => false });
+      check(err, { 'QUOTES_E2E_FSPIOP_POST_QUOTES_SUCCESS': (cbMessage) => false });
       clearTimers();
       ws.close();
     });
 
     ws.onmessage = (event) => {
       console.info(traceId, `WS message received [${wsChannel}]: ${event.data}`);
-      check(event.data, { 'TRANSFERS_E2E_FSPIOP_POST_TRANSFERS_SUCCESS': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
+      check(event.data, { 'QUOTES_E2E_FSPIOP_POST_QUOTES_SUCCESS': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
       clearTimers();
       ws.close();
       // sleep(1);
@@ -81,8 +76,8 @@ export function postTransfers() {
           payeeFspId
         },
         headers: {
-          'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
-          'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
+          'accept': 'application/vnd.interoperability.quotes+json;version=1.0',
+          'Content-Type': 'application/vnd.interoperability.quotes+json;version=1.0',
           'FSPIOP-Source': payerFspId,
           'FSPIOP-Destination': payeeFspId,
           'Date': (new Date()).toUTCString(),
@@ -92,39 +87,43 @@ export function postTransfers() {
       };
 
       const body = {
-        "transferId": transferId,
-        "payerFsp": payerFspId,
-        "payeeFsp": payeeFspId,
-        "amount": {
-          amount,
-          currency
+        "quoteId": quoteId,
+        "transactionId": transactionId,
+        "payer": {
+          "partyIdInfo": {
+            "partyIdType": "MSISDN",
+            "partyIdentifier": `${payerFsp['partyId']}`,
+            "fspId": payerFspId
+          }
         },
-        "expiration": "2030-01-01T00:00:00.000Z",
-        ilpPacket,
-        condition
+        "payee": {
+          "partyIdInfo": {
+            "partyIdType": "MSISDN",
+            "partyIdentifier": `${payeeFsp['partyId']}`,
+            "fspId": payeeFspId
+          }
+        },
+        "amountType": "SEND",
+        "amount": {
+          "amount": `${amount}`,
+          "currency": `${currency}`
+        },
+        "transactionType": {
+          "scenario": "TRANSFER",
+          "initiator": "PAYER",
+          "initiatorType": "CONSUMER"
+        }
       }
 
-      // Lets send the FSPIOP POST /transfers request
-      const res = http.post(`${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL}/transfers`, JSON.stringify(body), params);
-      check(res, { 'TRANSFERS_FSPIOP_POST_TRANSFERS_RESPONSE_IS_202' : (r) => r.status == 202 });
-
-      if (abortOnError && res.status != 202) {
-        // Abort the entire k6 test exection runner
-        console.error(traceId, `FSPIOP POST /transfers returned status: ${res.status}`);
-        ws.close();
-        exec.test.abort()
-      }
+      // Lets send the FSPIOP POST /quotes request
+      const res = http.post(`${__ENV.K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL}/quotes`, JSON.stringify(body), params);
+      check(res, { 'QUOTES_FSPIOP_POST_QUOTES_RESPONSE_IS_202' : (r) => r.status == 202 });
 
       wsTimeoutId = setTimeout(() => {
         const errorMsg = `WS timed-out on URL: ${wsURL}`
         console.error(traceId, errorMsg);
-        check(res, { 'TRANSFERS_E2E_FSPIOP_POST_TRANSFERS_SUCCESS': (cbMessage) => false });
+        check(res, { 'QUOTES_E2E_FSPIOP_POST_QUOTES_SUCCESS': (cbMessage) => false });
         ws.close();
-        if (abortOnError) {
-          // Abort the entire k6 test exection runner
-          console.error(traceId, 'Aborting k6 test execution!')
-          exec.test.abort()
-        }
       }, wsTimeoutMs);
     };
   });
