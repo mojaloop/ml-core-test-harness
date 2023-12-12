@@ -4,6 +4,26 @@ networks:
   mojaloop-net:
     name: mojaloop-net
 
+x-quoting-service-base: &quoting-service-base
+  # https://docs.docker.com/compose/compose-file/compose-file-v3/#extension-fields
+  image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
+  container_name: quoting-service
+  networks:
+    - mojaloop-net
+  depends_on: &quoting-service-base-depends-on
+    mysql:
+      condition: service_started
+    central-ledger:
+      condition: service_started
+  volumes:
+    - ./docker/config-modifier:/opt/app/config-modifier
+  user: root
+  profiles:
+    - quoting-service
+    - agreement
+    - all-services
+
+
 services:
 
   ## Switch
@@ -11,8 +31,8 @@ services:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
     container_name: central-ledger
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "3001:3001"
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
@@ -117,8 +137,8 @@ services:
   mysql:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
     container_name: mysql
-    # ports:
-    #   - "3306:3306"
+    ports:
+      - "3306:3306"
     volumes:
       # Note: this fixes the permissions issue, but docker-compose up will fail on first attempt
       - ./docker/sql-init/:/docker-entrypoint-initdb.d/
@@ -143,37 +163,32 @@ services:
       - all-services
 
   quoting-service:
-    image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
-    container_name: quoting-service
+    <<: *quoting-service-base
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && node src/index.js"
-    networks:
-      - mojaloop-net
-    depends_on:
-      mysql:
-        condition: service_started
-      central-ledger:
-        condition: service_started
     # ports:
     #   - "3002:3002"
-    volumes:
-      - ./docker/config-modifier:/opt/app/config-modifier
     healthcheck:
       test: wget -q http://localhost:3002/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
-    user: root
-    profiles:
-      - quoting-service
-      - agreement
-      - all-services
+
+  quoting-handlers:
+    <<: *quoting-service-base
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && npm run start:handlers"
+    container_name: quoting-handlers
+    depends_on:
+      <<: *quoting-service-base-depends-on
+      kafka:
+        condition: service_started
+    # todo: add healthcheck for quoting-handlers
 
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
     container_name: ml-api-adapter
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-api-adapter.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
-    # ports:
-    #   - "3000:3000"
+    ports:
+      - "3000:3000"
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
