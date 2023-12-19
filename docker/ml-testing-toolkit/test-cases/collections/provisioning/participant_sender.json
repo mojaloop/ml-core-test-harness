@@ -1304,7 +1304,7 @@
               }
             ]
           },
-          "delay": "500",
+          "delay": "2500",
           "scripts": {
             "postRequest": {
               "exec": [
