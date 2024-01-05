@@ -77,6 +77,7 @@ services:
       - transfer
       - discovery
       - agreement
+      - sdk-scheme-adapter
       - all-services
 
   kafka:
@@ -112,6 +113,7 @@ services:
       - transfer
       - discovery
       - agreement
+      - sdk-scheme-adapter
       - all-services
 
   mysql:
@@ -199,10 +201,10 @@ services:
       - all-services
 
   simulator:
-    image: mojaloop/simulator:${TEST_SIMULATOR_VERSION}
+    image: mojaloop/simulator:local
     container_name: simulator
-    # ports:
-    #   - "8444:8444"
+    ports:
+      - "8444:8444"
     environment:
       - LOG_LEVEL=info
       - TRANSFERS_ENDPOINT=http://ml-api-adapter:3000
@@ -220,6 +222,7 @@ services:
     profiles:
       - simulator
       - discovery
+      - sdk-scheme-adapter
       - all-services
 
   account-lookup-service:
@@ -256,7 +259,7 @@ services:
       - all-services
 
   sdk-scheme-adapter-api-svc:
-    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    image: mojaloop/sdk-scheme-adapter:local
     env_file:
       - .env
     container_name: sdk-scheme-adapter
@@ -268,13 +271,11 @@ services:
       - "9229:9229"
     networks:
       - mojaloop-net
-    # depends_on:
-    #   central-ledger:
-    #     condition: service_healthy
-    #   ml-api-adapter:
-    #     condition: service_healthy
-    #   account-lookup-service:
-    #     condition: service_healthy
+    depends_on:
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     #   quoting-service:
     #     condition: service_healthy
     volumes:
