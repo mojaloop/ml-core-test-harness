@@ -590,6 +590,7 @@ services:
       interval: 30s
     profiles:
       - central-ledger
+      - sdk-scheme-adapter
       - transfer
       - discovery
       - agreement
@@ -903,6 +904,45 @@ services:
       - callback-handler
       - all-services
       - als-test
+  
+  sdk-scheme-adapter-api-svc:
+    image: mojaloop/sdk-scheme-adapter:local
+    env_file:
+      - .env
+    container_name: sdk-scheme-adapter
+    command: yarn nx run modules-api-svc:start
+    ports:
+      - "4000:4000"
+      - "4001:4001"
+      - "4002:4002"
+      - "9229:9229"
+    networks:
+      - mojaloop-net
+    depends_on:
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    #   quoting-service:
+    #     condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: [
+        "CMD" ,
+        "apk", "add", "--no-cache", "curl", # Install curl
+        "&&",
+        "curl", "-f", "http://localhost:4001" # Check if api is up
+        ]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - sdk-scheme-adapter
+      - all-services
 
   callback-handler-svc-cl-sim:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
@@ -933,11 +973,26 @@ services:
     user: root
     profiles:
       - simulators
+      - sdk-scheme-adapter
       - callback-handler
       - all-services
       - als-test
       - transfers-test
       - quotes-test
+  
+  redis:
+    networks:
+      - mojaloop-net
+    image: "redis:6.2.4-alpine"
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD" ,"sh", "-c", "redis-cli","ping"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
 
   sim-perffsp1:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
