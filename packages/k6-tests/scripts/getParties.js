@@ -1,10 +1,9 @@
 import http from 'k6/http';
 import { check, fail, sleep, group } from 'k6';
-import crypto from "k6/crypto";
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/experimental/timers';
-import { randomItem } from "https://jslib.k6.io/k6-utils/1.1.0/index.js";
 import { Trace } from "../common/trace.js";
+import { getTwoItemsFromArray } from "../common/utils.js";
 
 
 // K6_SCRIPT_FSPIOP_ALS_PAYEE_PARTYID=${__ENV.K6_SCRIPT_FSPIOP_ALS_PAYEE_PARTYID},
@@ -26,14 +25,16 @@ export function getParties() {
   group("Get Parties", function () {
     let payerFsp
     let payeeFsp
+
     if (__ENV.UNIDIRECTIONAL === "true" || __ENV.UNIDIRECTIONAL === "TRUE") {
       payerFsp = fspList[0]
       payeeFsp =  fspList[1]
     } else {
-      const randomSortedFsp = fspList.concat().sort(() => randomItem([-1,1])).slice(0, 2);
-      payerFsp = randomSortedFsp[0]
-      payeeFsp =  randomSortedFsp[1]
+      const selectedFsps = getTwoItemsFromArray(fspList)
+      payerFsp = selectedFsps[0]
+      payeeFsp =  selectedFsps[1]
     }
+
 
     const startTs = Date.now();
     const payeeId = payeeFsp['partyId'];

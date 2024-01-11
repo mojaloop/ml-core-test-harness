@@ -1,4 +1,5 @@
 export { fspiopDiscoveryScenarios } from './scenarios/fspiopDiscovery.js';
+export { fspiopDiscoveryNoCallbackScenarios } from './scenarios/fspiopDiscoveryNoCallbackConstantRate.js';
 export { fspiopTransfersScenarios } from './scenarios/fspiopTransfers.js';
 export { fspiopTransfersNoCallbackScenarios } from './scenarios/fspiopTransfersNoCallback.js';
 export { fspiopQuotesScenarios } from './scenarios/fspiopQuotes.js';

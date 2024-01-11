@@ -1,0 +1,26 @@
+{
+  "scenarios": {
+    "fspiopTransfers": {
+      "executor": "ramping-arrival-rate",
+      "exec": "fspiopDiscoveryScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "preAllocatedVUs": 50,
+      "timeUnit": "1s",
+      "startRate": 10,
+      "stages": [
+        { "target": 100, "duration": "30s" },
+        { "target": 200, "duration": "30s" },
+        { "target": 300, "duration": "30s" },
+        { "target": 300, "duration": "5m" }
+
+      ]
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}

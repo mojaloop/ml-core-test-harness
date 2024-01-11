@@ -4,11 +4,11 @@
       "executor": "ramping-vus",
       "exec": "fspiopDiscoveryScenarios",
       "env": {
-        "UNIDIRECTIONAL": "true"
+        "UNIDIRECTIONAL": "false"
       },
-      "startVUs": 1,
+      "startVUs": 50,
       "stages": [
-        { "duration": "10s", "target": 6 }
+        { "duration": "5m", "target": 50 }
       ]
     }
   },
