@@ -502,6 +502,63 @@ services:
       - all-services
       - quotes-test
 
+  quoting-service-new:
+    image: "mojaloop/quoting-service:${QUOTING_SERVICE_NEW_VERSION}"
+    deploy:
+      mode: replicated
+      replicas: ${QS_NEW_API_REPLICAS}
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql-cl:
+        condition: service_started
+      central-ledger:
+        condition: service_started
+      kafka:
+        condition: service_started
+    environment:
+      ## Allows TraceID to be propogated - https://github.com/mojaloop/event-sdk#configuration
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+    volumes:
+      - ./docker/config-modifier:/opt/app/config-modifier
+    user: root
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service-new-perf.js /opt/app/config/default.json && node src/index.js"
+    # ports:
+    #   - "3002:3002"
+    healthcheck:
+      test: wget -q http://localhost:3002/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    profiles:
+      - all-services
+      - quotes-test
+
+  quoting-handlers:
+    image: "mojaloop/quoting-service:${QUOTING_SERVICE_NEW_VERSION}"
+    deploy:
+      mode: replicated
+      replicas: ${QS_NEW_HANDLER_REPLICAS}
+    networks:
+      - mojaloop-net
+    environment:
+      ## Allows TraceID to be propogated - https://github.com/mojaloop/event-sdk#configuration
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+    volumes:
+      - ./docker/config-modifier:/opt/app/config-modifier
+    user: root
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service-new-perf.js /opt/app/config/default.json && npm run start:handlers"
+    depends_on:
+      mysql-cl:
+        condition: service_started
+      central-ledger:
+        condition: service_started
+      kafka:
+        condition: service_started
+    profiles:
+      - all-services
+      - quotes-test
+
   # objstore:
   #   image: mongo:${DEP_MONGO_VERSION}
   #   container_name: objstore
@@ -549,6 +606,12 @@ services:
       # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-fulfil --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
       # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-processing --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
       # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-get --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-quotes-post --replication-factor 1 --partitions $$KAFKA_QUOTES_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-quotes-put --replication-factor 1 --partitions $$KAFKA_QUOTES_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-quotes-get --replication-factor 1 --partitions $$KAFKA_QUOTES_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulkquotes-post --replication-factor 1 --partitions $$KAFKA_QUOTES_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulkquotes-put --replication-factor 1 --partitions $$KAFKA_QUOTES_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulkquotes-get --replication-factor 1 --partitions $$KAFKA_QUOTES_PARTITIONS_NUM
       echo -e 'Successfully created the following topics:'
       kafka-topics.sh --bootstrap-server kafka:29092 --list
       "
@@ -559,6 +622,7 @@ services:
       - agreement
       - all-services
       - transfers-test
+      - quotes-test
 
   kafka:
     networks:

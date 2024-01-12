@@ -2,6 +2,7 @@ export { fspiopDiscoveryScenarios } from './scenarios/fspiopDiscovery.js';
 export { fspiopTransfersScenarios } from './scenarios/fspiopTransfers.js';
 export { fspiopTransfersNoCallbackScenarios } from './scenarios/fspiopTransfersNoCallback.js';
 export { fspiopQuotesScenarios } from './scenarios/fspiopQuotes.js';
+export { fspiopQuotesNoCallbackScenarios } from './scenarios/fspiopQuotesNoCallback.js';
 export { fspiopQuotesPersonalInfoExtensionsScenarios } from './scenarios/fspiopQuotesPersonalInfoExtensions.js';
 export { fspiopE2EScenarios } from './scenarios/fspiopE2E.js';
 
