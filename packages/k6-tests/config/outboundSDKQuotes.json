@@ -1,8 +1,8 @@
 {
   "scenarios": {
-    "inboundSDKQuotes": {
+    "outboundSDKQuotes": {
       "executor": "ramping-vus",
-      "exec": "inboundSDKQuotesScenarios",
+      "exec": "outboundSDKQuotesScenarios",
       "startVUs": 1,
       "stages": [
         { "duration": "30s", "target": 15 },

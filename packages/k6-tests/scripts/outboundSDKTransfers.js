@@ -67,11 +67,11 @@ export function postTransfers() {
 
     // Lets send the FSPIOP POST /transfers request
     const res = http.post(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/transfers`, JSON.stringify(body), params);
-    check(res, { 'TRANSFERS_FSPIOP_POST_TRANSFERS_RESPONSE_IS_202' : (r) => r.status == 202 });
+    check(res, { 'TRANSFERS__POST_TRANSFERS_RESPONSE_IS_202' : (r) => r.status == 202 });
 
     if (abortOnError && res.status != 202) {
       // Abort the entire k6 test exection runner
-      console.error(traceId, `FSPIOP POST /transfers returned status: ${res.status}`);
+      console.error(traceId, `POST /transfers returned status: ${res.status}`);
       exec.test.abort()
     }
   });
