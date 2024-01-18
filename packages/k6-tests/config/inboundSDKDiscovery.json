@@ -1,8 +1,8 @@
 {
     "scenarios": {
-      "sdkDiscovery": {
+      "inboundSDKDiscovery": {
         "executor": "ramping-vus",
-        "exec": "sdkDiscoveryScenarios",
+        "exec": "inboundSDKDiscoveryScenarios",
         "env": {
           "UNIDIRECTIONAL": "false"
         },

@@ -565,8 +565,8 @@ services:
       - mojaloop-net
     image: docker.io/bitnami/kafka:${DEP_KAFKA_VERSION}
     container_name: kafka
-    # ports:
-    #   - "9092:9092"
+    ports:
+      - "9092:9092"
     environment:
       # BITNAMI_DEBUG: "yes"
       ALLOW_PLAINTEXT_LISTENER: "yes"
@@ -909,6 +909,7 @@ services:
     image: mojaloop/sdk-scheme-adapter:local
     env_file:
       - .env
+      - perf.env
     container_name: sdk-scheme-adapter
     command: yarn nx run modules-api-svc:start
     ports:
@@ -923,8 +924,6 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
-    #   quoting-service:
-    #     condition: service_healthy
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
@@ -956,8 +955,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "3001:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -973,7 +972,6 @@ services:
     user: root
     profiles:
       - simulators
-      - sdk-scheme-adapter
       - callback-handler
       - all-services
       - als-test
@@ -1023,7 +1021,6 @@ services:
     user: root
     profiles:
       - simulators
-      - callback-handler
       - all-services
       - als-test
       - 2dfsp
@@ -1059,7 +1056,6 @@ services:
     user: root
     profiles:
       - simulators
-      - callback-handler
       - all-services
       - als-test
       - 2dfsp
@@ -1246,4 +1242,41 @@ services:
       interval: 15s
     user: root
     profiles:
+      - 8dfsp
+
+  sim-fspiop:
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    deploy:
+      mode: replicated
+      replicas: 1
+    env_file:
+      - .env
+      - ./envs/fspiop-sim.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    ports:
+      - "3001:3001"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment: {}
+      # - LOG_LEVEL=error
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - simulators
+      - callback-handler
+      - sdk-scheme-adapter
+      - all-services
+      - als-test
+      - 2dfsp
+      - 4dfsp
       - 8dfsp

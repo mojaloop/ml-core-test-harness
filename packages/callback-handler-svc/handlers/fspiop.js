@@ -84,6 +84,7 @@ const init = (config, logger, options = undefined) => {
       egressHistTimerEnd({ success: true, operation: 'fspiop_put_parties'})
       histTimerEnd1({ success: true, operation: 'fspiop_get_parties_with_callback'})
     })();
+    logger.info(`GET request processed /parties/${type}/${id}`)
     // Sync 202
     res.status(202).end()
     histTimerEnd({ success: true, operation: 'fspiop_get_parties'})
@@ -199,7 +200,7 @@ const init = (config, logger, options = undefined) => {
     const operationE2e = `${operation}_end2end`
     const operationRequest = `${operation}_request`
     const operationResponse = `${operation}_response`
-    const tracestate = TraceUtils.getTraceStateMap(req.headers)
+  const tracestate = TraceUtils.getTraceStateMap(req.headers)
 
     if (tracestate === undefined || tracestate[TRACESTATE_KEY_END2END_START_TS] === undefined || tracestate[TRACESTATE_KEY_CALLBACK_START_TS] === undefined) {
       return res.status(400).send(`${TRACESTATE_KEY_END2END_START_TS} or ${TRACESTATE_KEY_CALLBACK_START_TS} key/values not found in tracestate`)

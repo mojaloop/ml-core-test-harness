@@ -37,6 +37,7 @@ export function getParties() {
     const wsChannel = `${traceParent.traceId}/PUT/parties/MSISDN/${payeeId}`;
     const wsURL = `${wsUrl}/${wsChannel}`
     const ws = new WebSocket(wsURL);
+
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
 
     var wsTimeoutId = null;
