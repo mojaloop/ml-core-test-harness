@@ -105,7 +105,7 @@ export function postTransfers() {
       }
 
       // Lets send the FSPIOP POST /transfers request
-      const res = http.post(`${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL}/transfers`, JSON.stringify(body), params);
+      const res = http.post(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/transfers`, JSON.stringify(body), params);
       check(res, { 'TRANSFERS_FSPIOP_POST_TRANSFERS_RESPONSE_IS_202' : (r) => r.status == 202 });
 
       if (abortOnError && res.status != 202) {
@@ -117,7 +117,6 @@ export function postTransfers() {
 
       wsTimeoutId = setTimeout(() => {
         const errorMsg = `WS timed-out on URL: ${wsURL}`
-        console.error(traceId, errorMsg);
         check(res, { 'TRANSFERS_E2E_FSPIOP_POST_TRANSFERS_SUCCESS': (cbMessage) => false });
         ws.close();
         if (abortOnError) {

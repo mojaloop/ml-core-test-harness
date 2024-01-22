@@ -1,21 +1,16 @@
 import http from 'k6/http';
-import { crypto } from "k6/experimental/webcrypto";
 import { check, group } from 'k6';
 import exec from 'k6/execution';
 import { getTwoItemsFromArray } from "../common/utils.js";
 
 console.log(`Env Vars -->
-  K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL},
   K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL},
-  K6_SCRIPT_ABORT_ON_ERROR=${__ENV.K6_SCRIPT_ABORT_ON_ERROR}
+  K6_SCRIPT_ABORT_ON_ERROR=${__ENV.K6_SCRIPT_ABORT_ON_ERROR},
+  K6_SCRIPT_SDK_ENDPOINT_URL=${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL},
 `);
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
-const ilpPacket = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ILPPACKET
-const condition = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CONDITION
-const amount = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_AMOUNT.toString()
-const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 export function postTransfers() {
@@ -33,7 +28,6 @@ export function postTransfers() {
     }
 
     const startTs = Date.now();
-    const transferId = crypto.randomUUID();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
     const params = {
@@ -53,23 +47,47 @@ export function postTransfers() {
     };
 
     const body = {
-      "transferId": transferId,
-      "payerFsp": payerFspId,
-      "payeeFsp": payeeFspId,
-      "amount": {
-        amount,
-        currency
+      "homeTransactionId": "string",
+      "from": {
+        "type": "CONSUMER",
+        "idType": "MSISDN",
+        "idValue": payerFspId,
+        "idSubValue": "string",
+        "displayName": "fDg ME'iwbdzCSzVE7.TN",
+        "firstName": "Henrik",
+        "lastName": "Karlsson",
+        "fspId": "string",
+        "extensionList": [
+          {
+            "key": "string",
+            "value": "string"
+          }
+        ]
       },
-      "expiration": "2030-01-01T00:00:00.000Z",
-      ilpPacket,
-      condition
+      "to": {
+        "type": "CONSUMER",
+        "idType": "MSISDN",
+        "idValue": payeeFspId,
+        "idSubValue": "string",
+        "displayName": "eg-lcnP-wds.YiwXtbXS3",
+        "firstName": "Henrik",
+        "middleName": "Johannes",
+        "lastName": "Karlsson",
+        "fspId": "string"
+      },
+      "amountType": "RECEIVE",
+      "currency": "AED",
+      "amount": "123.45",
+      "transactionType": "TRANSFER",
+      "skipPartyLookup": true
     }
 
     // Lets send the FSPIOP POST /transfers request
+    console.log('doing: ', `${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/transfers`)
     const res = http.post(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/transfers`, JSON.stringify(body), params);
-    check(res, { 'TRANSFERS__POST_TRANSFERS_RESPONSE_IS_202' : (r) => r.status == 202 });
+    check(res, { 'TRANSFERS__POST_TRANSFERS_RESPONSE_IS_200' : (r) => r.status == 200 });
 
-    if (abortOnError && res.status != 202) {
+    if (abortOnError && res.status != 200) {
       // Abort the entire k6 test exection runner
       console.error(traceId, `POST /transfers returned status: ${res.status}`);
       exec.test.abort()

@@ -25,6 +25,8 @@ const init = (config, logger, options = undefined) => {
     const operationResponse = `${operation}_response`
     const tracestate = TraceUtils.getTraceStateMap(req.headers)
 
+    console.log(req.headers)
+
     if (tracestate === undefined || tracestate[TRACESTATE_KEY_END2END_START_TS] === undefined || tracestate[TRACESTATE_KEY_CALLBACK_START_TS] === undefined) {
       return res.status(400).send(`${TRACESTATE_KEY_END2END_START_TS} or ${TRACESTATE_KEY_CALLBACK_START_TS} key/values not found in tracestate`)
     }
@@ -100,6 +102,8 @@ const init = (config, logger, options = undefined) => {
 
     const quotesRequest = req.body
 
+    console.log("starting quote request");
+
     const quotesResponse = {
       payeeFspCommissionAmount: quotesRequest.feesCurrency,
       payeeFspCommissionAmountCurrency: quotesRequest.feesCurrency,
@@ -145,27 +149,11 @@ const init = (config, logger, options = undefined) => {
   })
 
   router.put('/quotes/:id', (req, res) => {
-    const histTimerEnd = options.metrics.getHistogram(
-      'ing_callbackHandler',
-      'Ingress - Operation handler',
-      ['success', 'operation']
-    ).startTimer()
-
-    res.status(202).end()
-
-    histTimerEnd({ success: true, operation: 'quoting_service_put_quote'})
+    return handleCallback('quotes', req, res)
   })
 
   router.put('/transfers/:id', (req, res) => {
-    const histTimerEnd = options.metrics.getHistogram(
-      'ing_callbackHandler',
-      'Ingress - Operation handler',
-      ['success', 'operation']
-    ).startTimer()
-
-    res.status(202).end()
-
-    histTimerEnd({ success: true, operation: 'transfers_put_transfer'})
+    return handleCallback('transfers', req, res)
   })
 
   return {

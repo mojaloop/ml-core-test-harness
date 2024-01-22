@@ -66,7 +66,6 @@ export function getParties() {
     };
 
     ws.onopen = () => {
-      console.info(traceId, `WS open on URL: ${wsURL}`);
       const params = {
         tags: {
           payerFspId,

@@ -1,9 +1,10 @@
 import http from 'k6/http';
-import { check, fail, sleep, group } from 'k6';
+import { check, group } from 'k6';
 import { randomItem } from "https://jslib.k6.io/k6-utils/1.1.0/index.js";
 
 console.log(`Env Vars -->
-K6_SCRIPT_SDK_ENDPOINT_URL=${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL},
+  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL},
+  K6_SCRIPT_SDK_ENDPOINT_URL=${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL},
 `);
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
@@ -21,7 +22,6 @@ export function getParties() {
       payeeFsp =  randomSortedFsp[1]
     }
 
-    const startTs = Date.now();
     const payeeId = payeeFsp['partyId'];
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
@@ -36,13 +36,11 @@ export function getParties() {
         'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',
         'FSPIOP-Source': payerFspId,
         'Date': (new Date()).toUTCString(),
-        'traceparent': traceParent.toString(),
-        'tracestate': `tx_end2end_start_ts=${startTs}`
       },
     };
 
     const res = http.get(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/parties/MSISDN/${payeeId}`, params);
-    check(res, { 'SDK_GET_PARTIES_RESPONSE_IS_202' : (r) => r.status == 202 });
+    check(res, { 'SDK_GET_PARTIES_RESPONSE_IS_200' : (r) => r.status == 200 });
 
   });
 }

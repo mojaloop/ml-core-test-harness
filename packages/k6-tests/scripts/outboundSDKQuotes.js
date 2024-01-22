@@ -4,6 +4,7 @@ import { check, group } from 'k6';
 import { getTwoItemsFromArray } from "../common/utils.js";
 
 console.log(`Env Vars -->
+  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL},
   K6_SCRIPT_SDK_ENDPOINT_URL=${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL},
 `);
 
@@ -25,7 +26,6 @@ export function postQuotes() {
       payeeFsp =  selectedFsps[1]
     }
 
-    const startTs = Date.now();
     const quoteId = crypto.randomUUID();
     const transactionId = crypto.randomUUID();
     const payerFspId = payerFsp['fspId'];
@@ -37,47 +37,48 @@ export function postQuotes() {
         payeeFspId
       },
       headers: {
-        'accept': 'application/vnd.interoperability.quotes+json;version=1.0',
-        'Content-Type': 'application/vnd.interoperability.quotes+json;version=1.0',
+        // 'accept': 'application/vnd.interoperability.quotes+json;version=1.0',
+        'Content-Type': 'application/json',
         'FSPIOP-Source': payerFspId,
         'FSPIOP-Destination': payeeFspId,
-        'Date': (new Date()).toUTCString(),
-        'traceparent': traceParent.toString(),
-        'tracestate': `tx_end2end_start_ts=${startTs}`
+        'Date': (new Date()).toUTCString()
       },
     };
 
     const body = {
-      "quoteId": quoteId,
-      "transactionId": transactionId,
-      "payer": {
-        "partyIdInfo": {
-          "partyIdType": "MSISDN",
-          "partyIdentifier": `${payerFsp['partyId']}`,
-          "fspId": payerFspId
+      "fspId": payerFspId,
+      "quotesPostRequest": {
+        "quoteId": quoteId,
+        "transactionId": transactionId,
+        "payee": {
+          "partyIdInfo": {
+            "partyIdType": "MSISDN",
+            "partyIdentifier": `${payeeFsp['partyId']}`,
+            "fspId": payeeFspId
+          }
+        },
+        "payer": {
+          "partyIdInfo": {
+            "partyIdType": "MSISDN",
+            "partyIdentifier": `${payerFsp['partyId']}`,
+            "fspId": payerFspId
+          }
+        },
+        "amountType": "SEND",
+        "amount": {
+          "amount": `${amount}`,
+          "currency": `${currency}`
+        },
+        "transactionType": {
+          "scenario": "DEPOSIT",
+          "initiator": "PAYER",
+          "initiatorType": "AGENT",
         }
-      },
-      "payee": {
-        "partyIdInfo": {
-          "partyIdType": "MSISDN",
-          "partyIdentifier": `${payeeFsp['partyId']}`,
-          "fspId": payeeFspId
-        }
-      },
-      "amountType": "SEND",
-      "amount": {
-        "amount": `${amount}`,
-        "currency": `${currency}`
-      },
-      "transactionType": {
-        "scenario": "TRANSFER",
-        "initiator": "PAYER",
-        "initiatorType": "CONSUMER"
       }
     }
 
     // Lets send the FSPIOP POST /quotes request
     const res = http.post(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/quotes`, JSON.stringify(body), params);
-    check(res, { 'QUOTES_FSPIOP_POST_QUOTES_RESPONSE_IS_202' : (r) => r.status == 202 });
+    check(res, { 'QUOTES_FSPIOP_POST_QUOTES_RESPONSE_IS_200' : (r) => r.status == 200 });
   });
 }

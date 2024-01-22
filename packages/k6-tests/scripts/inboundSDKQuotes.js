@@ -40,7 +40,9 @@ export function postQuotes() {
     const traceId = traceParent.traceId;
     const wsChannel = `${traceParent.traceId}/PUT/quotes/${quoteId}`;
     const wsURL = `${wsUrl}/${wsChannel}`
+    console.log('ws open on: ', wsURL)
     const ws = new WebSocket(wsURL);
+
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
 
     var wsTimeoutId = null;
@@ -69,7 +71,6 @@ export function postQuotes() {
     };
 
     ws.onopen = () => {
-      console.info(traceId, `WS open on URL: ${wsURL}`);
       const params = {
         tags: {
           payerFspId,
@@ -116,7 +117,7 @@ export function postQuotes() {
       }
 
       // Lets send the FSPIOP POST /quotes request
-      const res = http.post(`${__ENV.K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL}/quotes`, JSON.stringify(body), params);
+      const res = http.post(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/quotes`, JSON.stringify(body), params);
       check(res, { 'QUOTES_FSPIOP_POST_QUOTES_RESPONSE_IS_202' : (r) => r.status == 202 });
 
       wsTimeoutId = setTimeout(() => {
