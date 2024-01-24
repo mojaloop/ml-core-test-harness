@@ -27,7 +27,6 @@ export function postTransfers() {
       payeeFsp =  selectedFsps[1]
     }
 
-    const startTs = Date.now();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
     const params = {
@@ -36,13 +35,8 @@ export function postTransfers() {
         payeeFspId
       },
       headers: {
-        'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
-        'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
-        'FSPIOP-Source': payerFspId,
-        'FSPIOP-Destination': payeeFspId,
         'Date': (new Date()).toUTCString(),
-        'traceparent': traceParent.toString(),
-        'tracestate': `tx_end2end_start_ts=${startTs}`
+        'Content-Type': 'application/json',
       },
     };
 
@@ -51,41 +45,37 @@ export function postTransfers() {
       "from": {
         "type": "CONSUMER",
         "idType": "MSISDN",
-        "idValue": payerFspId,
-        "idSubValue": "string",
-        "displayName": "fDg ME'iwbdzCSzVE7.TN",
+        "idValue": "payerFspId",
+        "displayName": "test payer",
         "firstName": "Henrik",
         "lastName": "Karlsson",
-        "fspId": "string",
-        "extensionList": [
-          {
-            "key": "string",
-            "value": "string"
-          }
-        ]
+        "fspId": "string"
       },
       "to": {
         "type": "CONSUMER",
         "idType": "MSISDN",
-        "idValue": payeeFspId,
-        "idSubValue": "string",
-        "displayName": "eg-lcnP-wds.YiwXtbXS3",
-        "firstName": "Henrik",
-        "middleName": "Johannes",
-        "lastName": "Karlsson",
-        "fspId": "string"
+        "idValue": "payeeFspId"
       },
       "amountType": "RECEIVE",
       "currency": "AED",
       "amount": "123.45",
-      "transactionType": "TRANSFER",
-      "skipPartyLookup": true
+      "transactionType": "TRANSFER"
     }
 
     // Lets send the FSPIOP POST /transfers request
-    console.log('doing: ', `${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/transfers`)
-    const res = http.post(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/transfers`, JSON.stringify(body), params);
-    check(res, { 'TRANSFERS__POST_TRANSFERS_RESPONSE_IS_200' : (r) => r.status == 200 });
+    const postTransferResponse = http.post(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/transfers`, JSON.stringify(body), params);
+    check(postTransferResponse, { 'TRANSFERS__POST_TRANSFERS_RESPONSE_IS_200' : (r) => r.status == 200 });
+    
+    const transferId = JSON.parse(postTransferResponse.body).transferId
+
+    if (postTransferResponse.status == 200) {
+      console.log("putrequest: ", `${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/transfer/${transferId}`)
+      const putTransferResponse = http.put(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/transfer/${transferId}`, JSON.stringify({
+        "acceptParty": true
+      }), params);
+      check(putTransferResponse, { 'TRANSFERS__PUT_TRANSFERS_RESPONSE_IS_200' : (r) => r.status == 200 });
+    }
+
 
     if (abortOnError && res.status != 200) {
       // Abort the entire k6 test exection runner

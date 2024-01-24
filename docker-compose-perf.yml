@@ -906,17 +906,17 @@ services:
       - als-test
   
   sdk-scheme-adapter-api-svc:
-    image: mojaloop/sdk-scheme-adapter:local
+    image: mojaloop/sdk-scheme-adapter:v23.1.1
     env_file:
       - .env
       - perf.env
     container_name: sdk-scheme-adapter
-    command: yarn nx run modules-api-svc:start
+    command: yarn nx run modules-api-svc:start:debug
     ports:
       - "4000:4000"
       - "4001:4001"
       - "4002:4002"
-      - "9229:9229"
+      - "4003:9229"
     networks:
       - mojaloop-net
     depends_on:
