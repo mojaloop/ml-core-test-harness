@@ -78,7 +78,7 @@ export function postQuotes() {
     }
 
     // Lets send the FSPIOP POST /quotes request
-    const res = http.post(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/quotes`, JSON.stringify(body), params);
+    const res = http.post(`${__ENV.K6_SCRIPT_OUTBOUND_SDK_ENDPOINT_URL}/quotes`, JSON.stringify(body), params);
     check(res, { 'QUOTES_FSPIOP_POST_QUOTES_RESPONSE_IS_200' : (r) => r.status == 200 });
   });
 }

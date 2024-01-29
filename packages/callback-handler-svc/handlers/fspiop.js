@@ -81,7 +81,7 @@ const init = (config, logger, options = undefined) => {
             'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
           },
           httpAgent,
-        })        
+        })      
       } catch (e) {
         console.log('failed here: ', `${FSPIOP_ALS_ENDPOINT_URL}/parties/${type}/${id}`)
         logger.error(e)

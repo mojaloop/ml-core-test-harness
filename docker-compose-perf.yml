@@ -590,7 +590,6 @@ services:
       interval: 30s
     profiles:
       - central-ledger
-      - sdk-scheme-adapter
       - transfer
       - discovery
       - agreement
@@ -905,24 +904,19 @@ services:
       - all-services
       - als-test
   
-  sdk-scheme-adapter-api-svc:
+  inbound-sdk-scheme-adapter-api-svc:
     image: mojaloop/sdk-scheme-adapter:v23.1.1
     env_file:
       - .env
       - perf.env
-    container_name: sdk-scheme-adapter
-    command: yarn nx run modules-api-svc:start:debug
+    container_name: inbound-sdk-scheme-adapter
+    command: yarn nx run modules-api-svc:start
     ports:
       - "4000:4000"
-      - "4001:4001"
-      - "4002:4002"
-      - "4003:9229"
     networks:
       - mojaloop-net
     depends_on:
       redis:
-        condition: service_healthy
-      kafka:
         condition: service_healthy
     volumes:
       - ./docker/wait4:/opt/app/wait4
@@ -940,6 +934,41 @@ services:
       interval: 30s
     user: root
     profiles:
+      - inbound-sdk-scheme-adapter
+      - sdk-scheme-adapter
+      - all-services
+  
+  outbound-sdk-scheme-adapter-api-svc:
+    image: mojaloop/sdk-scheme-adapter:v23.1.1
+    env_file:
+      - .env
+      - perf.env
+    container_name: outbound-sdk-scheme-adapter
+    command: yarn nx run modules-api-svc:start
+    ports:
+      - "4001:4001"
+    networks:
+      - mojaloop-net
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: [
+        "CMD" ,
+        "apk", "add", "--no-cache", "curl", # Install curl
+        "&&",
+        "curl", "-f", "http://localhost:4001" # Check if api is up
+        ]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - outbound-sdk-scheme-adapter
       - sdk-scheme-adapter
       - all-services
 
@@ -1258,6 +1287,7 @@ services:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "3001:3001"
+      - "3002:3002"
     networks:
       - mojaloop-net
     volumes:
@@ -1274,7 +1304,9 @@ services:
     profiles:
       - simulators
       - callback-handler
-      - sdk-scheme-adapter
+      - sdk-scheme-adapte
+      - outbound-sdk-scheme-adapter
+      - inbound-sdk-scheme-adapter
       - all-services
       - als-test
       - 2dfsp

@@ -39,7 +39,7 @@ export function getParties() {
       },
     };
 
-    const res = http.get(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/parties/MSISDN/${payeeId}`, params);
+    const res = http.get(`${__ENV.K6_SCRIPT_OUTBOUND_SDK_ENDPOINT_URL}/parties/MSISDN/${payeeId}`, params);
     check(res, { 'SDK_GET_PARTIES_RESPONSE_IS_200' : (r) => r.status == 200 });
 
   });
