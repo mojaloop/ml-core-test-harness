@@ -593,6 +593,9 @@ services:
       - transfer
       - discovery
       - agreement
+      - sdk-scheme-adapter
+      - inbound-sdk-scheme-adapter
+      - outbound-sdk-scheme-adapter
       - all-services
       - transfers-test
       - quotes-test
@@ -905,7 +908,7 @@ services:
       - als-test
   
   inbound-sdk-scheme-adapter-api-svc:
-    image: mojaloop/sdk-scheme-adapter:v23.1.1
+    image: mojaloop/sdk-scheme-adapter:local
     env_file:
       - .env
       - perf.env

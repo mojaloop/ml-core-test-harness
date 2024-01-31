@@ -83,6 +83,10 @@ const init = (config, logger, options = undefined) => {
       'Ingress - Operation handler',
       ['success', 'operation']
     ).startTimer()
+    
+    console.log('GET REQUEST -----------------')
+    console.log(req.headers)
+    console.log('GET REQUEST -----------------')
 
 
     res.status(202).json({
