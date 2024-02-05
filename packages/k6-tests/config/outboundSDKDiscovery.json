@@ -4,11 +4,11 @@
         "executor": "ramping-vus",
         "exec": "outboundSDKDiscoveryScenarios",
         "env": {
-          "UNIDIRECTIONAL": "false"
+          "UNIDIRECTIONAL": "true"
         },
         "startVUs": 1,
         "stages": [
-          { "duration": "60s", "target": 6 }
+          { "duration": "2m", "target": 5 }
         ]
       }
     },

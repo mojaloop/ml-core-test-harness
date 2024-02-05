@@ -8,7 +8,7 @@
         },
         "startVUs": 1,
         "stages": [
-          { "duration": "10s", "target": 10 }
+          { "duration": "2m", "target": 5 }
         ]
       }
     },

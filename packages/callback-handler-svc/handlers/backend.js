@@ -25,8 +25,6 @@ const init = (config, logger, options = undefined) => {
     const operationResponse = `${operation}_response`
     const tracestate = TraceUtils.getTraceStateMap(req.headers)
 
-    console.log(req.headers)
-
     if (tracestate === undefined || tracestate[TRACESTATE_KEY_END2END_START_TS] === undefined || tracestate[TRACESTATE_KEY_CALLBACK_START_TS] === undefined) {
       return res.status(400).send(`${TRACESTATE_KEY_END2END_START_TS} or ${TRACESTATE_KEY_CALLBACK_START_TS} key/values not found in tracestate`)
     }
@@ -69,7 +67,7 @@ const init = (config, logger, options = undefined) => {
     )
     const traceId = TraceUtils.getTraceId(req.headers)
     const channel = '/' + traceId + '/' + req.method + req.path
-    logger.info(channel)
+    console.log('Handled PUT Callback request')
     options.wsServer.notify(channel, isErrorOperation ? 'ERROR_CALLBACK_RECEIVED' : 'SUCCESS_CALLBACK_RECEIVED')
     histTimerEnd({ success: true, operation })
     return res.status(202).end()
@@ -83,16 +81,11 @@ const init = (config, logger, options = undefined) => {
       'Ingress - Operation handler',
       ['success', 'operation']
     ).startTimer()
-    
-    console.log('GET REQUEST -----------------')
-    console.log(req.headers)
-    console.log('GET REQUEST -----------------')
-
 
     res.status(202).json({
       "fsp": "string"
     })
-
+    console.log('Handled GET request')
     histTimerEnd({ success: true, operation: 'oracle_get_parties'})
   })
 
@@ -105,8 +98,6 @@ const init = (config, logger, options = undefined) => {
     ).startTimer()
 
     const quotesRequest = req.body
-
-    console.log("starting quote request");
 
     const quotesResponse = {
       payeeFspCommissionAmount: quotesRequest.feesCurrency,

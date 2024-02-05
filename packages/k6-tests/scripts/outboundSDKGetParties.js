@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
-import { randomItem } from "https://jslib.k6.io/k6-utils/1.1.0/index.js";
+import { getTwoItemsFromArray } from "../common/utils.js";
 
 console.log(`Env Vars -->
   K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL},
@@ -13,13 +13,14 @@ export function getParties() {
   group("Get Parties", function () {
     let payerFsp
     let payeeFsp
+    
     if (__ENV.UNIDIRECTIONAL === "true" || __ENV.UNIDIRECTIONAL === "TRUE") {
       payerFsp = fspList[0]
       payeeFsp =  fspList[1]
     } else {
-      const randomSortedFsp = fspList.concat().sort(() => randomItem([-1,1])).slice(0, 2);
-      payerFsp = randomSortedFsp[0]
-      payeeFsp =  randomSortedFsp[1]
+      const selectedFsps = getTwoItemsFromArray(fspList)
+      payerFsp = selectedFsps[0]
+      payeeFsp =  selectedFsps[1]
     }
 
     const payeeId = payeeFsp['partyId'];
@@ -39,7 +40,7 @@ export function getParties() {
       },
     };
 
-    const res = http.get(`${__ENV.K6_SCRIPT_OUTBOUND_SDK_ENDPOINT_URL}/parties/MSISDN/${payeeId}`, params);
+    const res = http.get(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/parties/MSISDN/${payeeId}`, params);
     check(res, { 'SDK_GET_PARTIES_RESPONSE_IS_200' : (r) => r.status == 200 });
 
   });
