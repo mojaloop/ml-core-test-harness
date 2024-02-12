@@ -81,8 +81,12 @@ const init = (config, logger, options = undefined) => {
       'Ingress - Operation handler',
       ['success', 'operation']
     ).startTimer()
+    const type = req.params.type
+    const id = req.params.id
 
     res.status(202).json({
+      "idType": type,
+      "idValue": id,
       "fsp": "string"
     })
     console.log('Handled GET request')

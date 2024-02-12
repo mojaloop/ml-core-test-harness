@@ -1,0 +1,3 @@
+1. Sign each others dfsp_client.csr OUT_CLIENT_CERT_PATH
+2. Move each others dfsp_server_cacert.pem into each others folder OUT_CA_CERT_PATH
+3. Double check all other files are generated

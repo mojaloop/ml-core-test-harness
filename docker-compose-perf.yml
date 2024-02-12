@@ -975,7 +975,7 @@ services:
       - als-test
       - transfers-test
       - quotes-test
-  
+
   redis:
     networks:
       - mojaloop-net
