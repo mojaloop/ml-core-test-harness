@@ -908,7 +908,7 @@ services:
       - als-test
 
   sdk-scheme-adapter-api-svc:
-    image: mojaloop/sdk-scheme-adapter:v23.3.0-snapshot.1
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
     env_file:
       - .env
       - perf.env
