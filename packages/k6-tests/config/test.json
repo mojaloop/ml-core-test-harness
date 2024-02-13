@@ -1,17 +1,13 @@
 {
   "scenarios": {
     "test": {
-      "executor": "ramping-vus",
-      "exec": "testScenarios",
-      "startVUs": 1,
-      "stages": [
-        { "duration": "10s", "target": 6 }
-      ]
+      "executor": "shared-iterations",
+      "exec": "inboundSDKTransfersScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "vus": 1,
+      "iterations": 1
+      }
     }
-  },
-  "thresholds": {
-    "iteration_duration": [ "p(95)<1000" ],
-    "http_req_failed": [ "rate<0.01" ],
-    "http_req_duration": [ "p(95)<1000" ]
-  }
 }

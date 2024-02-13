@@ -565,8 +565,8 @@ services:
       - mojaloop-net
     image: docker.io/bitnami/kafka:${DEP_KAFKA_VERSION}
     container_name: kafka
-    # ports:
-    #   - "9092:9092"
+    ports:
+      - "9092:9092"
     environment:
       # BITNAMI_DEBUG: "yes"
       ALLOW_PLAINTEXT_LISTENER: "yes"
@@ -593,6 +593,9 @@ services:
       - transfer
       - discovery
       - agreement
+      - sdk-scheme-adapter
+      - inbound-sdk-scheme-adapter
+      - outbound-sdk-scheme-adapter
       - all-services
       - transfers-test
       - quotes-test
@@ -904,6 +907,40 @@ services:
       - all-services
       - als-test
 
+  sdk-scheme-adapter-api-svc:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    env_file:
+      - .env
+      - perf.env
+    container_name: sdk-scheme-adapter
+    command: yarn nx run modules-api-svc:start
+    ports:
+      - "4000:4000"
+      - "4001:4001"
+    networks:
+      - mojaloop-net
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: [
+        "CMD" ,
+        "apk", "add", "--no-cache", "curl", # Install curl
+        "&&",
+        "curl", "-f", "http://localhost:4001" # Check if api is up
+        ]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - sdk-scheme-adapter
+      - all-services
+
   callback-handler-svc-cl-sim:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
@@ -916,8 +953,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "3001:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -938,6 +975,20 @@ services:
       - als-test
       - transfers-test
       - quotes-test
+  
+  redis:
+    networks:
+      - mojaloop-net
+    image: "redis:6.2.4-alpine"
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD" ,"sh", "-c", "redis-cli","ping"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
 
   sim-perffsp1:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
@@ -968,7 +1019,6 @@ services:
     user: root
     profiles:
       - simulators
-      - callback-handler
       - all-services
       - als-test
       - 2dfsp
@@ -977,9 +1027,9 @@ services:
 
   sim-perffsp2:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    deploy:
-      mode: replicated
-      replicas: 1
+    # deploy:
+    #   mode: replicated
+    #   replicas: 1
     env_file:
       - .env
       - ./envs/perffsp2.env
@@ -1004,7 +1054,6 @@ services:
     user: root
     profiles:
       - simulators
-      - callback-handler
       - all-services
       - als-test
       - 2dfsp
@@ -1192,3 +1241,38 @@ services:
     user: root
     profiles:
       - 8dfsp
+
+  sim-fspiop:
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    # deploy:
+    #   mode: replicated
+    #   replicas: 5
+    env_file:
+      - .env
+      - ./envs/fspiop-sim.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment: {}
+      # - LOG_LEVEL=error
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - simulators
+      - callback-handler
+      - sdk-scheme-adapter
+      - all-services
+      - als-test

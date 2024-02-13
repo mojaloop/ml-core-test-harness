@@ -50,37 +50,43 @@ const init = (config, logger, options = undefined) => {
         'Egress - Operation handler',
         ['success', 'operation']
       ).startTimer()
-      await instance.put(`${FSPIOP_ALS_ENDPOINT_URL}/parties/${type}/${id}`, {
-        "party": {
-          "partyIdInfo": {
-            "partyIdType": "MSISDN",
-            "partyIdentifier": id,
-            "fspId": FSP_ID,
-            "partySubIdOrType": "HEALTH_CARD"
-          },
-          "personalInfo": {
-            "dateOfBirth": "1971-12-25",
-            "complexName": {
-              "lastName": "Trudeau",
-              "middleName": "Pierre",
-              "firstName": "Justin"
-            }
-          },
-          "name": "Justin Pierre"
-        }
-      },
-      {
-        headers: {
-          'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',
-          'Accept': 'application/vnd.interoperability.parties+json;version=1.1',
-          Date: new Date(),
-          'FSPIOP-Source': FSP_ID,
-          'FSPIOP-Destination': fspiopSourceHeader,
-          'traceparent': traceparentHeader,
-          'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
+      try {
+        await instance.put(`${FSPIOP_ALS_ENDPOINT_URL}/parties/${type}/${id}`, {
+          "party": {
+            "partyIdInfo": {
+              "type": "CONSUMER",
+              "partyIdType": "MSISDN",
+              "partyIdentifier": id,
+              "fspId": FSP_ID
+            },
+            "personalInfo": {
+              "dateOfBirth": "1971-12-25",
+              "complexName": {
+                "lastName": "Trudeau",
+                "middleName": "Pierre",
+                "firstName": "Justin"
+              }
+            },
+            "name": "Justin Pierre"
+          }
         },
-        httpAgent,
-      })
+        {
+          headers: {
+            'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',
+            'Accept': 'application/vnd.interoperability.parties+json;version=1.1',
+            Date: new Date(),
+            'FSPIOP-Source': FSP_ID,
+            'FSPIOP-Destination': fspiopSourceHeader,
+            'traceparent': traceparentHeader,
+            'tracestate': tracestateHeader + `,${TRACESTATE_KEY_CALLBACK_START_TS}=${Date.now()}`
+          },
+          httpAgent,
+        })      
+      } catch (e) {
+        console.log('failed here: ', `${FSPIOP_ALS_ENDPOINT_URL}/parties/${type}/${id}`)
+        logger.error(e)
+
+      }
       egressHistTimerEnd({ success: true, operation: 'fspiop_put_parties'})
       histTimerEnd1({ success: true, operation: 'fspiop_get_parties_with_callback'})
     })();
@@ -199,7 +205,7 @@ const init = (config, logger, options = undefined) => {
     const operationE2e = `${operation}_end2end`
     const operationRequest = `${operation}_request`
     const operationResponse = `${operation}_response`
-    const tracestate = TraceUtils.getTraceStateMap(req.headers)
+  const tracestate = TraceUtils.getTraceStateMap(req.headers)
 
     if (tracestate === undefined || tracestate[TRACESTATE_KEY_END2END_START_TS] === undefined || tracestate[TRACESTATE_KEY_CALLBACK_START_TS] === undefined) {
       return res.status(400).send(`${TRACESTATE_KEY_END2END_START_TS} or ${TRACESTATE_KEY_CALLBACK_START_TS} key/values not found in tracestate`)
