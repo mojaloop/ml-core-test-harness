@@ -992,9 +992,9 @@ services:
 
   sim-perffsp1:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # deploy:
-    #   mode: replicated
-    #   replicas: 1
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp1.env
