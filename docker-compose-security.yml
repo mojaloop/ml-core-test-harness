@@ -35,7 +35,7 @@ services:
       - security-sdk-scheme-adapter
 
   payer-sdk-scheme-adapter-api-svc:
-    image: mojaloop/sdk-scheme-adapter:local
+    image: mojaloop/sdk-scheme-adapter:v23.3.0
     env_file:
       - ./envs/payer-sdk-scheme-adapter-api-svc.env
     container_name: payer-sdk-scheme-adapter-api-svc
@@ -71,7 +71,7 @@ services:
 
 
   payee-sdk-scheme-adapter-api-svc:
-    image: mojaloop/sdk-scheme-adapter:local
+    image: mojaloop/sdk-scheme-adapter:v23.3.0
     env_file:
       - ./envs/payee-sdk-scheme-adapter-api-svc.env
     container_name: payee-sdk-scheme-adapter-api-svc
