@@ -77,7 +77,6 @@ services:
       - transfer
       - discovery
       - agreement
-      - sdk-scheme-adapter
       - all-services
 
   kafka:
@@ -113,7 +112,6 @@ services:
       - transfer
       - discovery
       - agreement
-      - sdk-scheme-adapter
       - all-services
 
   mysql:
@@ -201,10 +199,10 @@ services:
       - all-services
 
   simulator:
-    image: mojaloop/simulator:local
+    image: mojaloop/simulator:${TEST_SIMULATOR_VERSION}
     container_name: simulator
-    ports:
-      - "8444:8444"
+    # ports:
+    #   - "8444:8444"
     environment:
       - LOG_LEVEL=info
       - TRANSFERS_ENDPOINT=http://ml-api-adapter:3000
@@ -258,45 +256,6 @@ services:
     profiles:
       - account-lookup-service
       - discovery
-      - all-services
-
-  sdk-scheme-adapter-api-svc:
-    image: mojaloop/sdk-scheme-adapter:local
-    env_file:
-      - .env
-    container_name: sdk-scheme-adapter
-    command: yarn nx run modules-api-svc:start
-    ports:
-      - "4000:4000"
-      - "4001:4001"
-      - "4002:4002"
-      - "9229:9229"
-    networks:
-      - mojaloop-net
-    depends_on:
-      redis:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-    #   quoting-service:
-    #     condition: service_healthy
-    volumes:
-      - ./docker/wait4:/opt/app/wait4
-      - ./docker/config-modifier:/opt/app/config-modifier
-    healthcheck:
-      test: [
-        "CMD" ,
-        "apk", "add", "--no-cache", "curl", # Install curl
-        "&&",
-        "curl", "-f", "http://localhost:4001" # Check if api is up
-        ]
-      timeout: 20s
-      retries: 10
-      start_period: 40s
-      interval: 30s
-    user: root
-    profiles:
-      - sdk-scheme-adapter
       - all-services
 
   mysql-als:
@@ -439,17 +398,3 @@ services:
       - kafka
     profiles:
       - debug
-
-  redis:
-    networks:
-      - mojaloop-net
-    image: "redis:6.2.4-alpine"
-    container_name: redis
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD" ,"sh", "-c", "redis-cli","ping"]
-      timeout: 20s
-      retries: 10
-      start_period: 40s
-      interval: 30s
