@@ -220,7 +220,6 @@ services:
     profiles:
       - simulator
       - discovery
-      - sdk-scheme-adapter
       - all-services
 
   account-lookup-service:
