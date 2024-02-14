@@ -243,10 +243,26 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-s
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
+### Running Services for SDK characterization
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile sdk-scheme-adapter up -d
+```
+
+Stop Services
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile sdk-scheme-adapter down -v
+```
+
+#### Setting up the Inbound/Outbound Server variables
+- Go to `perf.env` and comment out the inboundSDK variables. You'll need to do the same and restart the `docker-compose` in order to change test suite.
+
 ### Configuration for Transfers with batch support
 - Set CENTRAL_LEDGER_POSITION_BATCH_REPLICAS to desired count in `.env` file
 - Enable line `CLEDG_KAFKA__EVENT_TYPE_ACTION_TOPIC_MAP__POSITION__PREPARE=topic-transfer-position-batch` in `perf.env` file
 - Set `CENTRAL_LEDGER_VERSION` to `v17.2.0` or higher
+
 
 ### Monitoring
 
@@ -339,6 +355,12 @@ env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDiscovery.json docker compose --project-nam
 env K6_SCRIPT_CONFIG_FILE_NAME=fspiopQuotes.json docker compose --project-name load -f docker-compose-load.yml up
 ( or )
 env K6_SCRIPT_CONFIG_FILE_NAME=fspiopE2E.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=inboundSDKDiscovery.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=inboundSDKQuotes.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=inboundSDKTransfer.json docker compose --project-name load -f docker-compose-load.yml up
 ```
 
 Cleanup tests

@@ -908,7 +908,7 @@ services:
       - als-test
 
   sdk-scheme-adapter-api-svc:
-    image: mojaloop/sdk-scheme-adapter:local
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
     env_file:
       - .env
       - perf.env
@@ -992,9 +992,9 @@ services:
 
   sim-perffsp1:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # deploy:
-    #   mode: replicated
-    #   replicas: 1
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
       - ./envs/perffsp1.env

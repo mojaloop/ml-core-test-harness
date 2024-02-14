@@ -2,7 +2,7 @@
   "scenarios": {
     "test": {
       "executor": "shared-iterations",
-      "exec": "inboundSDKDiscoveryScenarios",
+      "exec": "inboundSDKTransfersScenarios",
       "env": {
         "UNIDIRECTIONAL": "false"
       },

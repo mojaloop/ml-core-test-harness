@@ -67,7 +67,7 @@ const init = (config, logger, options = undefined) => {
     )
     const traceId = TraceUtils.getTraceId(req.headers)
     const channel = '/' + traceId + '/' + req.method + req.path
-    console.log('Handled PUT Callback request')
+    console.log('Handled PUT Callback request', channel)
     options.wsServer.notify(channel, isErrorOperation ? 'ERROR_CALLBACK_RECEIVED' : 'SUCCESS_CALLBACK_RECEIVED')
     histTimerEnd({ success: true, operation })
     return res.status(202).end()
