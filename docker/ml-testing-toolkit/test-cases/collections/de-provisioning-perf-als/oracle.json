@@ -1,0 +1,54 @@
+{
+  "options": {},
+  "name": "collections_tests_oracle",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Add MSISDN Oracle",
+      "meta": {
+        "info": "Add MSISDN Oracle."
+      },
+      "fileInfo": {
+        "path": "collections/de-provisioning-perf-als/oracle.json"
+      },
+      "requests": [
+        {
+          "id": 6,
+          "description": "Add Oracle for MSISDN",
+          "params": {
+            "ID": "",
+            "Type": ""
+          },
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin",
+            "specFile": "spec_files/api_definitions/als_admin_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/als_admin_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/als_admin_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/als_admin_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/als_admin_1.1/trigger_templates"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_ADMIN}",
+          "headers": {
+            "content-type": "application/vnd.interoperability.oracles+json;version=1.1",
+            "date": "",
+            "accept": "application/vnd.interoperability.oracles+json;version=1.1"
+          },
+          "body": {
+            "oracleIdType": "MSISDN",
+            "endpoint": {
+              "value": "{$inputs.PERF_ORACLE_ENDPOINT_BASE_URL}",
+              "endpointType": "URL"
+            },
+            "currency": "{$inputs.currency}"
+          },
+          "disabled": false
+        }
+      ]
+    }
+  ]
+}

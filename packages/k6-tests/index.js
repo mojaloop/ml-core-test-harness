@@ -3,6 +3,7 @@ export { fspiopDiscoveryNoCallbackScenarios } from './scenarios/fspiopDiscoveryN
 export { fspiopTransfersScenarios } from './scenarios/fspiopTransfers.js';
 export { fspiopTransfersNoCallbackScenarios } from './scenarios/fspiopTransfersNoCallback.js';
 export { fspiopQuotesScenarios } from './scenarios/fspiopQuotes.js';
+export { fspiopQuotesNoCallbackScenarios } from './scenarios/fspiopQuotesNoCallback.js';
 export { fspiopParallelScenarios } from './scenarios/fspiopParallel.js';
 
 const configFile = __ENV.K6_SCRIPT_CONFIG_FILE_NAME ? './config/' + __ENV.K6_SCRIPT_CONFIG_FILE_NAME : './config/test.json';

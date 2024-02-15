@@ -1,15 +1,15 @@
 {
   "scenarios": {
-    "fspiopQuotesNoCallbackConstantRate": {
+    "fspiopQuotesNoCallbackScenariosConstantRate": {
       "executor": "constant-arrival-rate",
-      "exec": "fspiopQuotesScenarios",
+      "exec": "fspiopQuotesNoCallbackScenarios",
       "env": {
         "UNIDIRECTIONAL": "false"
       },
       "preAllocatedVUs": 200,
       "timeUnit": "1s",
-      "duration": "2m",
-      "rate": 100
+      "duration": "5m",
+      "rate": 200    
     }
   },
   "thresholds": {

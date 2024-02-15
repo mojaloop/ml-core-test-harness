@@ -14,8 +14,8 @@ const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 const amount = __ENV.K6_SCRIPT_FSPIOP_QUOTES_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 
-export function postQuotesNoCallbackConstantRate() {
-  group("postQuotesNoCallbackConstantRate", function () {
+export function postQuotesNoCallback() {
+  group("postQuotesNoCallback", function () {
     let payerFsp
     let payeeFsp
 
