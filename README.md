@@ -369,6 +369,35 @@ Cleanup tests
 docker compose --project-name load -f docker-compose-load.yml down -v
 ```
 
+### SDK Security Overhead Testing
+
+#### Regenerating Certificates
+
+It's recommended that you do not trouble certificates and keys found in `docker/security/`.
+If you do need to for whatever reason these are the steps.
+
+From the root `ml-core-test-harness` directory. Accept all defaults and enter `y` when prompted.
+
+- `cd docker/security/payer/jws/ && . keygen.sh && cd ../tls/ && . createSecrets.sh && cd ../../payee/jws && . keygen.sh && cd ../tls/ && . createSecrets.sh && cd ../../../../`
+- `cp docker/security/payer/jws/publickey.cer docker/security/payee/jws/verification_keys/fspiopsimpayer.pem && cp docker/security/payee/jws/publickey.cer docker/security/payer/jws/verification_keys/fspiopsimpayee.pem`
+- `cd docker/security/payer/tls/ && openssl ca -config openssl-clientca.cnf -policy signing_policy -extensions signing_req -out ../../payee/tls/dfsp_client_cert.pem -infiles ../../payee/tls/dfsp_client.csr && cp dfsp_server_cacert.pem ../../payee/tls/payer_server_cacert.pem && cd ../../../../`
+- `cd docker/security/payee/tls/ && openssl ca -config openssl-clientca.cnf -policy signing_policy -extensions signing_req -out ../../payer/tls/dfsp_client_cert.pem -infiles ../../payer/tls/dfsp_client.csr && cp dfsp_server_cacert.pem ../../payer/tls/payee_server_cacert.pem && cd ../../../../`
+
+Here are more verbose hands on instructions of what above commands do.
+
+- Run `. keygen.sh` and `. createSecrets.sh` in the `/jws` and `/tls` folders respectively for both payer and payee.
+- Move `payee/jws/publickey.cer` to `payer/jws/verification_keys/fspiopsimpayee.pem` and move `payer/jws/publickey.cer` to `payee/jws/verification_keys/fspiopsimpayer.pem`
+- Switch directories to `docker/security/payer/tls/`
+- Run `openssl ca -config openssl-clientca.cnf -policy signing_policy -extensions signing_req -out ../../payee/tls/dfsp_client_cert.pem -infiles ../../payee/tls/dfsp_client.csr`
+- Switch directories to `docker/security/payee/tls/`
+- Run `openssl ca -config openssl-clientca.cnf -policy signing_policy -extensions signing_req -out ../../payer/tls/dfsp_client_cert.pem -infiles ../../payer/tls/dfsp_client.csr`
+- Move each others `dfsp_server_cacert.pem` into each others folder and rename to `payer_server_cacert.pem` and `payee_server_cacert.pem`
+
+#### Starting the Security Harness
+
+- Run `docker compose --project-name security -f docker-compose-security.yml --profile security-sdk-scheme-adapter up`
+
+
 ### Automate Load Tests
 
 This section describes the process to automate capturing of grafana rendered dashboards after running the performance testing scenarios.
