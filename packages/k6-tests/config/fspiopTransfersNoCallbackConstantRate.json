@@ -1,15 +1,15 @@
 {
   "scenarios": {
-    "fspiopTransfers": {
+    "fspiopTransfersNoCallbackScenarios": {
       "executor": "constant-arrival-rate",
       "exec": "fspiopTransfersNoCallbackScenarios",
       "env": {
         "UNIDIRECTIONAL": "false"
       },
-      "preAllocatedVUs": 50,
+      "preAllocatedVUs": 100,
       "timeUnit": "1s",
-      "duration": "1m",
-      "rate": 200
+      "duration": "2m",
+      "rate": 300
     }
   },
   "thresholds": {
