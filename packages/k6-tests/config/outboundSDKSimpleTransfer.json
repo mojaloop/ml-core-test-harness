@@ -1,8 +1,11 @@
 {
   "scenarios": {
-    "outboundSDKQuotes": {
+    "outboundSDKSimpleTransfers": {
       "executor": "ramping-vus",
-      "exec": "outboundSDKQuotesScenarios",
+      "exec": "outboundSDKSimpleTransfersScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "true"
+      },
       "startVUs": 1,
       "stages": [
         { "duration": "2m", "target": 20 }

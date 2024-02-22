@@ -8,7 +8,7 @@
         },
         "startVUs": 1,
         "stages": [
-          { "duration": "2m", "target": 5 }
+          { "duration": "2m", "target": 20 }
         ]
       }
     },
@@ -18,4 +18,3 @@
       "http_req_duration": [ "p(95)<1000" ]
     }
   }
-  

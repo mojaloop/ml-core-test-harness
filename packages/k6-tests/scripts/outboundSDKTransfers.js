@@ -2,6 +2,7 @@ import http from 'k6/http';
 import { check, group } from 'k6';
 import exec from 'k6/execution';
 import { getTwoItemsFromArray } from "../common/utils.js";
+import { crypto } from "k6/experimental/webcrypto";
 
 console.log(`Env Vars -->
   K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL},
@@ -54,7 +55,7 @@ export function postTransfers() {
       "to": {
         "type": "CONSUMER",
         "idType": "MSISDN",
-        "idValue": "payeeFspId"
+        "idValue": crypto.randomUUID()
       },
       "amountType": "SEND",
       "currency": "AED",
@@ -65,7 +66,7 @@ export function postTransfers() {
     // Lets send the FSPIOP POST /transfers request
     const postTransferResponse = http.post(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/transfers`, JSON.stringify(body), params);
     check(postTransferResponse, { 'TRANSFERS__POST_TRANSFERS_RESPONSE_IS_200' : (r) => r.status == 200 });
-    
+
     const transferId = JSON.parse(postTransferResponse.body).transferId
 
     if (postTransferResponse.status == 200) {

@@ -10,6 +10,7 @@ export { inboundSDKTransfersScenarios } from './scenarios/inboundSDKTransfers.js
 export { outboundSDKDiscoveryScenarios } from './scenarios/outboundSDKDiscovery.js';
 export { outboundSDKQuotesScenarios } from './scenarios/outboundSDKQuotes.js';
 export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.js';
+export { outboundSDKSimpleTransfersScenarios } from './scenarios/outboundSDKSimpleTransfers.js';
 
 
 const configFile = __ENV.K6_SCRIPT_CONFIG_FILE_NAME ? './config/' + __ENV.K6_SCRIPT_CONFIG_FILE_NAME : './config/test.json';

@@ -395,7 +395,7 @@ Here are more verbose hands on instructions of what above commands do.
 
 #### Starting the Security Harness
 
-- Run `docker compose --project-name security -f docker-compose-security.yml --profile security-sdk-scheme-adapter up`
+- Run `docker compose --project-name security -f docker-compose-security.yml --profile security-sdk-scheme-adapter up -d`
 
 
 ### Automate Load Tests

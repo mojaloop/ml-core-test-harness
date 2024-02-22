@@ -133,7 +133,7 @@ const init = (config, logger, options = undefined) => {
 
     const quotesResponse = {
       completedTimestamp: new Date(new Date().getTime() + 10000),
-      fulfilment: 'string',
+      fulfilment: 'lnYe4rYwLthWbzhVyX5cAuDfL1Ulw4WdaTgyGDREysw',
       homeTransactionId: req.body.homeR2PTransactionId,
       transferState: 'RECEIVED'
     }

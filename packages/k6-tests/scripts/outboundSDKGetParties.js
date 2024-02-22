@@ -1,6 +1,7 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
 import { getTwoItemsFromArray } from "../common/utils.js";
+import { crypto } from "k6/experimental/webcrypto";
 
 console.log(`Env Vars -->
   K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL},
@@ -13,7 +14,7 @@ export function getParties() {
   group("Get Parties", function () {
     let payerFsp
     let payeeFsp
-    
+
     if (__ENV.UNIDIRECTIONAL === "true" || __ENV.UNIDIRECTIONAL === "TRUE") {
       payerFsp = fspList[0]
       payeeFsp =  fspList[1]
@@ -23,10 +24,10 @@ export function getParties() {
       payeeFsp =  selectedFsps[1]
     }
 
-    const payeeId = payeeFsp['partyId'];
+    const uuid = crypto.randomUUID();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
-    
+
     const params = {
       tags: {
         payerFspId,
@@ -40,8 +41,8 @@ export function getParties() {
       },
     };
 
-    const res = http.get(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/parties/MSISDN/${payeeId}`, params);
+    const res = http.get(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/parties/MSISDN/${uuid}`, params);
     check(res, { 'SDK_GET_PARTIES_RESPONSE_IS_200' : (r) => r.status == 200 });
-
+    console.log(res)
   });
 }
