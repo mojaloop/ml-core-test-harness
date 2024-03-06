@@ -1354,7 +1354,8 @@
         },
         "body": {
           "providers": [
-            "FDH_FX"
+            "FDH_FX",
+            "testfxp1"
           ]
         }
       },

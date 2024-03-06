@@ -22,10 +22,19 @@ topics=(
   "topic-notification-event"
   "topic-transfer-get"
   "topic-admin-transfer"
+  "topic-quotes-post"
+  "topic-quotes-put"
+  "topic-quotes-get"
   "topic-bulk-prepare"
   "topic-bulk-fulfil"
   "topic-bulk-processing"
   "topic-bulk-get"
+  "topic-bulkquotes-post"
+  "topic-bulkquotes-put"
+  "topic-bulkquotes-get"
+  "topic-fx-quotes-post"
+  "topic-fx-quotes-put"
+  "topic-fx-quotes-get"
 )
 
 # Loop through the topics and create them using kafka-topics.sh

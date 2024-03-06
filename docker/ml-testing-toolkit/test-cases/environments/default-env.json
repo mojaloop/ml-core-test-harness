@@ -11,6 +11,7 @@
     "CALLBACK_ENDPOINT_FXPAYERDFSP": "http://fx-payerdfsp-sdk:4000",
     "CALLBACK_ENDPOINT_FXPAYEEDFSP": "http://fx-payeedfsp-sdk:4000",
     "SDK_OUTBOUND_ENDPOINT_FXPAYERDFSP": "http://fx-payerdfsp-sdk:4001",
+    "TESTFXP1_SDK_TESTAPI_URL": "http://fx-provider1-sdk:4002",
     "HOST_SIMULATOR": "http://simulator:8444",
     "ENABLE_WS_ASSERTIONS": true,
     "WS_ASSERTION_TIMEOUT": 5000,

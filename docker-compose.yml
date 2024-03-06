@@ -117,8 +117,8 @@ services:
   mysql:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
     container_name: mysql
-    # ports:
-    #   - "3306:3306"
+    ports:
+      - "3306:3306"
     volumes:
       # Note: this fixes the permissions issue, but docker-compose up will fail on first attempt
       - ./docker/sql-init/:/docker-entrypoint-initdb.d/
@@ -145,10 +145,16 @@ services:
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
     container_name: quoting-service
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && node src/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && node src/index.js & node src/handlers/index.js h --quotes --bulk_quotes --fx_quotes"
     networks:
       - mojaloop-net
+    environment:
+      - LOG_LEVEL=debug
     depends_on:
+      kafka:
+        condition: service_started
+      kafka-provisioning:
+        condition: service_completed_successfully
       mysql:
         condition: service_started
       central-ledger:
