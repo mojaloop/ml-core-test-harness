@@ -145,7 +145,7 @@ services:
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
     container_name: quoting-service
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && node src/index.js & node src/handlers/index.js h --quotes --bulk_quotes --fx_quotes"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && node src/index.js & node src/handlers/index.js --quotes --bulk_quotes --fx_quotes"
     networks:
       - mojaloop-net
     depends_on:
@@ -284,7 +284,6 @@ services:
       - discovery
       - all-services
 
-
   fx-provider1-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
     env_file: envs/fx-provider.env
@@ -337,7 +336,6 @@ services:
     profiles:
       - all-services
       - fx
-
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
