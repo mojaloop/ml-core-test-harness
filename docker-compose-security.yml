@@ -5,11 +5,40 @@ networks:
     name: mojaloop-net
 
 services:
-  sim-fspiop:
+  payer-sim-fspiop:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     env_file:
       - .env
-      - ./envs/fspiop-sim-security.env
+      - ./envs/payer-fspiop-sim-security.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    ports:
+      - "2001:3001"
+      - "2002:3002"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+      - ./docker/config-modifier:/opt/app/config-modifier
+    environment: {}
+      # - LOG_LEVEL=error
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - security-sdk-scheme-adapter
+
+  payee-sim-fspiop:
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    env_file:
+      - .env
+      - ./envs/payee-fspiop-sim-security.env
     build:
       context: ./packages/callback-handler-svc
       cache_from:
@@ -35,15 +64,15 @@ services:
       - security-sdk-scheme-adapter
 
   payer-sdk-scheme-adapter-api-svc:
-    image: mojaloop/sdk-scheme-adapter:v23.4.0
+    image: mojaloop/sdk-scheme-adapter:v23.4.1
     env_file:
       - ./envs/payer-sdk-scheme-adapter-api-svc.env
     container_name: payer-sdk-scheme-adapter-api-svc
-    command: yarn nx run modules-api-svc:start
+    command: yarn nx run modules-api-svc:start:debug
     ports:
       - "5000:4000"
       - "5001:4001"
-    #  - "9229:9229"
+      - "9229:9229"
     networks:
       - mojaloop-net
     depends_on:
@@ -72,7 +101,7 @@ services:
 
 
   payee-sdk-scheme-adapter-api-svc:
-    image: mojaloop/sdk-scheme-adapter:v23.4.0
+    image: mojaloop/sdk-scheme-adapter:v23.4.1
     env_file:
       - ./envs/payee-sdk-scheme-adapter-api-svc.env
     container_name: payee-sdk-scheme-adapter-api-svc
@@ -109,7 +138,7 @@ services:
   redis:
     networks:
       - mojaloop-net
-    image: "redis:6.2.4-alpine"
+    image: "redis:7.2.4-alpine"
     container_name: redis
     ports:
       - "6379:6379"
@@ -119,5 +148,16 @@ services:
       retries: 10
       start_period: 40s
       interval: 30s
+    profiles:
+      - security-sdk-scheme-adapter
+
+  redisinsight:
+    networks:
+      - mojaloop-net
+    image: redislabs/redisinsight:1.11.1
+    ports:
+      - "9001:8001"
+    volumes: []
+    restart: on-failure
     profiles:
       - security-sdk-scheme-adapter
