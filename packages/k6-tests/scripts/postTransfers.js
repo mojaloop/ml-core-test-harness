@@ -71,7 +71,7 @@ export function postTransfers() {
     };
 
     ws.onopen = () => {
-      console.info(traceId, `WS open on URL: ${wsURL}`);
+      // console.info(traceId, `WS open on URL: ${wsURL}`);
       const params = {
         tags: {
           payerFspId,

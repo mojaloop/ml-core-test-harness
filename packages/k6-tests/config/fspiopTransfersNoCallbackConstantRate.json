@@ -6,10 +6,10 @@
       "env": {
         "UNIDIRECTIONAL": "false"
       },
-      "preAllocatedVUs": 100,
+      "preAllocatedVUs": 200,
       "timeUnit": "1s",
       "duration": "2m",
-      "rate": 300
+      "rate": 500
     }
   },
   "thresholds": {
