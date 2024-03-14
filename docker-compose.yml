@@ -145,7 +145,7 @@ services:
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
     container_name: quoting-service
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && node src/index.js & node src/handlers/index.js --quotes --bulk_quotes --fx_quotes"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && node src/index.js & node src/handlers/index.js h --quotes --bulk_quotes --fx_quotes"
     networks:
       - mojaloop-net
     depends_on:
