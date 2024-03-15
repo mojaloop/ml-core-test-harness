@@ -171,6 +171,8 @@ services:
       - quoting-service
       - agreement
       - all-services
+    environment:
+      - LOG_LEVEL=debug
 
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}

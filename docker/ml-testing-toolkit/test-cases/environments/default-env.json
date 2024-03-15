@@ -12,6 +12,8 @@
     "CALLBACK_ENDPOINT_FXPAYEEDFSP": "http://fx-payeedfsp-sdk:4000",
     "SDK_OUTBOUND_ENDPOINT_FXPAYERDFSP": "http://fx-payerdfsp-sdk:4001",
     "TESTFXP1_SDK_TESTAPI_URL": "http://fx-provider1-sdk:4002",
+    "FXPAYERDFSP_SDK_TESTAPI_URL": "http://fx-payerdfsp-sdk:4002",
+    "FXPAYEEDFSP_SDK_TESTAPI_URL": "http://fx-payeedfsp-sdk:4002",
     "HOST_SIMULATOR": "http://simulator:8444",
     "ENABLE_WS_ASSERTIONS": true,
     "WS_ASSERTION_TIMEOUT": 5000,
@@ -94,6 +96,8 @@
     "FXP_SOURCE_CURRENCY": "BWP",
     "FXP_TARGET_CURRENCY": "TZS",
     "FXP_SOURCE_AMOUNT": "300",
-    "FXP_TARGET_AMOUNT": "48000"
+    "FXP_TARGET_AMOUNT": "48000",
+    "FX_PAYEE_PARTY_MSISDN": "27983767912",
+    "FX_PAYER_PARTY_MSISDN": "27983767913"
   }
 }
