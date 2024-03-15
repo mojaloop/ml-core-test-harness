@@ -172,7 +172,7 @@ services:
       - agreement
       - all-services
     environment:
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=info
 
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
