@@ -1275,11 +1275,6 @@
                 "  if (requestVariables.fxpayerQuotesCallback) break",
                 "  await custom.sleep(maxRetryWait)",
                 "}",
-                "",
-                "console.log(requestVariables.fxpayerQuotesCallback.headers['content-type'])",
-                "console.log('QuoteId: {$request.body.quoteId}')",
-                "console.log(requestVariables.fxpayerQuotesCallback)",
-                "console.log('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
                 ""
               ]
             },
