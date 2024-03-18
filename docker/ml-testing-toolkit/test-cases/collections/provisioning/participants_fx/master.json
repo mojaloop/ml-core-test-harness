@@ -1,0 +1,16 @@
+{
+  "order": [
+    {
+      "name": "participant_fxpayeedfsp.json",
+      "type": "file"
+    },
+    {
+      "name": "participant_fxpayerdfsp.json",
+      "type": "file"
+    },
+    {
+      "name": "participant_testfxp1.json",
+      "type": "file"
+    }
+  ]
+}

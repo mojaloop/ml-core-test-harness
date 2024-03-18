@@ -1,0 +1,20 @@
+{
+  "order": [
+    {
+      "name": "fx_tests.json",
+      "type": "file"
+    },
+    {
+      "name": "payee_sdk.json",
+      "type": "file"
+    },
+    {
+      "name": "payer_conversion.json",
+      "type": "file"
+    },
+    {
+      "name": "payer_sdk.json",
+      "type": "file"
+    }
+  ]
+}
