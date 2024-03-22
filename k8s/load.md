@@ -38,3 +38,19 @@ All tests are performed with following config:
 | Transfer       |   784         | ![](ts-ram-12.png)            | RAM    | disabled      | DB with ~2 million existing transfers                            |
 | Transfer       |   392         | ![](ts-ram-sc-batch-12.png)   | RAM    | pos-batch only| DB with ~2 million existing transfers                            |
 | Transfer       |   366         | ![](ts-ram-sidecars-12.png)   | RAM    | enabled       | DB with ~2 million existing transfers                            |
+
+> [!NOTE]
+>
+> RAM DB is configured with the following settings in the `apps/mojaloop-stateful-resources/values-mysql-central-ledger-db.yaml`:
+> ```yaml
+> primary:
+>   persistence:
+>     enabled: false
+>     extraVolumes:
+>       - name: bitnami
+>         emptyDir:
+>           medium: Memory
+>     extraVolumeMounts:
+>       - name: bitnami
+>         mountPath: /bitnami/mysql/data
+> ```
