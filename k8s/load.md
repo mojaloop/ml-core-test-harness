@@ -20,7 +20,7 @@ All tests are performed with following config:
 - `moja-centralledger-handler-transfer-prepare` - 12 replicas
 - `moja-ml-api-adapter-handler-notification` - 12 replicas
 - `moja-handler-pos-batch` - 8 replicas
-- all related topics - 12 replicas, 1 replicas
+- all related topics - 12 partitions, 1 replicas
 - configuration changed for prepare and fulfill Kafka consumers:
   - `batchSize` = 3
   - `syncConcurrency` =  3
