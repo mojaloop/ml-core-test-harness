@@ -30,12 +30,14 @@ All tests are performed with following config:
 
 | test           | peak ops/sec  | screenshot                         | DB     | Sidecars           | notes                                                        |
 | -------------- | ---------     | ----------                         | --     | --                 | ------                                                       |
-| Account lookup |   825         | ![](als-disk-sidecars-8.png)       | disk   | on                 |  8 x moja-account-lookup-service                             |
-| Account lookup |  1042         | ![](als-disk-sidecars-12.png)      | disk   | on                 | 12 x moja-account-lookup-service                             |
+| Account lookup |   825         | ![](als-disk-sidecars-8.png)       | Disk   | on                 |  8 x moja-account-lookup-service                             |
+| Account lookup |  1042         | ![](als-disk-sidecars-12.png)      | Disk   | on                 | 12 x moja-account-lookup-service                             |
 | Quoting        |   107         | ![](qs-ram-sidecars-12.png)        | RAM    | on                 | 12 x moja-quoting-service-handler, 12 x moja-quoting-service |
 | Quoting        |   109         | ![](qs-ram-12.png)                 | RAM    | off                | 12 x moja-quoting-service-handler, 12 x moja-quoting-service |
 | Quoting        |    61         | ![](qs-ram-sidecars-6.png)         | RAM    | on                 |  6 x moja-quoting-service-handler,  6 x moja-quoting-service |
 | Quoting        |    62         | ![](qs-ram-6.png)                  | RAM    | off                |  6 x moja-quoting-service-handler,  6 x moja-quoting-service |
+| Quoting        |    99         | ![](qs-disk-sidecars-12.png)       | Disk   | on                 | 12 x moja-quoting-service-handler, 12 x moja-quoting-service |
+| Quoting        |   117         | ![](qs-disk-12.png)                | Disk   | off                | 12 x moja-quoting-service-handler, 12 x moja-quoting-service |
 | Transfer       |   784         | ![](ts-ram-12.png)                 | RAM    | off                | DB with ~2 million existing transfers                        |
 | Transfer       |   392         | ![](ts-ram-sc-batch-12.png)        | RAM    | on only pos-batch  | DB with ~2 million existing transfers                        |
 | Transfer       |   366         | ![](ts-ram-sidecars-12.png)        | RAM    | on                 | DB with ~2 million existing transfers                        |
