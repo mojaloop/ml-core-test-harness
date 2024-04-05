@@ -26,7 +26,7 @@ With the above configuration, the number of virtual users will ramp up from 5 to
   - All side cars are enabled
 
 - Kafka topics:
-  - 12 partitions, 1 replica
+  - 12 partitions, 3 replicas
 
 - Service config:
   - ![config-changes](<Screenshot 2024-03-28 104525.png>)
@@ -42,7 +42,7 @@ env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfers.json docker compose --project-nam
 - Total requests sent
   - A total of 2.4 million transfers are sent with the rate of 121 transfers per second.
 - Output rate observed
-  - The output rate is XXX transfers per second.
+  - The output rate is 320 - 121 transfers per second.
   - Performance troubleshooting dashboard
   ![perf-troubleshooting](image-3.png)
   - K6 dashboard
