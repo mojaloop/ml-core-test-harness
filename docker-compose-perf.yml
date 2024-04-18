@@ -138,7 +138,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_SVC /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -186,7 +186,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_PREPARE /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --prepare"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -230,7 +230,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_POSITION_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_POSITION /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --position"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -274,7 +274,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_POSITION_BATCH_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --positionbatch"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_POSITION_BATCH /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --positionbatch"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -314,7 +314,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_FULFIL /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -435,7 +435,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1 # We dont need to scale this unless we are testing funds-in/out
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --admin"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_ADMIN /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --admin"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -481,6 +481,7 @@ services:
       - mojaloop-net
     # ports:
     #   - "3002:3002"
+    #   - "9229:9229"
     depends_on:
       mysql-cl:
         condition: service_started
@@ -498,6 +499,7 @@ services:
       interval: 15s
     user: root
     profiles:
+      - all-services
       - quotes-test
 
   # objstore:
@@ -563,8 +565,8 @@ services:
       - mojaloop-net
     image: docker.io/bitnami/kafka:${DEP_KAFKA_VERSION}
     container_name: kafka
-    # ports:
-    #   - "9092:9092"
+    ports:
+      - "9092:9092"
     environment:
       # BITNAMI_DEBUG: "yes"
       ALLOW_PLAINTEXT_LISTENER: "yes"
@@ -591,6 +593,9 @@ services:
       - transfer
       - discovery
       - agreement
+      - sdk-scheme-adapter
+      - inbound-sdk-scheme-adapter
+      - outbound-sdk-scheme-adapter
       - all-services
       - transfers-test
       - quotes-test
@@ -639,7 +644,7 @@ services:
       mode: replicated
       replicas: ${ML_API_ADAPTER_REPLICAS}
     # container_name: ml-api-adapter
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-api-adapter-disabled-handlers.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_ML_API_ADAPTER /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/api/index.js"
     # ports:
     #   - "3000:3000"
     volumes:
@@ -648,7 +653,7 @@ services:
     environment:
       # - LOG_LEVEL=error
       - EVENT_SDK_TRACEID_PER_VENDOR=false
-      # - MLAPI_TRANSFERS__SEND_TRANSFER_CONFIRMATION_TO_PAYEE=false
+      - MLAPI_TRANSFERS__SEND_TRANSFER_CONFIRMATION_TO_PAYEE=false
     networks:
       - mojaloop-net
     depends_on:
@@ -677,7 +682,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${ML_NOTIFICATION_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/ml-handler-notification.js /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/handlers/index.js handler --notification"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_ML_HANDLER_NOTIFY /opt/app/config/default.json && /opt/app/wait4/wait4.js ml-api-adapter && node src/handlers/index.js handler --notification"
     # ports:
     #   - "3000:3000"
     #   - "9229:9229"
@@ -758,7 +763,6 @@ services:
       - all-services
       - als-test
       - transfers-test
-      - quotes-test
 
   ttk-provisioning-als:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
@@ -869,6 +873,30 @@ services:
     profiles:
       - ttk-provisioning-quotes
 
+  ttk-provisioning-e2e:
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
+    env_file:
+      - .env
+      - perf.env
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+      central-ledger:
+        condition: service_healthy
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/perf-e2e-env.json --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+    user: root
+    profiles:
+      - ttk-provisioning-e2e
+
   callback-handler-svc-oracle-sim:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
@@ -903,6 +931,40 @@ services:
       - als-test
       - oracle
 
+  sdk-scheme-adapter-api-svc:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    env_file:
+      - .env
+      - perf.env
+    container_name: sdk-scheme-adapter
+    command: yarn nx run modules-api-svc:start
+    ports:
+      - "4000:4000"
+      - "4001:4001"
+    networks:
+      - mojaloop-net
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: [
+        "CMD" ,
+        "apk", "add", "--no-cache", "curl", # Install curl
+        "&&",
+        "curl", "-f", "http://localhost:4001" # Check if api is up
+        ]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - sdk-scheme-adapter
+      - all-services
+
   callback-handler-svc-cl-sim:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
@@ -915,8 +977,8 @@ services:
       context: ./packages/callback-handler-svc
       cache_from:
         - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "3001:3001"
     networks:
       - mojaloop-net
     volumes:
@@ -937,6 +999,20 @@ services:
       - als-test
       - transfers-test
       - quotes-test
+
+  redis:
+    networks:
+      - mojaloop-net
+    image: "redis:6.2.4-alpine"
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD" ,"sh", "-c", "redis-cli","ping"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
 
   sim-perffsp1:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
@@ -968,7 +1044,6 @@ services:
     user: root
     profiles:
       - simulators
-      - callback-handler
       - all-services
       - als-test
       - 2dfsp
@@ -977,9 +1052,9 @@ services:
 
   sim-perffsp2:
     image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    deploy:
-      mode: replicated
-      replicas: 1
+    # deploy:
+    #   mode: replicated
+    #   replicas: 1
     env_file:
       - .env
       - ./envs/perffsp2.env
@@ -1005,7 +1080,6 @@ services:
     user: root
     profiles:
       - simulators
-      - callback-handler
       - all-services
       - als-test
       - 2dfsp
@@ -1199,3 +1273,38 @@ services:
     user: root
     profiles:
       - 8dfsp
+
+  sim-fspiop:
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    # deploy:
+    #   mode: replicated
+    #   replicas: 5
+    env_file:
+      - .env
+      - ./envs/fspiop-sim.env
+    build:
+      context: ./packages/callback-handler-svc
+      cache_from:
+        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./packages/callback-handler-svc/config:/opt/app/config
+      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
+    environment: {}
+      # - LOG_LEVEL=error
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - simulators
+      - callback-handler
+      - sdk-scheme-adapter
+      - all-services
+      - als-test

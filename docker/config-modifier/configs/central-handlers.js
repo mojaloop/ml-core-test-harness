@@ -15,6 +15,11 @@ module.exports = {
     "PASSWORD": "",
     "DATABASE": "mlos"
   },
+  "CACHE": {
+    "CACHE_ENABLED": true,
+    "MAX_BYTE_SIZE": 10000000,
+    "EXPIRES_IN_MS": 1000
+  },
   "KAFKA": {
     "CONSUMER": {
       "BULK": {

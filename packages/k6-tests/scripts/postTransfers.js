@@ -1,6 +1,7 @@
 import http from 'k6/http';
 import { crypto } from "k6/experimental/webcrypto";
 import { check, fail, sleep, group } from 'k6';
+import exec from 'k6/execution';
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
@@ -10,7 +11,8 @@ import { uuid } from '../common/uuid.js'
 console.log(`Env Vars -->
   K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
   K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL},
-  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}
+  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL},
+  K6_SCRIPT_ABORT_ON_ERROR=${__ENV.K6_SCRIPT_ABORT_ON_ERROR}
 `);
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
@@ -19,6 +21,7 @@ const ilpPacket = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ILPPACKET
 const condition = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CONDITION
 const amount = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
+const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 export function postTransfers() {
   group("Post Transfers", function () {
@@ -107,11 +110,23 @@ export function postTransfers() {
       const res = http.post(`${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL}/transfers`, JSON.stringify(body), params);
       check(res, { 'TRANSFERS_FSPIOP_POST_TRANSFERS_RESPONSE_IS_202' : (r) => r.status == 202 });
 
+      if (abortOnError && res.status != 202) {
+        // Abort the entire k6 test exection runner
+        console.error(traceId, `FSPIOP POST /transfers returned status: ${res.status}`);
+        ws.close();
+        exec.test.abort()
+      }
+
       wsTimeoutId = setTimeout(() => {
         const errorMsg = `WS timed-out on URL: ${wsURL}`
         console.error(traceId, errorMsg);
         check(res, { 'TRANSFERS_E2E_FSPIOP_POST_TRANSFERS_SUCCESS': (cbMessage) => false });
         ws.close();
+        if (abortOnError) {
+          // Abort the entire k6 test exection runner
+          console.error(traceId, 'Aborting k6 test execution!')
+          exec.test.abort()
+        }
       }, wsTimeoutMs);
     };
   });

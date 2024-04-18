@@ -226,10 +226,43 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile quote
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
+### Running Services for Full E2E (Discovery+Agreement+Transfers) characterization
+
+- Set `ALS_SWITCH_ENDPOINT` to "http://central-ledger:3001" in perf.env
+- Set `QS_SWITCH_ENDPOINT` to "http://central-ledger:3001" in perf.env
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile 8dfsp --profile ttk-provisioning-e2e up -d
+```
+
+Stop Services
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile 8dfsp down -v
+```
+
+> NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
+
+### Running Services for SDK characterization
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile sdk-scheme-adapter up -d
+```
+
+Stop Services
+
+```bash
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile sdk-scheme-adapter down -v
+```
+
+#### Setting up the Inbound/Outbound Server variables
+- Go to `perf.env` and comment out the inboundSDK variables. You'll need to do the same and restart the `docker-compose` in order to change test suite.
+
 ### Configuration for Transfers with batch support
 - Set CENTRAL_LEDGER_POSITION_BATCH_REPLICAS to desired count in `.env` file
 - Enable line `CLEDG_KAFKA__EVENT_TYPE_ACTION_TOPIC_MAP__POSITION__PREPARE=topic-transfer-position-batch` in `perf.env` file
 - Set `CENTRAL_LEDGER_VERSION` to `v17.2.0` or higher
+
 
 ### Monitoring
 
@@ -247,7 +280,7 @@ docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
 Stop Monitoring Services
 
 ```bash
-docker compose --project-name monitoring --profile als-test -f docker-compose-monitoring.yml down -v
+docker compose --project-name monitoring --profile als-test --profile transfers-test -f docker-compose-monitoring.yml down -v
 ```
 
 Start monitoring with account lookup service mysql exporter
@@ -269,6 +302,13 @@ docker compose --project-name monitoring --profile quotes-test -f docker-compose
 ```
 
 since the quoting service uses the central ledger database.
+
+Start monitoring with all exporters
+
+```bash
+docker compose --project-name monitoring --profile als-test --profile quotes-test --profile transfers-test -f docker-compose-monitoring.yml up -d
+```
+
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
@@ -313,6 +353,14 @@ env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfersUnidirectional.json docker compose
 env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDiscovery.json docker compose --project-name load -f docker-compose-load.yml up
 ( or )
 env K6_SCRIPT_CONFIG_FILE_NAME=fspiopQuotes.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=fspiopE2E.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=inboundSDKDiscovery.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=inboundSDKQuotes.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=inboundSDKTransfer.json docker compose --project-name load -f docker-compose-load.yml up
 ```
 
 Cleanup tests
@@ -320,6 +368,35 @@ Cleanup tests
 ```bash
 docker compose --project-name load -f docker-compose-load.yml down -v
 ```
+
+### SDK Security Overhead Testing
+
+#### Regenerating Certificates
+
+It's recommended that you do not trouble certificates and keys found in `docker/security/`.
+If you do need to for whatever reason these are the steps.
+
+From the root `ml-core-test-harness` directory. Accept all defaults and enter `y` when prompted.
+
+- `cd docker/security/payer/jws/ && . keygen.sh && cd ../tls/ && . createSecrets.sh && cd ../../payee/jws && . keygen.sh && cd ../tls/ && . createSecrets.sh && cd ../../../../`
+- `cp docker/security/payer/jws/publickey.cer docker/security/payee/jws/verification_keys/fspiopsimpayer.pem && cp docker/security/payee/jws/publickey.cer docker/security/payer/jws/verification_keys/fspiopsimpayee.pem`
+- `cd docker/security/payer/tls/ && openssl ca -config openssl-clientca.cnf -policy signing_policy -extensions signing_req -out ../../payee/tls/dfsp_client_cert.pem -infiles ../../payee/tls/dfsp_client.csr && cp dfsp_server_cacert.pem ../../payee/tls/payer_server_cacert.pem && cd ../../../../`
+- `cd docker/security/payee/tls/ && openssl ca -config openssl-clientca.cnf -policy signing_policy -extensions signing_req -out ../../payer/tls/dfsp_client_cert.pem -infiles ../../payer/tls/dfsp_client.csr && cp dfsp_server_cacert.pem ../../payer/tls/payee_server_cacert.pem && cd ../../../../`
+
+Here are more verbose hands on instructions of what above commands do.
+
+- Run `. keygen.sh` and `. createSecrets.sh` in the `/jws` and `/tls` folders respectively for both payer and payee.
+- Move `payee/jws/publickey.cer` to `payer/jws/verification_keys/fspiopsimpayee.pem` and move `payer/jws/publickey.cer` to `payee/jws/verification_keys/fspiopsimpayer.pem`
+- Switch directories to `docker/security/payer/tls/`
+- Run `openssl ca -config openssl-clientca.cnf -policy signing_policy -extensions signing_req -out ../../payee/tls/dfsp_client_cert.pem -infiles ../../payee/tls/dfsp_client.csr`
+- Switch directories to `docker/security/payee/tls/`
+- Run `openssl ca -config openssl-clientca.cnf -policy signing_policy -extensions signing_req -out ../../payer/tls/dfsp_client_cert.pem -infiles ../../payer/tls/dfsp_client.csr`
+- Move each others `dfsp_server_cacert.pem` into each others folder and rename to `payer_server_cacert.pem` and `payee_server_cacert.pem`
+
+#### Starting the Security Harness
+
+- Run `docker compose --project-name security -f docker-compose-security.yml --profile security-sdk-scheme-adapter up`
+
 
 ### Automate Load Tests
 

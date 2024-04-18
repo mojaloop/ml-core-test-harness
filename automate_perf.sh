@@ -81,7 +81,8 @@ declare -a dashboards=(\
   "NodeJS%20Application%20Dashboard" \
   "Official%20k6%20Test%20Result" \
   "MySQL%20Overview" \
-  "Supporting%20Services%20-%20Callback%20Hander%20Service"
+  "Supporting%20Services%20-%20Callback%20Hander%20Service" \
+  "Mojaloop%20-%20Quoting%20Service"
   )
 
 # # create a directory to store the results with date timestamp in the name, check if the directory exists

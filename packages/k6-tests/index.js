@@ -5,6 +5,14 @@ export { fspiopTransfersNoCallbackScenarios } from './scenarios/fspiopTransfersN
 export { fspiopQuotesScenarios } from './scenarios/fspiopQuotes.js';
 export { fspiopQuotesNoCallbackScenarios } from './scenarios/fspiopQuotesNoCallback.js';
 export { fspiopParallelScenarios } from './scenarios/fspiopParallel.js';
+export { fspiopQuotesPersonalInfoExtensionsScenarios } from './scenarios/fspiopQuotesPersonalInfoExtensions.js';
+export { fspiopE2EScenarios } from './scenarios/fspiopE2E.js';
+export { inboundSDKDiscoveryScenarios } from './scenarios/inboundSDKDiscovery.js';
+export { inboundSDKQuotesScenarios } from './scenarios/inboundSDKQuotes.js';
+export { inboundSDKTransfersScenarios } from './scenarios/inboundSDKTransfers.js';
+export { outboundSDKDiscoveryScenarios } from './scenarios/outboundSDKDiscovery.js';
+export { outboundSDKQuotesScenarios } from './scenarios/outboundSDKQuotes.js';
+export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.js';
 
 const configFile = __ENV.K6_SCRIPT_CONFIG_FILE_NAME ? './config/' + __ENV.K6_SCRIPT_CONFIG_FILE_NAME : './config/test.json';
 const testConfig = JSON.parse(open(configFile));

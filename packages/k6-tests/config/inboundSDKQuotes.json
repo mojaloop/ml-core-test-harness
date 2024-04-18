@@ -1,0 +1,18 @@
+{
+  "scenarios": {
+    "inboundSDKQuotes": {
+      "executor": "ramping-vus",
+      "exec": "inboundSDKQuotesScenarios",
+      "startVUs": 1,
+      "stages": [
+        { "duration": "30s", "target": 15 },
+        { "duration": "1m", "target": 15 }
+      ]
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}
