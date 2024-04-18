@@ -9,3 +9,4 @@
 automate_perf.env
 perf.override.env
 perf-on-prem.env
+k8s.yaml

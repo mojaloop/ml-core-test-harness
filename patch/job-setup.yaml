@@ -1,0 +1,89 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: moja-ml-ttk-test-setup
+  namespace: mojaloop
+  labels:
+    argocd.argoproj.io/instance: moja
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: moja
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: ml-ttk-test-setup
+        app.kubernetes.io/version: 15.6.0
+        batch.kubernetes.io/job-name: moja-ml-ttk-test-setup
+        helm.sh/chart: ml-ttk-test-setup-15.6.0
+        job-name: moja-ml-ttk-test-setup
+        sidecar.istio.io/inject: 'false'
+    spec:
+      volumes:
+        - name: moja-ml-ttk-test-setup-conf
+          configMap:
+            name: moja-ml-ttk-test-setup-conf
+            items:
+              - key: cli-default-config.json
+                path: cli-default-config.json
+            defaultMode: 420
+        - name: moja-ml-ttk-test-setup-env
+          configMap:
+            name: moja-ml-ttk-test-setup-env
+            items:
+              - key: cli-testcase-environment.json
+                path: cli-testcase-environment.json
+            defaultMode: 420
+      containers:
+        - name: ml-ttk-test-setup
+          image: mojaloop/ml-testing-toolkit-client-lib:v1.2.2
+          command:
+            - /bin/sh
+            - '-c'
+          args:
+            - >
+              echo "Downloading the test collection...";
+
+              wget
+              https://github.com/mojaloop/testing-toolkit-test-cases/archive/v16.0.0.zip
+              -O downloaded-test-collections.zip;
+
+              mkdir tmp_test_cases;
+
+              unzip -d tmp_test_cases -o downloaded-test-collections.zip;
+
+              npm run cli -- \
+                -c cli-default-config.json \
+                -e cli-testcase-environment.json \
+                -i tmp_test_cases/testing-toolkit-test-cases-16.0.0/collections/hub/provisioning \
+                -u http://moja-ml-testing-toolkit-backend:5050 \
+                --report-format html \
+                --report-auto-filename-enable true \
+                --extra-summary-information="Test Suite:Provisioning,Environment:dev1.devbaremetal1.moja-onprem.net" \
+                --save-report true \
+                --report-name standard_provisioning_collection \
+                --save-report-base-url http://ttkbackend.dev1.devbaremetal1.moja-onprem.net;
+              export TEST_RUNNER_EXIT_CODE="$?";
+
+              echo "Test Runner finished with exit code:
+              $TEST_RUNNER_EXIT_CODE";
+
+              exit $TEST_RUNNER_EXIT_CODE;
+          envFrom:
+            - secretRef:
+                name: moja-ml-ttk-test-setup-aws-creds
+          resources: {}
+          volumeMounts:
+            - name: moja-ml-ttk-test-setup-env
+              mountPath: /opt/app/cli-testcase-environment.json
+              subPath: cli-testcase-environment.json
+            - name: moja-ml-ttk-test-setup-conf
+              mountPath: /opt/app/cli-default-config.json
+              subPath: cli-default-config.json
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 30

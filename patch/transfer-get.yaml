@@ -1,0 +1,7 @@
+spec:
+  template:
+    spec:
+      containers:
+        - name: centralledger-handler-transfer-get
+          image: mojaloop/central-ledger:v17.6.1
+          # image: mojaloop/central-ledger:v17.5.9-snapshot.0
