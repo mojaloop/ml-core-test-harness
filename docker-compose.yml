@@ -153,8 +153,39 @@ services:
         condition: service_started
       central-ledger:
         condition: service_started
+      kafka:
+        condition: service_started
     # ports:
     #   - "3002:3002"
+    volumes:
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: wget -q http://localhost:3002/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - quoting-service
+      - agreement
+      - all-services
+
+  quoting-service-handler:
+    image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
+    container_name: quoting-service-handler
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && npm run start:handlers"
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql:
+        condition: service_started
+      central-ledger:
+        condition: service_started
+      kafka:
+        condition: service_started
+    # ports:
+    #   - "3022:3002"
+    #   - "29229:9229"
     volumes:
       - ./docker/config-modifier:/opt/app/config-modifier
     healthcheck:

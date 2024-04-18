@@ -1,12 +1,15 @@
 {
   "options": {},
-  "name": "collections_fxp",
+  "name": "collections_tests_fx_fx_tests",
   "test_cases": [
     {
       "id": 1,
       "name": "FX Transfer",
       "fileInfo": {
-        "path": "collections/fxp/fx_tests.json"
+        "path": "collections/tests/fx/fx_tests.json",
+        "labels": [
+          "fx"
+        ]
       },
       "meta": {
         "info": "FX Transfer"
@@ -208,7 +211,7 @@
           "body": {
             "conversionRequestId": "{$function.generic.generateUUID}",
             "conversionTerms": {
-              "conversionId": "581f68ef-b54f-416f-9161-ac34e889a84b",
+              "conversionId": "{$function.generic.generateUUID}",
               "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
               "counterPartyFsp": "{$inputs.FXP_ID}",
               "amountType": "SEND",
@@ -226,9 +229,10 @@
             "Accept": "{$inputs.acceptFxQuotes}",
             "Content-Type": "{$inputs.contentTypeFxQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}"
+            "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
+            "FSPIOP-Destination": "{$inputs.FXP_TESTFXP1_ID}"
           },
-          "url": "{$inputs.HOST_FXP_SERVICES}",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
           "disabled": false,
           "tests": {
             "assertions": [
@@ -463,7 +467,7 @@
             "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}"
           },
           "body": {
-            "commitRequestId": "{$function.generic.generateUUID}",
+            "commitRequestId": "{$prev.4.callback.body.conversionTerms.conversionId}",
             "determiningTransferId": "{$function.generic.generateUUID}",
             "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
             "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
@@ -474,9 +478,9 @@
             },
             "targetAmount": {
               "currency": "{$inputs.FXP_TARGET_CURRENCY}",
-              "amount": "{$inputs.amount}"
+              "amount": "{$inputs.FXP_TARGET_AMOUNT}"
             },
-            "condition": "{$inputs.condition}",
+            "condition": "{$prev.4.callback.body.condition}",
             "expiration": "{$requestVariables.expiration}"
           },
           "scriptingEngine": "javascript",

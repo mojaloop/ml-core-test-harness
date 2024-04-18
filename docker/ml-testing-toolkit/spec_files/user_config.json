@@ -23,6 +23,11 @@
         "method": "put",
         "path": "/fxTransfers",
         "endpoint": "http://ml-api-adapter:3000"
+      },
+      {
+        "method": "put",
+        "path": "/fxQuotes",
+        "endpoint": "http://quoting-service:3002"
       }
     ]
   },
