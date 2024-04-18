@@ -680,13 +680,7 @@
           "scripts": {
             "preRequest": {
               "exec": [
-                "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()",
-                ""
-              ]
-            },
-            "postRequest": {
-              "exec": [
-                "console.log(prev.4.callback.body)"
+                "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
               ]
             }
           }
