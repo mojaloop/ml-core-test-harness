@@ -1,10 +1,11 @@
 import http from 'k6/http';
-import { crypto } from "k6/experimental/webcrypto";
+// import { crypto } from "k6/experimental/webcrypto";
 import { check, fail, sleep, group } from 'k6';
 import { WebSocket } from 'k6/experimental/websockets';
-import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/experimental/timers';
+import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
+import { uuid } from '../common/uuid.js'
 
 console.log(`Env Vars -->
   K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
@@ -31,8 +32,10 @@ export function postQuotes() {
     }
 
     const startTs = Date.now();
-    const quoteId = crypto.randomUUID();
-    const transactionId = crypto.randomUUID();
+    // const quoteId = crypto.randomUUID();
+    // const transactionId = crypto.randomUUID();
+    const quoteId = uuid();
+    const transactionId = uuid();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
     const wsUrl = payerFsp['wsUrl'];
@@ -40,7 +43,7 @@ export function postQuotes() {
     const traceId = traceParent.traceId;
     const wsChannel = `${traceParent.traceId}/PUT/quotes/${quoteId}`;
     const wsURL = `${wsUrl}/${wsChannel}`
-    const ws = new WebSocket(wsURL);
+    const ws = new WebSocket(wsURL, null, {tags: {name: 'quotes'}});
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
 
     var wsTimeoutId = null;

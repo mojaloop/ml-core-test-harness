@@ -1,8 +1,9 @@
 import http from 'k6/http';
-import { crypto } from "k6/experimental/webcrypto";
+// import { crypto } from "k6/experimental/webcrypto";
 import { check, group } from 'k6';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
+import { uuid } from '../common/uuid.js'
 
 console.log(`Env Vars -->
   K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
@@ -29,8 +30,10 @@ export function postQuotesNoCallback() {
     }
 
     const startTs = Date.now();
-    const quoteId = crypto.randomUUID();
-    const transactionId = crypto.randomUUID();
+    // const quoteId = crypto.randomUUID();
+    // const transactionId = crypto.randomUUID();
+    const quoteId = uuid();
+    const transactionId = uuid();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
     const traceParent = Trace();

@@ -1,8 +1,9 @@
 import http from 'k6/http';
-import { crypto } from "k6/experimental/webcrypto";
+// import { crypto } from "k6/experimental/webcrypto";
 import { check, fail, sleep, group } from 'k6';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
+import { uuid } from '../common/uuid.js'
 
 console.log(`Env Vars -->
   K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL},
@@ -31,7 +32,8 @@ export function postTransfersNoCallback() {
     }
 
     const startTs = Date.now();
-    const transferId = crypto.randomUUID();
+    // const transferId = crypto.randomUUID();
+    const transferId = uuid();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
     const traceParent = Trace();

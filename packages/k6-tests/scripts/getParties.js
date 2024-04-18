@@ -1,7 +1,7 @@
 import http from 'k6/http';
 import { check, fail, sleep, group } from 'k6';
 import { WebSocket } from 'k6/experimental/websockets';
-import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/experimental/timers';
+import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
 
@@ -45,7 +45,7 @@ export function getParties() {
     const traceId = traceParent.traceId;
     const wsChannel = `${traceParent.traceId}/PUT/parties/MSISDN/${payeeId}`;
     const wsURL = `${wsUrl}/${wsChannel}`
-    const ws = new WebSocket(wsURL);
+    const ws = new WebSocket(wsURL, null, {tags: {name: 'parties'}});
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
 
     var wsTimeoutId = null;
