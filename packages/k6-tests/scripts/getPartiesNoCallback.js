@@ -2,15 +2,18 @@ import http from 'k6/http';
 import { check, group } from 'k6';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
+import exec from 'k6/execution';
 
-console.log(`Env Vars -->
-  K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL},
-  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}
-`);
+function log() {
+  console.log('Env Vars -->');
+  console.log(`  K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL}`);
+  console.log(`  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}`);
+}
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function getPartiesNoCallback() {
+  !exec.instance.iterationsCompleted && log();
   group("getPartiesNoCallback", function () {
     let payerFsp
     let payeeFsp

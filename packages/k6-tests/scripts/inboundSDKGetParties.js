@@ -1,20 +1,22 @@
 import http from 'k6/http';
 import { check, fail, sleep, group } from 'k6';
 import { WebSocket } from 'k6/experimental/websockets';
-import { setTimeout, clearTimeout } from 'k6/experimental/timers';
+import { setTimeout, clearTimeout } from 'k6/timers';
 import { randomItem } from "https://jslib.k6.io/k6-utils/1.1.0/index.js";
 import { Trace } from "../common/trace.js";
+import exec from 'k6/execution';
 
-
-console.log(`Env Vars -->
-  K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
-  K6_SCRIPT_SDK_ENDPOINT_URL=${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL},
-  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}
-`);
+function log() {
+  console.log('Env Vars -->');
+  console.log(`  K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS}`);
+  console.log(`  K6_SCRIPT_SDK_ENDPOINT_URL=${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}`);
+  console.log(`  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}`);
+}
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function getParties() {
+  !exec.instance.iterationsCompleted && log();
   group("Get Parties", function () {
     let payerFsp
     let payeeFsp
@@ -58,7 +60,7 @@ export function getParties() {
     });
 
     ws.onmessage = (event) => {
-      console.info(traceId, `WS message received [${wsChannel}]: ${event.data}`);
+      __ENV.K6_DEBUG && console.info(traceId, `WS message received [${wsChannel}]: ${event.data}`);
       check(event.data, { 'SDK_GET_PARTIES_SUCCESS': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
       clearTimers();
       ws.close();

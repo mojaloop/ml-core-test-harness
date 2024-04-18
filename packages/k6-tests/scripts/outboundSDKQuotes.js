@@ -2,17 +2,20 @@ import http from 'k6/http';
 import { crypto } from "k6/experimental/webcrypto";
 import { check, group } from 'k6';
 import { getTwoItemsFromArray } from "../common/utils.js";
+import exec from 'k6/execution';
 
-console.log(`Env Vars -->
-  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL},
-  K6_SCRIPT_SDK_ENDPOINT_URL=${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL},
-`);
+function log() {
+  console.log('Env Vars -->');
+  console.log(`  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}`);
+  console.log(`  K6_SCRIPT_SDK_ENDPOINT_URL=${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL},`);
+}
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 const amount = __ENV.K6_SCRIPT_FSPIOP_QUOTES_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 
 export function postQuotes() {
+  !exec.instance.iterationsCompleted && log();
   group("Post Quotes", function () {
     let payerFsp
     let payeeFsp
