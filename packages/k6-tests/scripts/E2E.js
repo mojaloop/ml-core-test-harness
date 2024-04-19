@@ -1,11 +1,12 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
-import { crypto } from "k6/experimental/webcrypto";
+// import { crypto } from "k6/experimental/webcrypto";
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
 import exec from 'k6/execution';
+import { uuid } from '../common/uuid.js'
 
 function log() {
   console.log('Env Vars -->');
@@ -49,7 +50,7 @@ export function E2E() {
 
     const wsChannelParties = `${traceParent.traceId}/PUT/parties/MSISDN/${payeeId}`;
     const wsURLParties = `${wsUrl}/${wsChannelParties}`
-    const wsParties = new WebSocket(wsURLParties);
+    const wsParties = new WebSocket(wsURLParties, null, {tags: {name: 'e2e'}});
 
     var wsTimeoutId = null;
 
@@ -75,11 +76,13 @@ export function E2E() {
       wsParties.close();
 
       const startTsQuotes = Date.now();
-      const quoteId = crypto.randomUUID();
-      const transactionId = crypto.randomUUID();
+      // const quoteId = crypto.randomUUID();
+      // const transactionId = crypto.randomUUID();
+      const quoteId = uuid();
+      const transactionId = uuid();
       const wsChannelQuotes = `${traceParent.traceId}/PUT/quotes/${quoteId}`;
       const wsURLQuotes = `${wsUrl}/${wsChannelQuotes}`
-      const wsQuotes = new WebSocket(wsURLQuotes);
+      const wsQuotes = new WebSocket(wsURLQuotes, null, {tags: {name: 'e2e'}});
 
       var wsTimeoutId = null;
 
@@ -105,10 +108,11 @@ export function E2E() {
         wsQuotes.close();
 
         const startTsTransfers = Date.now();
-        const transferId = crypto.randomUUID();
+        // const transferId = crypto.randomUUID();
+        const transferId = uuid();
         const wsChannelTransfers = `${traceParent.traceId}/PUT/transfers/${transferId}`;
         const wsURLTransfers = `${wsUrl}/${wsChannelTransfers}`
-        const wsTransfers = new WebSocket(wsURLTransfers);
+        const wsTransfers = new WebSocket(wsURLTransfers, null, {tags: {name: 'e2e'}});
 
         var wsTimeoutId = null;
 
