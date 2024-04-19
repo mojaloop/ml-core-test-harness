@@ -16,6 +16,9 @@ networks:
 services:
   k6:
     image: grafana/k6:${K6_VERSION}
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
     env_file:
       - .env
       - perf.env
