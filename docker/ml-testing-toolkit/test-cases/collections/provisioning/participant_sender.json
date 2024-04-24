@@ -1452,7 +1452,7 @@
               }
             ]
           },
-          "delay": "500",
+          "delay": "1500",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -1617,7 +1617,7 @@
               }
             ]
           },
-          "delay": "500",
+          "delay": "1500",
           "scripts": {
             "postRequest": {
               "exec": [
