@@ -491,6 +491,35 @@ services:
     profiles:
       - ttk-tests
 
+  ttk-fx-tests:
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+      central-ledger:
+        condition: service_healthy
+      ml-api-adapter:
+        condition: service_healthy
+      account-lookup-service:
+        condition: service_healthy
+      quoting-service:
+        condition: service_healthy
+      ttk-provisioning-fx:
+        condition: service_completed_successfully
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/tests -e environments/default-env.json --labels std,fx --report-format html --save-report true --report-target file://reports/ttk-func-tests-report.html"
+    user: root
+    profiles:
+      - ttk-fx-tests
+
   ## Debug utilities
   kafka-debug-ui:
     image: docker.redpanda.com/redpandadata/console:${DEP_KAfKA_UI_VERSION}
