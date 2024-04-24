@@ -372,9 +372,9 @@ To capture results without running tests, use the following command
 ### FX Tests
 
 ```
-docker-compose --profile all-services --profile fx --profile ttk-provisioning --profile ttk-provisioning-fx --profile ttk-tests --profile debug up -d
+docker-compose --profile all-services --profile fx --profile ttk-provisioning-fx --profile ttk-tests --profile debug up -d
 ```
 
 ```
-docker-compose --profile all-services --profile fx --profile ttk-provisioning --profile ttk-provisioning-fx --profile ttk-tests --profile debug down -v
+docker-compose --profile all-services --profile fx --profile ttk-provisioning-fx --profile ttk-tests --profile debug down -v
 ```
