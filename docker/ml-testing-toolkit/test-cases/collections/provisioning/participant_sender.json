@@ -1452,7 +1452,7 @@
               }
             ]
           },
-          "delay": "500",
+          "delay": "{$inputs.DELAY_FUNDS_IN}",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -1655,7 +1655,7 @@
               }
             ]
           },
-          "delay": "500",
+          "delay": "{$inputs.DELAY_FUNDS_IN}",
           "scripts": {
             "postRequest": {
               "exec": [
