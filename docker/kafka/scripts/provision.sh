@@ -36,6 +36,7 @@ topics=(
   "topic-bulkquotes-post"
   "topic-bulkquotes-put"
   "topic-bulkquotes-get"
+  "topic-transfer-position-batch"
 )
 
 # Loop through the topics and create them using kafka-topics.sh
