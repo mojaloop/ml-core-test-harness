@@ -1,7 +1,8 @@
 #!/bin/sh
-kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-centralledger-service                  --patch-file patch/ledger-service.yaml
-sleep 10 # wait for schema creation
-kubectl scale            --kubeconfig k8s.yaml --namespace mojaloop deployment/moja-centralledger-service       --replicas=8
+# kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-centralledger-service                  --patch-file patch/ledger-service.yaml
+# sleep 10 # wait for schema creation
+# kubectl scale            --kubeconfig k8s.yaml --namespace mojaloop deployment/moja-centralledger-service       --replicas=8
+kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-account-lookup-service                 --patch-file patch/account-service.yaml
 kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-ml-api-adapter-service                 --patch-file patch/adapter-service.yaml
 kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-ml-api-adapter-handler-notification    --patch-file patch/adapter-handler.yaml
 kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-centralledger-handler-admin-transfer   --patch-file patch/transfer-admin.yaml

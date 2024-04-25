@@ -3,8 +3,8 @@ spec:
   template:
     spec:
       containers:
-        - name: quoting-service-handler
-          image: mojaloop/quoting-service:v15.7.1
+        - name: account-lookup-service
+          image: mojaloop/account-lookup-service:v15.2.4
           env:
             - name: EVENT_SDK_LOG_FILTER
               value: ''

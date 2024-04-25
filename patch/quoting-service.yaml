@@ -4,7 +4,7 @@ spec:
     spec:
       containers:
         - name: quoting-service
-          image: mojaloop/quoting-service:v15.7.1-snapshot.0
+          image: mojaloop/quoting-service:v15.7.1
           env:
             - name: EVENT_SDK_LOG_FILTER
               value: ''

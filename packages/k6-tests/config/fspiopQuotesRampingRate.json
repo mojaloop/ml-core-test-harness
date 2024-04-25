@@ -1,8 +1,8 @@
 {
   "scenarios": {
-    "fspiopTransfers": {
+    "fspiopQuotes": {
       "executor": "ramping-arrival-rate",
-      "exec": "fspiopTransfersScenarios",
+      "exec": "fspiopQuotesScenarios",
       "env": {
         "UNIDIRECTIONAL": "false"
       },

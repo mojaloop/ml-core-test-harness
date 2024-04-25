@@ -11,6 +11,10 @@ discoveries)
     echo "Testing account discoveries"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDiscovery.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
+discoveriesrate)
+    echo "Testing account discoveries with constant rates"
+    env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDiscoveryRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
+;;
 quote)
     echo "Testing single quote"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopSingleQuote.json docker compose --project-name load -f docker-compose-load.yml up
@@ -19,13 +23,21 @@ quotes)
     echo "Testing quotes"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopQuotes.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
+quotesrate)
+    echo "Testing quotes"
+    env K6_SCRIPT_CONFIG_FILE_NAME=fspiopQuotesRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
+;;
 transfer)
     echo "Testing single transfer"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopSingleTransfer.json docker compose --project-name load -f docker-compose-load.yml up
 ;;
-transfer)
+transfers)
     echo "Testing transfers"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfers.json docker compose --project-name load -f docker-compose-load.yml up -d
+;;
+transfersrate)
+    echo "Testing transfers"
+    env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfersRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 e2e)
     echo "Testing multiple end to end"
@@ -52,6 +64,7 @@ simrestart)
     echo "Usage: "
     echo "   $0 discovery"
     echo "   $0 discoveries"
+    echo "   $0 discoveries rate"
     echo "   $0 quote"
     echo "   $0 quotes"
     echo "   $0 transfer"
