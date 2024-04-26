@@ -46,7 +46,7 @@ export function postQuotes() {
     const traceId = traceParent.traceId;
     const wsChannel = `${traceParent.traceId}/PUT/quotes/${quoteId}`;
     const wsURL = `${wsUrl}/${wsChannel}`
-    const ws = new WebSocket(wsURL, null, {tags: {name: 'quotes'}});
+    const ws = new WebSocket(wsURL, null, {tags: {name: 'quotes ws'}});
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
 
     var wsTimeoutId = null;

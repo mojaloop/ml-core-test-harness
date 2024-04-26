@@ -50,7 +50,7 @@ export function E2E() {
 
     const wsChannelParties = `${traceParent.traceId}/PUT/parties/MSISDN/${payeeId}`;
     const wsURLParties = `${wsUrl}/${wsChannelParties}`
-    const wsParties = new WebSocket(wsURLParties, null, {tags: {name: 'e2e'}});
+    const wsParties = new WebSocket(wsURLParties, null, {tags: {name: 'e2e parties ws'}});
 
     var wsTimeoutId = null;
 
@@ -82,7 +82,7 @@ export function E2E() {
       const transactionId = uuid();
       const wsChannelQuotes = `${traceParent.traceId}/PUT/quotes/${quoteId}`;
       const wsURLQuotes = `${wsUrl}/${wsChannelQuotes}`
-      const wsQuotes = new WebSocket(wsURLQuotes, null, {tags: {name: 'e2e'}});
+      const wsQuotes = new WebSocket(wsURLQuotes, null, {tags: {name: 'e2e quotes ws'}});
 
       var wsTimeoutId = null;
 
@@ -112,7 +112,7 @@ export function E2E() {
         const transferId = uuid();
         const wsChannelTransfers = `${traceParent.traceId}/PUT/transfers/${transferId}`;
         const wsURLTransfers = `${wsUrl}/${wsChannelTransfers}`
-        const wsTransfers = new WebSocket(wsURLTransfers, null, {tags: {name: 'e2e'}});
+        const wsTransfers = new WebSocket(wsURLTransfers, null, {tags: {name: 'e2e transfers ws'}});
 
         var wsTimeoutId = null;
 
