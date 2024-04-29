@@ -40,6 +40,10 @@ transfersrate)
     echo "Testing transfers"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfersRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
+dqtrate)
+    echo "Testing account discoveries, quotes and transfers in parallel with constant rates"
+    env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDQTRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
+;;
 e2e)
     echo "Testing multiple end to end"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopE2E.json docker compose --project-name load -f docker-compose-load.yml up -d
