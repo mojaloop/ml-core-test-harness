@@ -14,7 +14,8 @@ export { outboundSDKDiscoveryScenarios } from './scenarios/outboundSDKDiscovery.
 export { outboundSDKQuotesScenarios } from './scenarios/outboundSDKQuotes.js';
 export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.js';
 
-const configFile = __ENV.K6_SCRIPT_CONFIG_FILE_NAME ? './config/' + __ENV.K6_SCRIPT_CONFIG_FILE_NAME : './config/test.json';
+const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';
+const configFile = configFolder + __ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json';
 const testConfig = JSON.parse(open(configFile));
 
 export const options = Object.assign(

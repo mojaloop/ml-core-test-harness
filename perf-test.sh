@@ -1,4 +1,5 @@
 #!/bin/bash
+export K6_SCRIPT_CONFIG_FOLDER_NAME="config-k8s"
 
 args="$1$2"
 

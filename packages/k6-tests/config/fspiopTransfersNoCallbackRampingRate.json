@@ -6,14 +6,15 @@
       "env": {
         "UNIDIRECTIONAL": "false"
       },
-      "preAllocatedVUs": 50,
+      "preAllocatedVUs": 1,
       "timeUnit": "1s",
       "startRate": 30,
       "stages": [
         { "target": 50, "duration": "2m" },
         { "target": 100, "duration": "2m" },
-        { "target": 150, "duration": "2m" }
-        
+        { "target": 150, "duration": "2m" },
+        { "target": 150, "duration": "2m" },
+        { "target": 200, "duration": "15m" }
       ]
     }
   },

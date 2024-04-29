@@ -6,10 +6,11 @@
       "env": {
         "UNIDIRECTIONAL": "false"
       },
-      "startVUs": 1,
+      "startVUs": 5,
       "stages": [
-        { "duration": "30s", "target": 15 },
-        { "duration": "5m", "target": 15 }
+        { "duration": "30s", "target": 600 },
+        { "duration": "1m", "target": 2000 },
+        { "duration": "480s", "target": 2000 }
       ]
     }
   },
