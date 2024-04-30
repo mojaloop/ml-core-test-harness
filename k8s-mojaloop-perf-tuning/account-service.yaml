@@ -1,0 +1,12 @@
+spec:
+  replicas: 12
+  template:
+    spec:
+      containers:
+        - name: account-lookup-service
+          image: mojaloop/account-lookup-service:v15.2.4
+          env:
+            - name: EVENT_SDK_LOG_FILTER
+              value: ''
+            - name: EVENT_SDK_SIDECAR_DISABLED
+              value: 'true'

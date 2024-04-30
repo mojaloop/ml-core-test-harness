@@ -419,3 +419,37 @@ To capture results without running tests, use the following command
 ```bash
 ./automate_perf.sh -c -f <From Time in Milliseconds> -t <To time in Milliseconds>
 ```
+
+### Testing Performance of Remote Mojaloop Deployment
+
+For executing performance test scenarios against a Mojaloop deployment, follow the steps below:
+
+1. **Set Environment Variables:**
+   - Set `perf.override.env` with the proper endpoints of the Mojaloop services.
+
+2. **Customize Configurations:**
+   - Edit the file `docker/ml-testing-toolkit/test-cases/environments/remote-k8s-env.json` to customize currencies and MSISDNs according to your requirements.
+
+3. **Run Simulators and TTK Provisioning:**
+   ```bash
+   docker compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-remote-k8s --profile oracle up -d
+   ```
+
+4. **Run Monitoring Services:**
+   ```bash
+   docker compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml up -d
+   ```
+
+5. **Execute Single Transfer Test Case:**
+   ```bash
+   env K6_SCRIPT_CONFIG_FILE_NAME=fspiopSingleTransfer.json docker compose --project-name load -f docker-compose-load.yml up
+   ```
+
+6. **Stop Services:**
+   ```bash
+   docker compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-remote-k8s down -v
+   docker compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml down -v
+   ```
+
+> **Note:** The `-v` argument is optional and will delete any volume data created by the monitoring Docker Compose.
+

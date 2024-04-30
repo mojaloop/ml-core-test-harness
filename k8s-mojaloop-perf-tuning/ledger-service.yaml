@@ -1,0 +1,12 @@
+spec:
+  replicas: 1
+  template:
+    spec:
+      initContainers:
+        - name: run-migration
+          image: mojaloop/central-ledger:v17.6.1
+          # image: mojaloop/central-ledger:v17.5.9-snapshot.0
+      containers:
+        - name: centralledger-service
+          image: mojaloop/central-ledger:v17.6.1
+          # image: mojaloop/central-ledger:v17.5.9-snapshot.0

@@ -1,7 +1,10 @@
 export { fspiopDiscoveryScenarios } from './scenarios/fspiopDiscovery.js';
+export { fspiopDiscoveryNoCallbackScenarios } from './scenarios/fspiopDiscoveryNoCallbackConstantRate.js';
 export { fspiopTransfersScenarios } from './scenarios/fspiopTransfers.js';
 export { fspiopTransfersNoCallbackScenarios } from './scenarios/fspiopTransfersNoCallback.js';
 export { fspiopQuotesScenarios } from './scenarios/fspiopQuotes.js';
+export { fspiopQuotesNoCallbackScenarios } from './scenarios/fspiopQuotesNoCallback.js';
+export { fspiopParallelScenarios } from './scenarios/fspiopParallel.js';
 export { fspiopQuotesPersonalInfoExtensionsScenarios } from './scenarios/fspiopQuotesPersonalInfoExtensions.js';
 export { fspiopE2EScenarios } from './scenarios/fspiopE2E.js';
 export { inboundSDKDiscoveryScenarios } from './scenarios/inboundSDKDiscovery.js';
@@ -11,8 +14,8 @@ export { outboundSDKDiscoveryScenarios } from './scenarios/outboundSDKDiscovery.
 export { outboundSDKQuotesScenarios } from './scenarios/outboundSDKQuotes.js';
 export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.js';
 
-
-const configFile = __ENV.K6_SCRIPT_CONFIG_FILE_NAME ? './config/' + __ENV.K6_SCRIPT_CONFIG_FILE_NAME : './config/test.json';
+const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';
+const configFile = configFolder + __ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json';
 const testConfig = JSON.parse(open(configFile));
 
 export const options = Object.assign(

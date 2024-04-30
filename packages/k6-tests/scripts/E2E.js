@@ -1,19 +1,21 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
-import { crypto } from "k6/experimental/webcrypto";
+// import { crypto } from "k6/experimental/webcrypto";
 import { WebSocket } from 'k6/experimental/websockets';
-import { setTimeout, clearTimeout } from 'k6/experimental/timers';
+import { setTimeout, clearTimeout } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
 import exec from 'k6/execution';
+import { uuid } from '../common/uuid.js'
 
-console.log(`Env Vars -->
-  K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
-  K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL},
-  K6_SCRIPT_ADMIN_ENDPOINT_URL=${__ENV.K6_SCRIPT_ADMIN_ENDPOINT_URL},
-  K6_SCRIPT_ORACLE_ENDPOINT_URL=${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL},
-  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_PAYER_POOL}
-`);
+function log() {
+  console.log('Env Vars -->');
+  console.log(`  K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS}`);
+  console.log(`  K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}`);
+  console.log(`  K6_SCRIPT_ADMIN_ENDPOINT_URL=${__ENV.K6_SCRIPT_ADMIN_ENDPOINT_URL}`);
+  console.log(`  K6_SCRIPT_ORACLE_ENDPOINT_URL=${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL}`);
+  console.log(`  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_PAYER_POOL}`);
+}
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 const ilpPacket = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ILPPACKET
@@ -23,6 +25,7 @@ const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 export function E2E() {
+  !exec.instance.iterationsCompleted && log();
   group("E2E", function () {
     let payerFsp
     let payeeFsp
@@ -47,7 +50,7 @@ export function E2E() {
 
     const wsChannelParties = `${traceParent.traceId}/PUT/parties/MSISDN/${payeeId}`;
     const wsURLParties = `${wsUrl}/${wsChannelParties}`
-    const wsParties = new WebSocket(wsURLParties);
+    const wsParties = new WebSocket(wsURLParties, null, {tags: {name: 'e2e parties ws'}});
 
     var wsTimeoutId = null;
 
@@ -67,17 +70,19 @@ export function E2E() {
     });
 
     wsParties.onmessage = (event) => {
-      console.info(traceId, `WS message received [${wsChannelParties}]: ${event.data}`);
+      __ENV.K6_DEBUG && console.info(traceId, `WS message received [${wsChannelParties}]: ${event.data}`);
       check(event.data, { 'ALS_E2E_FSPIOP_GET_PARTIES_SUCCESS': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
       clearTimersParties();
       wsParties.close();
 
       const startTsQuotes = Date.now();
-      const quoteId = crypto.randomUUID();
-      const transactionId = crypto.randomUUID();
+      // const quoteId = crypto.randomUUID();
+      // const transactionId = crypto.randomUUID();
+      const quoteId = uuid();
+      const transactionId = uuid();
       const wsChannelQuotes = `${traceParent.traceId}/PUT/quotes/${quoteId}`;
       const wsURLQuotes = `${wsUrl}/${wsChannelQuotes}`
-      const wsQuotes = new WebSocket(wsURLQuotes);
+      const wsQuotes = new WebSocket(wsURLQuotes, null, {tags: {name: 'e2e quotes ws'}});
 
       var wsTimeoutId = null;
 
@@ -97,16 +102,17 @@ export function E2E() {
       });
 
       wsQuotes.onmessage = (event) => {
-        console.info(traceId, `WS message received [${wsChannelQuotes}]: ${event.data}`);
+        __ENV.K6_DEBUG && console.info(traceId, `WS message received [${wsChannelQuotes}]: ${event.data}`);
         check(event.data, { 'QUOTES_E2E_FSPIOP_POST_QUOTES_SUCCESS': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
         clearTimersQuotes();
         wsQuotes.close();
 
         const startTsTransfers = Date.now();
-        const transferId = crypto.randomUUID();
+        // const transferId = crypto.randomUUID();
+        const transferId = uuid();
         const wsChannelTransfers = `${traceParent.traceId}/PUT/transfers/${transferId}`;
         const wsURLTransfers = `${wsUrl}/${wsChannelTransfers}`
-        const wsTransfers = new WebSocket(wsURLTransfers);
+        const wsTransfers = new WebSocket(wsURLTransfers, null, {tags: {name: 'e2e transfers ws'}});
 
         var wsTimeoutId = null;
 
@@ -126,14 +132,14 @@ export function E2E() {
         });
 
         wsTransfers.onmessage = (event) => {
-          console.info(traceId, `WS message received [${wsChannelTransfers}]: ${event.data}`);
+          __ENV.K6_DEBUG && console.info(traceId, `WS message received [${wsChannelTransfers}]: ${event.data}`);
           check(event.data, { 'TRANSFERS_E2E_FSPIOP_POST_TRANSFERS_SUCCESS': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
           clearTimersTransfers();
           wsTransfers.close();
         };
 
         wsTransfers.onopen = () => {
-          console.info(traceId, `WS open on URL: ${wsUrl}`);
+          __ENV.K6_DEBUG && console.info(traceId, `WS open on URL: ${wsUrl}`);
           const params = {
             tags: {
               payerFspId,
@@ -189,7 +195,7 @@ export function E2E() {
       };
 
       wsQuotes.onopen = () => {
-        console.info(traceId, `WS open on URL: ${wsURLQuotes}`);
+        __ENV.K6_DEBUG && console.info(traceId, `WS open on URL: ${wsURLQuotes}`);
         const params = {
           tags: {
             payerFspId,
@@ -249,7 +255,7 @@ export function E2E() {
     };
 
     wsParties.onopen = () => {
-      console.info(traceId, `WS open on URL: ${wsURLParties}`);
+      __ENV.K6_DEBUG && console.info(traceId, `WS open on URL: ${wsURLParties}`);
       const params = {
         tags: {
           payerFspId,

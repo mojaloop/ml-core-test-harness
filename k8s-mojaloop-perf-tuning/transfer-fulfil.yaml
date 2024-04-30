@@ -1,0 +1,13 @@
+spec:
+  replicas: 12
+  template:
+    spec:
+      containers:
+        - name: centralledger-handler-transfer-fulfil
+          image: mojaloop/central-ledger:v17.6.1
+          # image: mojaloop/central-ledger:v17.5.9-snapshot.0
+          env:
+            - name: EVENT_SDK_LOG_FILTER
+              value: ''
+            - name: EVENT_SDK_SIDECAR_DISABLED
+              value: 'true'

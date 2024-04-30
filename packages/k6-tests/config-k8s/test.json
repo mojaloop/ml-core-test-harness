@@ -1,0 +1,13 @@
+{
+  "scenarios": {
+    "test": {
+      "executor": "shared-iterations",
+      "exec": "inboundSDKTransfersScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "vus": 1,
+      "iterations": 1
+      }
+    }
+}

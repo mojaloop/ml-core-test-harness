@@ -1,19 +1,22 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
 import { getTwoItemsFromArray } from "../common/utils.js";
+import exec from 'k6/execution';
 
-console.log(`Env Vars -->
-  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL},
-  K6_SCRIPT_SDK_ENDPOINT_URL=${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL},
-`);
+function log() {
+  console.log('Env Vars -->');
+  console.log(`  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}`);
+  console.log(`  K6_SCRIPT_SDK_ENDPOINT_URL=${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL},`);
+}
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function getParties() {
+  !exec.instance.iterationsCompleted && log();
   group("Get Parties", function () {
     let payerFsp
     let payeeFsp
-    
+
     if (__ENV.UNIDIRECTIONAL === "true" || __ENV.UNIDIRECTIONAL === "TRUE") {
       payerFsp = fspList[0]
       payeeFsp =  fspList[1]
@@ -26,7 +29,7 @@ export function getParties() {
     const payeeId = payeeFsp['partyId'];
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
-    
+
     const params = {
       tags: {
         payerFspId,

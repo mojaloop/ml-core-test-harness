@@ -3,16 +3,18 @@ import { crypto } from "k6/experimental/webcrypto";
 import { check, fail, sleep, group } from 'k6';
 import exec from 'k6/execution';
 import { WebSocket } from 'k6/experimental/websockets';
-import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/experimental/timers';
+import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
+import { uuid } from '../common/uuid.js'
 
-console.log(`Env Vars -->
-  K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
-  K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL},
-  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL},
-  K6_SCRIPT_ABORT_ON_ERROR=${__ENV.K6_SCRIPT_ABORT_ON_ERROR}
-`);
+function log() {
+  console.log('Env Vars -->');
+  console.log(`  K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS}`);
+  console.log(`  K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL}`);
+  console.log(`  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}`);
+  console.log(`  K6_SCRIPT_ABORT_ON_ERROR=${__ENV.K6_SCRIPT_ABORT_ON_ERROR}`);
+}
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
@@ -23,6 +25,7 @@ const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 export function postTransfers() {
+  !exec.instance.iterationsCompleted && log();
   group("Post Transfers", function () {
     let payerFsp
     let payeeFsp
@@ -37,7 +40,8 @@ export function postTransfers() {
     }
 
     const startTs = Date.now();
-    const transferId = crypto.randomUUID();
+    // const transferId = crypto.randomUUID();
+    const transferId = uuid();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
     const wsUrl = payerFsp['wsUrl'];
@@ -45,7 +49,7 @@ export function postTransfers() {
     const traceId = traceParent.traceId;
     const wsChannel = `${traceParent.traceId}/PUT/transfers/${transferId}`;
     const wsURL = `${wsUrl}/${wsChannel}`
-    const ws = new WebSocket(wsURL);
+    const ws = new WebSocket(wsURL, null, {tags: {name: 'transfers ws'}});
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
 
     var wsTimeoutId = null;
@@ -66,7 +70,7 @@ export function postTransfers() {
     });
 
     ws.onmessage = (event) => {
-      console.info(traceId, `WS message received [${wsChannel}]: ${event.data}`);
+      __ENV.K6_DEBUG && console.info(traceId, `WS message received [${wsChannel}]: ${event.data}`);
       check(event.data, { 'TRANSFERS_E2E_FSPIOP_POST_TRANSFERS_SUCCESS': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
       clearTimers();
       ws.close();
@@ -74,7 +78,7 @@ export function postTransfers() {
     };
 
     ws.onopen = () => {
-      console.info(traceId, `WS open on URL: ${wsURL}`);
+      // __ENV.K6_DEBUG && console.info(traceId, `WS open on URL: ${wsURL}`);
       const params = {
         tags: {
           payerFspId,

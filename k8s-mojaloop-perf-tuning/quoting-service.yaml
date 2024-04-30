@@ -1,0 +1,12 @@
+spec:
+  replicas: 4
+  template:
+    spec:
+      containers:
+        - name: quoting-service
+          image: mojaloop/quoting-service:v15.7.1
+          env:
+            - name: EVENT_SDK_LOG_FILTER
+              value: ''
+            - name: EVENT_SDK_SIDECAR_DISABLED
+              value: 'true'
