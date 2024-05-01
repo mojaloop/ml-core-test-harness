@@ -13,6 +13,13 @@
       "labels": [
         "fx"
       ]
+    },
+    {
+      "name": "fx-sdk",
+      "type": "folder",
+      "labels": [
+        "fx-sdk"
+      ]
     }
   ]
 }

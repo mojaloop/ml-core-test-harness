@@ -3,6 +3,10 @@ module.exports = {
   "DATABASE": {
     "HOST": "mysql"
   },
+  "CACHE": {
+    "ENUM_DATA_EXPIRES_IN_MS": 1,
+    "PARTICIPANT_DATA_EXPIRES_IN_MS": 1
+  },
   "SWITCH_ENDPOINT": "http://central-ledger:3001",
   "KAFKA": {
     "CONSUMER": {

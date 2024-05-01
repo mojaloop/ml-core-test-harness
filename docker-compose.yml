@@ -78,6 +78,8 @@ services:
       - "27017:27017"
     networks:
       - mojaloop-net
+    logging:
+        driver: none
     healthcheck:
       test: mongosh --eval 'db.runCommand("ping").ok' localhost:27017/test --quiet
       interval: 10s
@@ -212,13 +214,15 @@ services:
         condition: service_started
       kafka:
         condition: service_started
+      quoting-service:
+        condition: service_healthy
     # ports:
     #   - "3022:3002"
     #   - "29229:9229"
     volumes:
       - ./docker/config-modifier:/opt/app/config-modifier
     healthcheck:
-      test: wget -q http://localhost:3002/health -O /dev/null || exit 1
+      test: wget -q http://localhost:3003/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
@@ -340,7 +344,6 @@ services:
       - discovery
       - all-services
 
-
   fx-provider1-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
     env_file: envs/fx-provider.env
@@ -353,7 +356,7 @@ services:
       - mojaloop-net
     profiles:
       - all-services
-      - fx
+      - fx-sdk
 
   fx-payerdfsp-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
@@ -367,7 +370,7 @@ services:
       - mojaloop-net
     profiles:
       - all-services
-      - fx
+      - fx-sdk
 
   fx-payeedfsp-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
@@ -381,7 +384,7 @@ services:
       - mojaloop-net
     profiles:
       - all-services
-      - fx
+      - fx-sdk
 
   redis:
     image: "redis:6.2.4-alpine"
@@ -454,6 +457,8 @@ services:
         condition: service_healthy
       quoting-service:
         condition: service_healthy
+      quoting-service-handler:
+        condition: service_healthy
     networks:
       - mojaloop-net
     command:
@@ -481,6 +486,8 @@ services:
         condition: service_healthy
       quoting-service:
         condition: service_healthy
+      quoting-service-handler:
+        condition: service_healthy
     networks:
       - mojaloop-net
     command:
@@ -507,6 +514,8 @@ services:
       account-lookup-service:
         condition: service_healthy
       quoting-service:
+        condition: service_healthy
+      quoting-service-handler:
         condition: service_healthy
       ttk-provisioning:
         condition: service_completed_successfully
@@ -537,6 +546,8 @@ services:
         condition: service_healthy
       quoting-service:
         condition: service_healthy
+      quoting-service-handler:
+        condition: service_healthy
       ttk-provisioning-fx:
         condition: service_completed_successfully
     networks:
@@ -548,6 +559,37 @@ services:
     user: root
     profiles:
       - ttk-fx-tests
+
+  ttk-fx-sdk-tests:
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+      central-ledger:
+        condition: service_healthy
+      ml-api-adapter:
+        condition: service_healthy
+      account-lookup-service:
+        condition: service_healthy
+      quoting-service:
+        condition: service_healthy
+      quoting-service-handler:
+        condition: service_healthy
+      ttk-provisioning-fx:
+        condition: service_completed_successfully
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/tests -e environments/default-env.json --labels std,fx,fx-sdk --report-format html --save-report true --report-target file://reports/ttk-func-tests-report.html"
+    user: root
+    profiles:
+      - ttk-fx-sdk-tests
 
   ## Debug utilities
   kafka-debug-ui:
