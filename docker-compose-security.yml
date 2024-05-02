@@ -10,18 +10,12 @@ services:
     env_file:
       - .env
       - ./envs/fspiop-sim-security.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "3001:3001"
       - "3002:3002"
     networks:
       - mojaloop-net
     volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
       - ./docker/config-modifier:/opt/app/config-modifier
     environment: {}
       # - LOG_LEVEL=error

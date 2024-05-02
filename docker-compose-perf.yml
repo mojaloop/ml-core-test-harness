@@ -898,24 +898,17 @@ services:
       - ttk-provisioning-e2e
 
   callback-handler-svc-oracle-sim:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
       - perf.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "30000:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -966,24 +959,17 @@ services:
       - all-services
 
   callback-handler-svc-cl-sim:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
       - ./envs/cl-sim.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "3001:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1018,7 +1004,7 @@ services:
     sysctls:
       # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
       net.ipv4.tcp_tw_reuse: 1
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -1026,17 +1012,10 @@ services:
       - .env
       - ./envs/perffsp1.env
       - perf.override.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "25001:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1057,7 +1036,7 @@ services:
     sysctls:
       # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
       net.ipv4.tcp_tw_reuse: 1
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # deploy:
     #   mode: replicated
     #   replicas: 1
@@ -1065,17 +1044,10 @@ services:
       - .env
       - ./envs/perffsp2.env
       - perf.override.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "25002:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1096,7 +1068,7 @@ services:
     sysctls:
       # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
       net.ipv4.tcp_tw_reuse: 1
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -1104,17 +1076,10 @@ services:
       - .env
       - ./envs/perffsp3.env
       - perf.override.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "25003:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1131,7 +1096,7 @@ services:
     sysctls:
       # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
       net.ipv4.tcp_tw_reuse: 1
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -1139,17 +1104,10 @@ services:
       - .env
       - ./envs/perffsp4.env
       - perf.override.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "25004:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1166,7 +1124,7 @@ services:
     sysctls:
       # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
       net.ipv4.tcp_tw_reuse: 1
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -1174,17 +1132,10 @@ services:
       - .env
       - ./envs/perffsp5.env
       - perf.override.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "25005:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1200,7 +1151,7 @@ services:
     sysctls:
       # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
       net.ipv4.tcp_tw_reuse: 1
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -1208,17 +1159,10 @@ services:
       - .env
       - ./envs/perffsp6.env
       - perf.override.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "25006:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1234,7 +1178,7 @@ services:
     sysctls:
       # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
       net.ipv4.tcp_tw_reuse: 1
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -1242,17 +1186,10 @@ services:
       - .env
       - ./envs/perffsp7.env
       - perf.override.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "25007:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1268,7 +1205,7 @@ services:
     sysctls:
       # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
       net.ipv4.tcp_tw_reuse: 1
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
@@ -1276,17 +1213,10 @@ services:
       - .env
       - ./envs/perffsp8.env
       - perf.override.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "25008:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1299,25 +1229,18 @@ services:
       - 8dfsp
 
   sim-fspiop:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     # deploy:
     #   mode: replicated
     #   replicas: 5
     env_file:
       - .env
       - ./envs/fspiop-sim.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     ports:
       - "3001:3001"
       - "3002:3002"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
