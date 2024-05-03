@@ -41,6 +41,7 @@ services:
       - discovery
       - agreement
       - all-services
+      - fx
 
   central-handler-position-batch:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -70,6 +71,7 @@ services:
     user: root
     profiles:
       - all-services
+      - fx
 
   objstore:
     image: mongo:${DEP_MONGO_VERSION}
@@ -92,6 +94,7 @@ services:
       - discovery
       - agreement
       - all-services
+      - fx
 
   kafka-provisioning:
     container_name: kafka-provisioning
@@ -109,6 +112,7 @@ services:
       - discovery
       - agreement
       - all-services
+      - fx
 
   kafka:
     networks:
@@ -144,6 +148,7 @@ services:
       - discovery
       - agreement
       - all-services
+      - fx
 
   mysql:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
@@ -172,6 +177,7 @@ services:
       - discovery
       - agreement
       - all-services
+      - fx
 
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
@@ -200,6 +206,7 @@ services:
       - quoting-service
       - agreement
       - all-services
+      - fx
 
   quoting-service-handler:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
@@ -231,6 +238,7 @@ services:
       - quoting-service
       - agreement
       - all-services
+      - fx
 
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
@@ -261,6 +269,7 @@ services:
       - ml-api-adapter
       - transfer
       - all-services
+      - fx
 
   simulator:
     image: mojaloop/simulator:${TEST_SIMULATOR_VERSION}
@@ -285,6 +294,7 @@ services:
       - simulator
       - discovery
       - all-services
+      - fx
 
   account-lookup-service:
     image: mojaloop/account-lookup-service:${ACCOUNT_LOOKUP_SERVICE_VERSION}
@@ -318,6 +328,7 @@ services:
       - account-lookup-service
       - discovery
       - all-services
+      - fx
 
   mysql-als:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
@@ -343,6 +354,7 @@ services:
       - account-lookup-service
       - discovery
       - all-services
+      - fx
 
   fx-provider1-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
@@ -497,6 +509,35 @@ services:
     user: root
     profiles:
       - ttk-provisioning-fx
+
+  ttk-provisioning-fx-sdk:
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+      central-ledger:
+        condition: service_healthy
+      ml-api-adapter:
+        condition: service_healthy
+      account-lookup-service:
+        condition: service_healthy
+      quoting-service:
+        condition: service_healthy
+      quoting-service-handler:
+        condition: service_healthy
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --labels std,fx,fx-sdk --save-report true --report-format html --report-target file://reports/ttk-provisioning-fx-report.html"
+    user: root
+    profiles:
+      - ttk-provisioning-fx-sdk
 
   ttk-tests:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}

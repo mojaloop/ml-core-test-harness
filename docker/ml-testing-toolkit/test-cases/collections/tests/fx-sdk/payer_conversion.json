@@ -8,7 +8,7 @@
       "fileInfo": {
         "path": "collections/tests/fx/payer_conversion.json",
         "labels": [
-          "fx"
+          "fx-sdk"
         ]
       },
       "meta": {

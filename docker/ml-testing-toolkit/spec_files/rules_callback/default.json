@@ -1216,12 +1216,12 @@
           "FSPIOP-Source": "{$request.headers.fspiop-destination}"
         },
         "body": {
-          "condition": "n2cwS3w4ekGlvNYoXg2uBAqssu3FCoXjADE2mziU5jU",
+          "condition": "f5sqb7tBTWPd5Y8BDFdMm9BJR_MNI4isf8p8n4D5pHA",
           "conversionTerms": {
-            "conversionId": "581f68ef-b54f-416f-9161-ac34e889a84b",
+            "conversionId": "{$request.body.conversionTerms.conversionId}",
             "determiningTransferId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
             "initiatingFsp": "PayerFSP",
-            "counterPartyFsp": "FDH_FX",
+            "counterPartyFsp": "{$request.body.conversionTerms.counterPartyFsp}",
             "amountType": "SEND",
             "sourceAmount": {
               "currency": "{$request.body.conversionTerms.sourceAmount.currency}",

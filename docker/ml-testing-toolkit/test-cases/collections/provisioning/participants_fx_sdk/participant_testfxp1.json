@@ -1205,7 +1205,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_POST",
-            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/fxTransfers"
+            "value": "{$inputs.CALLBACK_ENDPOINT_TESTFXP1}/fxTransfers"
           },
           "tests": {
             "assertions": [
@@ -1242,7 +1242,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
-            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_TESTFXP1}/fxTransfers/{{commitRequestId}}"
           },
           "tests": {
             "assertions": [
@@ -1279,7 +1279,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_ERROR",
-            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}/error"
+            "value": "{$inputs.CALLBACK_ENDPOINT_TESTFXP1}/fxTransfers/{{commitRequestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -1316,7 +1316,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
-            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_TESTFXP1}"
           },
           "tests": {
             "assertions": [

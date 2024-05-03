@@ -34,6 +34,13 @@
       "labels": [
         "fx"
       ]
+    },
+    {
+      "name": "participants_fx_sdk",
+      "type": "folder",
+      "labels": [
+        "fx-sdk"
+      ]
     }
   ]
 }

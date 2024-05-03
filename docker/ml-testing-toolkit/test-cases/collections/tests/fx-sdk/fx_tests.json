@@ -8,7 +8,7 @@
       "fileInfo": {
         "path": "collections/tests/fx/fx_tests.json",
         "labels": [
-          "fx"
+          "fx-sdk"
         ]
       },
       "meta": {
@@ -213,11 +213,11 @@
             "conversionTerms": {
               "conversionId": "{$function.generic.generateUUID}",
               "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
-              "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
+              "counterPartyFsp": "{$inputs.FXP_ID}",
               "amountType": "SEND",
               "sourceAmount": {
                 "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
-                "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
+                "amount": "300"
               },
               "targetAmount": {
                 "currency": "{$inputs.FXP_TARGET_CURRENCY}"
@@ -474,7 +474,7 @@
             "amountType": "SEND",
             "sourceAmount": {
               "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
-              "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
+              "amount": "300"
             },
             "targetAmount": {
               "currency": "{$inputs.FXP_TARGET_CURRENCY}",
