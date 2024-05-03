@@ -1292,6 +1292,43 @@
               }
             ]
           }
+        },
+        {
+          "id": 35,
+          "description": "Add callback - FX QUOTES FX PUT",
+          "meta": {
+            "info": "Add callback - QUOTES FX PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.FXP_FXPAYEEDFSP_ID}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.FXP_FXPAYEEDFSP_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
+            "value": "{$inputs.CALLBACK_ENDPOINT_FXPAYEEDFSP}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
         }
       ]
     },

@@ -261,7 +261,7 @@
             "Content-Type": "application/json"
           },
           "body": {
-            "type": "FSPIOP_CALLBACK_URL_QUOTES",
+            "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
             "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}"
           },
           "tests": {

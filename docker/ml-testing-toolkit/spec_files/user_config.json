@@ -23,6 +23,11 @@
         "method": "put",
         "path": "/fxTransfers",
         "endpoint": "http://ml-api-adapter:3000"
+      },
+      {
+        "method": "put",
+        "path": "/fxQuotes",
+        "endpoint": "http://quoting-service:3002"
       }
     ]
   },
@@ -45,8 +50,8 @@
   "JWS_SIGN_PUT_PARTIES": false,
   "CLIENT_MUTUAL_TLS_ENABLED": false,
   "ADVANCED_FEATURES_ENABLED": true,
-  "CALLBACK_TIMEOUT": 10000,
-  "DEFAULT_REQUEST_TIMEOUT": 3000,
+  "CALLBACK_TIMEOUT": 15000,
+  "DEFAULT_REQUEST_TIMEOUT": 10000,
   "SCRIPT_TIMEOUT": 5000,
   "LOG_SERVER_UI_URL": "http://some-url-here",
   "UI_CONFIGURATION": {
@@ -85,6 +90,11 @@
       "name": "fx",
       "description": "Test for foreign exchange functionality",
       "color": "blue"
+    },
+    {
+      "name": "fx-sdk",
+      "description": "Test for foreign exchange functionality for sdks",
+      "color": "orange"
     }
   ]
 }
