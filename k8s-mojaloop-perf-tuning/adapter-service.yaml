@@ -6,7 +6,7 @@ spec:
         - name: ml-api-adapter-service
           # image: mojaloop/ml-api-adapter:v14.0.5
           env:
-            - name: EVENT_SDK_LOG_FILTER
-              value: ''
             - name: EVENT_SDK_SIDECAR_DISABLED
-              value: 'true'
+              value: '$EVENT_SIDECAR_DISABLED'
+            - name: EVENT_SDK_KAFKA
+              value: $EVENT_DIRECT

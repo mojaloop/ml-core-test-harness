@@ -1,12 +1,15 @@
 spec:
-  replicas: 4
   template:
     spec:
       containers:
         - name: quoting-service
-          image: mojaloop/quoting-service:v15.7.1
+          image: mojaloop/quoting-service:$QUOTE_TAG
           env:
-            - name: EVENT_SDK_LOG_FILTER
-              value: ''
             - name: EVENT_SDK_SIDECAR_DISABLED
-              value: 'true'
+              value: '$EVENT_SIDECAR_DISABLED'
+            - name: EVENT_SDK_KAFKA
+              value: $EVENT_DIRECT
+          livenessProbe:
+            timeoutSeconds: 10
+          readinessProbe:
+            timeoutSeconds: 10

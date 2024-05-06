@@ -1,13 +1,11 @@
 spec:
-  replicas: 12
   template:
     spec:
       containers:
         - name: centralledger-handler-transfer-prepare
-          image: mojaloop/central-ledger:v17.6.1
-          # image: mojaloop/central-ledger:v17.5.9-snapshot.0
+          image: mojaloop/central-ledger:$LEDGER_TAG
           env:
-            - name: EVENT_SDK_LOG_FILTER
-              value: ''
             - name: EVENT_SDK_SIDECAR_DISABLED
-              value: 'true'
+              value: '$EVENT_SIDECAR_DISABLED'
+            - name: EVENT_SDK_KAFKA
+              value: $EVENT_DIRECT

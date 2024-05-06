@@ -74,6 +74,7 @@ simrestart)
     echo "   $0 quotes"
     echo "   $0 transfer"
     echo "   $0 transfers"
+    echo "   $0 dqt rate"
     echo "   $0 e2e"
     echo "   $0 e2e single"
     echo "   $0 sim start"
