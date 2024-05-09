@@ -1,36 +1,55 @@
 #!/bin/sh
+DIR=`dirname $(readlink -f "$0" 2> /dev/null)`
 
 case "$1" in
+audit)
+    echo "switching to direct audit events"
+    export ACCOUNT_TAG=v15.2.5-snapshot.3
+    export QUOTE_TAG=v15.7.2-snapshot.3
+    export LEDGER_TAG=v17.6.4-snapshot.2
+    export EVENT_SDK_KAFKA=config/default.json
+    export EVENT_SIDECAR_DISABLED=false
+    export EVENT_SDK_AUDIT=kafka
+    export EVENT_SDK_TRACE=off
+    export EVENT_SDK_LOG=off
+;;
 direct)
     echo "switching to direct events"
-    export ACCOUNT_TAG=v15.2.5-snapshot.2
-    export QUOTE_TAG=v15.7.2-snapshot.1
-    export LEDGER_TAG=v17.6.4-snapshot.1
-    export EVENT_DIRECT=config/default.json
+    export ACCOUNT_TAG=v15.2.5-snapshot.3
+    export QUOTE_TAG=v15.7.2-snapshot.3
+    export LEDGER_TAG=v17.6.4-snapshot.2
+    export EVENT_SDK_KAFKA=config/default.json
     export EVENT_SIDECAR_DISABLED=false
+    export EVENT_SDK_AUDIT=
+    export EVENT_SDK_TRACE=
+    export EVENT_SDK_LOG=
 ;;
 disabled)
     echo "switching to disabled sidecar"
-    export ACCOUNT_TAG=v15.2.5-snapshot.1
-    export QUOTE_TAG=v15.7.2-snapshot.0
-    export LEDGER_TAG=v17.6.4-snapshot.0
-    export EVENT_DIRECT=
+    export ACCOUNT_TAG=v15.2.4
+    export QUOTE_TAG=v15.7.1
+    export LEDGER_TAG=v17.6.2
+    export EVENT_SDK_KAFKA=
     export EVENT_SIDECAR_DISABLED=true
+;;
+schema)
+    echo "schema creation"
+    export LEDGER_TAG=v17.6.2
+    kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-centralledger-service                  -p "$(envsubst <$DIR/ledger-service.yaml)"
+    sleep 10 # wait for schema creation
+    kubectl scale            --kubeconfig k8s.yaml --namespace mojaloop deployment/moja-centralledger-service       --replicas=8
+    exit 0
 ;;
 *)
     echo "switching to baseline"
     export ACCOUNT_TAG=v15.2.4
     export QUOTE_TAG=v15.7.1
-    export LEDGER_TAG=v17.6.1
-    export EVENT_DIRECT=
+    export LEDGER_TAG=v17.6.2
+    export EVENT_SDK_KAFKA=
     export EVENT_SIDECAR_DISABLED=false
 ;;
 esac
 
-DIR=`dirname $(readlink -f "$0" 2> /dev/null)`
-# kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-centralledger-service                  --patch-file $DIR/ledger-service.yaml
-# sleep 10 # wait for schema creation
-# kubectl scale            --kubeconfig k8s.yaml --namespace mojaloop deployment/moja-centralledger-service       --replicas=8
 kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-account-lookup-service                 -p "$(envsubst <$DIR/account-service.yaml)"
 kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-ml-api-adapter-service                 -p "$(envsubst <$DIR/adapter-service.yaml)"
 kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-ml-api-adapter-handler-notification    -p "$(envsubst <$DIR/adapter-handler.yaml)"

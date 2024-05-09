@@ -5,7 +5,15 @@ spec:
         - name: handler-pos-batch
           image: mojaloop/central-ledger:$LEDGER_TAG
           env:
+            - name: LOG_LEVEL
+              value: warn
             - name: EVENT_SDK_SIDECAR_DISABLED
               value: '$EVENT_SIDECAR_DISABLED'
             - name: EVENT_SDK_KAFKA
-              value: $EVENT_DIRECT
+              value: $EVENT_SDK_KAFKA
+            - name: EVENT_SDK_TRACE
+              value: '$EVENT_SDK_TRACE'
+            - name: EVENT_SDK_AUDIT
+              value: '$EVENT_SDK_AUDIT'
+            - name: EVENT_SDK_LOG
+              value: '$EVENT_SDK_LOG'

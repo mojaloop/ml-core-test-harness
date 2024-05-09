@@ -10,15 +10,15 @@
       "timeUnit": "1s",
       "startRate": 10,
       "stages": [
-        { "target": 200, "duration": "15s" },
+        { "target": 200, "duration": "60s" },
         { "target": 200, "duration": "3m" },
-        { "target": 250, "duration": "15s" },
+        { "target": 250, "duration": "60s" },
         { "target": 250, "duration": "3m" },
-        { "target": 300, "duration": "15s" },
+        { "target": 300, "duration": "60s" },
         { "target": 300, "duration": "3m" },
-        { "target": 350, "duration": "15s" },
+        { "target": 350, "duration": "60s" },
         { "target": 350, "duration": "3m" },
-        { "target": 400, "duration": "15s" },
+        { "target": 400, "duration": "60s" },
         { "target": 400, "duration": "3m" }
       ]
     },
@@ -32,15 +32,15 @@
       "timeUnit": "1s",
       "startRate": 10,
       "stages": [
-        { "target": 200, "duration": "15s" },
+        { "target": 200, "duration": "60s" },
         { "target": 200, "duration": "3m" },
-        { "target": 250, "duration": "15s" },
+        { "target": 250, "duration": "60s" },
         { "target": 250, "duration": "3m" },
-        { "target": 300, "duration": "15s" },
+        { "target": 300, "duration": "60s" },
         { "target": 300, "duration": "3m" },
-        { "target": 350, "duration": "15s" },
+        { "target": 350, "duration": "60s" },
         { "target": 350, "duration": "3m" },
-        { "target": 400, "duration": "15s" },
+        { "target": 400, "duration": "60s" },
         { "target": 400, "duration": "3m" }
       ]
     },
@@ -54,15 +54,15 @@
       "timeUnit": "1s",
       "startRate": 10,
       "stages": [
-        { "target": 200, "duration": "15s" },
+        { "target": 200, "duration": "60s" },
         { "target": 200, "duration": "3m" },
-        { "target": 250, "duration": "15s" },
+        { "target": 250, "duration": "60s" },
         { "target": 250, "duration": "3m" },
-        { "target": 300, "duration": "15s" },
+        { "target": 300, "duration": "60s" },
         { "target": 300, "duration": "3m" },
-        { "target": 350, "duration": "15s" },
+        { "target": 350, "duration": "60s" },
         { "target": 350, "duration": "3m" },
-        { "target": 400, "duration": "15s" },
+        { "target": 400, "duration": "60s" },
         { "target": 400, "duration": "3m" }
       ]
     }
