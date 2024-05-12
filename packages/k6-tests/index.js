@@ -21,7 +21,11 @@ const testConfig = JSON.parse(open(configFile));
 export const options = Object.assign(
   { // default configs
     tags: {
-      testid: `${Date.now()}`,
+      testid: `${__ENV.K6_SCRIPT_CONFIG_FILE_NAME} ${new Date().toISOString().substring(0, 16)
+        .replace('T', ' ')}`
+        .replace('.json', '')
+        .replace('fspiop', '')
+        .trim(),
     },
   },
   testConfig

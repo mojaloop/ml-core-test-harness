@@ -18,6 +18,19 @@ spec:
             - name: EVENT_SDK_LOG
               value: '$EVENT_SDK_LOG'
           livenessProbe:
-            timeoutSeconds: 10
+            timeoutSeconds: 2
           readinessProbe:
-            timeoutSeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 1
+            failureThreshold: 1
+          volumeMounts:
+            - name: config-override
+              mountPath: /opt/app/.EVENT_SDKrc
+              subPath: .EVENT_SDKrc
+            - name: config-override
+              mountPath: /opt/app/.QUOTErc
+              subPath: .QUOTErc
+      volumes:
+        - name: config-override
+          configMap:
+            name: config-override

@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: redpanda-vs
+  namespace: redpanda
+spec:
+  gateways:
+    - istio-ingress-int/internal-wildcard-gateway
+  hosts:
+    - redpanda.int.dev1.devbaremetal.moja-onprem.net
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: redpanda-app-console
+            port:
+              number: 8080

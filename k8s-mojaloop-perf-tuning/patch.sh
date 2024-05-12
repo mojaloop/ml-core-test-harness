@@ -5,7 +5,7 @@ case "$1" in
 audit)
     echo "switching to direct audit events"
     export ACCOUNT_TAG=v15.2.5-snapshot.3
-    export QUOTE_TAG=v15.7.2-snapshot.3
+    export QUOTE_TAG=v15.7.2-snapshot.4
     export LEDGER_TAG=v17.6.4-snapshot.2
     export EVENT_SDK_KAFKA=config/default.json
     export EVENT_SIDECAR_DISABLED=false
@@ -16,7 +16,7 @@ audit)
 direct)
     echo "switching to direct events"
     export ACCOUNT_TAG=v15.2.5-snapshot.3
-    export QUOTE_TAG=v15.7.2-snapshot.3
+    export QUOTE_TAG=v15.7.2-snapshot.4
     export LEDGER_TAG=v17.6.4-snapshot.2
     export EVENT_SDK_KAFKA=config/default.json
     export EVENT_SIDECAR_DISABLED=false
@@ -40,6 +40,13 @@ schema)
     kubectl scale            --kubeconfig k8s.yaml --namespace mojaloop deployment/moja-centralledger-service       --replicas=8
     exit 0
 ;;
+init)
+    echo "installing RedPanda"
+    kubectl apply --kubeconfig k8s.yaml -f "$DIR/redpanda-app.yaml"
+    sleep 10
+    kubectl apply --kubeconfig k8s.yaml -f "$DIR/redpanda-service.yaml"
+    exit 0
+;;
 *)
     echo "switching to baseline"
     export ACCOUNT_TAG=v15.2.4
@@ -50,6 +57,7 @@ schema)
 ;;
 esac
 
+kubectl apply --kubeconfig k8s.yaml -f "$DIR/config-override.yaml"
 kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-account-lookup-service                 -p "$(envsubst <$DIR/account-service.yaml)"
 kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-ml-api-adapter-service                 -p "$(envsubst <$DIR/adapter-service.yaml)"
 kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-ml-api-adapter-handler-notification    -p "$(envsubst <$DIR/adapter-handler.yaml)"

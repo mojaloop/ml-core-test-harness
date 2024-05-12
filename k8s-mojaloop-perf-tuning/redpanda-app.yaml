@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redpanda-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  source:
+    repoURL: https://charts.redpanda.com
+    targetRevision: 0.7.24
+    chart: console
+    helm:
+      valuesObject:
+        image:
+          tag: v2.4.5
+          # registry:
+        console:
+          config:
+            kafka:
+              brokers:
+                - mojaloop-kafka-svc.stateful-resources.svc.cluster.local:9092
+              # sasl:
+              #   enabled: true
+              #   username:
+              #   password:
+              #   mechanism: PLAIN
+  destination:
+    namespace: redpanda
+    server: https://kubernetes.default.svc
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        maxDuration: 3m0s
+        factor: 2
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=background
+      - PruneLast=true

@@ -6,20 +6,20 @@
       "env": {
         "UNIDIRECTIONAL": "false"
       },
-      "preAllocatedVUs": 1000,
+      "preAllocatedVUs": 100,
       "timeUnit": "1s",
       "startRate": 10,
       "stages": [
-        { "target": 200, "duration": "60s" },
-        { "target": 200, "duration": "3m" },
-        { "target": 250, "duration": "60s" },
-        { "target": 250, "duration": "3m" },
-        { "target": 300, "duration": "60s" },
-        { "target": 300, "duration": "3m" },
-        { "target": 350, "duration": "60s" },
-        { "target": 350, "duration": "3m" },
-        { "target": 400, "duration": "60s" },
-        { "target": 400, "duration": "3m" }
+        { "target": 120, "duration": "90s" },
+        { "target": 120, "duration": "3m" },
+        { "target": 140, "duration": "90s" },
+        { "target": 140, "duration": "3m" },
+        { "target": 160, "duration": "90s" },
+        { "target": 160, "duration": "3m" },
+        { "target": 180, "duration": "90s" },
+        { "target": 180, "duration": "3m" },
+        { "target": 200, "duration": "90s" },
+        { "target": 200, "duration": "3m" }
       ]
     },
     "fspiopQuotes": {
@@ -28,20 +28,20 @@
       "env": {
         "UNIDIRECTIONAL": "false"
       },
-      "preAllocatedVUs": 1000,
+      "preAllocatedVUs": 200,
       "timeUnit": "1s",
       "startRate": 10,
       "stages": [
-        { "target": 200, "duration": "60s" },
-        { "target": 200, "duration": "3m" },
-        { "target": 250, "duration": "60s" },
-        { "target": 250, "duration": "3m" },
-        { "target": 300, "duration": "60s" },
-        { "target": 300, "duration": "3m" },
-        { "target": 350, "duration": "60s" },
-        { "target": 350, "duration": "3m" },
-        { "target": 400, "duration": "60s" },
-        { "target": 400, "duration": "3m" }
+        { "target": 120, "duration": "90s" },
+        { "target": 120, "duration": "3m" },
+        { "target": 140, "duration": "90s" },
+        { "target": 140, "duration": "3m" },
+        { "target": 160, "duration": "90s" },
+        { "target": 160, "duration": "3m" },
+        { "target": 180, "duration": "90s" },
+        { "target": 180, "duration": "3m" },
+        { "target": 200, "duration": "90s" },
+        { "target": 200, "duration": "3m" }
       ]
     },
     "fspiopTransfers": {
@@ -50,20 +50,20 @@
       "env": {
         "UNIDIRECTIONAL": "false"
       },
-      "preAllocatedVUs": 1000,
+      "preAllocatedVUs": 200,
       "timeUnit": "1s",
       "startRate": 10,
       "stages": [
-        { "target": 200, "duration": "60s" },
-        { "target": 200, "duration": "3m" },
-        { "target": 250, "duration": "60s" },
-        { "target": 250, "duration": "3m" },
-        { "target": 300, "duration": "60s" },
-        { "target": 300, "duration": "3m" },
-        { "target": 350, "duration": "60s" },
-        { "target": 350, "duration": "3m" },
-        { "target": 400, "duration": "60s" },
-        { "target": 400, "duration": "3m" }
+        { "target": 120, "duration": "90s" },
+        { "target": 120, "duration": "3m" },
+        { "target": 140, "duration": "90s" },
+        { "target": 140, "duration": "3m" },
+        { "target": 160, "duration": "90s" },
+        { "target": 160, "duration": "3m" },
+        { "target": 180, "duration": "90s" },
+        { "target": 180, "duration": "3m" },
+        { "target": 200, "duration": "90s" },
+        { "target": 200, "duration": "3m" }
       ]
     }
   },
