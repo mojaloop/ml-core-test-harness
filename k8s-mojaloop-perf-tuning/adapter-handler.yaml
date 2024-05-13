@@ -3,7 +3,7 @@ spec:
     spec:
       containers:
         - name: ml-api-adapter-handler-notification
-          # image: mojaloop/ml-api-adapter:v14.0.5
+          image: mojaloop/ml-api-adapter:$ML_API_TAG
           env:
             - name: LOG_LEVEL
               value: warn

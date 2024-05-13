@@ -7,7 +7,8 @@ audit)
     export ACCOUNT_TAG=v15.2.5-snapshot.3
     export QUOTE_TAG=v15.7.2-snapshot.4
     export LEDGER_TAG=v17.6.4-snapshot.2
-    export EVENT_SDK_KAFKA=config/default.json
+    export ML_API_TAG=v14.0.6-snapshot.0
+    export EVENT_SDK_KAFKA=./.EVENT_SDKrc
     export EVENT_SIDECAR_DISABLED=false
     export EVENT_SDK_AUDIT=kafka
     export EVENT_SDK_TRACE=off
@@ -18,7 +19,8 @@ direct)
     export ACCOUNT_TAG=v15.2.5-snapshot.3
     export QUOTE_TAG=v15.7.2-snapshot.4
     export LEDGER_TAG=v17.6.4-snapshot.2
-    export EVENT_SDK_KAFKA=config/default.json
+    export ML_API_TAG=v14.0.6-snapshot.0
+    export EVENT_SDK_KAFKA=./.EVENT_SDKrc
     export EVENT_SIDECAR_DISABLED=false
     export EVENT_SDK_AUDIT=
     export EVENT_SDK_TRACE=
@@ -29,6 +31,7 @@ disabled)
     export ACCOUNT_TAG=v15.2.4
     export QUOTE_TAG=v15.7.1
     export LEDGER_TAG=v17.6.2
+    export ML_API_TAG=v14.0.5
     export EVENT_SDK_KAFKA=
     export EVENT_SIDECAR_DISABLED=true
 ;;
@@ -52,6 +55,7 @@ init)
     export ACCOUNT_TAG=v15.2.4
     export QUOTE_TAG=v15.7.1
     export LEDGER_TAG=v17.6.2
+    export ML_API_TAG=v14.0.5
     export EVENT_SDK_KAFKA=
     export EVENT_SIDECAR_DISABLED=false
 ;;
