@@ -453,3 +453,37 @@ For executing performance test scenarios against a Mojaloop deployment, follow t
 
 > **Note:** The `-v` argument is optional and will delete any volume data created by the monitoring Docker Compose.
 
+### Helper scripts ###
+
+The following helper scripts are available to allow easier execution of repetitive tasks.
+- [perf-test.sh](./perf-test.sh) - run various performance tests
+- [k8s-mojaloop-perf-tuning/patch.sh](./k8s-mojaloop-perf-tuning/patch.sh) - patch k8s cluster to test with different releases and configurations
+
+The easises way to use these scripts is to create bash aliases for them:
+```sh
+alias p='./k8s-mojaloop-perf-tuning/patch.sh'
+alias t='./perf-test.sh'
+```
+
+Then use one of the following commands:
+- `t discovery` - Test single account discovery
+- `t discoveries` - Test account discoveries
+- `t discoveries rate` - Test account discoveries with ramping rates
+- `t quote` - Test single quote
+- `t quotes` - Test quotes
+- `t quotes rate` - Test quotes with ramping rates
+- `t transfer` - Test single transfer
+- `t transfers` - Test transfers
+- `t transfers rate` - Test transfers with ramping rates
+- `t dqtrate` - Test account discoveries, quotes and transfers in parallel with constant rates
+- `t e2e` - Test multiple end to end
+- `t e2e single` - Test single end to end
+- `t sim start` - Start the simulators
+- `t sim stop` - Stop the simulators
+- `t sim restart` - Restart the simulators
+- `p audit` - Configure direct events to Kafka without going through the sidecar, sending only audit and skipping others
+- `p direct` - Configure direct events to Kafka without going through the sidecar
+- `p disabled` - Configure no events to be produced
+- `p schema` - Recreate central ledger schema object
+- `p init` - Install RedPanda
+- `p` - Restore baseline with events sent through the sidecar
