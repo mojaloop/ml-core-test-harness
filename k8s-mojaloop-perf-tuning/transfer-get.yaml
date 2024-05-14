@@ -3,5 +3,4 @@ spec:
     spec:
       containers:
         - name: centralledger-handler-transfer-get
-          image: mojaloop/central-ledger:v17.6.1
-          # image: mojaloop/central-ledger:v17.5.9-snapshot.0
+          image: mojaloop/central-ledger:$LEDGER_TAG

@@ -1,12 +1,33 @@
 spec:
-  replicas: 12
   template:
     spec:
       containers:
         - name: account-lookup-service
-          image: mojaloop/account-lookup-service:v15.2.4
+          image: mojaloop/account-lookup-service:$ACCOUNT_TAG
           env:
-            - name: EVENT_SDK_LOG_FILTER
-              value: ''
+            - name: LOG_LEVEL
+              value: warn
             - name: EVENT_SDK_SIDECAR_DISABLED
-              value: 'true'
+              value: '$EVENT_SIDECAR_DISABLED'
+            - name: EVENT_SDK_KAFKA
+              value: $EVENT_SDK_KAFKA
+            - name: EVENT_SDK_TRACE
+              value: '$EVENT_SDK_TRACE'
+            - name: EVENT_SDK_AUDIT
+              value: '$EVENT_SDK_AUDIT'
+            - name: EVENT_SDK_LOG
+              value: '$EVENT_SDK_LOG'
+          livenessProbe:
+            timeoutSeconds: 2
+          readinessProbe:
+            timeoutSeconds: 1
+            periodSeconds: 1
+            failureThreshold: 1
+          volumeMounts:
+            - name: config-override
+              mountPath: /opt/app/.EVENT_SDKrc
+              subPath: .EVENT_SDKrc
+      volumes:
+        - name: config-override
+          configMap:
+            name: config-override

@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-override
+  namespace: mojaloop
+data:
+  .EVENT_SDKrc: |
+    {
+      "KAFKA": {
+        "PRODUCER": {
+          "EVENT": {
+            "POST": {
+              "config": {
+                "options": {
+                  "messageCharset": "utf8"
+                },
+                "rdkafkaConf": {
+                  "compression.type": "lz4",
+                  "metadata.broker.list": "mojaloop-kafka-svc.stateful-resources.svc.cluster.local:9092",
+                  "client.id": "producer-event",
+                  "event_cb": true,
+                  "dr_cb": false,
+                  "socket.keepalive.enable": true,
+                  "queue.buffering.max.messages": 10000000
+                },
+                "topicConf": {
+                  "request.required.acks": "all",
+                  "partitioner": "murmur2_random"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  .CLEDGrc: |
+    {
+      "KAFKA": {
+        "PRODUCER": {
+          "TRANSFER": {
+            "PREPARE": {
+              "config": {
+                "rdkafkaConf": {
+                  "compression.type": "lz4"
+                }
+              }
+            },
+            "POSITION": {
+              "config": {
+                "rdkafkaConf": {
+                  "compression.type": "lz4"
+                }
+              }
+            },
+            "FULFIL": {
+              "config": {
+                "rdkafkaConf": {
+                  "compression.type": "lz4"
+                }
+              }
+            },
+            "GET": {
+              "config": {
+                "rdkafkaConf": {
+                  "compression.type": "lz4"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  .QUOTErc: |
+    {
+      "KAFKA": {
+        "PRODUCER": {
+          "QUOTE": {
+            "POST": {
+              "config": {
+                "rdkafkaConf": {
+                  "compression.type": "lz4"
+                }
+              }
+            },
+            "PUT": {
+              "config": {
+                "rdkafkaConf": {
+                  "compression.type": "lz4"
+                }
+              }
+            },
+            "GET": {
+              "config": {
+                "rdkafkaConf": {
+                  "compression.type": "lz4"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+

@@ -1,12 +1,36 @@
 spec:
-  replicas: 12
   template:
     spec:
       containers:
         - name: quoting-service-handler
-          image: mojaloop/quoting-service:v15.7.1
+          image: mojaloop/quoting-service:$QUOTE_TAG
           env:
-            - name: EVENT_SDK_LOG_FILTER
-              value: ''
+            - name: LOG_LEVEL
+              value: warn
             - name: EVENT_SDK_SIDECAR_DISABLED
-              value: 'true'
+              value: '$EVENT_SIDECAR_DISABLED'
+            - name: EVENT_SDK_KAFKA
+              value: $EVENT_SDK_KAFKA
+            - name: EVENT_SDK_TRACE
+              value: '$EVENT_SDK_TRACE'
+            - name: EVENT_SDK_AUDIT
+              value: '$EVENT_SDK_AUDIT'
+            - name: EVENT_SDK_LOG
+              value: '$EVENT_SDK_LOG'
+          livenessProbe:
+            timeoutSeconds: 2
+          readinessProbe:
+            timeoutSeconds: 1
+            periodSeconds: 1
+            failureThreshold: 1
+          volumeMounts:
+            - name: config-override
+              mountPath: /opt/app/.EVENT_SDKrc
+              subPath: .EVENT_SDKrc
+            - name: config-override
+              mountPath: /opt/app/.QUOTErc
+              subPath: .QUOTErc
+      volumes:
+        - name: config-override
+          configMap:
+            name: config-override

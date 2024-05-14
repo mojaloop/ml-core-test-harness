@@ -13,7 +13,7 @@ discoveries)
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDiscovery.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 discoveriesrate)
-    echo "Testing account discoveries with constant rates"
+    echo "Testing account discoveries with ramping rates"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDiscoveryRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 quote)
@@ -25,7 +25,7 @@ quotes)
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopQuotes.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 quotesrate)
-    echo "Testing quotes"
+    echo "Testing quotes with ramping rates"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopQuotesRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 transfer)
@@ -37,7 +37,7 @@ transfers)
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfers.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 transfersrate)
-    echo "Testing transfers"
+    echo "Testing transfers with ramping rates"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfersRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 dqtrate)
@@ -74,6 +74,7 @@ simrestart)
     echo "   $0 quotes"
     echo "   $0 transfer"
     echo "   $0 transfers"
+    echo "   $0 dqt rate"
     echo "   $0 e2e"
     echo "   $0 e2e single"
     echo "   $0 sim start"
