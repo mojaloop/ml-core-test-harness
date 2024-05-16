@@ -12,6 +12,7 @@ data:
             "POST": {
               "config": {
                 "options": {
+                  "sync": false,
                   "messageCharset": "utf8"
                 },
                 "rdkafkaConf": {
@@ -33,19 +34,12 @@ data:
         }
       }
     }
-  .CLEDGrc: |
+  .MLAPIrc: |
     {
       "KAFKA": {
         "PRODUCER": {
           "TRANSFER": {
             "PREPARE": {
-              "config": {
-                "rdkafkaConf": {
-                  "compression.type": "lz4"
-                }
-              }
-            },
-            "POSITION": {
               "config": {
                 "rdkafkaConf": {
                   "compression.type": "lz4"
@@ -60,6 +54,31 @@ data:
               }
             },
             "GET": {
+              "config": {
+                "rdkafkaConf": {
+                  "compression.type": "lz4"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  .CLEDGrc: |
+    {
+      "KAFKA": {
+        "PRODUCER": {
+          "TRANSFER": {
+            "POSITION": {
+              "config": {
+                "rdkafkaConf": {
+                  "compression.type": "lz4"
+                }
+              }
+            }
+          },
+          "NOTIFICATION": {
+            "EVENT": {
               "config": {
                 "rdkafkaConf": {
                   "compression.type": "lz4"

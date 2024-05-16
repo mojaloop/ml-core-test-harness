@@ -1,8 +1,5 @@
 ## Ref: https://github.com/grafana/xk6-output-prometheus-remote/blob/main/docker-compose.yml
 ## Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/
-
-version: '3.8'
-
 networks:
   load-net:
     name: load-net

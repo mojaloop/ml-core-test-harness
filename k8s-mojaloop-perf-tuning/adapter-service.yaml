@@ -18,13 +18,32 @@ spec:
               value: '$EVENT_SDK_AUDIT'
             - name: EVENT_SDK_LOG
               value: '$EVENT_SDK_LOG'
+            - name: MLAPI_KAFKA__PRODUCER__TRANSFER__PREPARE__config__options__sync
+              value: 'true'
+            - name: MLAPI_KAFKA__PRODUCER__TRANSFER__FULFIL__config__options__sync
+              value: 'true'
+            - name: MLAPI_KAFKA__PRODUCER__TRANSFER__GET__config__options__sync
+              value: 'true'
+          livenessProbe:
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
+          readinessProbe:
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 1
+            failureThreshold: 1
           volumeMounts:
             - name: config-override
               mountPath: /opt/app/.EVENT_SDKrc
               subPath: .EVENT_SDKrc
             - name: config-override
-              mountPath: /opt/app/.CLEDGrc
-              subPath: .CLEDGrc
+              mountPath: /opt/app/.MLAPIrc
+              subPath: .MLAPIrc
+        - name: ml-api-adapter-service-sidecar
+          livenessProbe:
+            initialDelaySeconds: 5
+          readinessProbe:
+            initialDelaySeconds: 5
       volumes:
         - name: config-override
           configMap:

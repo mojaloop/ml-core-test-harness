@@ -17,13 +17,22 @@ spec:
               value: '$EVENT_SDK_AUDIT'
             - name: EVENT_SDK_LOG
               value: '$EVENT_SDK_LOG'
+          livenessProbe:
+            initialDelaySeconds: 5
+          readinessProbe:
+            initialDelaySeconds: 5
           volumeMounts:
             - name: config-override
               mountPath: /opt/app/.EVENT_SDKrc
               subPath: .EVENT_SDKrc
             - name: config-override
-              mountPath: /opt/app/.CLEDGrc
-              subPath: .CLEDGrc
+              mountPath: /opt/app/.MLAPIrc
+              subPath: .MLAPIrc
+        - name: ml-api-adapter-handler-notification-sidecar
+          livenessProbe:
+            initialDelaySeconds: 5
+          readinessProbe:
+            initialDelaySeconds: 5
       volumes:
         - name: config-override
           configMap:

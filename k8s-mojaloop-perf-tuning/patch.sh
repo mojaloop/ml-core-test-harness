@@ -6,8 +6,8 @@ audit)
     echo "switching to direct audit events"
     export ACCOUNT_TAG=v15.2.5-snapshot.3
     export QUOTE_TAG=v15.7.2-snapshot.4
-    export LEDGER_TAG=v17.6.4-snapshot.2
-    export ML_API_TAG=v14.0.6-snapshot.0
+    export LEDGER_TAG=v17.6.4-snapshot.3
+    export ML_API_TAG=v14.0.6-snapshot.1
     export EVENT_SDK_KAFKA=./.EVENT_SDKrc
     export EVENT_SIDECAR_DISABLED=false
     export EVENT_SDK_AUDIT=kafka
@@ -18,8 +18,8 @@ direct)
     echo "switching to direct events"
     export ACCOUNT_TAG=v15.2.5-snapshot.3
     export QUOTE_TAG=v15.7.2-snapshot.4
-    export LEDGER_TAG=v17.6.4-snapshot.2
-    export ML_API_TAG=v14.0.6-snapshot.0
+    export LEDGER_TAG=v17.6.4-snapshot.3
+    export ML_API_TAG=v14.0.6-snapshot.1
     export EVENT_SDK_KAFKA=./.EVENT_SDKrc
     export EVENT_SIDECAR_DISABLED=false
     export EVENT_SDK_AUDIT=
