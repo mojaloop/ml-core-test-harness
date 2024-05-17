@@ -12,7 +12,7 @@ data:
             "POST": {
               "config": {
                 "options": {
-                  "sync": false,
+                  "sync": true,
                   "messageCharset": "utf8"
                 },
                 "rdkafkaConf": {
