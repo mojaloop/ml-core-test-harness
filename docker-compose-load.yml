@@ -4,14 +4,14 @@
 version: '3.8'
 
 networks:
-  load-net:
-    name: load-net
+  # load-net:
+  #   name: load-net
   monitoring-net:
     name: monitoring-net
     external: true
-  mojaloop-net:
-    name: mojaloop-net
-    external: true
+  # mojaloop-net:
+  #   name: mojaloop-net
+  #   external: true
 
 services:
   k6:
@@ -30,9 +30,9 @@ services:
       - '--include-system-env-vars'
       - '/scripts/index.js'
     networks:
-      - load-net
+      # - load-net
       - monitoring-net
-      - mojaloop-net
+      # - mojaloop-net
     ports:
       - "5665:5665"
     environment:
@@ -44,3 +44,4 @@ services:
       # - K6_OUT=experimental-prometheus-rw # Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/
     volumes:
       - ./packages/k6-tests:/scripts
+      - /home/ubuntu/certs:/certs

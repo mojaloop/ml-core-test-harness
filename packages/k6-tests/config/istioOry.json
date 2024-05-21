@@ -1,24 +1,26 @@
 {
-    "scenarios": {
-      "fullSecurityScenario": {
-        "executor": "ramping-vus",
-        "exec": "fullSecurityScenarios",
-        "env": {
-          "UNIDIRECTIONAL": "true",
-          "CLIENT_ID": "dfsp-jwt",
-          "CLIENT_SECRET": "bLxnwDqhAB1mycHe8aAeb1DmpTGqrp0q",
-          "CERTS_DIR": "/Users/steveb/certs" 
-        },
-        "startVUs": 1,
-        "stages": [
-          { "duration": "10s", "target": 6 }
-        ]
-      }
-    },
-    "thresholds": {
-      "iteration_duration": [ "p(95)<1000" ],
-      "http_req_failed": [ "rate<0.01" ],
-      "http_req_duration": [ "p(95)<1000" ]
+  "insecureSkipTlsVerify": true, 
+  "tlsAuth": [{
+    "cert": "-----BEGIN CERTIFICATE-----\nMIIDbjCCAlagAwIBAgIUYj/4NGXpLplChoVdLXqFCxuOPsEwDQYJKoZIhvcNAQEL\nBQAwADAeFw0yNDA1MTQxMjI1NTdaFw0yNDA4MTIxMjI2MjdaMFoxDzANBgNVBAoT\nBkluZml0eDEcMBoGA1UECxMTSW5mcmFzdHJ1Y3R1cmUgVGVhbTEpMCcGA1UEAxMg\nYXdzZGV2LmxhYnNrOHMxMDE0Lm1vamFsb29wLmxpdmUwggEiMA0GCSqGSIb3DQEB\nAQUAA4IBDwAwggEKAoIBAQC6InbGW5oJdVNrhx0RjCiTuUOai9/7Gnd1Xzzi8dKK\nvwDJji+VaA3YwWqYMYl21bjXIlkHZgB1lHoN2O9+qO4vhw3pMfTjngof6F7AL/NE\n6NtQlFAtOWM2Y9+npFL94cy5YtTQp+Fv6Ri0ev4TEdhG7sr93rxfaOVqPE1tzXXa\nvo/yA4LvQYEOzNtgXnoCiZyBTQU0t/Ppc0h76OCbJkjInc2iaYoaODo2b2ngNJdS\ncdT5S1Fdx0dBZh/MiqJGF5otNocaxBf0JNPYAfh4NzrldmxYYrp+f5VSwLQo4o1I\nNkFLpzFUH3/LKarDd6tOUFDfZdoDYC8CJRxWIFuChtA7AgMBAAGjgYUwgYIwEwYD\nVR0lBAwwCgYIKwYBBQUHAwIwHQYDVR0OBBYEFJOFtKGkP3YX+fKNkDIsqhk8/s5y\nMB8GA1UdIwQYMBaAFBiab+vjPZMXdZImg4J7ZsTDYh+/MCsGA1UdEQQkMCKCIGF3\nc2Rldi5sYWJzazhzMTAxNC5tb2phbG9vcC5saXZlMA0GCSqGSIb3DQEBCwUAA4IB\nAQBBPcY2xc8bnsvmNri/8hKGOheaBh9hgsAjz/8tb/Zi/YeR8E35688sYZ+sXMPD\nZrgTnmf5QjwzknSOlDDAl+z37E5IKwJi1CwRflVM2AtzGUQl+KHDmcjzeKcLLlzv\nyUuKwDSIOuLRgKd5hxs4oecvD2s73Y40A+mm2+NrI1P3VUxTnI0GZ8N05lm5qyz1\ntlmuI1atdNjEGdiGm/weI0lMN+OhK85K6+v5wrntfiKuLId1b1qGFd6C7Ni74FJf\nLu0eibfGai1N3Jt5ge77U7M+SE1XP9qenTtmC1I2CAh8DlGifp6AWN35liUr7MZ3\nMXLAkRBclF09T1XnfZh5PrqP\n-----END CERTIFICATE-----",
+    "key": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEAuiJ2xluaCXVTa4cdEYwok7lDmovf+xp3dV884vHSir8AyY4vlWgN2MFq\nmDGJdtW41yJZB2YAdZR6DdjvfqjuL4cN6TH0454KH+hewC/zROjbUJRQLTljNmPfp6RS/eHM\nuWLU0Kfhb+kYtHr+ExHYRu7K/d68X2jlajxNbc112r6P8gOC70GBDszbYF56AomcgU0FNLfz\n6XNIe+jgmyZIyJ3NommKGjg6Nm9p4DSXUnHU+UtRXcdHQWYfzIqiRheaLTaHGsQX9CTT2AH4\neDc65XZsWGK6fn+VUsC0KOKNSDZBS6cxVB9/yymqw3erTlBQ32XaA2AvAiUcViBbgobQOwID\nAQABAoIBAG3EFTc0ncomHmOy8jl+5g73mh5xjkyOdxQIbeeHpBmeOeCisPzyt/ezWCEYVXB2\n6OI1pzrttCeiv7eazuFqzcvJYTK7+yaf9GiMqBO+Mz/X8j26uO1ygkd47lP2W9rMZeaNmeLS\nnedZFvCX921XgKuT9rFvwLajLWdQ2HiASZgM9cPyeDHESLrEO9srJAhmjbN0OaiAZPRAnk8l\ncR0+s8IxGlDjSu0MjJIrJrIkFJ0MK7EGfOyxLTMJTYrWt7HOtaBVTH+JjlxUAFhOW/Sud2U+\nrhJbnuTu2i8Z7Vg0qp432bsev+A6lT9ceW9ujA8kPOtEYrwXpq7ZvEnhXGPXZoECgYEA9KOh\nCvMpQsOV2pbyZNP2vfiWfher9sth73zWMvymRFIIARsyjR8LHH5C5MaxFFV2sgasCZTjUuMK\njhgLd/oScmdAKaeNjXZbwBev/NI7rNgGtG+CSTakcMeOD8YSWk7OLDbG4gZyJhLzYhLajmfs\nKWnj6WJql5CD/d95QbN+2rMCgYEAwsdPC+hnxDVnEztOhN0b+EY/2Mtfu0WP7Sk6obs48yEU\nC/+Sy+i9IpplDkIxRxnNjyyUe9qaIBx/6s8EXjmJbMYnqvGpps136rUl0CzvVwXspkG7SZYx\nGaQhICi4wiMYHn6JiyMb6BgCMDwxQLy8/knIAeaS511HLBx6OpNkGFkCgYEAzgi9SfaO6n7E\nx4tXbBmkdkxVmq6fEsQpoEQ4NkrYUTPxL9VTFs1tUzr3Zav9WU29IKRD4fH2Hkm/CvsvNYV0\nYcuZmztVGS30ieypODlrLt/ljbNYPAb8KUu31osPy+UQ+OXNTHD3VB+jwRZ14XeeyyY2X8mW\nUj3RHFBI1E+y58cCgYAXx39mA8SPVrmzxlzKqbfdcq4eyI1yboaovIzU6+eC/znUUSpZzJsy\nm0jVGc2sUYEgBqBGEqUYYIJZZ1awLjQR3ItBOmms3I7UT7NDHAlIRYfjsEiuLjDmYXxN0crk\noKY0Ktyd6PZiOnQh8WdN8PzdyqIpYT30ExY6U2u0tQPWWQKBgGReyBjM1yui78c1Uq6Hgs2F\nFCzhfPTZD2aUwi9cNKOuJxK+Dn12WyQh5yo+0SnMQT/KvwiCdwtJwNQUmdelFpcSsSTY0kXI\nytlLdDAbd+UzQGO14I/KhdrVuBFRec25bYmBjkNBbq44oF0OxXwheFIv9TIT83CaLojycyts\nLYJt\n-----END RSA PRIVATE KEY-----"
+  }],
+  "scenarios": {
+    "istioOryTests": {
+      "executor": "ramping-vus",
+      "exec": "istioOryScenarios",
+      "startVUs": 5,
+      "stages": [
+        { "duration": "30s", "target": 100 },
+        { "duration": "1m", "target": 500 },
+        { "duration": "5m", "target": 1000 },
+        { "duration": "5m", "target": 1000 }
+      ]
     }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
   }
+}
   

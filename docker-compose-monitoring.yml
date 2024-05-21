@@ -3,9 +3,9 @@ version: "3.7"
 networks:
   monitoring-net:
     name: monitoring-net
-  mojaloop-net:
-    name: mojaloop-net
-    external: true
+  # mojaloop-net:
+  #   name: mojaloop-net
+  #   external: true
 
 volumes:
     vol_prometheus_data: {}
@@ -35,7 +35,7 @@ services:
       - cadvisor
       #- pushgateway
     networks:
-      - mojaloop-net
+      # - mojaloop-net
       - monitoring-net
     restart: always
     # deploy:
@@ -59,7 +59,7 @@ services:
     ports:
       - 9100:9100
     networks:
-      - mojaloop-net
+      # - mojaloop-net
       - monitoring-net
     restart: always
     deploy:
@@ -93,7 +93,7 @@ services:
     ports:
       - 8080:8080
     networks:
-      - mojaloop-net
+      # - mojaloop-net
       - monitoring-net
     restart: always
     deploy:
@@ -118,7 +118,7 @@ services:
       GF_RENDERING_CALLBACK_URL: http://grafana:3000/
       GF_LOG_FILTERS: rendering:debug
     networks:
-      - mojaloop-net
+      # - mojaloop-net
       - monitoring-net
     restart: always
 
@@ -145,7 +145,7 @@ services:
     # ports:
     # - "9104:9104"
     networks:
-      - mojaloop-net
+      # - mojaloop-net
       - monitoring-net
     environment:
     - MYSQLD_EXPORTER_PASSWORD=password
@@ -160,7 +160,7 @@ services:
     # ports:
     # - "9104:9104"
     networks:
-      - mojaloop-net
+      # - mojaloop-net
       - monitoring-net
     environment:
     - MYSQLD_EXPORTER_PASSWORD=password
@@ -176,7 +176,7 @@ services:
     ports:
       - "9308:9308"
     networks:
-      - mojaloop-net
+      # - mojaloop-net
       - monitoring-net
     command:
       - --kafka.server=kafka:29092
@@ -190,6 +190,7 @@ services:
     ports:
     - "9080:8080"
     networks:
-      - mojaloop-net
+      - monitoring-net 
+      # - mojaloop-net
     environment:
       - KAFKA_BROKERS=kafka:29092

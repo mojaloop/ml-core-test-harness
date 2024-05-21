@@ -13,6 +13,7 @@ export { inboundSDKTransfersScenarios } from './scenarios/inboundSDKTransfers.js
 export { outboundSDKDiscoveryScenarios } from './scenarios/outboundSDKDiscovery.js';
 export { outboundSDKQuotesScenarios } from './scenarios/outboundSDKQuotes.js';
 export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.js';
+export { istioOryScenarios } from './scenarios/istioOry.js';
 
 const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';
 const configFile = configFolder + __ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json';

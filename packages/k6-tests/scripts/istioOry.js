@@ -15,20 +15,19 @@
 
 import http from 'k6/http';
 import { check } from 'k6';
-import { Counter } from 'k6/metrics';
-import { Rate } from 'k6/metrics';
+// import { Counter } from 'k6/metrics';
+// import { Rate } from 'k6/metrics';
 
-// Metrics
-const successCounter = new Counter('successful_requests');
-const errorRate = new Rate('error_rate');
+// // Metrics
+// const successCounter = new Counter('successful_requests');
+// const errorRate = new Rate('error_rate');
 
 // mTLS certs
 const cert = open(`${__ENV.CERTS_DIR}/private.crt`)
 const key  = open(`${__ENV.CERTS_DIR}/public.key`)
 
-export const options = {
-  vus: 10,
-  duration: '5m',
+// NOTE: For some reason, this options are not picked up in the test harnes docker compose run
+export const options = {  
   // k6 does not support custom CA certificates, so we need to skip TLS verification
   insecureSkipTlsVerify: true, 
   tlsAuth: [{ cert, key}],
@@ -68,12 +67,12 @@ export function getQuotes(token) {
     return http.post(url, payload, params);
 }
 
-export default function() {
+export function testIstioOry() {
   const token = getAuthToken();
   const res = getQuotes(token);
   const success = check(res, {
     'status is 202': (r) => r.status === 202,
   });
-  successCounter.add(success);
-  errorRate.add(!success);
+  // successCounter.add(success);
+  // errorRate.add(!success);
 }
