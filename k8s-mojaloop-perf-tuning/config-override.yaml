@@ -9,7 +9,7 @@ data:
       "KAFKA": {
         "PRODUCER": {
           "EVENT": {
-            "POST": {
+            "AUDIT": {
               "config": {
                 "options": {
                   "sync": true,
@@ -18,7 +18,49 @@ data:
                 "rdkafkaConf": {
                   "compression.type": "lz4",
                   "metadata.broker.list": "mojaloop-kafka-svc.stateful-resources.svc.cluster.local:9092",
-                  "client.id": "producer-event",
+                  "client.id": "producer-event-audit",
+                  "event_cb": true,
+                  "dr_cb": false,
+                  "socket.keepalive.enable": true,
+                  "queue.buffering.max.messages": 10000000
+                },
+                "topicConf": {
+                  "request.required.acks": "all",
+                  "partitioner": "murmur2_random"
+                }
+              }
+            },
+            "TRACE": {
+              "config": {
+                "options": {
+                  "sync": true,
+                  "messageCharset": "utf8"
+                },
+                "rdkafkaConf": {
+                  "compression.type": "lz4",
+                  "metadata.broker.list": "mojaloop-kafka-svc.stateful-resources.svc.cluster.local:9092",
+                  "client.id": "producer-event-trace",
+                  "event_cb": true,
+                  "dr_cb": false,
+                  "socket.keepalive.enable": true,
+                  "queue.buffering.max.messages": 10000000
+                },
+                "topicConf": {
+                  "request.required.acks": "all",
+                  "partitioner": "murmur2_random"
+                }
+              }
+            },
+            "LOG": {
+              "config": {
+                "options": {
+                  "sync": true,
+                  "messageCharset": "utf8"
+                },
+                "rdkafkaConf": {
+                  "compression.type": "lz4",
+                  "metadata.broker.list": "mojaloop-kafka-svc.stateful-resources.svc.cluster.local:9092",
+                  "client.id": "producer-event-log",
                   "event_cb": true,
                   "dr_cb": false,
                   "socket.keepalive.enable": true,
