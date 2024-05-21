@@ -1,0 +1,24 @@
+{
+    "scenarios": {
+      "fullSecurityScenario": {
+        "executor": "ramping-vus",
+        "exec": "fullSecurityScenarios",
+        "env": {
+          "UNIDIRECTIONAL": "true",
+          "CLIENT_ID": "dfsp-jwt",
+          "CLIENT_SECRET": "bLxnwDqhAB1mycHe8aAeb1DmpTGqrp0q",
+          "CERTS_DIR": "/Users/steveb/certs" 
+        },
+        "startVUs": 1,
+        "stages": [
+          { "duration": "10s", "target": 6 }
+        ]
+      }
+    },
+    "thresholds": {
+      "iteration_duration": [ "p(95)<1000" ],
+      "http_req_failed": [ "rate<0.01" ],
+      "http_req_duration": [ "p(95)<1000" ]
+    }
+  }
+  
