@@ -15,12 +15,6 @@ spec:
               value: '$EVENT_SDK_AUDIT'
             - name: EVENT_SDK_LOG
               value: '$EVENT_SDK_LOG'
-            - name: QUOTE_KAFKA__PRODUCER__QUOTE__POST__config__options__sync
-              value: 'true'
-            - name: QUOTE_KAFKA__PRODUCER__QUOTE__PUT__config__options__sync
-              value: 'true'
-            - name: QUOTE_KAFKA__PRODUCER__QUOTE__GET__config__options__sync
-              value: 'true'
           livenessProbe:
             timeoutSeconds: 2
           readinessProbe:

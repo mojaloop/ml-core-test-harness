@@ -15,10 +15,6 @@ spec:
               value: '$EVENT_SDK_AUDIT'
             - name: EVENT_SDK_LOG
               value: '$EVENT_SDK_LOG'
-            - name: CLEDG_KAFKA__PRODUCER__TRANSFER__POSITION__config__options__sync
-              value: 'true'
-            - name: CLEDG_KAFKA__PRODUCER__NOTIFICATION__EVENT__config__options__sync
-              value: 'true'
           livenessProbe:
             timeoutSeconds: 2
           readinessProbe:

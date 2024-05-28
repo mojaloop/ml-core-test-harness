@@ -83,6 +83,9 @@ data:
           "TRANSFER": {
             "PREPARE": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -90,6 +93,9 @@ data:
             },
             "FULFIL": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -97,6 +103,9 @@ data:
             },
             "GET": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -113,6 +122,9 @@ data:
           "TRANSFER": {
             "POSITION": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -122,6 +134,9 @@ data:
           "NOTIFICATION": {
             "EVENT": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -138,6 +153,9 @@ data:
           "QUOTE": {
             "POST": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -145,6 +163,9 @@ data:
             },
             "PUT": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -152,6 +173,9 @@ data:
             },
             "GET": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
