@@ -1,18 +1,18 @@
 {
     "options": {},
-    "name": "fxp_quote_expired",
+    "name": "fxp_non_success_states",
     "test_cases": [
       {
         "id": 1,
-        "name": "Send POST /quotes after expiry of the fxQuote",
+        "name": "Check PENDING state in PUT /fxQuotes/{ID}",
         "fileInfo": {
-          "path": "collections/tests/fx/golden_path/feature_tests/fxp_error.json",
+          "path": "collections/tests/fx/golden_path/feature_tests/negative_scenarios/fxp_non_success_states.json",
           "labels": [
             "fx"
           ]
         },
         "meta": {
-          "info": "POST /fxQuotes returns PUT /fxQuotes/{ID}/error"
+          "info": "POST /fxTransfers returns PUT /fxTransfers/{ID} with PENDING state"
         },
         "requests": [
           {
