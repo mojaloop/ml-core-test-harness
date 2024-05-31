@@ -129,9 +129,9 @@
       "folderPath": "als_admin_1.1"
     },
     {
-      "type": "fx_api_spec",
+      "type": "fspiop-rest-v2",
       "version": "2.0",
-      "folderPath": "fx_api_spec_2.0",
+      "folderPath": "fspiop-rest-v2_2.0",
       "asynchronous": false,
       "additionalApi": true
     }
