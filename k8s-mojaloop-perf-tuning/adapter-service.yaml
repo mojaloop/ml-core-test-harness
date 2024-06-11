@@ -16,27 +16,14 @@ spec:
               value: '$EVENT_SDK_AUDIT'
             - name: EVENT_SDK_LOG
               value: '$EVENT_SDK_LOG'
-          livenessProbe:
-            initialDelaySeconds: 5
-            timeoutSeconds: 2
-          readinessProbe:
-            initialDelaySeconds: 5
-            timeoutSeconds: 1
-            periodSeconds: 1
-            failureThreshold: 1
           volumeMounts:
-            - name: config-override
+            - name: config-override-volume
               mountPath: /opt/app/.EVENT_SDKrc
               subPath: .EVENT_SDKrc
-            - name: config-override
+            - name: config-override-volume
               mountPath: /opt/app/.MLAPIrc
               subPath: .MLAPIrc
-        - name: ml-api-adapter-service-sidecar
-          livenessProbe:
-            initialDelaySeconds: 5
-          readinessProbe:
-            initialDelaySeconds: 5
       volumes:
-        - name: config-override
+        - name: config-override-volume
           configMap:
             name: config-override

@@ -79,6 +79,20 @@ data:
   .MLAPIrc: |
     {
       "KAFKA": {
+        "CONSUMER": {
+          "NOTIFICATION": {
+            "EVENT": {
+              "config": {
+                "options": {
+                  "batchSize": 12,
+                  "consumeTimeout": 10,
+                  "syncConcurrency": 12,
+                  "syncSingleMessage": true
+                }
+              }
+            }
+          }
+        },
         "PRODUCER": {
           "TRANSFER": {
             "PREPARE": {
@@ -118,6 +132,30 @@ data:
   .CLEDGrc: |
     {
       "KAFKA": {
+        "CONSUMER": {
+          "TRANSFER": {
+            "FULFIL": {
+              "config": {
+                "options": {
+                  "batchSize": 12,
+                  "consumeTimeout": 10,
+                  "syncConcurrency": 12,
+                  "syncSingleMessage": true
+                }
+              }
+            },
+            "PREPARE": {
+              "config": {
+                "options": {
+                  "batchSize": 12,
+                  "consumeTimeout": 10,
+                  "syncConcurrency": 12,
+                  "syncSingleMessage": true
+                }
+              }
+            }
+          }
+        },
         "PRODUCER": {
           "TRANSFER": {
             "POSITION": {
@@ -149,6 +187,34 @@ data:
   .QUOTErc: |
     {
       "KAFKA": {
+        "CONSUMER": {
+          "QUOTE": {
+            "GET": {
+              "config": {
+                "options": {
+                  "batchSize": 50,
+                  "consumeTimeout": 10
+                }
+              }
+            },
+            "POST": {
+              "config": {
+                "options": {
+                  "batchSize": 50,
+                  "consumeTimeout": 10
+                }
+              }
+            },
+            "PUT": {
+              "config": {
+                "options": {
+                  "batchSize": 50,
+                  "consumeTimeout": 10
+                }
+              }
+            }
+          }
+        },
         "PRODUCER": {
           "QUOTE": {
             "POST": {

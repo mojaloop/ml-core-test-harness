@@ -15,20 +15,14 @@ spec:
               value: '$EVENT_SDK_AUDIT'
             - name: EVENT_SDK_LOG
               value: '$EVENT_SDK_LOG'
-          livenessProbe:
-            timeoutSeconds: 2
-          readinessProbe:
-            timeoutSeconds: 1
-            periodSeconds: 1
-            failureThreshold: 1
           volumeMounts:
-            - name: config-override
+            - name: config-override-volume
               mountPath: /opt/app/.EVENT_SDKrc
               subPath: .EVENT_SDKrc
-            - name: config-override
+            - name: config-override-volume
               mountPath: /opt/app/.CLEDGrc
               subPath: .CLEDGrc
       volumes:
-        - name: config-override
+        - name: config-override-volume
           configMap:
             name: config-override

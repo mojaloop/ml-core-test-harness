@@ -61,10 +61,10 @@ spec:
                 -u http://moja-ml-testing-toolkit-backend:5050 \
                 --report-format html \
                 --report-auto-filename-enable true \
-                --extra-summary-information="Test Suite:GP Tests,Environment:dev1.devbaremetal1.moja-onprem.net" \
+                --extra-summary-information="Test Suite:GP Tests,Environment:dev1.devbaremetal.moja-onprem.net" \
                 --save-report true \
                 --report-name gp_tests \
-                --save-report-base-url http://ttkbackend.dev1.devbaremetal1.moja-onprem.net;
+                --save-report-base-url http://ttkbackend.int.dev1.devbaremetal.moja-onprem.net;
               export TEST_RUNNER_EXIT_CODE="$?";
 
               echo "Test Runner finished with exit code:
