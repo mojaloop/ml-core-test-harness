@@ -475,7 +475,7 @@ Then use one of the following commands:
 - `t transfer` - Test single transfer
 - `t transfers` - Test transfers
 - `t transfers rate` - Test transfers with ramping rates
-- `t dqtrate` - Test account discoveries, quotes and transfers in parallel with constant rates
+- `t dqt rate` - Test account discoveries, quotes and transfers in parallel with constant rates
 - `t e2e` - Test multiple end to end
 - `t e2e single` - Test single end to end
 - `t sim start` - Start the simulators

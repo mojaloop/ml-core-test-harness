@@ -4,11 +4,10 @@ DIR=`dirname $(readlink -f "$0" 2> /dev/null)`
 case "$1" in
 audit)
     echo "switching to direct audit events"
-    export ACCOUNT_TAG=v15.2.5-snapshot.3
-    export QUOTE_TAG=v15.7.2-snapshot.4
-    export LEDGER_TAG=v17.6.4-snapshot.2
-    export ML_API_TAG=v14.0.6-snapshot.0
-    export EVENT_SDK_KAFKA=./.EVENT_SDKrc
+    export ACCOUNT_TAG=v15.2.5-snapshot.5
+    export QUOTE_TAG=v15.7.2-snapshot.12
+    export LEDGER_TAG=v17.6.4-snapshot.7
+    export ML_API_TAG=v14.0.6-snapshot.4
     export EVENT_SIDECAR_DISABLED=false
     export EVENT_SDK_AUDIT=kafka
     export EVENT_SDK_TRACE=off
@@ -16,11 +15,10 @@ audit)
 ;;
 direct)
     echo "switching to direct events"
-    export ACCOUNT_TAG=v15.2.5-snapshot.3
-    export QUOTE_TAG=v15.7.2-snapshot.4
-    export LEDGER_TAG=v17.6.4-snapshot.2
-    export ML_API_TAG=v14.0.6-snapshot.0
-    export EVENT_SDK_KAFKA=./.EVENT_SDKrc
+    export ACCOUNT_TAG=v15.2.5-snapshot.5
+    export QUOTE_TAG=v15.7.2-snapshot.12
+    export LEDGER_TAG=v17.6.4-snapshot.7
+    export ML_API_TAG=v14.0.6-snapshot.4
     export EVENT_SIDECAR_DISABLED=false
     export EVENT_SDK_AUDIT=
     export EVENT_SDK_TRACE=

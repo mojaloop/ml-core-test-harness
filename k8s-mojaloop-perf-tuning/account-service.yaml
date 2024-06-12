@@ -9,25 +9,17 @@ spec:
               value: warn
             - name: EVENT_SDK_SIDECAR_DISABLED
               value: '$EVENT_SIDECAR_DISABLED'
-            - name: EVENT_SDK_KAFKA
-              value: $EVENT_SDK_KAFKA
             - name: EVENT_SDK_TRACE
               value: '$EVENT_SDK_TRACE'
             - name: EVENT_SDK_AUDIT
               value: '$EVENT_SDK_AUDIT'
             - name: EVENT_SDK_LOG
               value: '$EVENT_SDK_LOG'
-          livenessProbe:
-            timeoutSeconds: 2
-          readinessProbe:
-            timeoutSeconds: 1
-            periodSeconds: 1
-            failureThreshold: 1
           volumeMounts:
-            - name: config-override
+            - name: config-override-volume
               mountPath: /opt/app/.EVENT_SDKrc
               subPath: .EVENT_SDKrc
       volumes:
-        - name: config-override
+        - name: config-override-volume
           configMap:
             name: config-override

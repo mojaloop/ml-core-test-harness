@@ -10,8 +10,6 @@ spec:
               value: warn
             - name: EVENT_SDK_SIDECAR_DISABLED
               value: '$EVENT_SIDECAR_DISABLED'
-            - name: EVENT_SDK_KAFKA
-              value: $EVENT_SDK_KAFKA
             - name: EVENT_SDK_TRACE
               value: '$EVENT_SDK_TRACE'
             - name: EVENT_SDK_AUDIT
@@ -19,13 +17,13 @@ spec:
             - name: EVENT_SDK_LOG
               value: '$EVENT_SDK_LOG'
           volumeMounts:
-            - name: config-override
+            - name: config-override-volume
               mountPath: /opt/app/.EVENT_SDKrc
               subPath: .EVENT_SDKrc
-            - name: config-override
-              mountPath: /opt/app/.CLEDGrc
-              subPath: .CLEDGrc
+            - name: config-override-volume
+              mountPath: /opt/app/.MLAPIrc
+              subPath: .MLAPIrc
       volumes:
-        - name: config-override
+        - name: config-override-volume
           configMap:
             name: config-override

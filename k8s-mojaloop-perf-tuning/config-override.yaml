@@ -9,15 +9,58 @@ data:
       "KAFKA": {
         "PRODUCER": {
           "EVENT": {
-            "POST": {
+            "AUDIT": {
               "config": {
                 "options": {
+                  "sync": true,
                   "messageCharset": "utf8"
                 },
                 "rdkafkaConf": {
                   "compression.type": "lz4",
                   "metadata.broker.list": "mojaloop-kafka-svc.stateful-resources.svc.cluster.local:9092",
-                  "client.id": "producer-event",
+                  "client.id": "producer-event-audit",
+                  "event_cb": true,
+                  "dr_cb": false,
+                  "socket.keepalive.enable": true,
+                  "queue.buffering.max.messages": 10000000
+                },
+                "topicConf": {
+                  "request.required.acks": "all",
+                  "partitioner": "murmur2_random"
+                }
+              }
+            },
+            "TRACE": {
+              "config": {
+                "options": {
+                  "sync": true,
+                  "messageCharset": "utf8"
+                },
+                "rdkafkaConf": {
+                  "compression.type": "lz4",
+                  "metadata.broker.list": "mojaloop-kafka-svc.stateful-resources.svc.cluster.local:9092",
+                  "client.id": "producer-event-trace",
+                  "event_cb": true,
+                  "dr_cb": false,
+                  "socket.keepalive.enable": true,
+                  "queue.buffering.max.messages": 10000000
+                },
+                "topicConf": {
+                  "request.required.acks": "all",
+                  "partitioner": "murmur2_random"
+                }
+              }
+            },
+            "LOG": {
+              "config": {
+                "options": {
+                  "sync": true,
+                  "messageCharset": "utf8"
+                },
+                "rdkafkaConf": {
+                  "compression.type": "lz4",
+                  "metadata.broker.list": "mojaloop-kafka-svc.stateful-resources.svc.cluster.local:9092",
+                  "client.id": "producer-event-log",
                   "event_cb": true,
                   "dr_cb": false,
                   "socket.keepalive.enable": true,
@@ -33,20 +76,30 @@ data:
         }
       }
     }
-  .CLEDGrc: |
+  .MLAPIrc: |
     {
       "KAFKA": {
+        "CONSUMER": {
+          "NOTIFICATION": {
+            "EVENT": {
+              "config": {
+                "options": {
+                  "batchSize": 12,
+                  "consumeTimeout": 10,
+                  "syncConcurrency": 12,
+                  "syncSingleMessage": true
+                }
+              }
+            }
+          }
+        },
         "PRODUCER": {
           "TRANSFER": {
             "PREPARE": {
               "config": {
-                "rdkafkaConf": {
-                  "compression.type": "lz4"
-                }
-              }
-            },
-            "POSITION": {
-              "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -54,6 +107,9 @@ data:
             },
             "FULFIL": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -61,6 +117,64 @@ data:
             },
             "GET": {
               "config": {
+                "options": {
+                  "sync": true
+                },
+                "rdkafkaConf": {
+                  "compression.type": "lz4"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  .CLEDGrc: |
+    {
+      "KAFKA": {
+        "CONSUMER": {
+          "TRANSFER": {
+            "FULFIL": {
+              "config": {
+                "options": {
+                  "batchSize": 12,
+                  "consumeTimeout": 10,
+                  "syncConcurrency": 12,
+                  "syncSingleMessage": true
+                }
+              }
+            },
+            "PREPARE": {
+              "config": {
+                "options": {
+                  "batchSize": 12,
+                  "consumeTimeout": 10,
+                  "syncConcurrency": 12,
+                  "syncSingleMessage": true
+                }
+              }
+            }
+          }
+        },
+        "PRODUCER": {
+          "TRANSFER": {
+            "POSITION": {
+              "config": {
+                "options": {
+                  "sync": true
+                },
+                "rdkafkaConf": {
+                  "compression.type": "lz4"
+                }
+              }
+            }
+          },
+          "NOTIFICATION": {
+            "EVENT": {
+              "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -73,10 +187,41 @@ data:
   .QUOTErc: |
     {
       "KAFKA": {
+        "CONSUMER": {
+          "QUOTE": {
+            "GET": {
+              "config": {
+                "options": {
+                  "batchSize": 50,
+                  "consumeTimeout": 10
+                }
+              }
+            },
+            "POST": {
+              "config": {
+                "options": {
+                  "batchSize": 50,
+                  "consumeTimeout": 10
+                }
+              }
+            },
+            "PUT": {
+              "config": {
+                "options": {
+                  "batchSize": 50,
+                  "consumeTimeout": 10
+                }
+              }
+            }
+          }
+        },
         "PRODUCER": {
           "QUOTE": {
             "POST": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -84,6 +229,9 @@ data:
             },
             "PUT": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
@@ -91,6 +239,9 @@ data:
             },
             "GET": {
               "config": {
+                "options": {
+                  "sync": true
+                },
                 "rdkafkaConf": {
                   "compression.type": "lz4"
                 }
