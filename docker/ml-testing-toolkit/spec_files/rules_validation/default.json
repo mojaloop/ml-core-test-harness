@@ -1,1 +1,164 @@
-[]
+[
+  {
+    "ruleId": 1,
+    "priority": 1,
+    "description": "Generic Error for POST /fxQuotes",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "502",
+          "path": "conversionTerms.extensionList.extension[0].key"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxQuotes"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxQuotes/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "body": {
+          "errorInformation": {
+            "errorCode": "5001",
+            "errorDescription": "Timeout"
+          }
+        }
+      },
+      "type": "MOCK_ERROR_CALLBACK"
+    },
+    "type": "validation",
+    "version": 1
+  },
+  {
+    "ruleId": 2,
+    "priority": 1,
+    "description": "Generic Error for POST /fxTransfers",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "numericEqual",
+          "value": "1001",
+          "path": "sourceAmount.amount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxTransfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxTransfers/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "body": {
+          "errorInformation": {
+            "errorCode": "1001",
+            "errorDescription": "Generic Error"
+          }
+        }
+      },
+      "type": "MOCK_ERROR_CALLBACK"
+    },
+    "type": "validation",
+    "version": 1
+  },
+  {
+    "ruleId": 3,
+    "priority": 1,
+    "description": "Generic Error for POST /transfers",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "numericEqual",
+          "value": "1001",
+          "path": "amount.amount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}/error",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "body": {
+          "errorInformation": {
+            "errorCode": "1001",
+            "errorDescription": "Generic Error"
+          }
+        }
+      },
+      "type": "MOCK_ERROR_CALLBACK"
+    },
+    "type": "validation",
+    "version": 1
+  }
+]

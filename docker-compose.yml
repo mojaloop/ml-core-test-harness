@@ -441,11 +441,12 @@ services:
     ports:
       - "9660:6060"
     environment:
-      - API_BASE_URL=http://localhost:9550
+      - API_BASE_URL=http://10.10.100.140:9550
       - AUTH_ENABLED=FALSE
     command:
       - sh
       - /usr/share/nginx/start.sh
+    user: root
     networks:
       - mojaloop-net
     profiles:

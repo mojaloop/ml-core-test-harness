@@ -1169,15 +1169,14 @@
     }
   },
   {
-    "ruleId": 23,
+    "ruleId": 35,
     "priority": 1,
-    "description": "post /fxQuotes",
+    "description": "Timeout for POST /fxTransfers",
     "apiVersion": {
       "minorVersion": 0,
       "majorVersion": 2,
       "type": "fspiop",
       "asynchronous": true,
-      "additionalApi": true,
       "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
       "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
       "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
@@ -1187,9 +1186,15 @@
     "conditions": {
       "all": [
         {
+          "fact": "body",
+          "operator": "numericEqual",
+          "value": "1000",
+          "path": "sourceAmount.amount"
+        },
+        {
           "fact": "operationPath",
           "operator": "equal",
-          "value": "/fxQuotes"
+          "value": "/fxTransfers"
         },
         {
           "fact": "method",
@@ -1200,53 +1205,18 @@
     },
     "event": {
       "method": "put",
-      "path": "/fxQuotes/{ID}",
+      "path": "/fxTransfers/{ID}",
       "params": {
         "scripts": {
-          "exec": [
-            "const fxQuoteBody = JSON.parse(request.body)",
-            "environment.sourceAmountValue = fxQuoteBody.conversionTerms.sourceAmount.amount || 500",
-            "environment.targetAmountValue = fxQuoteBody.conversionTerms.targetAmount.amount || 500"
-          ],
-          "scriptingEngine": "javascript"
-        },
-        "headers": {
-          "Content-Type": "{$request.headers.content-type}",
-          "Date": "{$request.headers.date}",
-          "FSPIOP-Source": "{$request.headers.fspiop-destination}"
+          "scriptingEngine": "postman"
         },
         "body": {
-          "condition": "f5sqb7tBTWPd5Y8BDFdMm9BJR_MNI4isf8p8n4D5pHA",
-          "conversionTerms": {
-            "conversionId": "{$request.body.conversionTerms.conversionId}",
-            "determiningTransferId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
-            "initiatingFsp": "PayerFSP",
-            "counterPartyFsp": "{$request.body.conversionTerms.counterPartyFsp}",
-            "amountType": "SEND",
-            "sourceAmount": {
-              "currency": "{$request.body.conversionTerms.sourceAmount.currency}",
-              "amount": "{$environment.sourceAmountValue}"
-            },
-            "targetAmount": {
-              "currency": "{$request.body.conversionTerms.targetAmount.currency}",
-              "amount": "{$environment.targetAmountValue}"
-            },
-            "charges": [
-              {
-                "chargeType": "string",
-                "sourceAmount": {
-                  "currency": "{$request.body.conversionTerms.sourceAmount.currency}",
-                  "amount": "33"
-                },
-                "targetAmount": {
-                  "currency": "{$request.body.conversionTerms.targetAmount.currency}",
-                  "amount": "6000"
-                }
-              }
-            ],
-            "expiration": "2023-12-25T14:17:09.663+01:00"
-          }
-        }
+          "fulfilment": "WLctttbu2HvTsa1XWvUoGRcQozHsqeu9Ahl2JW9Bsu8",
+          "completedTimestamp": "{$environment.completedTimestamp}",
+          "conversionState": "RESERVED",
+          "extensionList": null
+        },
+        "delay": 300000
       },
       "type": "MOCK_CALLBACK"
     },
@@ -1256,7 +1226,7 @@
   {
     "ruleId": 25,
     "priority": 1,
-    "description": "post /fxTransfers",
+    "description": "Success response for POST /fxTransfers",
     "apiVersion": {
       "minorVersion": 0,
       "majorVersion": 2,
@@ -1356,6 +1326,140 @@
           "providers": [
             "FDH_FX"
           ]
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 34,
+    "priority": 1,
+    "description": "Rule for fxQuotes timeout",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "FXP_QUOTES_TIMEOUT",
+          "path": "conversionTerms.extensionList.extension[0].value"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxQuotes"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxQuotes/{ID}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "delay": 300000
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 23,
+    "priority": 1,
+    "description": "Default Rule for FXP Quotes ",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxQuotes"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxQuotes/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "const fxQuoteBody = JSON.parse(request.body)",
+            "environment.sourceAmountValue = fxQuoteBody.conversionTerms.sourceAmount.amount || 500",
+            "environment.targetAmountValue = fxQuoteBody.conversionTerms.targetAmount.amount || 500"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}"
+        },
+        "body": {
+          "condition": "f5sqb7tBTWPd5Y8BDFdMm9BJR_MNI4isf8p8n4D5pHA",
+          "conversionTerms": {
+            "conversionId": "{$request.body.conversionTerms.conversionId}",
+            "determiningTransferId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+            "initiatingFsp": "PayerFSP",
+            "counterPartyFsp": "{$request.body.conversionTerms.counterPartyFsp}",
+            "amountType": "SEND",
+            "sourceAmount": {
+              "currency": "{$request.body.conversionTerms.sourceAmount.currency}",
+              "amount": "{$environment.sourceAmountValue}"
+            },
+            "targetAmount": {
+              "currency": "{$request.body.conversionTerms.targetAmount.currency}",
+              "amount": "{$environment.targetAmountValue}"
+            },
+            "charges": [
+              {
+                "chargeType": "string",
+                "sourceAmount": {
+                  "currency": "{$request.body.conversionTerms.sourceAmount.currency}",
+                  "amount": "33"
+                },
+                "targetAmount": {
+                  "currency": "{$request.body.conversionTerms.targetAmount.currency}",
+                  "amount": "6000"
+                }
+              }
+            ],
+            "expiration": "2023-12-25T14:17:09.663+01:00"
+          }
         }
       },
       "type": "MOCK_CALLBACK"
