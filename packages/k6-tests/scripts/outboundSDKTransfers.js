@@ -46,7 +46,7 @@ export function postTransfers() {
       "homeTransactionId": "string",
       "from": {
         "type": "CONSUMER",
-        "idType": "MSISDN",
+        "idType": "ACCOUNT_ID",
         "idValue": "payerFspId",
         "displayName": "test payer",
         "firstName": "Henrik",
@@ -55,7 +55,7 @@ export function postTransfers() {
       },
       "to": {
         "type": "CONSUMER",
-        "idType": "MSISDN",
+        "idType": "ACCOUNT_ID",
         "idValue": "payeeFspId"
       },
       "amountType": "SEND",

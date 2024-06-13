@@ -1,0 +1,31 @@
+{
+  "scenarios": {
+    "fspiopTransfers": {
+      "executor": "ramping-arrival-rate",
+      "exec": "fspiopFXTransfersScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "preAllocatedVUs": 600,
+      "timeUnit": "1s",
+      "startRate": 10,
+      "stages": [
+        { "target": 400, "duration": "90s" },
+        { "target": 400, "duration": "3m" },
+        { "target": 450, "duration": "90s" },
+        { "target": 450, "duration": "3m" },
+        { "target": 500, "duration": "90s" },
+        { "target": 500, "duration": "3m" },
+        { "target": 550, "duration": "90s" },
+        { "target": 550, "duration": "3m" },
+        { "target": 600, "duration": "90s" },
+        { "target": 600, "duration": "3m" }
+      ]
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}

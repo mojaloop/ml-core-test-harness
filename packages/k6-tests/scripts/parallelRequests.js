@@ -86,7 +86,7 @@ export function parallelRequests() {
       "transactionId": transactionId,
       "payer": {
         "partyIdInfo": {
-          "partyIdType": "MSISDN",
+          "partyIdType": "ACCOUNT_ID",
           "partyIdentifier": `${payerFsp['partyId']}`,
           "fspId": payerFspId,
           "extensionList": {
@@ -113,7 +113,7 @@ export function parallelRequests() {
       },
       "payee": {
         "partyIdInfo": {
-          "partyIdType": "MSISDN",
+          "partyIdType": "ACCOUNT_ID",
           "partyIdentifier": `${payeeFsp['partyId']}`,
           "fspId": payeeFspId,
           "extensionList": {
@@ -196,7 +196,7 @@ export function parallelRequests() {
     }
 
     const res = http.batch([
-      ['GET', `${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}/parties/MSISDN/${payeeId}`, null, partiesParams],
+      ['GET', `${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}/parties/ACCOUNT_ID/${payeeId}`, null, partiesParams],
       ['POST', `${__ENV.K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL}/quotes`, JSON.stringify(quotesBody), quotesParams],
       ['POST', `${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL}/transfers`, JSON.stringify(transfersBody), transfersParams]
     ])

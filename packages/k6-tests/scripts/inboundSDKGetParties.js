@@ -36,7 +36,7 @@ export function getParties() {
     const wsUrl = payerFsp['wsUrl'];
     const traceParent = Trace();
     const traceId = traceParent.traceId;
-    const wsChannel = `${traceParent.traceId}/PUT/parties/MSISDN/${payeeId}`;
+    const wsChannel = `${traceParent.traceId}/PUT/parties/ACCOUNT_ID/${payeeId}`;
     const wsURL = `${wsUrl}/${wsChannel}`
     const ws = new WebSocket(wsURL);
 
@@ -84,7 +84,7 @@ export function getParties() {
       };
 
       // Lets send the GET /parties request to the SDK
-      const res = http.get(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/parties/MSISDN/${payeeId}`, params);
+      const res = http.get(`${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL}/parties/ACCOUNT_ID/${payeeId}`, params);
       check(res, { 'SDK_GET_PARTIES_RESPONSE_IS_202' : (r) => r.status == 202 });
 
       wsTimeoutId = setTimeout(() => {

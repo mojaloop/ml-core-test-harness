@@ -277,6 +277,43 @@
           }
         },
         {
+          "id": 7.1,
+          "meta": {
+            "info": "Add callback - FX QUOTES PUT"
+          },
+          "description": "Add callback - FX QUOTES PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP1_ID}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.PERF_FSP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
+            "value": "{$inputs.PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
           "id": 8,
           "meta": {
             "info": "Add callback - TRANSFERS POST"
@@ -300,6 +337,43 @@
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
             "value": "{$inputs.PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL}/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 8.1,
+          "meta": {
+            "info": "Add callback - FX TRANSFERS POST"
+          },
+          "description": "Add callback - FX TRANSFERS POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP1_ID}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.PERF_FSP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_POST",
+            "value": "{$inputs.PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers"
           },
           "tests": {
             "assertions": [
@@ -351,6 +425,43 @@
           }
         },
         {
+          "id": 9.1,
+          "meta": {
+            "info": "Add callback - FX TRANSFERS PUT"
+          },
+          "description": "Add callback - FX TRANSFERS PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP1_ID}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.PERF_FSP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
+            "value": "{$inputs.PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
           "id": 10,
           "meta": {
             "info": "Add callback - TRANSFERS ERROR"
@@ -374,6 +485,43 @@
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
             "value": "{$inputs.PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL}/transfers/{{transferId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 10.1,
+          "meta": {
+            "info": "Add callback - FX TRANSFERS ERROR"
+          },
+          "description": "Add callback - FX TRANSFERS ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP1_ID}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.PERF_FSP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_ERROR",
+            "value": "{$inputs.PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -1509,11 +1657,11 @@
             "asynchronous": true
           },
           "operationPath": "/participants/{Type}/{ID}",
-          "path": "/participants/{$inputs.toIdType}/{$inputs.PERF_FSP1_MSISDN}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.PERF_FSP1_ADDRESS}",
           "method": "post",
           "params": {
             "Type": "{$inputs.toIdType}",
-            "ID": "{$inputs.PERF_FSP1_MSISDN}"
+            "ID": "{$inputs.PERF_FSP1_ADDRESS}"
           },
           "headers": {
             "FSPIOP-Source": "{$inputs.PERF_FSP1_ID}",

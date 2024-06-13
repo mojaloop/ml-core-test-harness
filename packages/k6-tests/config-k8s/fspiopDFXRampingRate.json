@@ -1,0 +1,75 @@
+{
+  "scenarios": {
+    "fspiopDiscovery": {
+      "executor": "ramping-arrival-rate",
+      "exec": "fspiopDiscoveryScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "preAllocatedVUs": 100,
+      "timeUnit": "1s",
+      "startRate": 10,
+      "stages": [
+        { "target": 300, "duration": "90s" },
+        { "target": 300, "duration": "3m" },
+        { "target": 320, "duration": "90s" },
+        { "target": 320, "duration": "3m" },
+        { "target": 340, "duration": "90s" },
+        { "target": 340, "duration": "3m" },
+        { "target": 360, "duration": "90s" },
+        { "target": 360, "duration": "3m" },
+        { "target": 400, "duration": "90s" },
+        { "target": 400, "duration": "3m" }
+      ]
+    },
+    "fspiopQuotes": {
+      "executor": "ramping-arrival-rate",
+      "exec": "fspiopQuotesFXScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "preAllocatedVUs": 250,
+      "timeUnit": "1s",
+      "startRate": 10,
+      "stages": [
+        { "target": 300, "duration": "90s" },
+        { "target": 300, "duration": "3m" },
+        { "target": 320, "duration": "90s" },
+        { "target": 320, "duration": "3m" },
+        { "target": 340, "duration": "90s" },
+        { "target": 340, "duration": "3m" },
+        { "target": 360, "duration": "90s" },
+        { "target": 360, "duration": "3m" },
+        { "target": 400, "duration": "90s" },
+        { "target": 400, "duration": "3m" }
+      ]
+    },
+    "fspiopTransfers": {
+      "executor": "ramping-arrival-rate",
+      "exec": "fspiopTransfersFXScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "preAllocatedVUs": 400,
+      "timeUnit": "1s",
+      "startRate": 10,
+      "stages": [
+        { "target": 300, "duration": "90s" },
+        { "target": 300, "duration": "3m" },
+        { "target": 320, "duration": "90s" },
+        { "target": 320, "duration": "3m" },
+        { "target": 340, "duration": "90s" },
+        { "target": 340, "duration": "3m" },
+        { "target": 360, "duration": "90s" },
+        { "target": 360, "duration": "3m" },
+        { "target": 400, "duration": "90s" },
+        { "target": 400, "duration": "3m" }
+      ]
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}

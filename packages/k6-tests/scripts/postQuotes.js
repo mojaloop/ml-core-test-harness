@@ -97,14 +97,14 @@ export function postQuotes() {
         "transactionId": transactionId,
         "payer": {
           "partyIdInfo": {
-            "partyIdType": "MSISDN",
+            "partyIdType": "ACCOUNT_ID",
             "partyIdentifier": `${payerFsp['partyId']}`,
             "fspId": payerFspId
           }
         },
         "payee": {
           "partyIdInfo": {
-            "partyIdType": "MSISDN",
+            "partyIdType": "ACCOUNT_ID",
             "partyIdentifier": `${payeeFsp['partyId']}`,
             "fspId": payeeFspId
           }
