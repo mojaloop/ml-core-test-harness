@@ -459,7 +459,7 @@ The following helper scripts are available to allow easier execution of repetiti
 - [perf-test.sh](./perf-test.sh) - run various performance tests
 - [k8s-mojaloop-perf-tuning/patch.sh](./k8s-mojaloop-perf-tuning/patch.sh) - patch k8s cluster to test with different releases and configurations
 
-The easises way to use these scripts is to create bash aliases for them:
+The easiest way to use these scripts is to create bash aliases for them:
 ```sh
 alias p='./k8s-mojaloop-perf-tuning/patch.sh'
 alias t='./perf-test.sh'
