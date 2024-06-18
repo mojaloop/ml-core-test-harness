@@ -10,16 +10,16 @@
       "timeUnit": "1s",
       "startRate": 10,
       "stages": [
+        { "target": 320, "duration": "90s" },
+        { "target": 320, "duration": "3m" },
+        { "target": 340, "duration": "90s" },
+        { "target": 340, "duration": "3m" },
+        { "target": 360, "duration": "90s" },
+        { "target": 360, "duration": "3m" },
+        { "target": 380, "duration": "90s" },
+        { "target": 380, "duration": "3m" },
         { "target": 400, "duration": "90s" },
-        { "target": 400, "duration": "3m" },
-        { "target": 450, "duration": "90s" },
-        { "target": 450, "duration": "3m" },
-        { "target": 500, "duration": "90s" },
-        { "target": 500, "duration": "3m" },
-        { "target": 550, "duration": "90s" },
-        { "target": 550, "duration": "3m" },
-        { "target": 600, "duration": "90s" },
-        { "target": 600, "duration": "3m" }
+        { "target": 400, "duration": "3m" }
       ]
     }
   },

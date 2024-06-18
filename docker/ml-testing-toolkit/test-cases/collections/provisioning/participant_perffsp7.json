@@ -351,43 +351,6 @@
           }
         },
         {
-          "id": 8.1,
-          "meta": {
-            "info": "Add callback - FX TRANSFERS POST"
-          },
-          "description": "Add callback - FX TRANSFERS POST",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP7_ID}/endpoints",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.PERF_FSP7_ID}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "headers": {
-            "Content-Type": "application/json"
-          },
-          "body": {
-            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_POST",
-            "value": "{$inputs.PERF_FSP7_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status code is 201",
-                "exec": [
-                  "expect(response.status).to.equal(201)"
-                ]
-              }
-            ]
-          }
-        },
-        {
           "id": 9,
           "meta": {
             "info": "Add callback - TRANSFERS PUT"
