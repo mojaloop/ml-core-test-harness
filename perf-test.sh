@@ -38,7 +38,7 @@ quotesrate)
 ;;
 fxquotesrate)
     echo "Testing quotes with ramping rates"
-    env K6_SCRIPT_CONFIG_FILE_NAME=fspiopQuotesFXRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
+    env K6_SCRIPT_CONFIG_FILE_NAME=fspiopFXQuotesRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 transfer)
     echo "Testing single transfer"
@@ -62,7 +62,7 @@ transfersrate)
 ;;
 fxtransfersrate)
     echo "Testing FX transfers with ramping rates"
-    env K6_SCRIPT_CONFIG_FILE_NAME=fspiopTransfersRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
+    env K6_SCRIPT_CONFIG_FILE_NAME=fspiopFXTransfersRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 dqtrate)
     echo "Testing account discoveries, quotes and transfers in parallel with constant rates"

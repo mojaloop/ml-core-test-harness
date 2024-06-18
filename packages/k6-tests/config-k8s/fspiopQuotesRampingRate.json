@@ -6,7 +6,7 @@
       "env": {
         "UNIDIRECTIONAL": "false"
       },
-      "preAllocatedVUs": 500,
+      "preAllocatedVUs": 100,
       "timeUnit": "1s",
       "startRate": 10,
       "stages": [

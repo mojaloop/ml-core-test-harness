@@ -62,6 +62,7 @@
     "PERF_FSP6_ADDRESS": "19012345006",
     "PERF_FSP7_ADDRESS": "19012345007",
     "PERF_FSP8_ADDRESS": "19012345008",
+    "PERF_FXP_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffxp:3001/fxp",
     "PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp1:3001/fspiop",
     "PERF_FSP2_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp2:3001/fspiop",
     "PERF_FSP3_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp3:3001/fspiop",

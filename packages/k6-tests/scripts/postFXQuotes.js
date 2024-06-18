@@ -22,17 +22,14 @@ const targetCurrency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_TARGET_CURRENCY
 
 export function postFXQuotes() {
   !exec.instance.iterationsCompleted && log();
-  group("Post Quotes", function () {
+  group("Post FX Quotes", function () {
     let payerFsp
-    let payeeFsp
 
     if (__ENV.UNIDIRECTIONAL === "true" || __ENV.UNIDIRECTIONAL === "TRUE") {
       payerFsp = fspList[0]
-      payeeFsp =  fspList[1]
     } else {
       const selectedFsps = getTwoItemsFromArray(fspList)
       payerFsp = selectedFsps[0]
-      payeeFsp =  selectedFsps[1]
     }
 
     const startTs = Date.now();
@@ -42,7 +39,7 @@ export function postFXQuotes() {
     const conversionId = uuid();
     const transactionId = uuid();
     const payerFspId = payerFsp['fspId'];
-    const payeeFspId = payeeFsp['fspId'];
+    const payeeFspId = 'perffxp';
     const wsUrl = payerFsp['wsUrl'];
     const traceParent = Trace();
     const traceId = traceParent.traceId;
@@ -110,31 +107,6 @@ export function postFXQuotes() {
           "targetAmount": {
             "currency": `${targetCurrency}`
           }
-        },
-        "transactionId": transactionId,
-        "payer": {
-          "partyIdInfo": {
-            "partyIdType": "ACCOUNT_ID",
-            "partyIdentifier": `${payerFsp['partyId']}`,
-            "fspId": payerFspId
-          }
-        },
-        "payee": {
-          "partyIdInfo": {
-            "partyIdType": "ACCOUNT_ID",
-            "partyIdentifier": `${payeeFsp['partyId']}`,
-            "fspId": payeeFspId
-          }
-        },
-        "amountType": "SEND",
-        "amount": {
-          "amount": `${amount}`,
-          "currency": `${currency}`
-        },
-        "transactionType": {
-          "scenario": "TRANSFER",
-          "initiator": "PAYER",
-          "initiatorType": "CONSUMER"
         }
       }
 

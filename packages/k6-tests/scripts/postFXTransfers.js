@@ -27,7 +27,7 @@ const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON
 
 export function postFXTransfers() {
   !exec.instance.iterationsCompleted && log();
-  group("Post Transfers", function () {
+  group("Post FX Transfers", function () {
     let payerFsp
     let payeeFsp
 
@@ -45,7 +45,7 @@ export function postFXTransfers() {
     const commitRequestId = uuid();
     const determiningTransferId = uuid();
     const payerFspId = payerFsp['fspId'];
-    const payeeFspId = payeeFsp['fspId'];
+    const payeeFspId = 'perffxp';
     const wsUrl = payerFsp['wsUrl'];
     const traceParent = Trace();
     const traceId = traceParent.traceId;
@@ -118,10 +118,9 @@ export function postFXTransfers() {
       const res = http.post(`${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL}/fxTransfers`, JSON.stringify(body), params);
       check(res, { 'TRANSFERS_FSPIOP_POST_FX_TRANSFERS_RESPONSE_IS_202' : (r) => r.status == 202 });
 
-      if (res.status != 202) {
+      if (abortOnError && res.status != 202) {
         // Abort the entire k6 test exection runner
         console.error(traceId, `FSPIOP POST /fxTransfers returned status: ${res.status}`);
-        console.log(res)
         ws.close();
         exec.test.abort()
       }
