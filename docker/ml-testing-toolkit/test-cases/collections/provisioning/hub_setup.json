@@ -564,9 +564,9 @@
         {
           "id": 1,
           "meta": {
-            "info": "Register MSISDN Oracle"
+            "info": "Register ACCOUNT_ID Oracle"
           },
-          "description": "Register MSISDN Oracle",
+          "description": "Register ACCOUNT_ID Oracle",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 1,
