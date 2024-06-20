@@ -48,7 +48,7 @@ export function E2E() {
     const traceId = traceParent.traceId;
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
 
-    const wsChannelParties = `${traceParent.traceId}/PUT/parties/MSISDN/${payeeId}`;
+    const wsChannelParties = `${traceParent.traceId}/PUT/parties/ACCOUNT_ID/${payeeId}`;
     const wsURLParties = `${wsUrl}/${wsChannelParties}`
     const wsParties = new WebSocket(wsURLParties, null, {tags: {name: 'e2e parties ws'}});
 
@@ -217,14 +217,14 @@ export function E2E() {
           "transactionId": transactionId,
           "payer": {
             "partyIdInfo": {
-              "partyIdType": "MSISDN",
+              "partyIdType": "ACCOUNT_ID",
               "partyIdentifier": `${payerFsp['partyId']}`,
               "fspId": payerFspId
             }
           },
           "payee": {
             "partyIdInfo": {
-              "partyIdType": "MSISDN",
+              "partyIdType": "ACCOUNT_ID",
               "partyIdentifier": `${payeeFsp['partyId']}`,
               "fspId": payeeFspId
             }
@@ -271,7 +271,7 @@ export function E2E() {
         },
       };
 
-      const res = http.get(`${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}/parties/MSISDN/${payeeId}`, params);
+      const res = http.get(`${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}/parties/ACCOUNT_ID/${payeeId}`, params);
       check(res, { 'ALS_FSPIOP_GET_PARTIES_RESPONSE_IS_202' : (r) => r.status == 202 });
 
       wsTimeoutId = setTimeout(() => {

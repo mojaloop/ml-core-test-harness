@@ -470,17 +470,25 @@ Then use one of the following commands:
 - `t discoveries` - Test account discoveries
 - `t discoveries rate` - Test account discoveries with ramping rates
 - `t quote` - Test single quote
+- `t fx quote` - Test single FX quote
 - `t quotes` - Test quotes
+- `t fx quotes` - Test FX quotes
 - `t quotes rate` - Test quotes with ramping rates
+- `t fx quotes rate` - Test FX quotes with ramping rates
 - `t transfer` - Test single transfer
+- `t fx transfer` - Test single FX transfer
 - `t transfers` - Test transfers
+- `t fx transfers` - Test FX transfers
 - `t transfers rate` - Test transfers with ramping rates
+- `t fx transfers rate` - Test FX transfers with ramping rates
 - `t dqt rate` - Test account discoveries, quotes and transfers in parallel with constant rates
+- `t dfx rate` - Test account discoveries, FX quotes and FX transfers in parallel with constant rates
 - `t e2e` - Test multiple end to end
 - `t e2e single` - Test single end to end
 - `t sim start` - Start the simulators
 - `t sim stop` - Stop the simulators
 - `t sim restart` - Restart the simulators
+- `t sim update` - Update the simulator images
 - `p audit` - Configure direct events to Kafka without going through the sidecar, sending only audit and skipping others
 - `p direct` - Configure direct events to Kafka without going through the sidecar
 - `p disabled` - Configure no events to be produced

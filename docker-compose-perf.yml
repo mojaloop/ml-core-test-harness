@@ -1,8 +1,7 @@
-version: "3.7"
-
 networks:
   mojaloop-net:
     name: mojaloop-net
+    external: true
 
 services:
 
@@ -999,6 +998,38 @@ services:
       retries: 10
       start_period: 40s
       interval: 30s
+
+  sim-perffxp:
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    deploy:
+      mode: replicated
+      replicas: 1
+    env_file:
+      - .env
+      - ./envs/perffxp.env
+      - perf.override.env
+    ports:
+      - "25000:3001"
+    networks:
+      - mojaloop-net
+    environment: {}
+      # - LOG_LEVEL=error
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - simulators
+      - all-services
+      - als-test
+      - 2dfsp
+      - 4dfsp
+      - 8dfsp
 
   sim-perffsp1:
     sysctls:

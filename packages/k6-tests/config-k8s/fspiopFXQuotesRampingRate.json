@@ -2,11 +2,11 @@
   "scenarios": {
     "fspiopQuotes": {
       "executor": "ramping-arrival-rate",
-      "exec": "fspiopQuotesScenarios",
+      "exec": "fspiopFXQuotesScenarios",
       "env": {
         "UNIDIRECTIONAL": "false"
       },
-      "preAllocatedVUs": 100,
+      "preAllocatedVUs": 500,
       "timeUnit": "1s",
       "startRate": 10,
       "stages": [

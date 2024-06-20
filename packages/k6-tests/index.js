@@ -1,8 +1,10 @@
 export { fspiopDiscoveryScenarios } from './scenarios/fspiopDiscovery.js';
 export { fspiopDiscoveryNoCallbackScenarios } from './scenarios/fspiopDiscoveryNoCallbackConstantRate.js';
 export { fspiopTransfersScenarios } from './scenarios/fspiopTransfers.js';
+export { fspiopFXTransfersScenarios } from './scenarios/fspiopFXTransfers.js';
 export { fspiopTransfersNoCallbackScenarios } from './scenarios/fspiopTransfersNoCallback.js';
 export { fspiopQuotesScenarios } from './scenarios/fspiopQuotes.js';
+export { fspiopFXQuotesScenarios } from './scenarios/fspiopFXQuotes.js';
 export { fspiopQuotesNoCallbackScenarios } from './scenarios/fspiopQuotesNoCallback.js';
 export { fspiopParallelScenarios } from './scenarios/fspiopParallel.js';
 export { fspiopQuotesPersonalInfoExtensionsScenarios } from './scenarios/fspiopQuotesPersonalInfoExtensions.js';
