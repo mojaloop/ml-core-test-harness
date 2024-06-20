@@ -1,4 +1,8 @@
 module.exports = {
+  "HUB_PARTICIPANT": {
+    "ID": 1,
+    "NAME": "Hub"
+  },
   "HOSTNAME": "http://central-ledger",
   "DATABASE": {
     "HOST": "mysql"
