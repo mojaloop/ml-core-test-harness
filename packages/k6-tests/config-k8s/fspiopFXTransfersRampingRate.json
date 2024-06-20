@@ -19,7 +19,8 @@
         { "target": 380, "duration": "90s" },
         { "target": 380, "duration": "3m" },
         { "target": 400, "duration": "90s" },
-        { "target": 400, "duration": "3m" }
+        { "target": 400, "duration": "3m" },
+        { "target": 100, "duration": "90s" }
       ]
     }
   },
