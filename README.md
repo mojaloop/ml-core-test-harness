@@ -62,7 +62,7 @@ _Note: This doesn't wait for any dependent services. You should make sure that a
 ## Running P2P transfer using testing toolkit web interface
 
 - Open the URL `http://localhost:9660` and go to `Test Runner`
-- Go to on `Collection Manager` and click on the button `Import Folder`
+- Go to `Collection Manager` and click on the button `Import Folder`
 - Select the folder `docker/ml-testing-toolkit/test-cases/collections/tests` and import
 - Select `p2p.json` and click on the masked area on the right side of the screen
 - Collection manager closes and click on `Run` button at the top right corner
