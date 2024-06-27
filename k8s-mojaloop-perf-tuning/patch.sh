@@ -35,17 +35,17 @@ disabled)
 ;;
 schema)
     echo "schema creation"
-    export LEDGER_TAG=v17.6.2
-    kubectl patch deployment --kubeconfig k8s.yaml --namespace mojaloop moja-centralledger-service                  -p "$(envsubst <$DIR/ledger-service.yaml)"
+    export LEDGER_TAG=v17.7.0-snapshot.14
+    kubectl patch deployment --namespace mojaloop moja-centralledger-service                  -p "$(envsubst <$DIR/ledger-service.yaml)"
     sleep 10 # wait for schema creation
-    kubectl scale            --kubeconfig k8s.yaml --namespace mojaloop deployment/moja-centralledger-service       --replicas=8
+    kubectl scale            --namespace mojaloop deployment/moja-centralledger-service       --replicas=8
     exit 0
 ;;
 init)
     echo "installing RedPanda"
-    kubectl apply --kubeconfig k8s.yaml -f "$DIR/redpanda-app.yaml"
+    kubectl apply -f "$DIR/redpanda-app.yaml"
     sleep 10
-    kubectl apply --kubeconfig k8s.yaml -f "$DIR/redpanda-service.yaml"
+    kubectl apply -f "$DIR/redpanda-service.yaml"
     exit 0
 ;;
 *)

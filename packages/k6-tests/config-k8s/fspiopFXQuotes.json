@@ -1,6 +1,6 @@
 {
   "scenarios": {
-    "fspiopQuotes": {
+    "fspiopFXQuotes": {
       "executor": "ramping-vus",
       "exec": "fspiopFXQuotesScenarios",
       "env": {
