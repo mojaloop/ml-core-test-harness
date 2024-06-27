@@ -1,6 +1,6 @@
 {
   "scenarios": {
-    "fspiopQuotes": {
+    "fspiopFXQuotes": {
       "executor": "ramping-arrival-rate",
       "exec": "fspiopFXQuotesScenarios",
       "env": {

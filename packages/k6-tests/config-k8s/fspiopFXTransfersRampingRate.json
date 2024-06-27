@@ -1,6 +1,6 @@
 {
   "scenarios": {
-    "fspiopTransfers": {
+    "fspiopFXTransfers": {
       "executor": "ramping-arrival-rate",
       "exec": "fspiopFXTransfersScenarios",
       "env": {

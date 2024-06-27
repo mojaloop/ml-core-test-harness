@@ -37,7 +37,7 @@ quotesrate)
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopQuotesRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 fxquotesrate)
-    echo "Testing quotes with ramping rates"
+    echo "Testing FX quotes with ramping rates"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopFXQuotesRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 transfer)
@@ -65,11 +65,11 @@ fxtransfersrate)
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopFXTransfersRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 dqtrate)
-    echo "Testing account discoveries, quotes and transfers in parallel with constant rates"
+    echo "Testing account discoveries, quotes and transfers in parallel with ramping rates"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDQTRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 dfxrate)
-    echo "Testing account discoveries, FX quotes and FX transfers in parallel with constant rates"
+    echo "Testing account discoveries, FX quotes and FX transfers in parallel with ramping rates"
     env K6_SCRIPT_CONFIG_FILE_NAME=fspiopDFXRampingRate.json docker compose --project-name load -f docker-compose-load.yml up -d
 ;;
 e2e)
@@ -89,7 +89,7 @@ simstop)
     docker compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile oracle down -v
 ;;
 simrestart)
-    echo "Restartung the simulators"
+    echo "Restarting the simulators"
     docker compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile oracle down -v
     docker compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-remote-k8s --profile oracle up -d
 ;;
@@ -99,19 +99,29 @@ simupdate)
 ;;
 *)
     echo "Usage: "
-    echo "   $0 discovery"
-    echo "   $0 discoveries"
-    echo "   $0 discoveries rate"
-    echo "   $0 quote"
-    echo "   $0 quotes"
-    echo "   $0 transfer"
-    echo "   $0 transfers"
-    echo "   $0 dqt rate"
-    echo "   $0 e2e"
-    echo "   $0 e2e single"
-    echo "   $0 sim start"
-    echo "   $0 sim stop"
-    echo "   $0 sim restart"
+    echo "   $0 discovery         - Test single account discovery"
+    echo "   $0 discoveries       - Test account discoveries"
+    echo "   $0 discoveries rate  - Test account discoveries with ramping rates"
+    echo "   $0 quote             - Test single quote"
+    echo "   $0 quotes            - Test quotes"
+    echo "   $0 quotes rate       - Test quotes with ramping rates"
+    echo "   $0 transfer          - Test single transfer"
+    echo "   $0 transfers         - Test transfers"
+    echo "   $0 transfers rate    - Test transfers with ramping rates"
+    echo "   $0 fx quote          - Test single FX quote"
+    echo "   $0 fx quotes         - Test FX quotes"
+    echo "   $0 fx quotes rate    - Test FX quotes with ramping rates"
+    echo "   $0 fx transfer       - Test single FX transfer"
+    echo "   $0 fx transfers      - Test FX transfers"
+    echo "   $0 fx transfersrate  - Test FX transfers with ramping rates"
+    echo "   $0 dqtrate           - Test account discoveries, quotes and transfers in parallel with ramping rates"
+    echo "   $0 dfxrate           - Test account discoveries, FX quotes and FX transfers in parallel with ramping rates"
+    echo "   $0 e2e               - Test multiple end to end"
+    echo "   $0 e2e single        - Test single end to end"
+    echo "   $0 sim start         - Star the simulators"
+    echo "   $0 sim stop          - Stop the simulators"
+    echo "   $0 sim restart       - Restart the simulators"
+    echo "   $0 sim update        - Update the simulators"
     exit 1
 ;;
 esac
