@@ -346,7 +346,7 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --save-report true --report-format html --report-target file://reports/ttk-provisioning-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning-one -e environments/default-env.json --save-report true --report-format html --report-target file://reports/ttk-provisioning-report.html"
     user: root
     profiles:
       - ttk-provisioning
