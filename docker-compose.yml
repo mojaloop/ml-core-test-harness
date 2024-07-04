@@ -41,6 +41,7 @@ services:
       - discovery
       - agreement
       - all-services
+      - simple
 
   objstore:
     image: mongo:${DEP_MONGO_VERSION}
@@ -61,6 +62,7 @@ services:
       - discovery
       - agreement
       - all-services
+      - simple
 
   kafka-provisioning:
     container_name: kafka-provisioning
@@ -78,6 +80,7 @@ services:
       - discovery
       - agreement
       - all-services
+      - simple
 
   kafka:
     networks:
@@ -113,6 +116,7 @@ services:
       - discovery
       - agreement
       - all-services
+      - simple
 
   mysql:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
@@ -141,6 +145,7 @@ services:
       - discovery
       - agreement
       - all-services
+      - simple
 
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
@@ -167,6 +172,7 @@ services:
       - quoting-service
       - agreement
       - all-services
+      - simple
 
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
@@ -197,6 +203,7 @@ services:
       - ml-api-adapter
       - transfer
       - all-services
+      - simple
 
   simulator:
     image: mojaloop/simulator:${TEST_SIMULATOR_VERSION}
@@ -221,6 +228,7 @@ services:
       - simulator
       - discovery
       - all-services
+      - simple
 
   account-lookup-service:
     image: mojaloop/account-lookup-service:${ACCOUNT_LOOKUP_SERVICE_VERSION}
@@ -256,6 +264,7 @@ services:
       - account-lookup-service
       - discovery
       - all-services
+      - simple
 
   mysql-als:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
@@ -281,6 +290,7 @@ services:
       - account-lookup-service
       - discovery
       - all-services
+      - simple
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
@@ -307,6 +317,7 @@ services:
     profiles:
       - testing-toolkit
       - all-services
+      - simple
 
   mojaloop-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:${TEST_TTK_UI_VERSION}
@@ -323,6 +334,7 @@ services:
     profiles:
       - testing-toolkit
       - all-services
+      - simple
 
   ttk-provisioning:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
@@ -346,10 +358,11 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --save-report true --report-format html --report-target file://reports/ttk-provisioning-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning-one -e environments/default-env-one.json --save-report true --report-format html --report-target file://reports/ttk-provisioning-report.html"
     user: root
     profiles:
       - ttk-provisioning
+      - simple
 
   ttk-tests:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
@@ -379,6 +392,7 @@ services:
     user: root
     profiles:
       - ttk-tests
+      - simple
 
   ## Debug utilities
   kafka-debug-ui:
