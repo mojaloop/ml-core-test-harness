@@ -163,7 +163,7 @@ services:
     volumes:
       - ./docker/config-modifier:/opt/app/config-modifier
     healthcheck:
-      test: wget -q http://localhost:3002/health -O /dev/null || exit 1
+      test: wget -q http://0.0.0.0:3002/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
@@ -220,7 +220,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: wget -q http://localhost:8444/health -O /dev/null || exit 1
+      test: wget -q http://0.0.0.0:8444/health -O /dev/null || exit 1
       timeout: 20s
       retries: 10
       interval: 30s
