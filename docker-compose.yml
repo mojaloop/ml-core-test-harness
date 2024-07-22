@@ -12,7 +12,8 @@ services:
     container_name: central-ledger
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
     # ports:
-    #   - "3001:3001"
+      # - "3001:3001"
+      # - "9229:9229"
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
@@ -48,6 +49,7 @@ services:
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --positionbatch"
     # ports:
     #   - "3001:3001"
+    # - "29229:9229"
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
@@ -408,7 +410,6 @@ services:
     profiles:
       - all-services
       - fx
-
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
