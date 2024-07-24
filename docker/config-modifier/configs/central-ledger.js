@@ -17,8 +17,11 @@ module.exports = {
   },
   "PROXY_CACHE": {
     "enabled": true,
+    "type": "redis",
     "proxyConfig": {
-      "host": "redis",
+      "cluster": [
+        { "host": "redis-node-0", "port": 6379 }
+      ]
     }
   },
   "KAFKA": {

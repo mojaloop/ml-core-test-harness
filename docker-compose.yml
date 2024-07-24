@@ -4,6 +4,20 @@ networks:
   mojaloop-net:
     name: mojaloop-net
 
+x-redis-node: &REDIS_NODE
+  image: docker.io/bitnami/redis-cluster:6.2.14
+  environment: &REDIS_ENVS
+    ALLOW_EMPTY_PASSWORD: yes
+    REDIS_NODES: redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
+  healthcheck:
+    test: [ "CMD", "redis-cli", "ping" ]
+    timeout: 2s
+  networks:
+    - mojaloop-net
+  profiles:
+    - all-services
+    - fx
+
 services:
 
   ## Switch
@@ -398,6 +412,7 @@ services:
       - all-services
       - fx-sdk
 
+  ##  todo: clarify if standalone redis is needed for another services
   redis:
     image: "redis:6.2.4-alpine"
     container_name: redis
@@ -408,6 +423,32 @@ services:
     profiles:
       - all-services
       - fx
+
+  redis-node-0:
+    <<: *REDIS_NODE
+    environment:
+      <<: *REDIS_ENVS
+      REDIS_CLUSTER_CREATOR: yes
+    depends_on:
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+    ports:
+      - "6379:6379"
+
+  redis-node-1:
+    <<: *REDIS_NODE
+  redis-node-2:
+    <<: *REDIS_NODE
+  redis-node-3:
+    <<: *REDIS_NODE
+  redis-node-4:
+    <<: *REDIS_NODE
+  redis-node-5:
+    <<: *REDIS_NODE
+
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
