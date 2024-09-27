@@ -11,8 +11,8 @@ services:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
     container_name: central-ledger
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
-    # ports:
-    #   - "3001:3001"
+    ports:
+       - "3001:3001"
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
@@ -291,6 +291,58 @@ services:
       - discovery
       - all-services
       - simple
+
+  reporting-hub-bop-positions-ui:
+    container_name: reporting-hub-bop-positions-ui
+    image: mojaloop/reporting-hub-bop-positions-ui
+    build:
+      context: .
+      cache_from:
+        - mojaloop/reporting-hub-bop-positions-ui
+    environment:
+      - CENTRAL_LEDGER_ENDPOINT=http://localhost:3001
+    ports:
+      - "8084:8084"
+    networks:
+      - mojaloop-net
+    healthcheck:
+      test: wget -q http://172.17.0.1:8084 -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    profiles:
+      - simple
+
+  reporting-hub-bop-shell:
+    profiles: ["shell","simple"]
+    container_name: reporting-hub-bop-shell
+    image: mojaloop/reporting-hub-bop-shell
+    build:
+      context: .
+      cache_from:
+        - mojaloop/reporting-hub-bop-shell
+    environment:
+      - LOGIN_URL=http://127.0.0.1:4455/.ory/kratos/public/self-service/login
+      - LOGOUT_URL=http://127.0.0.1:4455/.ory/kratos/public/self-service/logout/browser
+      - AUTH_TOKEN_URL=http://127.0.0.1:4455/.ory/kratos/public/sessions/whoami
+      - AUTH_ENABLED=false
+      - AUTH_API_BASE_URL=/
+      - AUTH_MOCK_API=false
+      - REMOTE_API_BASE_URL=/
+      - REMOTE_MOCK_API=false
+      - REMOTE_1_URL=http://localhost:8081
+      - REMOTE_2_URL=http://localhost:8082
+      - REMOTE_3_URL=http://localhost:8083
+      - REMOTE_4_URL=http://localhost:8084
+    ports:
+      - "8080:8080"
+    networks:
+      - mojaloop-net
+    healthcheck:
+      test: wget -q http://172.17.0.1:8080 -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
