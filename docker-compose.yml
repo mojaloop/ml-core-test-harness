@@ -8,7 +8,9 @@ services:
 
   ## Switch
   central-ledger:
-    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+#    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    build:
+      context: ../central-ledger
     container_name: central-ledger
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
     ports:
@@ -294,9 +296,9 @@ services:
 
   reporting-hub-bop-positions-ui:
     container_name: reporting-hub-bop-positions-ui
-    image: mojaloop/reporting-hub-bop-positions-ui
+#    image: mojaloop/reporting-hub-bop-positions-ui
     build:
-      context: .
+      context: ../reporting-hub-bop-positions-ui
       cache_from:
         - mojaloop/reporting-hub-bop-positions-ui
     environment:
