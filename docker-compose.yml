@@ -412,7 +412,6 @@ services:
       - all-services
       - fx-sdk
 
-  ##  todo: clarify if standalone redis is needed for another services
   redis:
     image: "redis:6.2.4-alpine"
     container_name: redis
@@ -436,7 +435,7 @@ services:
       - redis-node-4
       - redis-node-5
     ports:
-      - "6379:6379"
+      - "16379:6379"
 
   redis-node-1:
     <<: *REDIS_NODE

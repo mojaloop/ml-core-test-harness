@@ -17,10 +17,10 @@ module.exports = {
   },
   "PROXY_CACHE": {
     "enabled": true,
-    "type": "redis",
+    "type": "redis-cluster",
     "proxyConfig": {
       "cluster": [
-        { "host": "redis-node-0", "port": 6379 }
+        { "host": "redis-node-0", "port": 16379 }
       ]
     }
   },
