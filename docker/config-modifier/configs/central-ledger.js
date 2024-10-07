@@ -20,7 +20,7 @@ module.exports = {
     "type": "redis-cluster",
     "proxyConfig": {
       "cluster": [
-        { "host": "redis-node-0", "port": 16379 }
+        { "host": "redis-node-0", "port": 6379 }
       ]
     }
   },
