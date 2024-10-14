@@ -37,6 +37,10 @@ topics=(
   "topic-bulkquotes-put"
   "topic-bulkquotes-get"
   "topic-transfer-position-batch"
+
+  "topic-event-audit"
+  "topic-event-log"
+  "topic-event-trace"
 )
 
 # Loop through the topics and create them using kafka-topics.sh
