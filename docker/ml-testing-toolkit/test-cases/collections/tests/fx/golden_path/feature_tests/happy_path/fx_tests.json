@@ -150,7 +150,7 @@
           "path": "/services/FXP",
           "method": "get",
           "url": "{$inputs.HOST_FXP_SERVICES}",
-          "disabled": false,
+          "disabled": true,
           "headers": {
             "Content-Type": "{$inputs.contentTypeServicesFxp}",
             "Date": "{$function.generic.curDate}",

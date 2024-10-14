@@ -17,18 +17,26 @@ module.exports = {
   },
   "PROXY_CACHE": {
     "enabled": true,
+    "type": "redis",
     "proxyConfig": {
+      // We need to unset cluster as there is an issue in proxy lib. The above type parameter is not being considered.
+      "cluster": undefined,
       "host": "redis",
+      "port": 6379,
     }
   },
   "KAFKA": {
     EVENT_TYPE_ACTION_TOPIC_MAP: {
       POSITION:{
-        PREPARE: "topic-transfer-position-batch",
-        BULK_PREPARE: null,
-        COMMIT: "topic-transfer-position-batch",
-        BULK_COMMIT: null,
-        RESERVE: "topic-transfer-position-batch"
+        "PREPARE": "topic-transfer-position-batch",
+        "FX_PREPARE": "topic-transfer-position-batch",
+        "COMMIT": "topic-transfer-position-batch",
+        "RESERVE": "topic-transfer-position-batch",
+        "FX_RESERVE": "topic-transfer-position-batch",
+        "TIMEOUT_RESERVED": "topic-transfer-position-batch",
+        "FX_TIMEOUT_RESERVED": "topic-transfer-position-batch",
+        "ABORT": "topic-transfer-position-batch",
+        "FX_ABORT": "topic-transfer-position-batch"
       }
     },
     "CONSUMER": {

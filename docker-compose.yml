@@ -367,7 +367,6 @@ services:
     networks:
       - mojaloop-net
     profiles:
-      - all-services
       - fx-sdk
 
   fx-payerdfsp-sdk:
@@ -381,7 +380,6 @@ services:
     networks:
       - mojaloop-net
     profiles:
-      - all-services
       - fx-sdk
 
   fx-payeedfsp-sdk:
@@ -395,7 +393,6 @@ services:
     networks:
       - mojaloop-net
     profiles:
-      - all-services
       - fx-sdk
 
   redis:

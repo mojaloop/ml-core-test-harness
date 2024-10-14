@@ -267,7 +267,7 @@ services:
       - transfers-test
 
   central-handler-position-batch:
-    image: mojaloop/central-ledger:${CENTRAL_LEDGER_BATCH_VERSION}
+    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
     env_file:
       - .env
       - perf.env
