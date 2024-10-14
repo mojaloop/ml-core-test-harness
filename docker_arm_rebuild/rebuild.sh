@@ -2,7 +2,7 @@
 
 # Load the .env file into the environment
 set -a
-source .env
+source ../.env
 set +a
 
 # Function to clone repo, checkout specific tag, and build docker image
@@ -32,7 +32,7 @@ build_docker_image_from_repo() {
 }
 
 # Extract all images from docker-compose.yaml that reference environment variables
-IMAGES=$(grep -o 'image:.*${.*}' docker-compose.yml | sed -E 's/image: *//')
+IMAGES=$(grep -o 'image:.*${.*}' ../docker-compose.yml | sed -E 's/image: *//')
 
 # 2. Create a temporary file to track unique image repo + tag combinations
 touch processed_images.txt
@@ -56,27 +56,31 @@ do
   RESOLVED_IMAGE="$BASE_IMAGE:${!VAR_NAME}"
 
   # Check if the image starts with "mojaloop/"
-  if [[ $RESOLVED_IMAGE == mojaloop/* ]]; then
-    # Extract the image repo name (mojaloop/account-lookup-service) and tag (v15.4.0-snapshot.33)
-    REPO_NAME=$(echo "$RESOLVED_IMAGE" | cut -d ':' -f 1 | sed 's#mojaloop/##') # account-lookup-service
-    TAG=$(echo "$RESOLVED_IMAGE" | cut -d ':' -f 2)                             # v15.4.0-snapshot.33
+  if [[ $RESOLVED_IMAGE == mojaloop/* ]] ; then
+    if { [[ $# -eq 0 ]] || [[ $RESOLVED_IMAGE == mojaloop/$*:* ]]; }; then
+      # Extract the image repo name (mojaloop/account-lookup-service) and tag (v15.4.0-snapshot.33)
+      REPO_NAME=$(echo "$RESOLVED_IMAGE" | cut -d ':' -f 1 | sed 's#mojaloop/##') # account-lookup-service
+      TAG=$(echo "$RESOLVED_IMAGE" | cut -d ':' -f 2)                             # v15.4.0-snapshot.33
 
-    # Construct the Git repository URL based on the repo name
-    GIT_REPO="https://github.com/mojaloop/$REPO_NAME"
+      # Construct the Git repository URL based on the repo name
+      GIT_REPO="https://github.com/mojaloop/$REPO_NAME"
 
-    # Create a unique key combining the repo and tag (to handle duplicates)
-    UNIQUE_KEY="$REPO_NAME:$TAG"
+      # Create a unique key combining the repo and tag (to handle duplicates)
+      UNIQUE_KEY="$REPO_NAME:$TAG"
 
-    # Check if this unique key has already been processed
-    if ! grep -q "$UNIQUE_KEY" processed_images.txt; then
-      # Mark this image as processed by writing it to the temporary file
-      echo "$UNIQUE_KEY" >> processed_images.txt
+      # Check if this unique key has already been processed
+      if ! grep -q "$UNIQUE_KEY" processed_images.txt; then
+        # Mark this image as processed by writing it to the temporary file
+        echo "$UNIQUE_KEY" >> processed_images.txt
 
-      # Run the build function in the background
-      echo "Building Docker image $RESOLVED_IMAGE from repo $GIT_REPO with tag $TAG"
-      build_docker_image_from_repo "$RESOLVED_IMAGE" "$GIT_REPO" "$TAG" &
+        # Run the build function in the background
+        echo "Building Docker image $RESOLVED_IMAGE from repo $GIT_REPO with tag $TAG"
+        build_docker_image_from_repo "$RESOLVED_IMAGE" "$GIT_REPO" "$TAG" &
+      else
+        echo "Skipping duplicate image: $RESOLVED_IMAGE"
+      fi
     else
-      echo "Skipping duplicate image: $RESOLVED_IMAGE"
+      echo "Skipping image: $RESOLVED_IMAGE"
     fi
   else
     echo "Skipping non-mojaloop image: $RESOLVED_IMAGE"
