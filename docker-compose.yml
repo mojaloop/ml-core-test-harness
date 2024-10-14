@@ -16,6 +16,7 @@ services:
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
+       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     environment:
       - LOG_LEVEL=info
       - CLEDG_MONGODB__DISABLED=false
@@ -51,6 +52,7 @@ services:
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
+       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     environment:
       - LOG_LEVEL=info
       - CLEDG_MONGODB__DISABLED=true
@@ -196,6 +198,7 @@ services:
     #   - "3002:3002"
     volumes:
       - ./docker/config-modifier:/opt/app/config-modifier
+      - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     healthcheck:
       test: wget -q http://localhost:3002/health -O /dev/null || exit 1
       timeout: 20s
@@ -228,6 +231,7 @@ services:
     #   - "29229:9229"
     volumes:
       - ./docker/config-modifier:/opt/app/config-modifier
+      - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     healthcheck:
       test: wget -q http://localhost:3003/health -O /dev/null || exit 1
       timeout: 20s
@@ -249,6 +253,7 @@ services:
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
+      - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     environment:
       - LOG_LEVEL=info
     networks:
@@ -317,6 +322,7 @@ services:
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
+      - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     healthcheck:
       test: wget -q http://localhost:4001/health -O /dev/null || exit 1
       timeout: 20s
@@ -646,3 +652,117 @@ services:
       - kafka
     profiles:
       - debug
+
+  ## Finance Portal services
+  reporting-events-processor-svc:
+    image: mojaloop/reporting-events-processor-svc:${FP_EVENTS_PROCESSOR_SVC_VERSION}
+    user: root  ##TODO: Need to check if this is required
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/reporting-events-processor-svc.js /opt/app/config/default.json && npm start"
+    volumes:
+       - ./docker/config-modifier:/opt/app/config-modifier
+    environment:
+      - EVENT_STORE_DB_HOST=objstore
+      - EVENT_STORE_DB_PORT=27017
+      - EVENT_STORE_DB_DATABASE=reporting
+      - EVENT_STORE_DB_EVENTS_COLLECTION=reporting
+      - KAFKA_TOPIC_EVENT=topic-event-audit
+    networks:
+        - mojaloop-net
+    depends_on:
+      objstore:
+        condition: service_healthy
+    profiles:
+      - finance-portal
+
+  reporting-hub-bop-api-svc:
+    image: mojaloop/reporting-hub-bop-api-svc:${FP_GRAPHQL_API_SVC_VERSION}
+    environment:
+      - REPORTING_DB_HOST=mysql
+      - REPORTING_DB_PORT=3306
+      - REPORTING_DB_USER=central_ledger
+      - REPORTING_DB_SCHEMA=central_ledger
+      - EVENT_STORE_DB_HOST=objstore
+      - EVENT_STORE_DB_PORT=27017
+      - EVENT_STORE_DB_DATABASE=reporting
+      - CORS_WHITELIST=http://localhost:9400
+      - ALLOW_CREDENTIALS=false
+      - PRISMA_LOGGING_ENABLED=true
+    volumes:
+       - ./docker/reporting-hub-bop-api-svc/config:/opt/reporting/config
+    ports:
+      - "9401:3000"
+    networks:
+        - mojaloop-net
+    depends_on:
+      objstore:
+        condition: service_healthy
+    profiles:
+      - finance-portal
+
+  fp-proxy:
+    image: nginx:alpine
+    ports:
+      - "9400:80"
+    volumes:
+      - ./docker/fp-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - central-ledger
+    networks:
+        - mojaloop-net
+    profiles:
+      - finance-portal
+
+  reporting-hub-bop-trx-ui:
+    image: mojaloop/reporting-hub-bop-trx-ui:${FP_TRANSFERS_UI_VERSION}
+    environment:
+      - REACT_APP_API_BASE_URL=http://localhost:9400/graphql
+    ports:
+      - "9302:8082"
+    networks:
+      - mojaloop-net
+    healthcheck:
+      test: wget -q http://172.17.0.1:8082 -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    profiles:
+      - finance-portal
+
+  reporting-hub-bop-positions-ui:
+    image: mojaloop/reporting-hub-bop-positions-ui:${FP_POSITIONS_UI_VERSION}
+    environment:
+      - CENTRAL_LEDGER_ENDPOINT=http://localhost:9400/central-admin
+    ports:
+      - "9304:8084"
+    networks:
+      - mojaloop-net
+    healthcheck:
+      test: wget -q http://172.17.0.1:8084 -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    profiles:
+      - finance-portal
+
+  ## This UI can be accessed through fp-proxy on http://localhost:9400
+  reporting-hub-bop-shell:
+    image: mojaloop/reporting-hub-bop-shell:${FP_SHELL_UI_VERSION}
+    environment:
+      - AUTH_ENABLED=false
+      - AUTH_API_BASE_URL=/
+      - AUTH_MOCK_API=false
+      - REMOTE_API_BASE_URL=/
+      - REMOTE_MOCK_API=false
+      - REMOTE_1_URL=http://localhost:9301
+      - REMOTE_2_URL=http://localhost:9302
+      - REMOTE_3_URL=http://localhost:9303
+      - REMOTE_4_URL=http://localhost:9304
+    networks:
+      - mojaloop-net
+    healthcheck:
+      test: wget -q http://localhost:8080 -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    profiles:
+      - finance-portal
