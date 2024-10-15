@@ -30,7 +30,7 @@ services:
       objstore:
         condition: service_started
     healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:3001/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 30s
@@ -65,7 +65,7 @@ services:
       kafka:
         condition: service_started
     healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:3001/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 30s
@@ -200,7 +200,7 @@ services:
       - ./docker/config-modifier:/opt/app/config-modifier
       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     healthcheck:
-      test: wget -q http://localhost:3002/health -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:3002/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
@@ -233,7 +233,7 @@ services:
       - ./docker/config-modifier:/opt/app/config-modifier
       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     healthcheck:
-      test: wget -q http://localhost:3003/health -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:3003/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
@@ -264,7 +264,7 @@ services:
       central-ledger:
         condition: service_started
     healthcheck:
-      test: wget -q http://localhost:3000/health -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:3000/health -O /dev/null || exit 1
       timeout: 30s
       retries: 30
       interval: 30s
@@ -291,7 +291,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: wget -q http://localhost:8444/health -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:8444/health -O /dev/null || exit 1
       timeout: 20s
       retries: 10
       interval: 30s
@@ -324,7 +324,7 @@ services:
       - ./docker/config-modifier:/opt/app/config-modifier
       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     healthcheck:
-      test: wget -q http://localhost:4001/health -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:4001/health -O /dev/null || exit 1
       timeout: 20s
       retries: 10
       start_period: 40s
@@ -726,7 +726,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: wget -q http://172.17.0.1:8082 -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:8082 -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
@@ -743,7 +743,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: wget -q http://172.17.0.1:8084 -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:8084 -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
@@ -767,7 +767,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: wget -q http://localhost:8080 -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:8080 -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
