@@ -443,6 +443,7 @@ services:
     ports:
       - "9660:6060"
     environment:
+      ## Change localhost to the host IP if you are running the UI on a different machine
       - API_BASE_URL=http://localhost:9550
       - AUTH_ENABLED=FALSE
     command:
@@ -714,6 +715,7 @@ services:
   reporting-hub-bop-trx-ui:
     image: mojaloop/reporting-hub-bop-trx-ui:${FP_TRANSFERS_UI_VERSION}
     environment:
+      ## Change localhost to the host IP if you are running the UI on a different machine
       - REACT_APP_API_BASE_URL=http://localhost:9400/graphql
     ports:
       - "9302:8082"
@@ -730,6 +732,7 @@ services:
   reporting-hub-bop-positions-ui:
     image: mojaloop/reporting-hub-bop-positions-ui:${FP_POSITIONS_UI_VERSION}
     environment:
+      ## Change localhost to the host IP if you are running the UI on a different machine
       - CENTRAL_LEDGER_ENDPOINT=http://localhost:9400/central-admin
     ports:
       - "9304:8084"
@@ -752,6 +755,7 @@ services:
       - AUTH_MOCK_API=false
       - REMOTE_API_BASE_URL=/
       - REMOTE_MOCK_API=false
+      ## Change localhost to the host IP if you are running the UI on a different machine
       - REMOTE_1_URL=http://localhost:9301
       - REMOTE_2_URL=http://localhost:9302
       - REMOTE_3_URL=http://localhost:9303
