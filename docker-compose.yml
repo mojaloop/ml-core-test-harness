@@ -684,7 +684,6 @@ services:
       - EVENT_STORE_DB_HOST=objstore
       - EVENT_STORE_DB_PORT=27017
       - EVENT_STORE_DB_DATABASE=reporting
-      - CORS_WHITELIST=http://localhost:9400
       - ALLOW_CREDENTIALS=false
       - PRISMA_LOGGING_ENABLED=true
     volumes:
