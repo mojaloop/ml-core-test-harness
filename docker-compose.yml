@@ -687,6 +687,8 @@ services:
       - EVENT_STORE_DB_DATABASE=reporting
       - ALLOW_CREDENTIALS=false
       - PRISMA_LOGGING_ENABLED=true
+      ## Change localhost to the host IP if you are running the UI on a different machine
+      - CORS_WHITELIST=http://localhost:9400
     volumes:
        - ./docker/reporting-hub-bop-api-svc/config:/opt/reporting/config
     ports:
@@ -707,6 +709,8 @@ services:
       - ./docker/fp-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - central-ledger
+      - quoting-service
+      - reporting-hub-bop-shell
     networks:
         - mojaloop-net
     profiles:
