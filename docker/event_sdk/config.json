@@ -1,0 +1,74 @@
+{
+    "AUDIT": "kafka",
+    "KAFKA": {
+        "PRODUCER": {
+            "EVENT": {
+                "AUDIT": {
+                    "config": {
+                        "options": {
+                            "messageCharset": "utf8",
+                            "sync": true
+                        },
+                        "rdkafkaConf": {
+                            "client.id": "producer-event-audit",
+                            "compression.type": "lz4",
+                            "dr_cb": false,
+                            "event_cb": true,
+                            "metadata.broker.list": "kafka:29092",
+                            "queue.buffering.max.messages": 10000000,
+                            "socket.keepalive.enable": true
+                        },
+                        "topicConf": {
+                            "partitioner": "murmur2_random",
+                            "request.required.acks": "all"
+                        }
+                    }
+                },
+                "LOG": {
+                    "config": {
+                        "options": {
+                            "messageCharset": "utf8",
+                            "sync": true
+                        },
+                        "rdkafkaConf": {
+                            "client.id": "producer-event-log",
+                            "compression.type": "lz4",
+                            "dr_cb": false,
+                            "event_cb": true,
+                            "metadata.broker.list": "kafka:29092",
+                            "queue.buffering.max.messages": 10000000,
+                            "socket.keepalive.enable": true
+                        },
+                        "topicConf": {
+                            "partitioner": "murmur2_random",
+                            "request.required.acks": "all"
+                        }
+                    }
+                },
+                "TRACE": {
+                    "config": {
+                        "options": {
+                            "messageCharset": "utf8",
+                            "sync": true
+                        },
+                        "rdkafkaConf": {
+                            "client.id": "producer-event-trace",
+                            "compression.type": "lz4",
+                            "dr_cb": false,
+                            "event_cb": true,
+                            "metadata.broker.list": "kafka:29092",
+                            "queue.buffering.max.messages": 10000000,
+                            "socket.keepalive.enable": true
+                        },
+                        "topicConf": {
+                            "partitioner": "murmur2_random",
+                            "request.required.acks": "all"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "LOG": "off",
+    "TRACE": "off"
+}

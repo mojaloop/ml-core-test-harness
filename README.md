@@ -388,3 +388,7 @@ docker-compose --profile all-services --profile fx --profile fx-sdk --profile tt
 ```
 docker-compose --profile all-services --profile fx --profile fx-sdk --profile ttk-provisioning-fx-sdk --profile ttk-fx-sdk-tests --profile debug down -v
 ```
+
+### Finance Portal
+
+docker-compose --profile all-services --profile fx --profile finance-portal --profile ttk-provisioning-fx --profile ttk-fx-tests --profile debug up -d
