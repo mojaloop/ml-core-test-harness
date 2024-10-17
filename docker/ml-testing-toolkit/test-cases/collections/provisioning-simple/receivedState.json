@@ -1,0 +1,318 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "received State",
+      "meta": {
+        "info": "received State"
+      },
+      "requests": [
+        {
+          "id": 5,
+          "meta": {
+            "info": "Payee initiate request"
+          },
+          "description": "Payee initiate request",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transactionRequests",
+          "path": "/transactionRequests",
+          "method": "post",
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payeefsp}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}",
+            "Accept": "{$inputs.acceptTransactionRequests}",
+            "FSPIOP-HTTP-Method": "POST",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+          },
+          "body": {
+            "transactionRequestId": "{$function.generic.generateUUID}",
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "PERSONAL_ID",
+                "partyIdentifier": "16135551212",
+                "partySubIdOrType": "DRIVING_LICENSE",
+                "fspId": "1234"
+              },
+              "merchantClassificationCode": "4321",
+              "name": "Justin Trudeau",
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Justin",
+                  "middleName": "Pierre",
+                  "lastName": "Trudeau"
+                },
+                "dateOfBirth": "1971-12-25"
+              }
+            },
+            "payer": {
+              "partyIdType": "PERSONAL_ID",
+              "partyIdentifier": "16135551212",
+              "partySubIdOrType": "DRIVING_LICENSE",
+              "fspId": "1234"
+            },
+            "amount": {
+              "currency": "{$inputs.currency}",
+              "amount": "123.45"
+            },
+            "transactionType": {
+              "scenario": "DEPOSIT",
+              "subScenario": "CUSTOM_SUBSCENARIO",
+              "initiator": "PAYEE",
+              "initiatorType": "CONSUMER",
+              "refundInfo": {
+                "originalTransactionId": "{$function.generic.generateUUID}",
+                "refundReason": "free text indicating reason for the refund"
+              },
+              "balanceOfPayments": "123"
+            },
+            "note": "Free-text memo",
+            "geoCode": {
+              "latitude": "+45.4215",
+              "longitude": "+75.6972"
+            },
+            "authenticationType": "OTP",
+            "expiration": "{$environment.transferExpirationx}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "transactionRequestState is RECEIVED",
+                "exec": [
+                  "expect(environment.payeecallback.data.transactionRequestState).to.eql('RECEIVED');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateUUID}'",
+                "console.log(environment.tranid)",
+                "",
+                "environment.transferExpirationx= new Date(new Date().getTime() + 600000).toISOString();",
+                "",
+                "console.log(environment.transferExpirationx)",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transactionRequestId}', 'payeecallback')",
+                "  ",
+                " await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.transferId}', 'payerrequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payerequest = await websocket.getMessage('payerrequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  ",
+                "  environment.payeecallback = await websocket.getMessage('payeecallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "",
+                "console.log(environment.payeecallback);",
+                "environment.tranid = environment.payeecallback.id",
+                "console.log(environment.tranid)"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "send RECEIVED state"
+          },
+          "description": "send RECEIVED state",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transactionRequests/{ID}",
+          "path": "/transactionRequests/{$prev.5.request.body.transactionRequestId}",
+          "method": "put",
+          "params": {
+            "ID": "{$prev.5.request.body.transactionRequestId}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}",
+            "FSPIOP-HTTP-Method": "PUT",
+            "FSPIOP-URI": "/transactionRequests/{$prev.5.request.body.transactionRequestId}",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+          },
+          "body": {
+            "transactionId": "{$prev.5.request.body.transactionRequestId}",
+            "transactionRequestState": "RECEIVED"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "check fsp source",
+                "exec": [
+                  "expect(environment.payeecallback.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME);"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "check fsp destination",
+                "exec": [
+                  "expect(environment.payeecallback.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME);"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "check method put",
+                "exec": [
+                  "expect(environment.payeecallback.headers['fspiop-http-method']).to.equal('PUT');"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "transactionId matches",
+                "exec": [
+                  "expect(environment.payeecallback.data.transactionId).to.equal('{$prev.5.request.body.transactionRequestId}');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$prev.5.request.body.transactionRequestId}', 'payeecallback')",
+                "  ",
+                " ",
+                "}",
+                "console.log(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$prev.5.request.body.transactionRequestId}');"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                " ",
+                "  ",
+                "  environment.payeecallback = await websocket.getMessage('payeecallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "",
+                "console.log(environment.payeecallback);"
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "meta": {
+            "info": "Check transactionRequest state"
+          },
+          "description": "Check transactionRequest state",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transactionRequests/{ID}",
+          "path": "/transactionRequests/{$environment.tranid}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payeefsp}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Date": "{$function.generic.curDate}",
+            "Accept": "{$inputs.acceptTransactionRequests}",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/transactionRequests",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response code status 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "transactionRequestState is RECEIVED",
+                "exec": [
+                  "expect(environment.payeecallbackz.data.transactionRequestState).to.equal('RECEIVED');"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "/*if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.tranid, 'payeecallback2')",
+                "  ",
+                " ",
+                "}",
+                "console.log(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.tranid);*/",
+                "",
+                "//TODO THIS REQUEST GET TRANSACTIONREQUEST DOES NOT WORK PROPERLY THERE ARE CONNECTION ISSUES WHEN WE RUN IT",
+                "",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "/*",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  ",
+                "  environment.payeecallbackz = await websocket.getMessage('payeecallback2', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "*/",
+                "console.log(environment.payeecallbackz);"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/transaction_request_service/received State.json"
+      }
+    }
+  ]
+}

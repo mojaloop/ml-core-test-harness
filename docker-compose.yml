@@ -336,6 +336,38 @@ services:
       - all-services
       - simple
 
+  transaction-request-service:
+    # image: mojaloop/transaction-requests-service:${ML_TRANSACTION_REQUESTS_SERVICE}
+    build:
+      context: ../../transaction-requests-service
+    ports:
+      - "4003:4003"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+      central-ledger:
+        condition: service_healthy
+      ml-api-adapter:
+        condition: service_healthy
+      account-lookup-service:
+        condition: service_healthy
+      quoting-service:
+        condition: service_healthy
+    networks:
+      - mojaloop-net
+    healthcheck:
+      test: wget -q http://localhost:4003/health -O /dev/null || exit 1
+      timeout: 30s
+      retries: 30
+      interval: 30s
+      start_period: 30s
+    user: root
+    profiles:
+      - testing-toolkit
+      - transfer
+      - all-services
+      - simple
+
   ttk-provisioning:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
     volumes:
