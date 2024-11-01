@@ -33,7 +33,7 @@ async function main () {
 
     // Read the Json file `default.json`
     const overrideConfig = require(OVERRIDE_FILE)
-    
+
     // Merge the config in config/central-ledger.js into default.json
     const newConfig = deepMerge(origConfig,overrideConfig)
     // Write the new default.json
@@ -58,7 +58,7 @@ main()
  */
 const deepMerge = function () {
 	// Setup merged object
-	const newObj = {}
+	const newObj = Array.isArray(arguments[0]) ? [] : {}
 	// Merge the object into the newObj object
 	const merge = function (obj) {
 		for (var prop in obj) {
