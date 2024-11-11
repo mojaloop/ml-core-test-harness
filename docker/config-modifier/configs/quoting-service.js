@@ -3,6 +3,7 @@ module.exports = {
   "DATABASE": {
     "HOST": "mysql"
   },
+  "SIMPLE_ROUTING_MODE": false,
   "CACHE": {
     "ENUM_DATA_EXPIRES_IN_MS": 1,
     "PARTICIPANT_DATA_EXPIRES_IN_MS": 1
