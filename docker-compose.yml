@@ -782,6 +782,8 @@ services:
     environment:
       - SINGLE_USER_CREDENTIALS_USERNAME=${NIFIUSER:-admin}
       - SINGLE_USER_CREDENTIALS_PASSWORD=${NIFIPASS:-password@1234}  # Password must be minimum 12 characters
+      - MONGO_CONNECTION_URI=mongodb://objstore:27017
+      - MYSQL_CONNECTION_URI=jdbc:mysql://mysql:3306/central_ledger
     volumes:
       - ./nifi-drivers/mysql-connector-j-8.0.33.jar:/opt/nifi/nifi-current/lib/mysql-connector-j-8.0.33.jar
       # - ./nifi-data/state:/opt/nifi/nifi-current/state
