@@ -775,3 +775,21 @@ services:
       interval: 15s
     profiles:
       - finance-portal
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:${CADVISER_VERSION}
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 8082:8080
+    networks:
+      - mojaloop-net
+      # - monitoring-net
+    restart: always
+    deploy:
+      mode: global
+    profiles:
+      - finance-portal
