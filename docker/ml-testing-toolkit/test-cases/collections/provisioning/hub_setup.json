@@ -564,9 +564,9 @@
         {
           "id": 1,
           "meta": {
-            "info": "Register MSISDN Oracle"
+            "info": "Register ACCOUNT_ID Oracle"
           },
-          "description": "Register MSISDN Oracle",
+          "description": "Register ACCOUNT_ID Oracle",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 1,
@@ -576,97 +576,7 @@
           "path": "/oracles",
           "method": "post",
           "body": {
-            "oracleIdType": "MSISDN",
-            "endpoint": {
-              "value": "{$inputs.HOST_SIMULATOR}/oracle",
-              "endpointType": "URL"
-            },
-            "currency": "{$inputs.currency}",
-            "isDefault": true
-          },
-          "headers": {
-            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
-            "Accept": "application/vnd.interoperability.participants+json;version=1",
-            "Date": "{$function.generic.curDate}"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_ADMIN}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "status to be 201 or errorCode 2001 already exists",
-                "exec": [
-                  "if (response.body.errorInformation) {",
-                  "  expect(response.body.errorInformation.errorCode).to.equal(\"2001\")",
-                  "} else {",
-                  "  expect(response.status).to.equal(201)",
-                  "}"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 2,
-          "meta": {
-            "info": "Register BUSINESS Oracle"
-          },
-          "description": "Register BUSINESS Oracle",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
-            "type": "als_admin"
-          },
-          "operationPath": "/oracles",
-          "path": "/oracles",
-          "method": "post",
-          "body": {
-            "oracleIdType": "BUSINESS",
-            "endpoint": {
-              "value": "{$inputs.HOST_SIMULATOR}/oracle",
-              "endpointType": "URL"
-            },
-            "currency": "{$inputs.currency}",
-            "isDefault": true
-          },
-          "headers": {
-            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
-            "Accept": "application/vnd.interoperability.participants+json;version=1",
-            "Date": "{$function.generic.curDate}"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_ADMIN}",
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "status to be 201 or errorCode 2001 already exists",
-                "exec": [
-                  "if (response.body.errorInformation) {",
-                  "  expect(response.body.errorInformation.errorCode).to.equal(\"2001\")",
-                  "} else {",
-                  "  expect(response.status).to.equal(201)",
-                  "}"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 3,
-          "meta": {
-            "info": "Register ALIAS Oracle"
-          },
-          "description": "Register ALIAS Oracle",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
-            "type": "als_admin"
-          },
-          "operationPath": "/oracles",
-          "path": "/oracles",
-          "method": "post",
-          "body": {
-            "oracleIdType": "ALIAS",
+            "oracleIdType": "ACCOUNT_ID",
             "endpoint": {
               "value": "{$inputs.HOST_SIMULATOR}/oracle",
               "endpointType": "URL"

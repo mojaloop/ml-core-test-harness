@@ -1,8 +1,7 @@
-version: "3.7"
-
 networks:
   mojaloop-net:
     name: mojaloop-net
+    external: true
 
 services:
 
@@ -493,7 +492,7 @@ services:
     volumes:
       - ./docker/config-modifier:/opt/app/config-modifier
     healthcheck:
-      test: wget -q http://localhost:3002/health -O /dev/null || exit 1
+      test: wget -q http://0.0.0.0:3002/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
@@ -593,6 +592,9 @@ services:
       - transfer
       - discovery
       - agreement
+      - sdk-scheme-adapter
+      - inbound-sdk-scheme-adapter
+      - outbound-sdk-scheme-adapter
       - all-services
       - transfers-test
       - quotes-test
@@ -823,6 +825,29 @@ services:
     profiles:
       - ttk-provisioning-transfers
 
+  ttk-provisioning-remote-k8s:
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
+    env_file:
+      - .env
+      - perf.env
+      - perf.override.env
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - 'sed -e "s~K6_CALLBACK_FQDN~$$K6_CALLBACK_FQDN~g" -e "s~K6_SCRIPT_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ADMIN_ENDPOINT_URL~g" -e "s~K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~$$K6_SCRIPT_ALS_ADMIN_ENDPOINT_URL~g" -e "s~K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL~$$K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL~g" -e "s~K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL~$$K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL~g" -e "s~K6_SCRIPT_ORACLE_ENDPOINT_URL~$$K6_SCRIPT_ORACLE_ENDPOINT_URL~g" environments/remote-k8s-env.json > /tmp/env.json && npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e /tmp/env.json --report-format html --report-target file://reports/ttk-provisioning-report.html'
+    user: root
+    profiles:
+      - ttk-provisioning-remote-k8s
+
   ttk-provisioning-quotes:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
     env_file:
@@ -872,24 +897,17 @@ services:
       - ttk-provisioning-e2e
 
   callback-handler-svc-oracle-sim:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
       - perf.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "30000:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -903,26 +921,54 @@ services:
       - callback-handler
       - all-services
       - als-test
+      - oracle
+
+  sdk-scheme-adapter-api-svc:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    env_file:
+      - .env
+      - perf.env
+    container_name: sdk-scheme-adapter
+    command: yarn nx run modules-api-svc:start
+    ports:
+      - "4000:4000"
+      - "4001:4001"
+    networks:
+      - mojaloop-net
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: [
+        "CMD" ,
+        "apk", "add", "--no-cache", "curl", # Install curl
+        "&&",
+        "curl", "-f", "http://localhost:4001" # Check if api is up
+        ]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - sdk-scheme-adapter
+      - all-services
 
   callback-handler-svc-cl-sim:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
       - ./envs/cl-sim.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+    ports:
+      - "3001:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -939,25 +985,36 @@ services:
       - transfers-test
       - quotes-test
 
-  sim-perffsp1:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+  redis:
+    networks:
+      - mojaloop-net
+    image: "redis:6.2.4-alpine"
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD" ,"sh", "-c", "redis-cli","ping"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+
+  sim-perffxp:
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
-      - ./envs/perffsp1.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+      - ./envs/perffxp.env
+      - perf.override.env
+    ports:
+      - "25000:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -968,7 +1025,38 @@ services:
     user: root
     profiles:
       - simulators
-      - callback-handler
+      - all-services
+      - als-test
+      - 2dfsp
+      - 4dfsp
+      - 8dfsp
+
+  sim-perffsp1:
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    deploy:
+      mode: replicated
+      replicas: 1
+    env_file:
+      - .env
+      - ./envs/perffsp1.env
+      - perf.override.env
+    ports:
+      - "25001:3001"
+    networks:
+      - mojaloop-net
+    environment: {}
+      # - LOG_LEVEL=error
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - simulators
       - all-services
       - als-test
       - 2dfsp
@@ -976,24 +1064,21 @@ services:
       - 8dfsp
 
   sim-perffsp2:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    deploy:
-      mode: replicated
-      replicas: 1
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    # deploy:
+    #   mode: replicated
+    #   replicas: 1
     env_file:
       - .env
       - ./envs/perffsp2.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+      - perf.override.env
+    ports:
+      - "25002:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1004,7 +1089,6 @@ services:
     user: root
     profiles:
       - simulators
-      - callback-handler
       - all-services
       - als-test
       - 2dfsp
@@ -1012,24 +1096,21 @@ services:
       - 8dfsp
 
   sim-perffsp3:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
       - ./envs/perffsp3.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+      - perf.override.env
+    ports:
+      - "25003:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1043,24 +1124,21 @@ services:
       - 8dfsp
 
   sim-perffsp4:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
       - ./envs/perffsp4.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+      - perf.override.env
+    ports:
+      - "25004:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1074,24 +1152,21 @@ services:
       - 8dfsp
 
   sim-perffsp5:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
       - ./envs/perffsp5.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+      - perf.override.env
+    ports:
+      - "25005:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1104,24 +1179,21 @@ services:
       - 8dfsp
 
   sim-perffsp6:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
       - ./envs/perffsp6.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+      - perf.override.env
+    ports:
+      - "25006:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1134,24 +1206,21 @@ services:
       - 8dfsp
 
   sim-perffsp7:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
       - ./envs/perffsp7.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+      - perf.override.env
+    ports:
+      - "25007:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1164,24 +1233,21 @@ services:
       - 8dfsp
 
   sim-perffsp8:
-    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
       - ./envs/perffsp8.env
-    build:
-      context: ./packages/callback-handler-svc
-      cache_from:
-        - mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # ports:
-    #   - "3001:3001"
+      - perf.override.env
+    ports:
+      - "25008:3001"
     networks:
       - mojaloop-net
-    volumes:
-      - ./packages/callback-handler-svc/config:/opt/app/config
-      - ./packages/callback-handler-svc/handlers:/opt/app/handlers
     environment: {}
       # - LOG_LEVEL=error
     healthcheck:
@@ -1192,3 +1258,31 @@ services:
     user: root
     profiles:
       - 8dfsp
+
+  sim-fspiop:
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    # deploy:
+    #   mode: replicated
+    #   replicas: 5
+    env_file:
+      - .env
+      - ./envs/fspiop-sim.env
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+    networks:
+      - mojaloop-net
+    environment: {}
+      # - LOG_LEVEL=error
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - simulators
+      - callback-handler
+      - sdk-scheme-adapter
+      - all-services
+      - als-test

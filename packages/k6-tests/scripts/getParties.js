@@ -1,10 +1,10 @@
 import http from 'k6/http';
 import { check, fail, sleep, group } from 'k6';
-import crypto from "k6/crypto";
 import { WebSocket } from 'k6/experimental/websockets';
-import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/experimental/timers';
-import { randomItem } from "https://jslib.k6.io/k6-utils/1.1.0/index.js";
+import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
+import { getTwoItemsFromArray } from "../common/utils.js";
+import exec from 'k6/execution';
 
 
 // K6_SCRIPT_FSPIOP_ALS_PAYEE_PARTYID=${__ENV.K6_SCRIPT_FSPIOP_ALS_PAYEE_PARTYID},
@@ -12,28 +12,33 @@ import { Trace } from "../common/trace.js";
 // K6_SCRIPT_FSPIOP_PAYEE_FSP_ID=${__ENV.K6_SCRIPT_FSPIOP_PAYEE_FSP_ID},
 // K6_SCRIPT_CALLBACK_HANDLER_SERVICE_WS_URL=${__ENV.K6_SCRIPT_CALLBACK_HANDLER_SERVICE_WS_URL},
 
-console.log(`Env Vars -->
-  K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS},
-  K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL},
-  K6_SCRIPT_ADMIN_ENDPOINT_URL=${__ENV.K6_SCRIPT_ADMIN_ENDPOINT_URL},
-  K6_SCRIPT_ORACLE_ENDPOINT_URL=${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL},
-  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_PAYER_POOL}
-`);
+
+function log() {
+  console.log('Env Vars -->');
+  console.log(`  K6_SCRIPT_WS_TIMEOUT_MS=${__ENV.K6_SCRIPT_WS_TIMEOUT_MS}`);
+  console.log(`  K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL=${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}`);
+  console.log(`  K6_SCRIPT_ADMIN_ENDPOINT_URL=${__ENV.K6_SCRIPT_ADMIN_ENDPOINT_URL}`);
+  console.log(`  K6_SCRIPT_ORACLE_ENDPOINT_URL=${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL}`);
+  console.log(`  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}`);
+}
 
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function getParties() {
+  !exec.instance.iterationsCompleted && log();
   group("Get Parties", function () {
     let payerFsp
     let payeeFsp
+
     if (__ENV.UNIDIRECTIONAL === "true" || __ENV.UNIDIRECTIONAL === "TRUE") {
       payerFsp = fspList[0]
       payeeFsp =  fspList[1]
     } else {
-      const randomSortedFsp = fspList.concat().sort(() => randomItem([-1,1])).slice(0, 2);
-      payerFsp = randomSortedFsp[0]
-      payeeFsp =  randomSortedFsp[1]
+      const selectedFsps = getTwoItemsFromArray(fspList)
+      payerFsp = selectedFsps[0]
+      payeeFsp =  selectedFsps[1]
     }
+
 
     const startTs = Date.now();
     const payeeId = payeeFsp['partyId'];
@@ -42,9 +47,9 @@ export function getParties() {
     const wsUrl = payerFsp['wsUrl'];
     const traceParent = Trace();
     const traceId = traceParent.traceId;
-    const wsChannel = `${traceParent.traceId}/PUT/parties/MSISDN/${payeeId}`;
+    const wsChannel = `${traceParent.traceId}/PUT/parties/ACCOUNT_ID/${payeeId}`;
     const wsURL = `${wsUrl}/${wsChannel}`
-    const ws = new WebSocket(wsURL);
+    const ws = new WebSocket(wsURL, null, {tags: {name: 'parties ws'}});
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
 
     var wsTimeoutId = null;
@@ -65,7 +70,7 @@ export function getParties() {
     });
 
     ws.onmessage = (event) => {
-      console.info(traceId, `WS message received [${wsChannel}]: ${event.data}`);
+      __ENV.K6_DEBUG && console.info(traceId, `WS message received [${wsChannel}]: ${event.data}`);
       check(event.data, { 'ALS_E2E_FSPIOP_GET_PARTIES_SUCCESS': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
       clearTimers();
       ws.close();
@@ -73,9 +78,10 @@ export function getParties() {
     };
 
     ws.onopen = () => {
-      console.info(traceId, `WS open on URL: ${wsURL}`);
+      __ENV.K6_DEBUG && console.info(traceId, `WS open on URL: ${wsURL}`);
       const params = {
         tags: {
+          name: 'parties',
           payerFspId,
           payeeFspId
         },
@@ -103,11 +109,11 @@ export function getParties() {
 
       // // OPTIONAL: Lets send the ORACLE GET /participants request to the Oracle to resolve FSPID for payeeId.
       // // Useful when bypassing the ALS and testing directly against a Simulator.
-      // const resOracleGetParticipantsForPayee = http.get(`${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL}/participants/MSISDN/${payeeId}`, params);
+      // const resOracleGetParticipantsForPayee = http.get(`${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL}/participants/ACCOUNT_ID/${payeeId}`, params);
       // check(resOracleGetParticipantsForPayee, { 'ALS_ORACLE_GET_PARTICIPANTS_RESPONSE_IS_200' : (r) => r.status == 200 });
 
       // Lets send the FSPIOP GET /parties request to the ALS
-      const res = http.get(`${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}/parties/MSISDN/${payeeId}`, params);
+      const res = http.get(`${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}/parties/ACCOUNT_ID/${payeeId}`, params);
       check(res, { 'ALS_FSPIOP_GET_PARTIES_RESPONSE_IS_202' : (r) => r.status == 202 });
 
       wsTimeoutId = setTimeout(() => {

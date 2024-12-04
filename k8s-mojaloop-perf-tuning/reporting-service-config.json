@@ -1,0 +1,41 @@
+    {
+      "EVENT_STORE_DB": {
+        "HOST": "mongodb-reporting-events-mongodb.stateful-resources.svc.cluster.local",
+        "PORT": "27017",
+        "USER": "mojaloop",
+        "PASSWORD": "",
+        "DATABASE": "mojaloop",
+        "EVENTS_COLLECTION": "reporting"
+      },
+      "KAFKA": {
+        "TOPIC_EVENT": "topic-event-audit",
+        "CONSUMER": {
+          "EVENT": {
+            "config": {
+              "options": {
+                "mode": 2,
+                "batchSize": 50,
+                "pollFrequency": 10,
+                "recursiveTimeout": 100,
+                "messageCharset": "utf8",
+                "messageAsJSON": true,
+                "sync": true,
+                "consumeTimeout": 10
+              },
+              "rdkafkaConf": {
+                "clientId": "audit_events_processor_consumer",
+                "groupId": "audit_events_processor_consumer_group",
+                "metadataBrokerList": "mojaloop-kafka-svc.stateful-resources.svc.cluster.local:9092",
+                "socketKeepaliveEnable": true,
+                "allowAutoCreateTopics": true,
+                "partitionAssignmentStrategy": "",
+                "enableAutoCommit": false
+              },
+              "topicConf": {
+                "autoOffsetReset": "earliest"
+              }
+            }
+          }
+        }
+      }
+    }

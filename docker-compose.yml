@@ -28,7 +28,7 @@ services:
       kafka:
         condition: service_started
       objstore:
-        condition: service_started
+        condition: service_healthy
     healthcheck:
       test: wget -q http://127.0.0.1:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -319,6 +319,8 @@ services:
         condition: service_started
       central-ledger:
         condition: service_started
+      simulator:
+        condition: service_healthy
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier

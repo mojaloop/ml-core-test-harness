@@ -1,0 +1,6 @@
+spec:
+  template:
+    spec:
+      containers:
+        - name: centralledger-handler-admin-transfer
+          image: mojaloop/central-ledger:$LEDGER_TAG

@@ -1,0 +1,22 @@
+{
+  "scenarios": {
+    "fspiopDiscovery": {
+      "executor": "ramping-vus",
+      "exec": "fspiopDiscoveryScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "startVUs": 5,
+      "stages": [
+        { "duration": "30s", "target": 600 },
+        { "duration": "1m", "target": 5000 },
+        { "duration": "1h", "target": 5000 }
+      ]
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "scenarios": {
+    "fspiopQuotes": {
+      "executor": "shared-iterations",
+      "exec": "fspiopFXQuotesScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "vus": 1,
+      "iterations": 1
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}

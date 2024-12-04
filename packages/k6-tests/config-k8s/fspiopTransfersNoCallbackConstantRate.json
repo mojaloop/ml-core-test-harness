@@ -1,0 +1,20 @@
+{
+  "scenarios": {
+    "fspiopTransfersNoCallbackScenarios": {
+      "executor": "constant-arrival-rate",
+      "exec": "fspiopTransfersNoCallbackScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "preAllocatedVUs": 200,
+      "timeUnit": "1s",
+      "duration": "2m",
+      "rate": 500
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}

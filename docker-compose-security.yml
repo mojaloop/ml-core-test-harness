@@ -1,0 +1,116 @@
+version: "3.7"
+
+networks:
+  mojaloop-net:
+    name: mojaloop-net
+
+services:
+  sim-fspiop:
+    image: mojaloop/callback-handler-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    env_file:
+      - .env
+      - ./envs/fspiop-sim-security.env
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+    networks:
+      - mojaloop-net
+    volumes:
+      - ./docker/config-modifier:/opt/app/config-modifier
+    environment: {}
+      # - LOG_LEVEL=error
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - security-sdk-scheme-adapter
+
+  payer-sdk-scheme-adapter-api-svc:
+    image: mojaloop/sdk-scheme-adapter:v23.3.0
+    env_file:
+      - ./envs/payer-sdk-scheme-adapter-api-svc.env
+    container_name: payer-sdk-scheme-adapter-api-svc
+    command: yarn nx run modules-api-svc:start
+    ports:
+      - "5000:4000"
+      - "5001:4001"
+    networks:
+      - mojaloop-net
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+      - ./docker/security/payer:/opt/app/modules/api-svc/secrets
+      - ./docker/security/payer:/opt/app/secrets
+      - ./docker/security/payer:/secrets
+    healthcheck:
+      test: [
+        "CMD" ,
+        "apk", "add", "--no-cache", "curl", # Install curl
+        "&&",
+        "curl", "-f", "http://localhost:4001" # Check if api is up
+        ]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - security-sdk-scheme-adapter
+
+
+  payee-sdk-scheme-adapter-api-svc:
+    image: mojaloop/sdk-scheme-adapter:v23.3.0
+    env_file:
+      - ./envs/payee-sdk-scheme-adapter-api-svc.env
+    container_name: payee-sdk-scheme-adapter-api-svc
+    command: yarn nx run modules-api-svc:start
+    ports:
+      - "4000:4000"
+      - "4001:4001"
+    networks:
+      - mojaloop-net
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+      - ./docker/security/payee:/opt/app/modules/api-svc/secrets
+      - ./docker/security/payee:/opt/app/secrets
+      - ./docker/security/payee:/secrets
+    healthcheck:
+      test: [
+        "CMD" ,
+        "apk", "add", "--no-cache", "curl", # Install curl
+        "&&",
+        "curl", "-f", "http://localhost:4001" # Check if api is up
+        ]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - security-sdk-scheme-adapter
+
+  redis:
+    networks:
+      - mojaloop-net
+    image: "redis:6.2.4-alpine"
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD" ,"sh", "-c", "redis-cli","ping"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    profiles:
+      - security-sdk-scheme-adapter

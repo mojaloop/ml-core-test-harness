@@ -1,0 +1,29 @@
+spec:
+  replicas: 12
+  template:
+    spec:
+      containers:
+        - name: ml-api-adapter-service
+          image: mojaloop/ml-api-adapter:$ML_API_TAG
+          env:
+            - name: LOG_LEVEL
+              value: warn
+            - name: EVENT_SDK_SIDECAR_DISABLED
+              value: '$EVENT_SIDECAR_DISABLED'
+            - name: EVENT_SDK_TRACE
+              value: '$EVENT_SDK_TRACE'
+            - name: EVENT_SDK_AUDIT
+              value: '$EVENT_SDK_AUDIT'
+            - name: EVENT_SDK_LOG
+              value: '$EVENT_SDK_LOG'
+          volumeMounts:
+            - name: config-override-volume
+              mountPath: /opt/app/.EVENT_SDKrc
+              subPath: .EVENT_SDKrc
+            - name: config-override-volume
+              mountPath: /opt/app/.MLAPIrc
+              subPath: .MLAPIrc
+      volumes:
+        - name: config-override-volume
+          configMap:
+            name: config-override

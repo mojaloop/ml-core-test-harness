@@ -44,8 +44,7 @@
             "fspId": "{$inputs.toFspId}",
             "currency": "{$inputs.currency}"
           },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "ignoreCallbacks": true
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         },
         {
           "id": 3,

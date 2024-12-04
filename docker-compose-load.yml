@@ -1,8 +1,5 @@
 ## Ref: https://github.com/grafana/xk6-output-prometheus-remote/blob/main/docker-compose.yml
 ## Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/
-
-version: '3.8'
-
 networks:
   load-net:
     name: load-net
@@ -16,12 +13,17 @@ networks:
 services:
   k6:
     image: grafana/k6:${K6_VERSION}
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
     env_file:
       - .env
       - perf.env
+      - perf.override.env
     command:
       - run
       # - '--help' ## Useful to list run options
+      # - '--http-debug=full'
       - '--include-system-env-vars'
       - '/scripts/index.js'
     networks:
@@ -29,9 +31,11 @@ services:
       - monitoring-net
       - mojaloop-net
     ports:
-      - "6565:6565"
+      - "5665:5665"
     environment:
       - K6_SCRIPT_CONFIG_FILE_NAME=${K6_SCRIPT_CONFIG_FILE_NAME:-test.json}
+      - K6_SCRIPT_CONFIG_FOLDER_NAME=${K6_SCRIPT_CONFIG_FOLDER_NAME}
+      - K6_WEB_DASHBOARD=true
       # - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write # Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/#options
       # - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true # Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/#options
       # - K6_OUT=experimental-prometheus-rw # Ref: https://k6.io/docs/results-output/real-time/prometheus-remote-write/

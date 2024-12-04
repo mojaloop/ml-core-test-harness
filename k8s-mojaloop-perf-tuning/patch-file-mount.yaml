@@ -1,0 +1,13 @@
+spec:
+  template:
+    spec:
+      containers:
+        - name: quoting-service-handler
+          volumeMounts:
+            - name: create-logger
+              mountPath: /opt/app/node_modules/winston/lib/winston/create-logger.js
+              subPath: create-logger.js
+      volumes:
+        - name: create-logger
+          configMap:
+            name: create-logger
