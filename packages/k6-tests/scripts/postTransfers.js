@@ -6,7 +6,7 @@ import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
-import { uuid } from '../common/uuid.js'
+import { ulid } from '../common/uuid.js'
 
 function log() {
   console.log('Env Vars -->');
@@ -41,7 +41,8 @@ export function postTransfers() {
 
     const startTs = Date.now();
     // const transferId = crypto.randomUUID();
-    const transferId = uuid();
+    const transferId = ulid();
+    const msgId = ulid();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
     const wsUrl = payerFsp['wsUrl'];
@@ -85,8 +86,8 @@ export function postTransfers() {
           payeeFspId
         },
         headers: {
-          'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
-          'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
+          'Accept': 'application/vnd.interoperability.iso20022.transfers+json;version=2.0',
+          'Content-Type': 'application/vnd.interoperability.iso20022.transfers+json;version=2.0',
           'FSPIOP-Source': payerFspId,
           'FSPIOP-Destination': payeeFspId,
           'Date': (new Date()).toUTCString(),
@@ -110,7 +111,7 @@ export function postTransfers() {
 
       const body = {
         "GrpHdr": {
-          "MsgId": MsgId,
+          "MsgId": msgId,
           "CreDtTm": new Date().toISOString(),
           "NbOfTxs": "1",
           "SttlmInf": {
@@ -127,7 +128,7 @@ export function postTransfers() {
             "Id": {
               "OrgId": {
                 "Othr": {
-                  "Id": payeeFsp
+                  "Id": payeeFspId
                 }
               }
             }
@@ -136,7 +137,7 @@ export function postTransfers() {
             "Id": {
               "OrgId": {
                 "Othr": {
-                  "Id": payerFsp
+                  "Id": payerFspId
                 }
               }
             }
