@@ -86,8 +86,8 @@ export function getParties() {
           payeeFspId
         },
         headers: {
-          'Accept': 'application/vnd.interoperability.parties+json;version=1.1',
-          'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',
+          'Accept': 'application/vnd.interoperability.iso20022.parties+json;version=2.0',
+          'Content-Type': 'application/vnd.interoperability.iso20022.parties+json;version=2.0',
           'FSPIOP-Source': payerFspId,
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
