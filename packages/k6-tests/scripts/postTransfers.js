@@ -95,7 +95,7 @@ export function postTransfers() {
         },
       };
 
-      const body = {
+      const body_ = {
         "transferId": transferId,
         "payerFsp": payerFspId,
         "payeeFsp": payeeFspId,
@@ -106,6 +106,63 @@ export function postTransfers() {
         "expiration": "2030-01-01T00:00:00.000Z",
         ilpPacket,
         condition
+      }
+
+      const body = {
+        "GrpHdr": {
+          "MsgId": MsgId,
+          "CreDtTm": new Date().toISOString(),
+          "NbOfTxs": "1",
+          "SttlmInf": {
+            "SttlmMtd": "CLRG"
+          },
+          "PmtInstrXpryDtTm": "2030-01-01T00:00:00.000Z"
+        },
+        "CdtTrfTxInf": {
+          "PmtId": {
+            "TxId": transferId
+          },
+          "ChrgBr": "SHAR",
+          "Cdtr": {
+            "Id": {
+              "OrgId": {
+                "Othr": {
+                  "Id": payeeFsp
+                }
+              }
+            }
+          },
+          "Dbtr": {
+            "Id": {
+              "OrgId": {
+                "Othr": {
+                  "Id": payerFsp
+                }
+              }
+            }
+          },
+          "CdtrAgt": {
+            "FinInstnId": {
+              "Othr": {
+                "Id": payeeFspId
+              }
+            }
+          },
+          "DbtrAgt": {
+            "FinInstnId": {
+              "Othr": {
+                "Id": payerFspId
+              }
+            }
+          },
+          "IntrBkSttlmAmt": {
+            "Ccy": currency,
+            "ActiveCurrencyAndAmount": `${amount}`
+          },
+          "VrfctnOfTerms": {
+            "IlpV4PrepPacket": ilpPacket
+          }
+        }
       }
 
       // Lets send the FSPIOP POST /transfers request

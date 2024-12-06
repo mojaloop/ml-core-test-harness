@@ -125,7 +125,7 @@ export function postQuotes() {
       const body = {
         "GrpHdr": {
           "MsgId": msgId,
-          "CreDtTm": (new Date()).toISOString(),
+          "CreDtTm": new Date().toISOString(),
           "NbOfTxs": "1",
           "SttlmInf": {
             "SttlmMtd": "CLRG"
