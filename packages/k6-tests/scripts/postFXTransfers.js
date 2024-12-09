@@ -133,7 +133,7 @@ export function postFXTransfers() {
           "Dbtr": {
             "FinInstnId": {
               "Othr": {
-                "Id": payeeFspId
+                "Id": payerFspId
               }
             }
           },
@@ -142,7 +142,7 @@ export function postFXTransfers() {
               "Id": {
                 "OrgId": {
                   "Othr": {
-                    "Id": payeeFspId
+                    "Id": payerFspId
                   }
                 }
               }
@@ -150,7 +150,7 @@ export function postFXTransfers() {
             "DbtrAgt": {
               "FinInstnId": {
                 "Othr": {
-                  "Id": payeeFspId
+                  "Id": payerFspId
                 }
               }
             },
@@ -158,7 +158,7 @@ export function postFXTransfers() {
               "Id": {
                 "OrgId": {
                   "Othr": {
-                    "Id": payerFspId
+                    "Id": payeeFspId
                   }
                 }
               }
@@ -166,7 +166,7 @@ export function postFXTransfers() {
             "CdtrAgt": {
               "FinInstnId": {
                 "Othr": {
-                  "Id": payerFspId
+                  "Id": payeeFspId
                 }
               }
             },
@@ -178,7 +178,7 @@ export function postFXTransfers() {
           "Cdtr": {
             "FinInstnId": {
               "Othr": {
-                "Id": payerFspId
+                "Id": payeeFspId
               }
             }
           },
