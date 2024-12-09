@@ -5,7 +5,7 @@ import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
-import { uuid } from '../common/uuid.js'
+import { ulid } from '../common/uuid.js'
 import exec from 'k6/execution';
 
 function log() {
@@ -35,9 +35,10 @@ export function postFXQuotes() {
     const startTs = Date.now();
     // const quoteId = crypto.randomUUID();
     // const transactionId = crypto.randomUUID();
-    const conversionRequestId = uuid();
-    const conversionId = uuid();
-    const transactionId = uuid();
+    const conversionRequestId = ulid();
+    const conversionId = ulid();
+    const transactionId = ulid();
+    const msgId = ulid();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = 'perffxp';
     const wsUrl = payerFsp['wsUrl'];
@@ -81,8 +82,8 @@ export function postFXQuotes() {
           payeeFspId
         },
         headers: {
-          'accept': 'application/vnd.interoperability.fxQuotes+json;version=1.0',
-          'Content-Type': 'application/vnd.interoperability.fxQuotes+json;version=1.0',
+          'accept': 'application/vnd.interoperability.iso20022.fxQuotes+json;version=2.0',
+          'Content-Type': 'application/vnd.interoperability.iso20022.fxQuotes+json;version=2.0',
           'FSPIOP-Source': payerFspId,
           'FSPIOP-Destination': payeeFspId,
           'Date': (new Date()).toUTCString(),
@@ -91,7 +92,7 @@ export function postFXQuotes() {
         },
       };
 
-      const body = {
+      const body_ = {
         "conversionRequestId": conversionRequestId,
         "conversionTerms": {
           "conversionId": conversionId,
@@ -106,6 +107,84 @@ export function postFXQuotes() {
           },
           "targetAmount": {
             "currency": `${targetCurrency}`
+          }
+        }
+      }
+
+      const body = {
+        "GrpHdr": {
+          "MsgId": msgId,
+          "CreDtTm": new Date().toISOString(),
+          "NbOfTxs": "1",
+          "SttlmInf": {
+            "SttlmMtd": "CLRG"
+          },
+          "PmtInstrXpryDtTm": "2030-01-01T00:00:00.000Z"
+        },
+        "CdtTrfTxInf": {
+          "PmtId": {
+            "TxId": conversionRequestId,
+            "InstrId": transactionId,
+            "EndToEndId": transactionId
+          },
+          "Dbtr": {
+            "FinInstnId": {
+              "Othr": {
+                "Id": payerFspId
+              }
+            }
+          },
+          "UndrlygCstmrCdtTrf": {
+            "Dbtr": {
+              "Id": {
+                "OrgId": {
+                  "Othr": {
+                    "Id": payerFspId
+                  }
+                }
+              }
+            },
+            "DbtrAgt": {
+              "FinInstnId": {
+                "Othr": {
+                  "Id": payerFspId
+                }
+              }
+            },
+            "Cdtr": {
+              "Id": {
+                "OrgId": {
+                  "Othr": {
+                    "Id": payeeFspId
+                  }
+                }
+              }
+            },
+            "CdtrAgt": {
+              "FinInstnId": {
+                "Othr": {
+                  "Id": payeeFspId
+                }
+              }
+            },
+            "InstdAmt": {
+              "Ccy": currency,
+              "ActiveOrHistoricCurrencyAndAmount": `${amount}`
+            }
+          },
+          "Cdtr": {
+            "FinInstnId": {
+              "Othr": {
+                "Id": payeeFspId
+              }
+            }
+          },
+          "IntrBkSttlmAmt": {
+            "Ccy": targetCurrency,
+            "ActiveCurrencyAndAmount": "0"
+          },
+          "InstrForCdtrAgt": {
+            "InstrInf": "SEND"
           }
         }
       }

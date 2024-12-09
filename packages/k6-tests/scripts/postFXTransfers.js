@@ -6,7 +6,7 @@ import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
-import { uuid } from '../common/uuid.js'
+import { ulid } from '../common/uuid.js'
 
 function log() {
   console.log('Env Vars -->');
@@ -42,8 +42,9 @@ export function postFXTransfers() {
 
     const startTs = Date.now();
     // const transferId = crypto.randomUUID();
-    const commitRequestId = uuid();
-    const determiningTransferId = uuid();
+    const commitRequestId = ulid();
+    const determiningTransferId = ulid();
+    const msgId = ulid();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = 'perffxp';
     const wsUrl = payerFsp['wsUrl'];
@@ -87,8 +88,8 @@ export function postFXTransfers() {
           payeeFspId
         },
         headers: {
-          'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
-          'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
+          'Accept': 'application/vnd.interoperability.iso20022.fxTransfers+json;version=2.0',
+          'Content-Type': 'application/vnd.interoperability.iso20022.fxTransfers+json;version=2.0',
           'FSPIOP-Source': payerFspId,
           'FSPIOP-Destination': payeeFspId,
           'Date': (new Date()).toUTCString(),
@@ -97,7 +98,7 @@ export function postFXTransfers() {
         },
       };
 
-      const body = {
+      const body_ = {
         "commitRequestId": commitRequestId,
         "determiningTransferId": determiningTransferId,
         "initiatingFsp": payerFspId,
@@ -112,6 +113,83 @@ export function postFXTransfers() {
         },
         "expiration": "2030-01-01T00:00:00.000Z",
         condition
+      }
+
+      const body = {
+        "GrpHdr": {
+          "MsgId": msgId,
+          "CreDtTm": new Date().toISOString(),
+          "NbOfTxs": "1",
+          "SttlmInf": {
+            "SttlmMtd": "CLRG"
+          },
+          "PmtInstrXpryDtTm": "2030-01-01T00:00:00.000Z"
+        },
+        "CdtTrfTxInf": {
+          "PmtId": {
+            "TxId": commitRequestId,
+            "EndToEndId": determiningTransferId
+          },
+          "Dbtr": {
+            "FinInstnId": {
+              "Othr": {
+                "Id": payeeFspId
+              }
+            }
+          },
+          "UndrlygCstmrCdtTrf": {
+            "Dbtr": {
+              "Id": {
+                "OrgId": {
+                  "Othr": {
+                    "Id": payeeFspId
+                  }
+                }
+              }
+            },
+            "DbtrAgt": {
+              "FinInstnId": {
+                "Othr": {
+                  "Id": payeeFspId
+                }
+              }
+            },
+            "Cdtr": {
+              "Id": {
+                "OrgId": {
+                  "Othr": {
+                    "Id": payerFspId
+                  }
+                }
+              }
+            },
+            "CdtrAgt": {
+              "FinInstnId": {
+                "Othr": {
+                  "Id": payerFspId
+                }
+              }
+            },
+            "InstdAmt": {
+              "Ccy": currency,
+              "ActiveOrHistoricCurrencyAndAmount": `${amount}`
+            }
+          },
+          "Cdtr": {
+            "FinInstnId": {
+              "Othr": {
+                "Id": payerFspId
+              }
+            }
+          },
+          "IntrBkSttlmAmt": {
+            "Ccy": targetCurrency,
+            "ActiveCurrencyAndAmount": `${amount}`
+          },
+          "VrfctnOfTerms": {
+            "Sh256Sgntr": condition
+          }
+        }
       }
 
       // Lets send the FSPIOP POST /transfers request
