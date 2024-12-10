@@ -778,20 +778,25 @@ services:
   ## nifi for watching state changes
   nifi:
     container_name: nifi
-    image: apache/nifi
+    image: apache/nifi:1.27.0
     environment:
       - SINGLE_USER_CREDENTIALS_USERNAME=${NIFIUSER:-admin}
       - SINGLE_USER_CREDENTIALS_PASSWORD=${NIFIPASS:-password@1234}  # Password must be minimum 12 characters
-      - MONGO_CONNECTION_URI=mongodb://objstore:27017
-      - MYSQL_CONNECTION_URI=jdbc:mysql://mysql:3306/central_ledger
+      - NIFI_SENSITIVE_PROPS_KEY=xzNViQSKL/GsLIKR6IraZimhNjI7X0cO
+      - REPORTING_EVENTS_DB_HOST=objstore
+      - REPORTING_EVENTS_DB_PORT=27017
+      - REPORTING_EVENTS_DB_DATABASE=reporting
+      # No mongodb user so commented , in case there is a user uncomment this
+      # - REPORTING_EVENTS_DB_USER=null 
+      # - EVENT_STORE_DB_PASSWORD=null
+      - REPORTING_DB_HOST=mysql
+      - REPORTING_DB_PORT=3306
+      - REPORTING_DB_DATABASE=${DBUSER:-central_ledger}
+      - REPORTING_DB_USER=${DBUSER:-central_ledger}
+      - REPORTING_DB_PASSWORD=${DBPASS:-password}
     volumes:
       - ./nifi-drivers/mysql-connector-j-8.0.33.jar:/opt/nifi/nifi-current/lib/mysql-connector-j-8.0.33.jar
-      # - ./nifi-data/state:/opt/nifi/nifi-current/state
-      # - ./nifi-data/db:/opt/nifi/nifi-current/database_repository
-      # - ./nifi-data/flowfile:/opt/nifi/nifi-current/flowfile_repository
-      # - ./nifi-data/content:/opt/nifi/nifi-current/content_repository
-      # - ./nifi-data/provenance:/opt/nifi/nifi-current/provenance_repository
-      - ./nifi-data/nifi_conf:/opt/nifi/nifi-current/conf
+      - ./nifi-data/nifi_conf/:/opt/nifi/nifi-current/conf
     ports:
       - "8081:8080"
       - "8443:8443"
