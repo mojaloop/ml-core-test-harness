@@ -82,6 +82,18 @@
                 "exec": [
                   "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
                 ]
+              },
+              {
+                "id": 7,
+                "description": "Callback currency to match the request",
+                "exec": [
+                  "expect(callback.body.currency).to.equal('{$request.body.currency}')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback body to have partyList",
+                "exec": ["expect(callback.body).to.have.property('partyList')"]
               }
             ]
           }
