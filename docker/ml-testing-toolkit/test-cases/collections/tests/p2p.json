@@ -9,9 +9,7 @@
       },
       "fileInfo": {
         "path": "hub/golden_path/feature_tests/p2p_money_transfer/p2p_happy_path.json",
-        "labels": [
-          "p2p"
-        ]
+        "labels": ["p2p"]
       },
       "requests": [
         {
@@ -44,7 +42,49 @@
             "fspId": "{$inputs.toFspId}",
             "currency": "{$inputs.currency}"
           },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText to be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback body should have no error",
+                "exec": [
+                  "expect(callback.body).to.not.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback content-type to be participant",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
+                ]
+              }
+            ]
+          }
         },
         {
           "id": 3,
@@ -76,16 +116,12 @@
               {
                 "id": 1,
                 "description": "Response status to be 202",
-                "exec": [
-                  "expect(response.status).to.equal(202)"
-                ]
+                "exec": ["expect(response.status).to.equal(202)"]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Accepted",
-                "exec": [
-                  "expect(response.statusText).to.equal('Accepted')"
-                ]
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
               },
               {
                 "id": 3,
@@ -97,9 +133,7 @@
               {
                 "id": 4,
                 "description": "Callback body should contain party",
-                "exec": [
-                  "expect(callback.body).to.have.property('party')"
-                ]
+                "exec": ["expect(callback.body).to.have.property('party')"]
               },
               {
                 "id": 5,
@@ -217,16 +251,12 @@
               {
                 "id": 1,
                 "description": "Response status to be 202",
-                "exec": [
-                  "expect(response.status).to.equal(202)"
-                ]
+                "exec": ["expect(response.status).to.equal(202)"]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Accepted",
-                "exec": [
-                  "expect(response.statusText).to.equal('Accepted')"
-                ]
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
               },
               {
                 "id": 3,
@@ -348,16 +378,12 @@
               {
                 "id": 1,
                 "description": "Response status to be 202",
-                "exec": [
-                  "expect(response.status).to.equal(202)"
-                ]
+                "exec": ["expect(response.status).to.equal(202)"]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Accepted",
-                "exec": [
-                  "expect(response.statusText).to.equal('Accepted')"
-                ]
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
               },
               {
                 "id": 3,
