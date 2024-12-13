@@ -20,6 +20,13 @@
       "labels": [
         "fx-sdk"
       ]
+    },
+    {
+      "name": "rules",
+      "type": "folder",
+      "labels": [
+        "rules"
+      ]
     }
   ]
 }

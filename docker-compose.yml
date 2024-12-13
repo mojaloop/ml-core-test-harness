@@ -214,9 +214,22 @@ services:
   quoting-service-handler:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
     container_name: quoting-service-handler
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && npm run start:handlers"
+    command: >-
+      sh -c "/opt/app/config-modifier/run.js
+      /opt/app/config/default.json
+      /opt/app/config-modifier/configs/quoting-service.js
+      /opt/app/config/default.json
+      && /opt/app/config-modifier/run.js
+      /opt/app/config/rules.json
+      /opt/app/config-modifier/configs/quoting-rules.js
+      /opt/app/config/rules.json
+      && npm run start:handlers"
     networks:
       - mojaloop-net
+    environment:
+      - RULE_PROFILE=${RULE_PROFILE}
+      - RULE_CURRENCY_LIMITS=${RULE_CURRENCY_LIMITS}
+      - RULE_PROXY_LIST=${RULE_PROXY_LIST}
     depends_on:
       mysql:
         condition: service_started
