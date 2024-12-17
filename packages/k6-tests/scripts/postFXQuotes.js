@@ -170,20 +170,20 @@ export function postFXQuotes() {
           }
         }
       } : {
-        conversionRequestId: conversionRequestId,
-        conversionTerms: {
-          conversionId: conversionId,
-          'initiatingFsp' : payerFspId,
-          determiningTransferId: transactionId,
-          counterPartyFsp: payeeFspId,
-          amountType: 'SEND',
-          expiration: '2030-01-01T00:00:00.000Z',
-          sourceAmount: {
-            amount: `${amount}`,
-            currency: `${currency}`
+        "conversionRequestId": conversionRequestId,
+        "conversionTerms": {
+          "conversionId": conversionId,
+          "initiatingFsp" : payerFspId,
+          "determiningTransferId": transactionId,
+          "counterPartyFsp": payeeFspId,
+          "amountType": "SEND",
+          "expiration": "2030-01-01T00:00:00.000Z",
+          "sourceAmount": {
+            "amount": `${amount}`,
+            "currency": `${currency}`
           },
-          targetAmount: {
-            currency: `${targetCurrency}`
+          "targetAmount": {
+            "currency": `${targetCurrency}`
           }
         }
       };

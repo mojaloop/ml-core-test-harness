@@ -153,14 +153,14 @@ export function postTransfers() {
           }
         }
       } : {
-        transferId: transferId,
-        payerFsp: payerFspId,
-        payeeFsp: payeeFspId,
-        amount: {
+        "transferId": transferId,
+        "payerFsp": payerFspId,
+        "payeeFsp": payeeFspId,
+        "amount": {
           amount,
           currency
         },
-        expiration: '2030-01-01T00:00:00.000Z',
+        "expiration": "2030-01-01T00:00:00.000Z",
         ilpPacket,
         condition
       }

@@ -156,31 +156,31 @@ export function postQuotes() {
           ChrgBr: 'DEBT'
         }
       } : {
-        quoteId: quoteId,
-        transactionId: transactionId,
-        payer: {
-          partyIdInfo: {
-            partyIdType: "ACCOUNT_ID",
-            partyIdentifier: `${payerFsp['partyId']}`,
-            fspId: payerFspId
+        "quoteId": quoteId,
+        "transactionId": transactionId,
+        "payer": {
+          "partyIdInfo": {
+            "partyIdType": "ACCOUNT_ID",
+            "partyIdentifier": `${payerFsp['partyId']}`,
+            "fspId": payerFspId
           }
         },
-        payee: {
-          partyIdInfo: {
-            partyIdType: "ACCOUNT_ID",
-            partyIdentifier: `${payeeFsp['partyId']}`,
-            fspId: payeeFspId
+        "payee": {
+          "partyIdInfo": {
+            "partyIdType": "ACCOUNT_ID",
+            "partyIdentifier": `${payeeFsp['partyId']}`,
+            "fspId": payeeFspId
           }
         },
-        amountType: "SEND",
-        amount: {
-          amount: `${amount}`,
-          currency: `${currency}`
+        "amountType": "SEND",
+        "amount": {
+          "amount": `${amount}`,
+          "currency": `${currency}`
         },
-        transactionType: {
-          scenario: "TRANSFER",
-          initiator: "PAYER",
-          initiatorType: "CONSUMER"
+        "transactionType": {
+          "scenario": "TRANSFER",
+          "initiator": "PAYER",
+          "initiatorType": "CONSUMER"
         }
       }
 

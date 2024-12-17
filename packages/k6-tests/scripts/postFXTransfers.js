@@ -174,19 +174,19 @@ export function postFXTransfers() {
           }
         }
       } : {
-        commitRequestId: commitRequestId,
-        determiningTransferId: determiningTransferId,
-        initiatingFsp: payerFspId,
-        counterPartyFsp: payeeFspId,
-        sourceAmount: {
+        "commitRequestId": commitRequestId,
+        "determiningTransferId": determiningTransferId,
+        "initiatingFsp": payerFspId,
+        "counterPartyFsp": payeeFspId,
+        "sourceAmount": {
           amount,
           currency
         },
-        targetAmount: {
+        "targetAmount": {
           amount,
           currency: targetCurrency
         },
-        expiration: '2030-01-01T00:00:00.000Z',
+        "expiration": "2030-01-01T00:00:00.000Z",
         condition
       }
 
