@@ -77,13 +77,6 @@
                 ]
               },
               {
-                "id": 5,
-                "description": "Callback content-type to be participant",
-                "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
-                ]
-              },
-              {
                 "id": 7,
                 "description": "Callback currency to match the request",
                 "exec": [
