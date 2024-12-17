@@ -6,7 +6,8 @@ import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
-import { uuid } from '../common/uuid.js'
+import { ulid } from '../common/uuid.js'
+import { replaceHeaders } from '../common/replaceHeaders.js';
 
 function log() {
   console.log('Env Vars -->');
@@ -41,7 +42,8 @@ export function postTransfers() {
 
     const startTs = Date.now();
     // const transferId = crypto.randomUUID();
-    const transferId = uuid();
+    const transferId = ulid();
+    const msgId = ulid();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
     const wsUrl = payerFsp['wsUrl'];
@@ -84,7 +86,7 @@ export function postTransfers() {
           payerFspId,
           payeeFspId
         },
-        headers: {
+        headers: replaceHeaders({
           'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
           'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
           'FSPIOP-Source': payerFspId,
@@ -92,10 +94,65 @@ export function postTransfers() {
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
           'tracestate': `tx_end2end_start_ts=${startTs}`
-        },
+        })
       };
 
-      const body = {
+      const body = __ENV.API_TYPE === 'iso20022' ? {
+        GrpHdr: {
+          MsgId: msgId,
+          CreDtTm: new Date().toISOString(),
+          NbOfTxs: '1',
+          SttlmInf: {
+            SttlmMtd: 'CLRG'
+          },
+          PmtInstrXpryDtTm: '2030-01-01T00:00:00.000Z'
+        },
+        CdtTrfTxInf: {
+          PmtId: {
+            TxId: transferId
+          },
+          ChrgBr: 'SHAR',
+          Cdtr: {
+            Id: {
+              OrgId: {
+                Othr: {
+                  Id: payeeFspId
+                }
+              }
+            }
+          },
+          Dbtr: {
+            Id: {
+              OrgId: {
+                Othr: {
+                  Id: payerFspId
+                }
+              }
+            }
+          },
+          CdtrAgt: {
+            FinInstnId: {
+              Othr: {
+                Id: payeeFspId
+              }
+            }
+          },
+          DbtrAgt: {
+            FinInstnId: {
+              Othr: {
+                Id: payerFspId
+              }
+            }
+          },
+          IntrBkSttlmAmt: {
+            Ccy: currency,
+            ActiveCurrencyAndAmount: `${amount}`
+          },
+          VrfctnOfTerms: {
+            IlpV4PrepPacket: ilpPacket
+          }
+        }
+      } : {
         "transferId": transferId,
         "payerFsp": payerFspId,
         "payeeFsp": payeeFspId,
