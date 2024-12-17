@@ -3,6 +3,7 @@ import { check, fail, sleep, group } from 'k6';
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
+import { replaceHeaders } from '../common/replaceHeaders.js';
 import { getTwoItemsFromArray } from "../common/utils.js";
 import exec from 'k6/execution';
 
@@ -85,14 +86,14 @@ export function getParties() {
           payerFspId,
           payeeFspId
         },
-        headers: {
-          'Accept': 'application/vnd.interoperability.iso20022.parties+json;version=2.0',
-          'Content-Type': 'application/vnd.interoperability.iso20022.parties+json;version=2.0',
+        headers: replaceHeaders({
+          'Accept': 'application/vnd.interoperability.parties+json;version=1.1',
+          'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',
           'FSPIOP-Source': payerFspId,
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
           'tracestate': `tx_end2end_start_ts=${startTs}`
-        },
+        }),
       };
 
       // // OPTIONAL: Lets send the ADMIN GET /participants request to the Central-Ledger to validate payerFspId.

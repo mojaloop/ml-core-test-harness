@@ -7,6 +7,7 @@ import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers'
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
 import { ulid } from '../common/uuid.js'
+import { replaceHeaders } from '../common/replaceHeaders.js';
 
 function log() {
   console.log('Env Vars -->');
@@ -85,85 +86,83 @@ export function postTransfers() {
           payerFspId,
           payeeFspId
         },
-        headers: {
-          'Accept': 'application/vnd.interoperability.iso20022.transfers+json;version=2.0',
-          'Content-Type': 'application/vnd.interoperability.iso20022.transfers+json;version=2.0',
+        headers: replaceHeaders({
+          'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
+          'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
           'FSPIOP-Source': payerFspId,
           'FSPIOP-Destination': payeeFspId,
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
           'tracestate': `tx_end2end_start_ts=${startTs}`
-        },
+        })
       };
 
-      const body_ = {
-        "transferId": transferId,
-        "payerFsp": payerFspId,
-        "payeeFsp": payeeFspId,
-        "amount": {
+      const body = __ENV.API_TYPE === 'iso20022' ? {
+        GrpHdr: {
+          MsgId: msgId,
+          CreDtTm: new Date().toISOString(),
+          NbOfTxs: '1',
+          SttlmInf: {
+            SttlmMtd: 'CLRG'
+          },
+          PmtInstrXpryDtTm: '2030-01-01T00:00:00.000Z'
+        },
+        CdtTrfTxInf: {
+          PmtId: {
+            TxId: transferId
+          },
+          ChrgBr: 'SHAR',
+          Cdtr: {
+            Id: {
+              OrgId: {
+                Othr: {
+                  Id: payeeFspId
+                }
+              }
+            }
+          },
+          Dbtr: {
+            Id: {
+              OrgId: {
+                Othr: {
+                  Id: payerFspId
+                }
+              }
+            }
+          },
+          CdtrAgt: {
+            FinInstnId: {
+              Othr: {
+                Id: payeeFspId
+              }
+            }
+          },
+          DbtrAgt: {
+            FinInstnId: {
+              Othr: {
+                Id: payerFspId
+              }
+            }
+          },
+          IntrBkSttlmAmt: {
+            Ccy: currency,
+            ActiveCurrencyAndAmount: `${amount}`
+          },
+          VrfctnOfTerms: {
+            IlpV4PrepPacket: ilpPacket
+          }
+        }
+      } : {
+        transferId: transferId,
+        payerFsp: payerFspId,
+        payeeFsp: payeeFspId,
+        amount: {
           amount,
           currency
         },
-        "expiration": "2030-01-01T00:00:00.000Z",
+        expiration: '2030-01-01T00:00:00.000Z',
         ilpPacket,
         condition
-      }
-
-      const body = {
-        "GrpHdr": {
-          "MsgId": msgId,
-          "CreDtTm": new Date().toISOString(),
-          "NbOfTxs": "1",
-          "SttlmInf": {
-            "SttlmMtd": "CLRG"
-          },
-          "PmtInstrXpryDtTm": "2030-01-01T00:00:00.000Z"
-        },
-        "CdtTrfTxInf": {
-          "PmtId": {
-            "TxId": transferId
-          },
-          "ChrgBr": "SHAR",
-          "Cdtr": {
-            "Id": {
-              "OrgId": {
-                "Othr": {
-                  "Id": payeeFspId
-                }
-              }
-            }
-          },
-          "Dbtr": {
-            "Id": {
-              "OrgId": {
-                "Othr": {
-                  "Id": payerFspId
-                }
-              }
-            }
-          },
-          "CdtrAgt": {
-            "FinInstnId": {
-              "Othr": {
-                "Id": payeeFspId
-              }
-            }
-          },
-          "DbtrAgt": {
-            "FinInstnId": {
-              "Othr": {
-                "Id": payerFspId
-              }
-            }
-          },
-          "IntrBkSttlmAmt": {
-            "Ccy": currency,
-            "ActiveCurrencyAndAmount": `${amount}`
-          },
-          "VrfctnOfTerms": {
-            "IlpV4PrepPacket": ilpPacket
-          }
-        }
       }
 
       // Lets send the FSPIOP POST /transfers request

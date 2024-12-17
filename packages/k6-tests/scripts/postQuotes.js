@@ -7,6 +7,7 @@ import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
 import { ulid } from '../common/uuid.js'
 import exec from 'k6/execution';
+import { replaceHeaders } from '../common/replaceHeaders.js';
 
 function log() {
   console.log(`Env Vars -->`);
@@ -82,106 +83,104 @@ export function postQuotes() {
           payerFspId,
           payeeFspId
         },
-        headers: {
-          'accept': 'application/vnd.interoperability.iso20022.quotes+json;version=1.0',
-          'Content-Type': 'application/vnd.interoperability.iso20022.quotes+json;version=1.0',
+        headers: replaceHeaders({
+          'Accept': 'application/vnd.interoperability.quotes+json;version=1.0',
+          'Content-Type': 'application/vnd.interoperability.quotes+json;version=1.0',
           'FSPIOP-Source': payerFspId,
           'FSPIOP-Destination': payeeFspId,
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
           'tracestate': `tx_end2end_start_ts=${startTs}`
-        },
+        }),
       };
 
-      const body_ = {
-        "quoteId": quoteId,
-        "transactionId": transactionId,
-        "payer": {
-          "partyIdInfo": {
-            "partyIdType": "ACCOUNT_ID",
-            "partyIdentifier": `${payerFsp['partyId']}`,
-            "fspId": payerFspId
+      const body = __ENV.API_TYPE === 'iso20022' ? {
+        GrpHdr: {
+          MsgId: msgId,
+          CreDtTm: new Date().toISOString(),
+          NbOfTxs: '1',
+          SttlmInf: {
+            SttlmMtd: 'CLRG'
           }
         },
-        "payee": {
-          "partyIdInfo": {
-            "partyIdType": "ACCOUNT_ID",
-            "partyIdentifier": `${payeeFsp['partyId']}`,
-            "fspId": payeeFspId
-          }
-        },
-        "amountType": "SEND",
-        "amount": {
-          "amount": `${amount}`,
-          "currency": `${currency}`
-        },
-        "transactionType": {
-          "scenario": "TRANSFER",
-          "initiator": "PAYER",
-          "initiatorType": "CONSUMER"
+        CdtTrfTxInf: {
+          PmtId: {
+            TxId: quoteId,
+            EndToEndId: transactionId
+          },
+          Cdtr: {
+            Id: {
+              PrvtId: {
+                Othr: {
+                  SchmeNm: {
+                    Prtry: 'ACCOUNT_ID'
+                  },
+                  Id: payeeFsp['partyId']
+                }
+              }
+            }
+          },
+          CdtrAgt: {
+            FinInstnId: {
+              Othr: {
+                Id: payeeFspId
+              }
+            }
+          },
+          Dbtr: {
+            Id: {
+              PrvtId: {
+                Othr: {
+                  SchmeNm: {
+                    Prtry: 'ACCOUNT_ID'
+                  },
+                  Id: payerFsp['partyId']
+                }
+              }
+            }
+          },
+          DbtrAgt: {
+            FinInstnId: {
+              Othr: {
+                Id: payeeFspId
+              }
+            }
+          },
+          IntrBkSttlmAmt: {
+            Ccy: currency,
+            ActiveCurrencyAndAmount: `${amount}`
+          },
+          Purp: {
+            Prtry: 'TRANSFER'
+          },
+          ChrgBr: 'DEBT'
         }
-      }
-
-      const body = {
-        "GrpHdr": {
-          "MsgId": msgId,
-          "CreDtTm": new Date().toISOString(),
-          "NbOfTxs": "1",
-          "SttlmInf": {
-            "SttlmMtd": "CLRG"
+      } : {
+        quoteId: quoteId,
+        transactionId: transactionId,
+        payer: {
+          partyIdInfo: {
+            partyIdType: "ACCOUNT_ID",
+            partyIdentifier: `${payerFsp['partyId']}`,
+            fspId: payerFspId
           }
         },
-        "CdtTrfTxInf": {
-          "PmtId": {
-            "TxId": quoteId,
-            "EndToEndId": transactionId
-          },
-          "Cdtr": {
-            "Id": {
-              "PrvtId": {
-                "Othr": {
-                  "SchmeNm": {
-                    "Prtry": "ACCOUNT_ID"
-                  },
-                  "Id": payeeFsp['partyId']
-                }
-              }
-            }
-          },
-          "CdtrAgt": {
-            "FinInstnId": {
-              "Othr": {
-                "Id": payeeFspId
-              }
-            }
-          },
-          "Dbtr": {
-            "Id": {
-              "PrvtId": {
-                "Othr": {
-                  "SchmeNm": {
-                    "Prtry": "ACCOUNT_ID"
-                  },
-                  "Id": payerFsp['partyId']
-                }
-              }
-            }
-          },
-          "DbtrAgt": {
-            "FinInstnId": {
-              "Othr": {
-                "Id": payeeFspId
-              }
-            }
-          },
-          "IntrBkSttlmAmt": {
-            "Ccy": currency,
-            "ActiveCurrencyAndAmount": `${amount}`
-          },
-          "Purp": {
-            "Prtry": "TRANSFER"
-          },
-          "ChrgBr": "DEBT"
+        payee: {
+          partyIdInfo: {
+            partyIdType: "ACCOUNT_ID",
+            partyIdentifier: `${payeeFsp['partyId']}`,
+            fspId: payeeFspId
+          }
+        },
+        amountType: "SEND",
+        amount: {
+          amount: `${amount}`,
+          currency: `${currency}`
+        },
+        transactionType: {
+          scenario: "TRANSFER",
+          initiator: "PAYER",
+          initiatorType: "CONSUMER"
         }
       }
 

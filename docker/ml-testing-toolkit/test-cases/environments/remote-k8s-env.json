@@ -15,7 +15,7 @@
     "currency": "XXX",
     "currency2": "XTS",
     "cgscurrency": "INR",
-    "HUB_NAME": "hub-regionstg",
+    "HUB_NAME": "Hub",
     "hubEmail": "some.email@gmail.com",
     "hub_operator": "NOT_APPLICABLE",
     "toIdType": "ACCOUNT_ID",
