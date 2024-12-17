@@ -24,11 +24,13 @@ services:
       - mojaloop-net
     depends_on:
       mysql:
-        condition: service_started
+        condition: service_healthy
       kafka:
         condition: service_started
       objstore:
         condition: service_healthy
+      kafka-provisioning:
+        condition: service_completed_successfully
     healthcheck:
       test: wget -q http://127.0.0.1:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -60,10 +62,14 @@ services:
     networks:
       - mojaloop-net
     depends_on:
+      mysql:
+        condition: service_healthy
       central-ledger:
         condition: service_healthy
       kafka:
         condition: service_started
+      kafka-provisioning:
+        condition: service_completed_successfully
     healthcheck:
       test: wget -q http://127.0.0.1:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -185,15 +191,19 @@ services:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
     container_name: quoting-service
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && node src/index.js"
+    environment:
+      - UV_THREADPOOL_SIZE=20
     networks:
       - mojaloop-net
     depends_on:
       mysql:
-        condition: service_started
+        condition: service_healthy
       central-ledger:
         condition: service_started
       kafka:
         condition: service_started
+      kafka-provisioning:
+        condition: service_completed_successfully
     # ports:
     #   - "3002:3002"
     volumes:
@@ -215,17 +225,21 @@ services:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
     container_name: quoting-service-handler
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service.js /opt/app/config/default.json && npm run start:handlers"
+    environment:
+      - UV_THREADPOOL_SIZE=20
     networks:
       - mojaloop-net
     depends_on:
       mysql:
-        condition: service_started
+        condition: service_healthy
       central-ledger:
         condition: service_started
       kafka:
         condition: service_started
       quoting-service:
         condition: service_healthy
+      kafka-provisioning:
+        condition: service_completed_successfully
     # ports:
     #   - "3022:3002"
     #   - "29229:9229"
@@ -261,6 +275,8 @@ services:
     depends_on:
       kafka:
         condition: service_started
+      kafka-provisioning:
+        condition: service_completed_successfully
       central-ledger:
         condition: service_started
     healthcheck:
@@ -316,7 +332,7 @@ services:
       - mojaloop-net
     depends_on:
       mysql-als:
-        condition: service_started
+        condition: service_healthy
       central-ledger:
         condition: service_started
       simulator:
@@ -469,6 +485,8 @@ services:
         condition: service_healthy
       central-ledger:
         condition: service_healthy
+      central-handler-position-batch:
+        condition: service_healthy
       ml-api-adapter:
         condition: service_healthy
       account-lookup-service:
@@ -497,6 +515,8 @@ services:
       mojaloop-testing-toolkit:
         condition: service_healthy
       central-ledger:
+        condition: service_healthy
+      central-handler-position-batch:
         condition: service_healthy
       ml-api-adapter:
         condition: service_healthy
@@ -527,6 +547,8 @@ services:
         condition: service_healthy
       central-ledger:
         condition: service_healthy
+      central-handler-position-batch:
+        condition: service_healthy
       ml-api-adapter:
         condition: service_healthy
       account-lookup-service:
@@ -555,6 +577,8 @@ services:
       mojaloop-testing-toolkit:
         condition: service_healthy
       central-ledger:
+        condition: service_healthy
+      central-handler-position-batch:
         condition: service_healthy
       ml-api-adapter:
         condition: service_healthy
@@ -587,6 +611,8 @@ services:
         condition: service_healthy
       central-ledger:
         condition: service_healthy
+      central-handler-position-batch:
+        condition: service_healthy
       ml-api-adapter:
         condition: service_healthy
       account-lookup-service:
@@ -617,6 +643,8 @@ services:
       mojaloop-testing-toolkit:
         condition: service_healthy
       central-ledger:
+        condition: service_healthy
+      central-handler-position-batch:
         condition: service_healthy
       ml-api-adapter:
         condition: service_healthy
