@@ -88,8 +88,8 @@ export function postFXTransfers() {
           payeeFspId
         },
         headers: replaceHeaders({
-          'Accept': 'application/vnd.interoperability.fxTransfers+json;version=1.0',
-          'Content-Type': 'application/vnd.interoperability.fxTransfers+json;version=1.0',
+          'Accept': 'application/vnd.interoperability.fxTransfers+json;version=1.1',
+          'Content-Type': 'application/vnd.interoperability.fxTransfers+json;version=1.1',
           'FSPIOP-Source': payerFspId,
           'FSPIOP-Destination': payeeFspId,
           'Date': (new Date()).toUTCString(),
