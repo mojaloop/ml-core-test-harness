@@ -10,7 +10,8 @@
       "stages": [
         { "duration": "30s", "target": 600 },
         { "duration": "1m", "target": 2000 },
-        { "duration": "480s", "target": 2000 }
+        { "duration": "480s", "target": 2000 },
+        { "duration": "90s", "target": 200 }
       ]
     }
   },
