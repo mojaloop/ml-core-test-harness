@@ -1,7 +1,7 @@
 version: 2.1
 setup: true
 orbs:
-  build: mojaloop/build@1.0.40
+  build: mojaloop/build@dev:9fba667adc24a841b2e26c26f127cc0b9c8471ae
 workflows:
   setup:
     jobs:
@@ -9,3 +9,4 @@ workflows:
           filters:
             tags:
               only: /v\d+(\.\d+){2}(-[a-zA-Z-][0-9a-zA-Z-]*\.\d+)?/
+          base_image: ghcr.io/grafana/k6-operator:runner-v0.0.17
