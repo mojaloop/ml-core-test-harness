@@ -1,0 +1,804 @@
+{
+  "name": "parties_negative",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "Party info with missing header",
+      "meta": {
+        "info": "Party info with missing header"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Party info with missing fspiop source header"
+          },
+          "description": "Party info with missing fspiop source header",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response should be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain fspiop",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('fspiop-source')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Party info with missing date header"
+          },
+          "description": "Party info with missing date header",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response should be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain date",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('date')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Party info with missing content header"
+          },
+          "description": "Party info with missing content header",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response should be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain content-type",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('content')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Party info with missing accept header"
+          },
+          "description": "Party info with missing accept header",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "{$inputs.contentType}"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response should be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain accept",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('accept')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Party info of unprovisioned party",
+      "meta": {
+        "info": "Party info of unprovisioned party"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Party info of unprovisioned party"
+          },
+          "description": "Party info of unprovisioned party",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "123"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": 3,
+                "description": "Request content-type to be parties",
+                "exec": [
+                  "expect('{$request.headers['Content-Type']}').to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(callback.body).to.have.property('errorInformation')",
+                  ""
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Response should contain error description",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback error should be 3200",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3200')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Party info of unused type"
+          },
+          "description": "Party info of unused type",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "BUSINESS",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": 3,
+                "description": "Request content-type to be parties",
+                "exec": [
+                  "expect('{$request.headers['Content-Type']}').to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(callback.body).to.have.property('errorInformation')",
+                  ""
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Response should contain error description",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback error should be 3200",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3200')"
+                ]
+              }
+            ]
+          },
+          "path": "/parties/BUSINESS/{$inputs.toIdValue}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Party info with wrong header values",
+      "meta": {
+        "info": "Party info with wrong header values"
+      },
+      "requests": [
+        {
+          "id": 2,
+          "meta": {
+            "info": "Party info with wrong date header (BUG)"
+          },
+          "description": "Party info with wrong date header (BUG)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Date": "thursday"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response should be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain date",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('date')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 3,
+          "meta": {
+            "info": "Party info with wrong content header(BUG)"
+          },
+          "description": "Party info with wrong content header(BUG)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.parties+xml;version=15.5"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response should be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain content-type",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('content')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Party info with wrong accept header(BUG)"
+          },
+          "description": "Party info with wrong accept header(BUG)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "{$inputs.contentType}",
+            "Accept": "application/vnd.interoperability.parties+xml;version=3.0"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response should be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Get Party with wrong optional headers",
+      "meta": {
+        "info": "Get Party with wrong optional headers"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Get party information"
+          },
+          "description": "Get party information",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback body should contain party",
+                "exec": ["expect(callback.body).to.have.property('party')"]
+              },
+              {
+                "id": 5,
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be parties",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
+                "exec": [
+                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "meta": {
+            "info": "Get party information with wrong optional HTTP header"
+          },
+          "description": "Get party information with wrong optional HTTP header",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.accept}",
+            "Content-Type": "{$inputs.contentType}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-HTTP-Method": "PUT"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback body should contain party",
+                "exec": ["expect(callback.body).to.have.property('party')"]
+              },
+              {
+                "id": 5,
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be parties",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
+                "exec": [
+                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
