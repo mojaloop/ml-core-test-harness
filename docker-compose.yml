@@ -82,6 +82,8 @@ services:
       - "27017:27017"
     networks:
       - mojaloop-net
+    volumes:
+      - ./mongo-init-scripts/:/docker-entrypoint-initdb.d/
     logging:
         driver: none
     healthcheck:
