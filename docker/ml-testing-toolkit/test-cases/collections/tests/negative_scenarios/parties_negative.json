@@ -191,9 +191,9 @@
               },
               {
                 "id": 4,
-                "description": "Response should contain content-type",
+                "description": "Response should contain Content",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('content')"
+                  "expect(response.body.errorInformation.errorDescription).to.include('Content')"
                 ]
               },
               {
@@ -264,9 +264,9 @@
               },
               {
                 "id": 5,
-                "description": "Response should contain accept",
+                "description": "Response should contain Accept",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('accept')"
+                  "expect(response.body.errorInformation.errorDescription).to.include('Accept')"
                 ]
               }
             ]
@@ -355,9 +355,9 @@
               },
               {
                 "id": 8,
-                "description": "Callback error should be 3200",
+                "description": "Callback error should be 3204",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorCode).to.equal('3200')"
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3204')"
                 ]
               }
             ]
@@ -437,9 +437,9 @@
               },
               {
                 "id": 8,
-                "description": "Callback error should be 3200",
+                "description": "Callback error should be 3003",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorCode).to.equal('3200')"
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3003')"
                 ]
               }
             ]
