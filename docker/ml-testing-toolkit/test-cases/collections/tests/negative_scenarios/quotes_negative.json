@@ -1,0 +1,2257 @@
+{
+  "options": {},
+  "name": "tests_negative_scenarios_quotes_negative",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "POST /quotes with missing headers",
+      "meta": {
+        "info": "POST /quotes with missing headers"
+      },
+      "fileInfo": {
+        "path": "tests/negative_scenarios/quotes_negative.json"
+      },
+      "requests": [
+        {
+          "id": 2,
+          "meta": {
+            "info": "Post quote - Missing destination header"
+          },
+          "description": "Post Quote - Missing destination header",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response error code should be 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain destination",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('destination')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Post Quote - Missing content header (BUG)"
+          },
+          "description": "Post Quote - Missing content header (BUG)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response error description should contain body",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('content-type')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3101'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "Post Quote - Missing Accept header"
+          },
+          "description": "Post Quote - Missing Accept header",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "{$inputs.contentTypeQuotes}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain Accept",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('accept')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "Post Quote - Missing Date header"
+          },
+          "description": "Post Quote - Missing Date header",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "{$inputs.contentTypeQuotes}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain date",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('date')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 7,
+          "meta": {
+            "info": "Post Quote - Missing FSPIOP Source header"
+          },
+          "description": "Post Quote - Missing FSPIOP Source header",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "{$inputs.contentTypeQuotes}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain fspiop",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('fspiop')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "POST /quotes with wrong headers",
+      "meta": {
+        "info": "POST /quotes with wrong headers"
+      },
+      "fileInfo": {
+        "path": "tests/negative_scenarios/quotes_negative.json"
+      },
+      "requests": [
+        {
+          "id": 2,
+          "meta": {
+            "info": "Send quote"
+          },
+          "description": "Send quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Post Quote - Wrong content header (BUG)"
+          },
+          "description": "Post Quote - Wrong content header (BUG)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.quotes+xml;version=5.0"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3101'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "Post Quote - Missing Accept header (BUG)"
+          },
+          "description": "Post Quote - Missing Accept header (BUG)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain Accept",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('accept')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "Post Quote - Wrong Date header (BUG)"
+          },
+          "description": "Post Quote - Wrong Date header (BUG)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "Th12312412"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain date",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('date')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "POST /quotes with missing parameters in body",
+      "meta": {
+        "info": "POST /quotes with missing parameters in body"
+      },
+      "fileInfo": {
+        "path": "tests/negative_scenarios/quotes_negative.json"
+      },
+      "requests": [
+        {
+          "id": 4,
+          "meta": {
+            "info": "Post Quote - Missing quote ID in Body"
+          },
+          "description": "Post Quote - Missing quote ID in Body",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0"
+          },
+          "body": {
+            "quoteId": "",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain quote",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('quote')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3100'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "Post Quote - Missing transaction ID in body"
+          },
+          "description": "Post Quote - Missing transaction ID in body",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain transaction",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('transaction')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3100'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "Post Quote - Missing payer info in body "
+          },
+          "description": "Post Quote - Missing payer info in body ",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": "",
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain payer",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('payer')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3101'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 7,
+          "meta": {
+            "info": "Post Quote - Missing amount type in Body"
+          },
+          "description": "Post Quote - Missing amount type in Body",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain amount",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('amount')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3100'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 8,
+          "meta": {
+            "info": "Post Quote - Missing amount in Body "
+          },
+          "description": "Post Quote - Missing amount in Body ",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain amount",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('amount')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3100'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 9,
+          "meta": {
+            "info": "Post Quote - Missing currency in Body"
+          },
+          "description": "Post Quote - Missing currency in Body",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain currency",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('currency')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3100'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 10,
+          "meta": {
+            "info": "Post Quote - Missing transactionType-scenario in Body"
+          },
+          "description": "Post Quote - Missing transactionType-scenario in Body",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain transactionType",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('transactionType')",
+                  "expect(response.body.errorInformation.errorDescription).to.include('scenario')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3100'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 11,
+          "meta": {
+            "info": "Post Quote - Missing transactionType-initiatorType in Body "
+          },
+          "description": "Post Quote - Missing transactionType-initiatorType in Body ",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": ""
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain transactionType",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('transactionType')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3100'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 12,
+          "meta": {
+            "info": "Post Quote - Missing transactionType-initiator in Body "
+          },
+          "description": "Post Quote - Missing transactionType-initiator in Body ",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain transactionType",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('transactionType')",
+                  "expect(response.body.errorInformation.errorDescription).to.include('initiator')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response should contain '3100'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "POST /Quotes with wrong optional parameters and headers",
+      "meta": {
+        "info": "POST /Quotes with wrong optional parameters and headers"
+      },
+      "fileInfo": {
+        "path": "tests/negative_scenarios/quotes_negative.json"
+      },
+      "requests": [
+        {
+          "id": 2,
+          "meta": {
+            "info": "Send quote"
+          },
+          "description": "Send quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.toFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain destination",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('destination')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response errorCode should be '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Post Quote with wrong optional parameter - name"
+          },
+          "description": "Post Quote with wrong optional parameter - name",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "234213",
+                  "lastName": "45626"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.toFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain destination",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('destination')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response errorCode should be '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "Post Quote with wrong optional header - HTTP Method  "
+          },
+          "description": "Post Quote with wrong optional header - HTTP Method  ",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-HTTP-Method": "GET"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.toFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain destination",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('destination')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response errorCode should be '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": false
+        }
+      ]
+    }
+  ]
+}
