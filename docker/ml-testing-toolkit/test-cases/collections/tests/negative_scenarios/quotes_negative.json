@@ -15,9 +15,9 @@
         {
           "id": 2,
           "meta": {
-            "info": "Post quote - Missing destination header"
+            "info": "Send quote - wrong fspiop destination in header"
           },
-          "description": "Post Quote - Missing destination header",
+          "description": "Send quote - wrong fspiop destination in header",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 1,
@@ -72,40 +72,76 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
               },
               {
                 "id": 2,
-                "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
               },
               {
                 "id": 3,
-                "description": "Response should contain error information",
+                "description": "Callback Content Length not 0",
                 "exec": [
-                  "expect(response.body).to.have.property('errorInformation')"
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
                 "id": 4,
-                "description": "Response should contain error code",
+                "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
-                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
                 "id": 5,
-                "description": "Response error code should be 3102",
+                "description": "Callback body should contain transferAmount",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                  "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
                 "id": 6,
-                "description": "Response should contain destination",
+                "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('destination')"
+                  "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be quotes",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Request amountType to be SEND",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('SEND')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
                 ]
               }
             ]
@@ -115,8 +151,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 4,
@@ -203,14 +238,14 @@
                 "id": 5,
                 "description": "Response error description should contain body",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('content-type')"
+                  "expect(response.body.errorInformation.errorDescription).to.include('body')"
                 ]
               },
               {
                 "id": 6,
-                "description": "Response should contain '3101'",
+                "description": "Response should contain '3102'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
                 ]
               }
             ]
@@ -220,8 +255,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 5,
@@ -325,8 +359,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 6,
@@ -430,8 +463,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 7,
@@ -535,14 +567,13 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         }
       ]
     },
     {
       "id": 2,
-      "name": "POST /quotes with wrong headers",
+      "name": "POST /quotes with invalid values in header",
       "meta": {
         "info": "POST /quotes with wrong headers"
       },
@@ -553,7 +584,7 @@
         {
           "id": 2,
           "meta": {
-            "info": "Send quote"
+            "info": "Send quote - wrong fspiop destination in header"
           },
           "description": "Send quote",
           "apiVersion": {
@@ -568,7 +599,8 @@
             "Accept": "{$inputs.acceptQuotes}",
             "Content-Type": "{$inputs.contentTypeQuotes}",
             "Date": "{$function.generic.curDate}",
-            "FSPIOP-Source": "{$inputs.fromFspId}"
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "randomStringTest"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -610,33 +642,82 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
               },
               {
                 "id": 2,
-                "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
               },
               {
                 "id": 3,
-                "description": "Response should contain error information",
+                "description": "Callback Content Length not 0",
                 "exec": [
-                  "expect(response.body).to.have.property('errorInformation')"
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
                 "id": 4,
-                "description": "Response should contain error code",
+                "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
-                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
                 "id": 5,
-                "description": "Response should contain '3102'",
+                "description": "Callback body should contain transferAmount",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                  "expect(callback.body).to.not.have.property('transferAmount')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Request amountType to be SEND",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('SEND')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                ]
+              },
+              {
+                "id": 12,
+                "description": "Callback body should contain error information",
+                "exec": [
+                  "expect(callback.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 13,
+                "description": "Callback body should contain errorCode '3201'",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.include('3201')"
+                ]
+              },
+              {
+                "id": 14,
+                "description": "Callback body should include Destination FSP error",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorDescription).to.include('Destination FSP Error')"
                 ]
               }
             ]
@@ -765,7 +846,8 @@
           "headers": {
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0"
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "testAcceptText"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -838,9 +920,9 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3102'",
+                "description": "Response should contain '3101'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               }
             ]
@@ -871,7 +953,8 @@
             "Accept": "{$inputs.acceptQuotes}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Content-Type": "{$inputs.contentTypeQuotes}",
-            "Date": "Th12312412"
+            "Date": "Th12312412",
+            "FSPIOP-Destination": "{$inputs.fromFspId}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -941,13 +1024,6 @@
                 "exec": [
                   "expect(response.body.errorInformation.errorDescription).to.include('date')"
                 ]
-              },
-              {
-                "id": 6,
-                "description": "Response should contain '3102'",
-                "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
-                ]
               }
             ]
           },
@@ -957,7 +1033,7 @@
           },
           "path": "/quotes",
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         }
       ]
     },
@@ -1074,8 +1150,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 5,
@@ -1180,8 +1255,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 6,
@@ -1270,9 +1344,9 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3101'",
+                "description": "Response should contain '3100'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               }
             ]
@@ -1282,8 +1356,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 7,
@@ -1388,8 +1461,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 8,
@@ -1494,8 +1566,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 9,
@@ -1600,8 +1671,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 10,
@@ -1689,8 +1759,7 @@
                 "id": 5,
                 "description": "Response should contain transactionType",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('transactionType')",
-                  "expect(response.body.errorInformation.errorDescription).to.include('scenario')"
+                  "expect(response.body.errorInformation.errorDescription).to.include('transactionType')"
                 ]
               },
               {
@@ -1707,8 +1776,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 11,
@@ -1813,8 +1881,7 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 12,
@@ -1902,8 +1969,7 @@
                 "id": 5,
                 "description": "Response should contain transactionType",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('transactionType')",
-                  "expect(response.body.errorInformation.errorDescription).to.include('initiator')"
+                  "expect(response.body.errorInformation.errorDescription).to.include('transactionType')"
                 ]
               },
               {
@@ -1920,16 +1986,15 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         }
       ]
     },
     {
       "id": 4,
-      "name": "POST /Quotes with wrong optional parameters and headers",
+      "name": "POST /Transfers with wrong parameters in body",
       "meta": {
-        "info": "POST /Quotes with wrong optional parameters and headers"
+        "info": "POST /Transfers with wrong parameters in body"
       },
       "fileInfo": {
         "path": "tests/negative_scenarios/quotes_negative.json"
@@ -1996,39 +2061,75 @@
               {
                 "id": 1,
                 "description": "Response status to be 202",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": ["expect(response.status).to.equal(202)"]
               },
               {
                 "id": 2,
-                "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
               },
               {
                 "id": 3,
-                "description": "Response should contain error information",
+                "description": "Callback Content Length not 0",
                 "exec": [
-                  "expect(response.body).to.have.property('errorInformation')"
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
                 "id": 4,
-                "description": "Response should contain error code",
+                "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
-                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
                 "id": 5,
-                "description": "Response should contain destination",
+                "description": "Callback body should contain transferAmount",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('destination')"
+                  "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
                 "id": 6,
-                "description": "Response errorCode should be '3102'",
+                "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                  "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be quotes",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Request amountType to be SEND",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('SEND')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
                 ]
               }
             ]
@@ -2037,64 +2138,137 @@
             "Type": "",
             "ID": ""
           },
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
-          "id": 4,
+          "id": 3,
           "meta": {
-            "info": "Post Quote with wrong optional parameter - name"
+            "info": "Send transfer"
           },
-          "description": "Post Quote with wrong optional parameter - name",
+          "description": "Send transfer",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 1,
             "type": "fspiop",
             "asynchronous": true
           },
-          "operationPath": "/quotes",
+          "operationPath": "/transfers",
           "method": "post",
           "headers": {
-            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
-            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
           "body": {
-            "quoteId": "{$function.generic.generateUUID}",
-            "transactionId": "{$function.generic.generateUUID}",
-            "payer": {
-              "partyIdInfo": {
-                "partyIdType": "{$inputs.fromIdType}",
-                "partyIdentifier": "{$inputs.fromIdValue}",
-                "fspId": "{$inputs.fromFspId}"
-              },
-              "personalInfo": {
-                "complexName": {
-                  "firstName": "234213",
-                  "lastName": "45626"
-                },
-                "dateOfBirth": "{$inputs.fromDOB}"
-              }
-            },
-            "payee": {
-              "partyIdInfo": {
-                "partyIdType": "{$inputs.toIdType}",
-                "partyIdentifier": "{$inputs.toIdValue}",
-                "fspId": "{$inputs.toFspId}"
-              }
-            },
-            "amountType": "SEND",
+            "transferId": "{$prev.2.request.body.transactionId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.toFspId}",
             "amount": {
               "amount": "{$inputs.amount}",
               "currency": "{$inputs.currency}"
             },
-            "transactionType": {
-              "scenario": "TRANSFER",
-              "initiator": "PAYER",
-              "initiatorType": "CONSUMER"
+            "expiration": "{$prev.2.callback.body.expiration}",
+            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
+            "condition": "{$prev.2.callback.body.condition}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback transferState to be COMMITTED",
+                "exec": [
+                  "expect(callback.body.transferState).to.equal('COMMITTED')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback content-type to be transfers",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Request transferId same as quote request transferId",
+                "exec": [
+                  "expect('{$request.body.transferId}').to.equal('{$prev.2.request.body.transactionId}')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Request transferAmount (amount & currency) to match quote request",
+                "exec": [
+                  "expect('{$prev.2.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.2.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Request FSP source the same as quote callback FSP destination",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.2.callback.headers.fspiop-destination}')"
+                ]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Send transfer with wrong  currency in body"
+          },
+          "description": "Send transfer with wrong  currency in body",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "transferId": "{$prev.2.request.body.transactionId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.toFspId}",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "POC"
             },
-            "note": "{$inputs.note}"
+            "expiration": "{$prev.2.callback.body.expiration}",
+            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
+            "condition": "{$prev.2.callback.body.condition}"
           },
           "tests": {
             "assertions": [
@@ -2105,52 +2279,287 @@
               },
               {
                 "id": 2,
-                "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
-              },
-              {
-                "id": 3,
                 "description": "Response should contain error information",
                 "exec": [
                   "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
-                "id": 4,
+                "id": 3,
                 "description": "Response should contain error code",
                 "exec": [
                   "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
-                "id": 5,
-                "description": "Response should contain destination",
+                "id": 4,
+                "description": "Response should contain currency",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('destination')"
+                  "expect(response.body.errorInformation.errorDescription).to.include('currency')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               },
               {
                 "id": 6,
-                "description": "Response errorCode should be '3102'",
-                "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
-                ]
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
               }
             ]
           },
-          "params": {
-            "Type": "",
-            "ID": ""
-          },
-          "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": 5,
           "meta": {
-            "info": "Post Quote with wrong optional header - HTTP Method  "
+            "info": "Send transfer with wrong  amount in body"
           },
-          "description": "Post Quote with wrong optional header - HTTP Method  ",
+          "description": "Send transfer with wrong  amount in body",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "transferId": "{$prev.2.request.body.transactionId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.toFspId}",
+            "amount": {
+              "amount": "fasdas",
+              "currency": "{$inputs.currency}"
+            },
+            "expiration": "{$prev.2.callback.body.expiration}",
+            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
+            "condition": "{$prev.2.callback.body.condition}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain amount",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('amount')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": 6,
+          "meta": {
+            "info": "Send transfer with wrong  transferId in body parameters"
+          },
+          "description": "Send transfer with wrong  transferId in body parameters",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "transferId": "123124123",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.toFspId}",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "expiration": "{$prev.2.callback.body.expiration}",
+            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
+            "condition": "{$prev.2.callback.body.condition}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain transferId",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('transferId')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              }
+            ]
+          },
+          "disabled": true
+        },
+        {
+          "id": 7,
+          "meta": {
+            "info": "Send transfer with wrong  expiration in body"
+          },
+          "description": "Send transfer with wrong  expiration in body",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "transferId": "{$prev.2.request.body.transactionId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.toFspId}",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "expiration": "thursd",
+            "ilpPacket": "{$prev.2.callback.body.ilpPacket}",
+            "condition": "{$prev.2.callback.body.condition}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
+              },
+              {
+                "id": 2,
+                "description": "Response should contain error information",
+                "exec": [
+                  "expect(response.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Response should contain error code",
+                "exec": [
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Response should contain expiration",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('expiration')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Response should contain '3102'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+              }
+            ]
+          },
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "POST /Quotes with wrong optional parameters and headers",
+      "meta": {
+        "info": "POST /Quotes with wrong optional parameters and headers"
+      },
+      "fileInfo": {
+        "path": "tests/negative_scenarios/quotes_negative.json"
+      },
+      "requests": [
+        {
+          "id": 2,
+          "meta": {
+            "info": "Send quote"
+          },
+          "description": "Send quote",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 1,
@@ -2164,7 +2573,7 @@
             "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}",
-            "FSPIOP-HTTP-Method": "GET"
+            "FSPIOP-Destination": "{$inputs.fromFspId}"
           },
           "body": {
             "quoteId": "{$function.generic.generateUUID}",
@@ -2206,40 +2615,76 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
               },
               {
                 "id": 2,
-                "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
               },
               {
                 "id": 3,
-                "description": "Response should contain error information",
+                "description": "Callback Content Length not 0",
                 "exec": [
-                  "expect(response.body).to.have.property('errorInformation')"
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
                 ]
               },
               {
                 "id": 4,
-                "description": "Response should contain error code",
+                "description": "Callback FSP Destination equal to request FSP Source",
                 "exec": [
-                  "expect(response.body.errorInformation).to.have.property('errorCode')"
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
               },
               {
                 "id": 5,
-                "description": "Response should contain destination",
+                "description": "Callback body should contain transferAmount",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('destination')"
+                  "expect(callback.body).to.have.property('transferAmount')"
                 ]
               },
               {
                 "id": 6,
-                "description": "Response errorCode should be '3102'",
+                "description": "Callback transferAmount (amount & currency)to match the request",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                  "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be quotes",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Request amountType to be SEND",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('SEND')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
                 ]
               }
             ]
@@ -2249,7 +2694,292 @@
             "ID": ""
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": false
+          "disabled": true
+        },
+        {
+          "id": 4,
+          "meta": {
+            "info": "Post Quote with wrong optional parameter - name"
+          },
+          "description": "Post Quote with wrong optional parameter - name",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "234213",
+                  "lastName": "45626"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.toFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback body should contain transferAmount",
+                "exec": [
+                  "expect(callback.body).to.have.property('transferAmount')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback transferAmount (amount & currency)to match the request",
+                "exec": [
+                  "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be quotes",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Request amountType to be SEND",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('SEND')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": true
+        },
+        {
+          "id": 5,
+          "meta": {
+            "info": "Post Quote with wrong optional header - HTTP Method  "
+          },
+          "description": "Post Quote with wrong optional header - HTTP Method  ",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-Destination": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.toIdValue}",
+                "fspId": "{$inputs.toFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": 2,
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": 3,
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Callback body should contain transferAmount",
+                "exec": [
+                  "expect(callback.body).to.have.property('transferAmount')"
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Callback transferAmount (amount & currency)to match the request",
+                "exec": [
+                  "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": 7,
+                "description": "Callback content-type to be quotes",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
+                ]
+              },
+              {
+                "id": 8,
+                "description": "Request amountType to be SEND",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('SEND')"
+                ]
+              },
+              {
+                "id": 9,
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": 10,
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": 11,
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "disabled": true
         }
       ]
     }
