@@ -1,11 +1,15 @@
 {
-  "name": "parties_negative",
+  "options": {},
+  "name": "tests_negative_scenarios_parties_negative",
   "test_cases": [
     {
       "id": 1,
       "name": "Party info with missing header",
       "meta": {
         "info": "Party info with missing header"
+      },
+      "fileInfo": {
+        "path": "tests/negative_scenarios/parties_negative.json"
       },
       "requests": [
         {
@@ -72,7 +76,8 @@
                 ]
               }
             ]
-          }
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         },
         {
           "id": 2,
@@ -138,7 +143,8 @@
                 ]
               }
             ]
-          }
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         },
         {
           "id": 3,
@@ -204,7 +210,8 @@
                 ]
               }
             ]
-          }
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         },
         {
           "id": 4,
@@ -270,7 +277,8 @@
                 ]
               }
             ]
-          }
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         }
       ]
     },
@@ -279,6 +287,9 @@
       "name": "Party info of unprovisioned party",
       "meta": {
         "info": "Party info of unprovisioned party"
+      },
+      "fileInfo": {
+        "path": "tests/negative_scenarios/parties_negative.json"
       },
       "requests": [
         {
@@ -361,7 +372,8 @@
                 ]
               }
             ]
-          }
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         },
         {
           "id": 2,
@@ -444,7 +456,8 @@
               }
             ]
           },
-          "path": "/parties/BUSINESS/{$inputs.toIdValue}"
+          "path": "/parties/BUSINESS/{$inputs.toIdValue}",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         }
       ]
     },
@@ -453,6 +466,9 @@
       "name": "Party info with wrong header values",
       "meta": {
         "info": "Party info with wrong header values"
+      },
+      "fileInfo": {
+        "path": "tests/negative_scenarios/parties_negative.json"
       },
       "requests": [
         {
@@ -514,7 +530,8 @@
               }
             ]
           },
-          "disabled": true
+          "disabled": true,
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         },
         {
           "id": 3,
@@ -574,7 +591,8 @@
                 ]
               }
             ]
-          }
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         },
         {
           "id": 4,
@@ -627,15 +645,19 @@
                 ]
               }
             ]
-          }
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         }
       ]
     },
     {
-      "id": 14,
+      "id": 4,
       "name": "Get Party with wrong optional headers",
       "meta": {
         "info": "Get Party with wrong optional headers"
+      },
+      "fileInfo": {
+        "path": "tests/negative_scenarios/parties_negative.json"
       },
       "requests": [
         {
@@ -716,7 +738,8 @@
                 ]
               }
             ]
-          }
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         },
         {
           "id": 2,
@@ -797,7 +820,8 @@
                 ]
               }
             ]
-          }
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
         }
       ]
     }
