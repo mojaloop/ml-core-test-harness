@@ -1,6 +1,6 @@
 {
   "VERSION": 1,
-  "CALLBACK_ENDPOINT": "http://account-lookup-service:4002",
+  "CALLBACK_ENDPOINT": "http://example-users-api-service:8000",
   "CALLBACK_RESOURCE_ENDPOINTS": {
     "enabled": true,
     "endpoints": [
