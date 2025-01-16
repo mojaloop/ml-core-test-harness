@@ -1119,7 +1119,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 5,
@@ -1224,7 +1225,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 6,
@@ -1313,9 +1315,9 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3100'",
+                "description": "Response should contain '3101'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               }
             ]
@@ -1325,7 +1327,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 7,
@@ -1430,7 +1433,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 8,
@@ -1535,7 +1539,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 9,
@@ -1640,7 +1645,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 10,
@@ -1745,7 +1751,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 11,
@@ -1850,7 +1857,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 12,
@@ -1955,7 +1963,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         }
       ]
     },
