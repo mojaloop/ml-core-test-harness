@@ -15,7 +15,7 @@
         {
           "id": 2,
           "meta": {
-            "info": "Send quote - wrong fspiop destination in header"
+            "info": "Send quote - missing FSPIOP destination in header"
           },
           "description": "Send quote - wrong fspiop destination in header",
           "apiVersion": {
@@ -72,76 +72,40 @@
             "assertions": [
               {
                 "id": 1,
-                "description": "Response status to be 202",
-                "exec": ["expect(response.status).to.equal(202)"]
+                "description": "Response status to be 400",
+                "exec": ["expect(response.status).to.equal(400)"]
               },
               {
                 "id": 2,
-                "description": "Response statusText be Accepted",
-                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+                "description": "Response statusText be Bad Request",
+                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
               },
               {
                 "id": 3,
-                "description": "Callback Content Length not 0",
+                "description": "Response should contain error information",
                 "exec": [
-                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                  "expect(response.body).to.have.property('errorInformation')"
                 ]
               },
               {
                 "id": 4,
-                "description": "Callback FSP Destination equal to request FSP Source",
+                "description": "Response should contain error code",
                 "exec": [
-                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                  "expect(response.body.errorInformation).to.have.property('errorCode')"
                 ]
               },
               {
                 "id": 5,
-                "description": "Callback body should contain transferAmount",
+                "description": "error code should be '3102'",
                 "exec": [
-                  "expect(callback.body).to.have.property('transferAmount')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
                 ]
               },
               {
                 "id": 6,
-                "description": "Callback transferAmount (amount & currency)to match the request",
+                "description": "Response should contain fspiop-destination",
                 "exec": [
-                  "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
-                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
-                ]
-              },
-              {
-                "id": 7,
-                "description": "Callback content-type to be quotes",
-                "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version=1.0')"
-                ]
-              },
-              {
-                "id": 8,
-                "description": "Request amountType to be SEND",
-                "exec": [
-                  "expect('{$request.body.amountType}').to.equal('SEND')"
-                ]
-              },
-              {
-                "id": 9,
-                "description": "Request transactionType scenario to be TRANSFER",
-                "exec": [
-                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
-                ]
-              },
-              {
-                "id": 10,
-                "description": "Request transactionType initiator to be PAYER",
-                "exec": [
-                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
-                ]
-              },
-              {
-                "id": 11,
-                "description": "Request transactionType initiatorType to be CONSUMER",
-                "exec": [
-                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                  "expect(response.body.errorInformation.errorDescription).to.include('fspiop-destination')"
                 ]
               }
             ]
@@ -151,7 +115,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 4,
@@ -235,17 +200,17 @@
                 ]
               },
               {
-                "id": 5,
-                "description": "Response error description should contain body",
+                "id": 6,
+                "description": "error code should be '3102'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('body')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               },
               {
-                "id": 6,
-                "description": "Response should contain '3102'",
+                "id": 7,
+                "description": "Response should contain content header",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                  "expect(response.body.errorInformation.errorDescription).to.include('content-type')"
                 ]
               }
             ]
@@ -255,7 +220,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 5,
@@ -347,7 +313,7 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3102'",
+                "description": "error code should be '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3102')"
                 ]
@@ -359,7 +325,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 6,
@@ -451,7 +418,7 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3102'",
+                "description": "error code should be '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3102')"
                 ]
@@ -463,7 +430,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         },
         {
           "id": 7,
@@ -555,7 +523,7 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3102'",
+                "description": "error code should be '3102'",
                 "exec": [
                   "expect(response.body.errorInformation.errorCode).to.include('3102')"
                 ]
@@ -567,7 +535,8 @@
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",
-          "disabled": true
+          "disabled": false,
+          "url": "{$inputs.HOST_QUOTING_SERVICE}"
         }
       ]
     },
