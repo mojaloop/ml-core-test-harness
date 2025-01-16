@@ -2116,7 +2116,8 @@
             "Type": "",
             "ID": ""
           },
-          "disabled": true
+          "disabled": true,
+          "url": "{$inputs.HOST_ML_API_ADAPTER}"
         },
         {
           "id": 3,
@@ -2214,7 +2215,8 @@
               }
             ]
           },
-          "disabled": true
+          "disabled": true,
+          "url": "{$inputs.HOST_ML_API_ADAPTER}"
         },
         {
           "id": 4,
@@ -2290,7 +2292,8 @@
               }
             ]
           },
-          "disabled": true
+          "disabled": true,
+          "url": "{$inputs.HOST_ML_API_ADAPTER}"
         },
         {
           "id": 5,
@@ -2366,7 +2369,8 @@
               }
             ]
           },
-          "disabled": true
+          "disabled": true,
+          "url": "{$inputs.HOST_ML_API_ADAPTER}"
         },
         {
           "id": 6,
@@ -2442,7 +2446,8 @@
               }
             ]
           },
-          "disabled": true
+          "disabled": true,
+          "url": "{$inputs.HOST_ML_API_ADAPTER}"
         },
         {
           "id": 7,
@@ -2518,7 +2523,8 @@
               }
             ]
           },
-          "disabled": true
+          "disabled": true,
+          "url": "{$inputs.HOST_ML_API_ADAPTER}"
         }
       ]
     },
@@ -2664,6 +2670,13 @@
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
                 ]
+              },
+              {
+                "id": 12,
+                "description": "Response should not have error information",
+                "exec": [
+                  "expect(response.body).to.not.have.property('errorInformation')"
+                ]
               }
             ]
           },
@@ -2672,7 +2685,7 @@
             "ID": ""
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": true
+          "disabled": false
         },
         {
           "id": 4,
@@ -2806,6 +2819,13 @@
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
                 ]
+              },
+              {
+                "id": 12,
+                "description": "Response should not have error information",
+                "exec": [
+                  "expect(response.body).to.not.have.property('errorInformation')"
+                ]
               }
             ]
           },
@@ -2814,7 +2834,7 @@
             "ID": ""
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": true
+          "disabled": false
         },
         {
           "id": 5,
@@ -2949,6 +2969,13 @@
                 "exec": [
                   "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
                 ]
+              },
+              {
+                "id": 12,
+                "description": "Response should not have error information",
+                "exec": [
+                  "expect(response.body).to.not.have.property('errorInformation')"
+                ]
               }
             ]
           },
@@ -2957,7 +2984,7 @@
             "ID": ""
           },
           "url": "{$inputs.HOST_QUOTING_SERVICE}",
-          "disabled": true
+          "disabled": false
         }
       ]
     }
