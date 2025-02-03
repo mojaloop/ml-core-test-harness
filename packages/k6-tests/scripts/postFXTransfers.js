@@ -1,12 +1,12 @@
 import http from 'k6/http';
-import { crypto } from "k6/experimental/webcrypto";
 import { check, fail, sleep, group } from 'k6';
 import exec from 'k6/execution';
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
+import { replaceHeaders } from '../common/replaceHeaders.js';
 import { getTwoItemsFromArray } from "../common/utils.js";
-import { uuid } from '../common/uuid.js'
+import { ulid } from '../common/uuid.js'
 
 function log() {
   console.log('Env Vars -->');
@@ -42,8 +42,9 @@ export function postFXTransfers() {
 
     const startTs = Date.now();
     // const transferId = crypto.randomUUID();
-    const commitRequestId = uuid();
-    const determiningTransferId = uuid();
+    const commitRequestId = ulid();
+    const determiningTransferId = ulid();
+    const msgId = ulid();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = 'perffxp';
     const wsUrl = payerFsp['wsUrl'];
@@ -86,18 +87,93 @@ export function postFXTransfers() {
           payerFspId,
           payeeFspId
         },
-        headers: {
-          'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
-          'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
+        headers: replaceHeaders({
+          'Accept': 'application/vnd.interoperability.fxTransfers+json;version=1.1',
+          'Content-Type': 'application/vnd.interoperability.fxTransfers+json;version=1.1',
           'FSPIOP-Source': payerFspId,
           'FSPIOP-Destination': payeeFspId,
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
           'tracestate': `tx_end2end_start_ts=${startTs}`
-        },
+        }),
       };
 
-      const body = {
+      const body = __ENV.API_TYPE === 'iso20022' ? {
+        GrpHdr: {
+          MsgId: msgId,
+          CreDtTm: new Date().toISOString(),
+          NbOfTxs: '1',
+          SttlmInf: {
+            SttlmMtd: 'CLRG'
+          },
+          PmtInstrXpryDtTm: '2030-01-01T00:00:00.000Z'
+        },
+        CdtTrfTxInf: {
+          PmtId: {
+            TxId: commitRequestId,
+            EndToEndId: determiningTransferId
+          },
+          Dbtr: {
+            FinInstnId: {
+              Othr: {
+                Id: payerFspId
+              }
+            }
+          },
+          UndrlygCstmrCdtTrf: {
+            Dbtr: {
+              Id: {
+                OrgId: {
+                  Othr: {
+                    Id: payerFspId
+                  }
+                }
+              }
+            },
+            DbtrAgt: {
+              FinInstnId: {
+                Othr: {
+                  Id: payerFspId
+                }
+              }
+            },
+            Cdtr: {
+              Id: {
+                OrgId: {
+                  Othr: {
+                    Id: payeeFspId
+                  }
+                }
+              }
+            },
+            CdtrAgt: {
+              FinInstnId: {
+                Othr: {
+                  Id: payeeFspId
+                }
+              }
+            },
+            InstdAmt: {
+              Ccy: currency,
+              ActiveOrHistoricCurrencyAndAmount: `${amount}`
+            }
+          },
+          Cdtr: {
+            FinInstnId: {
+              Othr: {
+                Id: payeeFspId
+              }
+            }
+          },
+          IntrBkSttlmAmt: {
+            Ccy: targetCurrency,
+            ActiveCurrencyAndAmount: `${amount}`
+          },
+          VrfctnOfTerms: {
+            Sh256Sgntr: condition
+          }
+        }
+      } : {
         "commitRequestId": commitRequestId,
         "determiningTransferId": determiningTransferId,
         "initiatingFsp": payerFspId,

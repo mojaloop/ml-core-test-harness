@@ -2,6 +2,16 @@ module.exports = {
   "HOSTNAME": "http://ml-api-adapter",
   "ENDPOINT_SOURCE_URL": "http://central-ledger:3001",
   "ENDPOINT_HEALTH_URL": "http://central-ledger:3001/health",
+  "PROXY_CACHE": {
+    "enabled": true,
+    "type": "redis",
+    "proxyConfig": {
+      // We need to unset cluster as there is an issue in proxy lib. The above type parameter is not being considered.
+      "cluster": undefined,
+      "host": "redis",
+      "port": 6379,
+    }
+  },
   "KAFKA": {
     "CONSUMER": {
       "NOTIFICATION": {

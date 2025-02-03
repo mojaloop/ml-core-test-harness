@@ -1,5 +1,6 @@
 {
   "inputValues": {
+    "HUB_NAME": "Hub",
     "CALLBACK_ENDPOINT_BASE_URL": "http://mojaloop-testing-toolkit:4040",
     "HOST_ACCOUNT_LOOKUP_ADMIN": "http://account-lookup-service:4001",
     "HOST_ACCOUNT_LOOKUP_SERVICE": "http://account-lookup-service:4002",

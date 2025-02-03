@@ -5,8 +5,9 @@ import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
-import { uuid } from '../common/uuid.js'
+import { ulid } from '../common/uuid.js'
 import exec from 'k6/execution';
+import { replaceHeaders } from '../common/replaceHeaders.js';
 
 function log() {
   console.log(`Env Vars -->`);
@@ -37,8 +38,9 @@ export function postQuotes() {
     const startTs = Date.now();
     // const quoteId = crypto.randomUUID();
     // const transactionId = crypto.randomUUID();
-    const quoteId = uuid();
-    const transactionId = uuid();
+    const quoteId = ulid();
+    const transactionId = ulid();
+    const msgId = ulid();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
     const wsUrl = payerFsp['wsUrl'];
@@ -81,18 +83,79 @@ export function postQuotes() {
           payerFspId,
           payeeFspId
         },
-        headers: {
-          'accept': 'application/vnd.interoperability.quotes+json;version=1.0',
+        headers: replaceHeaders({
+          'Accept': 'application/vnd.interoperability.quotes+json;version=1.0',
           'Content-Type': 'application/vnd.interoperability.quotes+json;version=1.0',
           'FSPIOP-Source': payerFspId,
           'FSPIOP-Destination': payeeFspId,
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
           'tracestate': `tx_end2end_start_ts=${startTs}`
-        },
+        }),
       };
 
-      const body = {
+      const body = __ENV.API_TYPE === 'iso20022' ? {
+        GrpHdr: {
+          MsgId: msgId,
+          CreDtTm: new Date().toISOString(),
+          NbOfTxs: '1',
+          SttlmInf: {
+            SttlmMtd: 'CLRG'
+          }
+        },
+        CdtTrfTxInf: {
+          PmtId: {
+            TxId: quoteId,
+            EndToEndId: transactionId
+          },
+          Cdtr: {
+            Id: {
+              PrvtId: {
+                Othr: {
+                  SchmeNm: {
+                    Prtry: 'ACCOUNT_ID'
+                  },
+                  Id: payeeFsp['partyId']
+                }
+              }
+            }
+          },
+          CdtrAgt: {
+            FinInstnId: {
+              Othr: {
+                Id: payeeFspId
+              }
+            }
+          },
+          Dbtr: {
+            Id: {
+              PrvtId: {
+                Othr: {
+                  SchmeNm: {
+                    Prtry: 'ACCOUNT_ID'
+                  },
+                  Id: payerFsp['partyId']
+                }
+              }
+            }
+          },
+          DbtrAgt: {
+            FinInstnId: {
+              Othr: {
+                Id: payeeFspId
+              }
+            }
+          },
+          IntrBkSttlmAmt: {
+            Ccy: currency,
+            ActiveCurrencyAndAmount: `${amount}`
+          },
+          Purp: {
+            Prtry: 'TRANSFER'
+          },
+          ChrgBr: 'DEBT'
+        }
+      } : {
         "quoteId": quoteId,
         "transactionId": transactionId,
         "payer": {

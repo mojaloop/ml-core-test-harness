@@ -1,0 +1,77 @@
+{
+    "options": {},
+    "name": "fx_quotes",
+    "test_cases": [
+      {
+        "id": 1,
+        "name": "FX Quote - 400",
+        "fileInfo": {
+          "path": "collections/tests/fx/fx_tests.json",
+          "labels": [
+            "fx"
+          ]
+        },
+        "meta": {
+          "info": "FX Quote - 400"
+        },
+        "requests": [
+          {
+            "id": 4,
+            "description": "POST /fxQuotes",
+            "apiVersion": {
+              "minorVersion": 0,
+              "majorVersion": 2,
+              "type": "fspiop",
+              "asynchronous": true,
+              "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+              "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+              "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+              "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+              "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+            },
+            "operationPath": "/fxQuotes",
+            "path": "/fxQuotes",
+            "method": "post",
+            "body": {
+              "conversionRequestId": "{$function.generic.generateUUID}",
+              "conversionTerms": {
+                "conversionId": "{$function.generic.generateUUID}",
+                "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
+                "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
+                "amountType": "SENDING",
+                "sourceAmount": {
+                  "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
+                  "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
+                },
+                "targetAmount": {
+                  "currency": "{$inputs.FXP_TARGET_CURRENCY}"
+                },
+                "expiration": "{$inputs.FXP_EXPIRATION}"
+              }
+            },
+            "headers": {
+              "Accept": "{$inputs.acceptFxQuotes}",
+              "Content-Type": "{$inputs.contentTypeFxQuotes}",
+              "Date": "{$function.generic.curDate}",
+              "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}",
+              "FSPIOP-Destination": "{$inputs.FXP_TESTFXP1_ID}"
+            },
+            "url": "{$inputs.HOST_QUOTING_SERVICE}",
+            "disabled": false,
+            "tests": {
+              "assertions": [
+                {
+                  "id": 1,
+                  "description": "Response status to be 400",
+                  "exec": [
+                    "expect(response.status).to.equal(400)"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+  

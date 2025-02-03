@@ -1,6 +1,6 @@
 {
   "VERSION": 1,
-  "CALLBACK_ENDPOINT": "http://account-lookup-service:4002",
+  "CALLBACK_ENDPOINT": "http://mojaloop-testing-toolkit:4040",
   "CALLBACK_RESOURCE_ENDPOINTS": {
     "enabled": true,
     "endpoints": [
@@ -18,6 +18,16 @@
         "method": "put",
         "path": "/transfers",
         "endpoint": "http://ml-api-adapter:3000"
+      },
+      {
+        "method": "put",
+        "path": "/fxTransfers",
+        "endpoint": "http://ml-api-adapter:3000"
+      },
+      {
+        "method": "put",
+        "path": "/fxQuotes",
+        "endpoint": "http://quoting-service:3002"
       }
     ]
   },
@@ -40,8 +50,8 @@
   "JWS_SIGN_PUT_PARTIES": false,
   "CLIENT_MUTUAL_TLS_ENABLED": false,
   "ADVANCED_FEATURES_ENABLED": true,
-  "CALLBACK_TIMEOUT": 10000,
-  "DEFAULT_REQUEST_TIMEOUT": 3000,
+  "CALLBACK_TIMEOUT": 15000,
+  "DEFAULT_REQUEST_TIMEOUT": 10000,
   "SCRIPT_TIMEOUT": 5000,
   "LOG_SERVER_UI_URL": "http://some-url-here",
   "UI_CONFIGURATION": {
@@ -65,5 +75,26 @@
     "TEST_CASES_REPO_HUB_PROVISIONING_PATH": "collections/dfsp/provisioning"
   },
   "DEFAULT_ENVIRONMENT_FILE_NAME": "default-env.json",
-  "LABELS": []
+  "LABELS": [
+    {
+      "name": "std",
+      "description": "Standard tests",
+      "color": "green"
+    },
+    {
+      "name": "perf",
+      "description": "Performance characterisation test cases",
+      "color": "red"
+    },
+    {
+      "name": "fx",
+      "description": "Test for foreign exchange functionality",
+      "color": "blue"
+    },
+    {
+      "name": "fx-sdk",
+      "description": "Test for foreign exchange functionality for sdks",
+      "color": "orange"
+    }
+  ]
 }

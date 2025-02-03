@@ -18,7 +18,7 @@ const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 const amount = __ENV.K6_SCRIPT_FSPIOP_QUOTES_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 
-export function postQuotes() {
+export function postQuotesPersonalInfoExtensions() {
   !exec.instance.iterationsCompleted && log();
   group("Post Quotes", function () {
     let payerFsp

@@ -1,0 +1,83 @@
+{
+    "options": {},
+    "name": "fx_transfer_400",
+    "test_cases": [
+        {
+            "id": 1,
+            "name": "FX Transfer - 400",
+            "fileInfo": {
+                "path": "collections/tests/fx/fx_transfers.json",
+                "labels": [
+                    "fx"
+                ]
+            },
+            "meta": {
+                "info": "FX Transfer - 400"
+            },
+            "requests": [
+                {
+                    "id": 6,
+                    "description": "POST /fxTransfers",
+                    "apiVersion": {
+                        "minorVersion": 0,
+                        "majorVersion": 2,
+                        "type": "fspiop",
+                        "asynchronous": true,
+                        "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+                        "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+                        "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+                        "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+                        "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+                    },
+                    "operationPath": "/fxTransfers",
+                    "path": "/fxTransfers",
+                    "method": "post",
+                    "url": "{$inputs.HOST_ML_API_ADAPTER}",
+                    "headers": {
+                        "Accept": "{$inputs.acceptFxTransfers}",
+                        "Content-Type": "{$inputs.contentTypeFxTransfers}",
+                        "Date": "{$function.generic.curDate}",
+                        "FSPIOP-Source": "{$inputs.FXP_PAYER_DFSP_ID}"
+                    },
+                    "body": {
+                        "commitRequestId": "{$function.generic.generateUUID}",
+                        "determiningTransferId": "X@#^",
+                        "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
+                        "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
+                        "amountType": "SEND",
+                        "sourceAmount": {
+                            "currency": "{$inputs.FXP_SOURCE_CURRENCY}",
+                            "amount": "{$inputs.FXP_SOURCE_AMOUNT}"
+                        },
+                        "targetAmount": {
+                            "currency": "{$inputs.FXP_TARGET_CURRENCY}",
+                            "amount": "{$inputs.FXP_TARGET_AMOUNT}"
+                        },
+                        "condition": "condition",
+                        "expiration": "{$requestVariables.expiration}"
+                    },
+                    "scriptingEngine": "javascript",
+                    "disabled": false,
+                    "tests": {
+                        "assertions": [
+                            {
+                                "id": 1,
+                                "description": "Response status to be 400",
+                                "exec": [
+                                    "expect(response.status).to.equal(400)"
+                                ]
+                            }
+                        ]
+                    },
+                    "scripts": {
+                        "preRequest": {
+                            "exec": [
+                                "requestVariables.expiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
