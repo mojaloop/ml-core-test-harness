@@ -320,7 +320,7 @@ services:
   account-lookup-service:
     image: mojaloop/account-lookup-service:${ACCOUNT_LOOKUP_SERVICE_VERSION}
     container_name: account-lookup-service
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/account-lookup-service.js /opt/app/config/default.json && /opt/app/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/account-lookup-service.js /opt/app/config/default.json && /opt/app/wait4/wait4.js account-lookup-service && npm run migrate && npm run start:all"
     # ports:
     #   - "4001:4001"
     #   - "4002:4002"
