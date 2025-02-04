@@ -585,7 +585,7 @@
             "isDefault": true
           },
           "headers": {
-            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.participants+json;version=2.0",
             "Accept": "application/vnd.interoperability.participants+json;version=1",
             "Date": "{$function.generic.curDate}"
           },

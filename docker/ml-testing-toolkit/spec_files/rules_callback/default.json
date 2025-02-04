@@ -290,7 +290,7 @@
       "path": "/parties/{Type}/{ID}",
       "params": {
         "headers": {
-          "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+          "Content-Type": "application/vnd.interoperability.parties+json;version=2.0",
           "FSPIOP-Source": "greenbankfsp",
           "Date": "{$request.headers.date}"
         },
@@ -360,7 +360,7 @@
       "path": "/parties/{Type}/{ID}",
       "params": {
         "headers": {
-          "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+          "Content-Type": "application/vnd.interoperability.parties+json;version=2.0",
           "FSPIOP-Source": "greenbankfsp"
         },
         "body": {
@@ -494,7 +494,7 @@
       "path": "/parties/{Type}/{ID}",
       "params": {
         "headers": {
-          "Content-Type": "application/vnd.interoperability.parties+json;version=1.0"
+          "Content-Type": "application/vnd.interoperability.parties+json;version=2.0"
         },
         "body": {
           "party": {

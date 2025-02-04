@@ -321,7 +321,7 @@
                 "id": 3,
                 "description": "Request content-type to be parties",
                 "exec": [
-                  "expect('{$request.headers['Content-Type']}').to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "expect('{$request.headers['Content-Type']}').to.equal('application/vnd.interoperability.parties+json;version=2.0')"
                 ]
               },
               {
@@ -403,7 +403,7 @@
                 "id": 3,
                 "description": "Request content-type to be parties",
                 "exec": [
-                  "expect('{$request.headers['Content-Type']}').to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "expect('{$request.headers['Content-Type']}').to.equal('application/vnd.interoperability.parties+json;version=2.0')"
                 ]
               },
               {
@@ -704,7 +704,7 @@
                 "id": 7,
                 "description": "Callback content-type to be parties",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=2.0')"
                 ]
               },
               {
@@ -785,7 +785,7 @@
                 "id": 7,
                 "description": "Callback content-type to be parties",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=2.0')"
                 ]
               },
               {
