@@ -433,6 +433,7 @@ services:
   ## Testing Toolkit
   mojaloop-testing-toolkit:
     image: mojaloop/ml-testing-toolkit:${TEST_TTK_SVC_VERSION}
+    container_name: mojaloop-testing-toolkit
     volumes:
       - "./docker/ml-testing-toolkit/spec_files:/opt/app/spec_files"
       - "./docker/ml-testing-toolkit/test-cases:/opt/app/examples"
@@ -654,7 +655,7 @@ services:
         condition: service_healthy
       quoting-service-handler:
         condition: service_healthy
-      ttk-provisioning-fx:
+      ttk-provisioning-fx-sdk:
         condition: service_completed_successfully
     networks:
       - mojaloop-net

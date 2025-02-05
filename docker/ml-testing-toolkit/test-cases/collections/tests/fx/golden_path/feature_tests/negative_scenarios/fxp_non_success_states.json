@@ -31,10 +31,10 @@
                 "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
               },
               "operationPath": "/parties/{Type}/{ID}",
-              "path": "/parties/MSISDN/{$inputs.toIdValue}",
+              "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
               "method": "get",
               "params": {
-                "Type": "MSISDN",
+                "Type": "{$inputs.toIdType}",
                 "ID": "{$inputs.toIdValue}"
               },
               "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
@@ -758,4 +758,3 @@
       }
     ]
   }
-  

@@ -30,7 +30,7 @@
     "fromDOB": "1984-01-01",
     "fromFirstName": "Firstname-Test",
     "fromFspId": "pinkbankfsp",
-    "fromIdType": "MSISDN",
+    "fromIdType": "ACCOUNT_ID",
     "fromIdValue": "44123456789",
     "fromLastName": "Lastname-Test",
     "hubEmail": "some.email@gmail.com",

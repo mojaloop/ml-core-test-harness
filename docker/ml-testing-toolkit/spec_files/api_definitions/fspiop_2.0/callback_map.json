@@ -672,7 +672,6 @@
       }
     }
   },
-
   "/services/FXP": {
     "get": {
       "successCallback": {

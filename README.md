@@ -509,7 +509,7 @@ docker-compose --profile testing-toolkit --profile fx --profile ttk-provisioning
 ### FX SDK Tests
 
 ```
-docker-compose --profile all-services --profile fx --profile fx-sdk --profile ttk-provisioning-fx-sdk --profile ttk-fx-tests --profile debug up -d
+docker-compose --profile all-services --profile fx --profile fx-sdk --profile ttk-provisioning-fx-sdk --profile ttk-fx-sdk-tests --profile debug up -d
 ```
 
 ```

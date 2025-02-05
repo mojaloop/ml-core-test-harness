@@ -389,7 +389,7 @@
           "displayName": "Yaro",
           "firstName": "Yaro",
           "fspId": "fxpayeedfsp",
-          "idType": "MSISDN",
+          "idType": "ACCOUNT_ID",
           "idValue": "{$request.params.idValue}",
           "lastName": "Smith",
           "merchantClassificationCode": "1234",

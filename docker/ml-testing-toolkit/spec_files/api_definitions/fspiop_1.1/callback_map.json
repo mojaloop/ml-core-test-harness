@@ -564,5 +564,45 @@
         }
       }
     }
+  },
+  "/services/FXP": {
+    "get": {
+      "successCallback": {
+        "method": "put",
+        "path": "/services/FXP",
+        "headerOverride": {
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}",
+          "Content-Type": "{$session.negotiatedContentType}",
+          "Date": "{$request.headers.date}"
+        }
+      }
+    }
+  },
+  "/services/FXP/{SourceCurrency}/{TargetCurrency}": {
+    "get": {
+      "successCallback": {
+        "method": "put",
+        "path": "/services/FXP/{SourceCurrency}/{TargetCurrency}",
+        "pathPattern": "/services/FXP/{$request.params.SourceCurrency}/{$request.params.TargetCurrency}",
+        "headerOverride": {
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}",
+          "Content-Type": "{$session.negotiatedContentType}",
+          "Date": "{$request.headers.date}"
+        }
+      },
+      "errorCallback": {
+        "method": "put",
+        "path": "/services/FXP/{SourceCurrency}/{TargetCurrency}",
+        "pathPattern": "/services/FXP/{$request.params.SourceCurrency}/{$request.params.TargetCurrency}",
+        "headerOverride": {
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
+          "FSPIOP-Destination": "{$request.headers.fspiop-source}",
+          "Content-Type": "{$session.negotiatedContentType}",
+          "Date": "{$request.headers.date}"
+        }
+      }
+    }
   }
 }

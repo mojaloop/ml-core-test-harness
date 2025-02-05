@@ -1,5 +1,58 @@
 [
   {
+    "ruleId": 33,
+    "priority": 1,
+    "description": "get /services/FXP",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/services/FXP"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/services/FXP",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "javascript"
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}"
+        },
+        "body": {
+          "providers": [
+            "FDH_FX"
+          ]
+        }
+      },
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
     "ruleId": 30,
     "priority": 1,
     "description": "ttkpayeefsp PUT Notifications Failure Test-case due to invalid FSPIOP-Destination",
@@ -297,7 +350,7 @@
         "body": {
           "party": {
             "partyIdInfo": {
-              "partyIdType": "MSISDN",
+              "partyIdType": "ACCOUNT_ID",
               "partyIdentifier": "{$request.params.ID}",
               "fspId": "greenbankfsp"
             },
@@ -1273,59 +1326,6 @@
           "completedTimestamp": "{$environment.completedTimestamp}",
           "conversionState": "RESERVED",
           "extensionList": null
-        }
-      },
-      "type": "MOCK_CALLBACK"
-    },
-    "type": "callback",
-    "version": 1
-  },
-  {
-    "ruleId": 33,
-    "priority": 1,
-    "description": "get /services/FXP",
-    "apiVersion": {
-      "minorVersion": 0,
-      "majorVersion": 2,
-      "type": "fspiop",
-      "asynchronous": true,
-      "additionalApi": true,
-      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
-      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
-      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
-      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
-      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
-    },
-    "conditions": {
-      "all": [
-        {
-          "fact": "operationPath",
-          "operator": "equal",
-          "value": "/services/FXP"
-        },
-        {
-          "fact": "method",
-          "operator": "equal",
-          "value": "get"
-        }
-      ]
-    },
-    "event": {
-      "method": "put",
-      "path": "/services/FXP",
-      "params": {
-        "scripts": {
-          "scriptingEngine": "postman"
-        },
-        "headers": {
-          "Content-Type": "{$request.headers.content-type}",
-          "Date": "{$request.headers.date}",
-          "FSPIOP-Source": "{$request.headers.fspiop-destination}"
-        },
-        "body": {
-          "providers": [
-            "FDH_FX"
-          ]
         }
       },
       "type": "MOCK_CALLBACK"
