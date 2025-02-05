@@ -15,8 +15,8 @@
           },
           "description": "Party info with missing fspiop source header",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -66,9 +66,9 @@
               },
               {
                 "id": 5,
-                "description": "Response should contain '3102'",
+                "description": "Response should contain '3100'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               }
             ]
@@ -81,8 +81,8 @@
           },
           "description": "Party info with missing date header",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -132,9 +132,9 @@
               },
               {
                 "id": 5,
-                "description": "Response should contain '3102'",
+                "description": "Response should contain '3100'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               }
             ]
@@ -147,8 +147,8 @@
           },
           "description": "Party info with missing content header",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -193,14 +193,14 @@
                 "id": 4,
                 "description": "Response should contain Content",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('Content')"
+                  "expect(response.body.errorInformation.errorDescription).to.include('content')"
                 ]
               },
               {
                 "id": 5,
-                "description": "Response should contain '3102'",
+                "description": "Response should contain '3100'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
                 ]
               }
             ]
@@ -213,8 +213,8 @@
           },
           "description": "Party info with missing accept header",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -288,8 +288,8 @@
           },
           "description": "Party info of unprovisioned party",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -370,8 +370,8 @@
           },
           "description": "Party info of unused type",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -462,8 +462,8 @@
           },
           "description": "Party info with wrong date header (BUG)",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -523,8 +523,8 @@
           },
           "description": "Party info with wrong content header(BUG)",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -583,8 +583,8 @@
           },
           "description": "Party info with wrong accept header(BUG)",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -645,8 +645,8 @@
           },
           "description": "Get party information",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -725,8 +725,8 @@
           },
           "description": "Get party information with wrong optional HTTP header",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
