@@ -27,6 +27,7 @@
             "Content-Type": "{$inputs.contentType}",
             "Date": "{$function.generic.curDate}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -66,9 +67,9 @@
               },
               {
                 "id": 5,
-                "description": "Response should contain '3100'",
+                "description": "Response should contain '3102'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
                 ]
               }
             ]
@@ -93,6 +94,7 @@
             "Content-Type": "{$inputs.contentType}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -132,9 +134,9 @@
               },
               {
                 "id": 5,
-                "description": "Response should contain '3100'",
+                "description": "Response should contain '3101'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               }
             ]
@@ -159,6 +161,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -193,14 +196,14 @@
                 "id": 4,
                 "description": "Response should contain Content",
                 "exec": [
-                  "expect(response.body.errorInformation.errorDescription).to.include('content')"
+                  "expect(response.body.errorInformation.errorDescription).to.include('Content')"
                 ]
               },
               {
                 "id": 5,
-                "description": "Response should contain '3100'",
+                "description": "Response should contain '3102'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
                 ]
               }
             ]
@@ -225,6 +228,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Content-Type": "{$inputs.contentType}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -301,6 +305,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "123"
@@ -383,6 +388,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "BUSINESS",
             "ID": "{$inputs.toIdValue}"
@@ -475,6 +481,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Date": "thursday"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -536,6 +543,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Content-Type": "application/vnd.interoperability.parties+xml;version=15.5"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -596,6 +604,7 @@
             "Content-Type": "{$inputs.contentType}",
             "Accept": "application/vnd.interoperability.parties+xml;version=3.0"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -658,6 +667,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -739,6 +749,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "FSPIOP-HTTP-Method": "PUT"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
