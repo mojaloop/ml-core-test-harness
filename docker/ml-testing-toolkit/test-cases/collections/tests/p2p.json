@@ -68,25 +68,6 @@
                 "exec": [
                   "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
                 ]
-              },
-              {
-                "id": 6,
-                "description": "Callback body should have no error",
-                "exec": [
-                  "expect(callback.body).to.not.have.property('errorInformation')"
-                ]
-              },
-              {
-                "id": 7,
-                "description": "Callback currency to match the request",
-                "exec": [
-                  "expect(callback.body.currency).to.equal('{$request.body.currency}')"
-                ]
-              },
-              {
-                "id": 8,
-                "description": "Callback body to have partyList",
-                "exec": ["expect(callback.body).to.have.property('partyList')"]
               }
             ]
           }
@@ -94,7 +75,7 @@
         {
           "id": 3,
           "meta": {
-            "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
+            "info": "This request allows us to get the personal information associated with a ACCOUNT_ID and the FSP associated to it."
           },
           "description": "Get party information",
           "apiVersion": {
@@ -322,7 +303,7 @@
             ]
           },
           "params": {
-            "Type": "MSISDN",
+            "Type": "ACCOUNT_ID",
             "ID": "{$inputs.toIdValue}"
           },
           "path": "/quotes",

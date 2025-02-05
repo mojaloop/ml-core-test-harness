@@ -1,0 +1,26 @@
+{
+  "PORT": 3000,
+  "REPORTING_DB": {
+    "DIALECT": "mysql",
+    "HOST": "mysql",
+    "PORT": 3306,
+    "USER": "central_ledger",
+    "PASSWORD": "password",
+    "SCHEMA": "central_ledger"
+  },
+  "EVENT_STORE_DB": {
+    "HOST": "objstore",
+    "PORT": 27017,
+    "USER": "",
+    "PASSWORD": "",
+    "DATABASE": "reporting"
+  },
+  "ORY_KETO_READ_URL": "",
+  "AUTH_CHECK_PARTICIPANTS": false,
+  "USER_ID_HEADER": "x-user",
+  "PRISMA_LOGGING_ENABLED": false,
+  "CORS_WHITELIST": [
+    "http://localhost:8082"
+  ],
+  "ALLOW_CREDENTIALS": true
+}

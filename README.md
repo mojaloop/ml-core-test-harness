@@ -16,9 +16,6 @@ Execute the following commands to run mojaloop in local machine
 git clone https://github.com/mojaloop/ml-core-test-harness.git
 cd ml-core-test-harness
 docker-compose --profile all-services --profile ttk-provisioning --profile ttk-tests up
-
-# For simple deployment
-docker compose --profile simple up
 ```
 
 Wait for some time to get all the containers up and healthy.
@@ -498,3 +495,17 @@ Then use one of the following commands:
 - `p schema` - Recreate central ledger schema object
 - `p init` - Install RedPanda
 - `p` - Restore baseline with events sent through the sidecar
+
+### FX Tests
+
+```
+docker-compose --profile testing-toolkit --profile fx --profile ttk-provisioning-fx --profile ttk-fx-tests --profile debug up -d
+```
+
+```
+docker-compose --profile testing-toolkit --profile fx --profile ttk-provisioning-fx --profile ttk-fx-tests --profile debug down -v
+```
+
+### Finance Portal
+
+docker-compose --profile all-services --profile fx --profile finance-portal --profile ttk-provisioning-fx --profile ttk-fx-tests --profile debug up -d

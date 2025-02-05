@@ -2,15 +2,45 @@
   "order": [
     {
       "name": "hub_setup.json",
-      "type": "file"
+      "type": "file",
+      "labels": [
+        "std"
+      ]
     },
     {
-      "name": "participant_testingtoolkitdfsp.json",
-      "type": "file"
+      "name": "participant_receiver.json",
+      "type": "file",
+      "labels": [
+        "std"
+      ]
     },
     {
-      "name": "participant_ttkpayeefsp",
-      "type": "file"
+      "name": "participant_sender.json",
+      "type": "file",
+      "labels": [
+        "std"
+      ]
+    },
+    {
+      "name": "participants_perf",
+      "type": "folder",
+      "labels": [
+        "perf"
+      ]
+    },
+    {
+      "name": "participants_fx",
+      "type": "folder",
+      "labels": [
+        "fx"
+      ]
+    },
+    {
+      "name": "participants_fx_sdk",
+      "type": "folder",
+      "labels": [
+        "fx-sdk"
+      ]
     }
   ]
 }
