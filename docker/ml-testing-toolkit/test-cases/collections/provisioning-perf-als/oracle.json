@@ -4,9 +4,9 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "Add MSISDN Oracle",
+      "name": "Add ACCOUNT_ID Oracle",
       "meta": {
-        "info": "Add MSISDN Oracle."
+        "info": "Add ACCOUNT_ID Oracle."
       },
       "fileInfo": {
         "path": "collections/provisioning-perf-als/oracle.json"
@@ -14,7 +14,7 @@
       "requests": [
         {
           "id": 6,
-          "description": "Add Oracle for MSISDN",
+          "description": "Add Oracle for ACCOUNT_ID",
           "params": {
             "ID": "",
             "Type": ""
@@ -39,7 +39,7 @@
             "accept": "application/vnd.interoperability.oracles+json;version=1.1"
           },
           "body": {
-            "oracleIdType": "MSISDN",
+            "oracleIdType": "ACCOUNT_ID",
             "endpoint": {
               "value": "{$inputs.PERF_ORACLE_ENDPOINT_BASE_URL}",
               "endpointType": "URL"

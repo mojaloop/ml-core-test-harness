@@ -20,10 +20,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/Hub/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
           "method": "post",
           "params": {
-            "name": "Hub"
+            "name": "{$inputs.HUB_NAME}"
           },
           "body": {
             "type": "HUB_MULTILATERAL_SETTLEMENT",
@@ -62,10 +62,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/Hub/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
           "method": "post",
           "params": {
-            "name": "Hub"
+            "name": "{$inputs.HUB_NAME}"
           },
           "body": {
             "type": "HUB_RECONCILIATION",
@@ -104,10 +104,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/Hub/endpoints",
+          "path": "/participants/{$inputs.HUB_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "Hub"
+            "name": "{$inputs.HUB_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -142,10 +142,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/Hub/endpoints",
+          "path": "/participants/{$inputs.HUB_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "Hub"
+            "name": "{$inputs.HUB_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -180,10 +180,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/Hub/endpoints",
+          "path": "/participants/{$inputs.HUB_NAME}/endpoints",
           "method": "post",
           "params": {
-            "name": "Hub"
+            "name": "{$inputs.HUB_NAME}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -218,10 +218,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/Hub/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
           "method": "post",
           "params": {
-            "name": "Hub"
+            "name": "{$inputs.HUB_NAME}"
           },
           "body": {
             "type": "HUB_MULTILATERAL_SETTLEMENT",
@@ -260,10 +260,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/Hub/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
           "method": "post",
           "params": {
-            "name": "Hub"
+            "name": "{$inputs.HUB_NAME}"
           },
           "body": {
             "type": "HUB_RECONCILIATION",
@@ -302,10 +302,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/Hub/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
           "method": "post",
           "params": {
-            "name": "Hub"
+            "name": "{$inputs.HUB_NAME}"
           },
           "body": {
             "type": "HUB_MULTILATERAL_SETTLEMENT",
@@ -344,10 +344,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/Hub/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
           "method": "post",
           "params": {
-            "name": "Hub"
+            "name": "{$inputs.HUB_NAME}"
           },
           "body": {
             "type": "HUB_RECONCILIATION",
@@ -585,7 +585,7 @@
             "isDefault": true
           },
           "headers": {
-            "Content-Type": "application/vnd.interoperability.participants+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.participants+json;version=2.0",
             "Accept": "application/vnd.interoperability.participants+json;version=1",
             "Date": "{$function.generic.curDate}"
           },

@@ -1,4 +1,8 @@
 module.exports = {
+  "HUB_PARTICIPANT": {
+    "ID": 1,
+    "NAME": "Hub"
+  },
   "HOSTNAME": "http://central-ledger",
   "DATABASE": {
     "HOST": "mysql"
@@ -11,7 +15,30 @@ module.exports = {
     "PASSWORD": "",
     "DATABASE": "mlos"
   },
+  "PROXY_CACHE": {
+    "enabled": true,
+    "type": "redis",
+    "proxyConfig": {
+      // We need to unset cluster as there is an issue in proxy lib. The above type parameter is not being considered.
+      "cluster": undefined,
+      "host": "redis",
+      "port": 6379,
+    }
+  },
   "KAFKA": {
+    EVENT_TYPE_ACTION_TOPIC_MAP: {
+      POSITION:{
+        "PREPARE": "topic-transfer-position-batch",
+        "FX_PREPARE": "topic-transfer-position-batch",
+        "COMMIT": "topic-transfer-position-batch",
+        "RESERVE": "topic-transfer-position-batch",
+        "FX_RESERVE": "topic-transfer-position-batch",
+        "TIMEOUT_RESERVED": "topic-transfer-position-batch",
+        "FX_TIMEOUT_RESERVED": "topic-transfer-position-batch",
+        "ABORT": "topic-transfer-position-batch",
+        "FX_ABORT": "topic-transfer-position-batch"
+      }
+    },
     "CONSUMER": {
       "BULK": {
         "PREPARE": {
@@ -66,6 +93,13 @@ module.exports = {
           }
         },
         "POSITION": {
+          "config": {
+            "rdkafkaConf": {
+              "metadata.broker.list": "kafka:29092"
+            }
+          }
+        },
+        "POSITION_BATCH": {
           "config": {
             "rdkafkaConf": {
               "metadata.broker.list": "kafka:29092"

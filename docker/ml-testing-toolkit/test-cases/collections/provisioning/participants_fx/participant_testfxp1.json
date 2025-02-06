@@ -3,9 +3,9 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "perffsp8 provisioning",
+      "name": "fxp provisioning",
       "meta": {
-        "info": "perffsp8 provisioning"
+        "info": "fxp provisioning"
       },
       "requests": [
         {
@@ -23,7 +23,7 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "{$inputs.PERF_FSP8_ID}",
+            "name": "{$inputs.FXP_TESTFXP1_ID}",
             "currency": "{$inputs.currency}"
           },
           "headers": {
@@ -58,10 +58,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "body": {
             "currency": "{$inputs.currency}",
@@ -103,10 +103,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -114,7 +114,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -140,10 +140,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -151,7 +151,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "tests": {
             "assertions": [
@@ -177,10 +177,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -188,7 +188,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_GET",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -214,10 +214,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -225,7 +225,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -251,10 +251,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -262,44 +262,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_QUOTES",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status code is 201",
-                "exec": [
-                  "expect(response.status).to.equal(201)"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 7.1,
-          "meta": {
-            "info": "Add callback - FX QUOTES PUT"
-          },
-          "description": "Add callback - FX QUOTES PUT",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "headers": {
-            "Content-Type": "application/json"
-          },
-          "body": {
-            "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}"
           },
           "tests": {
             "assertions": [
@@ -325,10 +288,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -336,7 +299,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/transfers"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/transfers"
           },
           "tests": {
             "assertions": [
@@ -362,10 +325,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -373,44 +336,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/transfers/{{transferId}}"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status code is 201",
-                "exec": [
-                  "expect(response.status).to.equal(201)"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 9.1,
-          "meta": {
-            "info": "Add callback - FX TRANSFERS PUT"
-          },
-          "description": "Add callback - FX TRANSFERS PUT",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "headers": {
-            "Content-Type": "application/json"
-          },
-          "body": {
-            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/transfers/{{transferId}}"
           },
           "tests": {
             "assertions": [
@@ -436,10 +362,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -447,44 +373,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/transfers/{{transferId}}/error"
-          },
-          "tests": {
-            "assertions": [
-              {
-                "id": 1,
-                "description": "Status code is 201",
-                "exec": [
-                  "expect(response.status).to.equal(201)"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id": 10.1,
-          "meta": {
-            "info": "Add callback - FX TRANSFERS ERROR"
-          },
-          "description": "Add callback - FX TRANSFERS ERROR",
-          "apiVersion": {
-            "minorVersion": 0,
-            "majorVersion": 1,
-            "type": "central_admin"
-          },
-          "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
-          "method": "post",
-          "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
-          },
-          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
-          "headers": {
-            "Content-Type": "application/json"
-          },
-          "body": {
-            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_ERROR",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}/error"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/transfers/{{transferId}}/error"
           },
           "tests": {
             "assertions": [
@@ -510,10 +399,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -521,7 +410,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -547,10 +436,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -558,7 +447,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
           },
           "tests": {
             "assertions": [
@@ -584,10 +473,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -595,7 +484,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -621,10 +510,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -632,7 +521,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -658,10 +547,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -669,7 +558,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -695,10 +584,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -706,7 +595,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
           },
           "tests": {
             "assertions": [
@@ -732,10 +621,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -743,7 +632,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}"
           },
           "tests": {
             "assertions": [
@@ -769,10 +658,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -806,10 +695,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -843,10 +732,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -880,10 +769,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -891,7 +780,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers"
           },
           "tests": {
             "assertions": [
@@ -917,10 +806,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -928,7 +817,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers/{{id}}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers/{{id}}"
           },
           "tests": {
             "assertions": [
@@ -954,10 +843,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -965,7 +854,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers/{{id}}/error"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers/{{id}}/error"
           },
           "tests": {
             "assertions": [
@@ -982,19 +871,19 @@
         {
           "id": 24,
           "meta": {
-            "info": "Add sender callback - PARTICIPANT PUT Batch"
+            "info": "Add callback - PARTICIPANT PUT Batch"
           },
-          "description": "Add sender callback - PARTICIPANT PUT Batch",
+          "description": "Add callback - PARTICIPANT PUT Batch",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1002,7 +891,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/participants/{{requestId}}"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/participants/{{requestId}}"
           },
           "tests": {
             "assertions": [
@@ -1019,19 +908,19 @@
         {
           "id": 25,
           "meta": {
-            "info": "Add sender callback - PARTICIPANT PUT Batch Error"
+            "info": "Add callback - PARTICIPANT PUT Batch Error"
           },
-          "description": "Add sender callback - PARTICIPANT PUT Batch Error",
+          "description": "Add callback - PARTICIPANT PUT Batch Error",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1039,7 +928,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/participants/{{requestId}}/error"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/participants/{{requestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -1065,10 +954,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1076,7 +965,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
-            "value": "{$inputs.PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "tests": {
             "assertions": [
@@ -1105,7 +994,7 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "{$inputs.PERF_FSP8_ID}",
+            "name": "{$inputs.FXP_TESTFXP1_ID}",
             "currency": "{$inputs.currency2}"
           },
           "headers": {
@@ -1140,10 +1029,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "body": {
             "currency": "{$inputs.currency2}",
@@ -1188,7 +1077,7 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "{$inputs.PERF_FSP8_ID}",
+            "name": "{$inputs.FXP_TESTFXP1_ID}",
             "currency": "{$inputs.cgscurrency}"
           },
           "headers": {
@@ -1223,10 +1112,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "body": {
             "currency": "{$inputs.cgscurrency}",
@@ -1255,32 +1144,220 @@
               }
             ]
           }
+        },
+        {
+          "id": 31,
+          "description": "Add callback - QUOTES PUT",
+          "meta": {
+            "info": "Add callback - QUOTES PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_QUOTES",
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 32,
+          "description": "Add callback - FX TRANSFERS POST",
+          "meta": {
+            "info": "Add callback - FX TRANSFERS POST"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_POST",
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/fxTransfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 33,
+          "description": "Add callback - FX TRANSFERS PUT",
+          "meta": {
+            "info": "Add callback - FX TRANSFERS PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 34,
+          "description": "Add callback - FX TRANSFERS ERROR",
+          "meta": {
+            "info": "Add callback - FX TRANSFERS ERROR"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_ERROR",
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 35,
+          "description": "Add callback - QUOTES FX PUT",
+          "meta": {
+            "info": "Add callback - QUOTES FX PUT"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
+            "value": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
         }
-      ]
+      ],
+      "fileInfo": {
+        "path": "collections/provisioning/participant_testfxp1.json"
+      }
     },
     {
       "id": 2,
-      "name": "sender fundsin",
+      "name": "Funds In",
       "meta": {
-        "info": "sender fundsin"
+        "info": "Funds In"
       },
       "requests": [
         {
           "id": 1,
           "meta": {
-            "info": "sender Get Status Request before deposit"
+            "info": "Get Status Request before deposit"
           },
-          "description": "sender Get Status Request before deposit",
+          "description": "Get Status Request before deposit",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/accounts",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -1305,8 +1382,8 @@
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
-                "    pm.environment.set(\"senderSettlementAccountId\", jsonData[i].id)",
-                "    pm.environment.set(\"senderSettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "    pm.environment.set(\"fxpCurrency1SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"fxpCurrency1SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
@@ -1316,28 +1393,28 @@
         {
           "id": 2,
           "meta": {
-            "info": "Deposit Funds in Settlement Account - sender"
+            "info": "Deposit Funds in Settlement Account"
           },
-          "description": "Deposit Funds in Settlement Account - sender",
+          "description": "Deposit Funds in Settlement Account",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/accounts/{$environment.senderSettlementAccountId}",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/accounts/{$environment.fxpCurrency1SettlementAccountId}",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}",
-            "id": "{$environment.senderSettlementAccountId}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}",
+            "id": "{$environment.fxpCurrency1SettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.senderfundsInPrepareTransferId}",
+            "transferId": "{$environment.fxpCurrency1fundsInPrepareTransferId}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$environment.senderfundsInPrepareAmount}",
+              "amount": "{$environment.fxpCurrency1fundsInPrepareAmount}",
               "currency": "{$inputs.currency}"
             },
             "extensionList": {
@@ -1369,8 +1446,8 @@
             "preRequest": {
               "exec": [
                 "var uuid = require('uuid');",
-                "pm.environment.set('senderfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('senderfundsInPrepareAmount', 5000000);"
+                "pm.environment.set('fxpCurrency1fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('fxpCurrency1fundsInPrepareAmount', 5000000);"
               ]
             }
           }
@@ -1378,19 +1455,19 @@
         {
           "id": 3,
           "meta": {
-            "info": "sender Get Status Request after deposit"
+            "info": "Get Status Request after deposit"
           },
-          "description": "sender Get Status Request after deposit",
+          "description": "Get Status Request after deposit",
           "apiVersion": {
             "minorVersion": 0,
             "majorVersion": 1,
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/accounts",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -1408,14 +1485,14 @@
               },
               {
                 "id": 2,
-                "description": "sender Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.senderSettlementAccountBalanceAfterFundsIn).to.equal(+environment.senderSettlementAccountBalanceBeforeFundsIn - +environment.senderfundsInPrepareAmount)"
+                  "expect(+environment.fxpCurrency1SettlementAccountBalanceAfterFundsIn).to.equal(+environment.fxpCurrency1SettlementAccountBalanceBeforeFundsIn - +environment.fxpCurrency1fundsInPrepareAmount)"
                 ]
               }
             ]
           },
-          "delay": "2500",
+          "delay": "500",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -1423,7 +1500,7 @@
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
-                "    pm.environment.set(\"senderSettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "    pm.environment.set(\"fxpCurrency1SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
@@ -1442,10 +1519,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/accounts",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -1470,8 +1547,8 @@
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
-                "    pm.environment.set(\"senderCurrency2SettlementAccountId\", jsonData[i].id)",
-                "    pm.environment.set(\"senderCurrency2SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "    pm.environment.set(\"fxpCurrency2SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"fxpCurrency2SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
@@ -1490,19 +1567,19 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/accounts/{$environment.senderCurrency2SettlementAccountId}",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/accounts/{$environment.fxpCurrency2SettlementAccountId}",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}",
-            "id": "{$environment.senderCurrency2SettlementAccountId}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}",
+            "id": "{$environment.fxpCurrency2SettlementAccountId}"
           },
           "body": {
-            "transferId": "{$environment.senderfundsInPrepareTransferId}",
+            "transferId": "{$environment.fxpCurrency2fundsInPrepareTransferId}",
             "externalReference": "string",
             "action": "recordFundsIn",
             "reason": "string",
             "amount": {
-              "amount": "{$environment.senderfundsInPrepareAmountCurrency2}",
+              "amount": "{$environment.fxpCurrency2fundsInPrepareAmount}",
               "currency": "{$inputs.currency2}"
             },
             "extensionList": {
@@ -1534,8 +1611,8 @@
             "preRequest": {
               "exec": [
                 "var uuid = require('uuid');",
-                "pm.environment.set('senderfundsInPrepareTransferId', uuid.v4())",
-                "pm.environment.set('senderfundsInPrepareAmountCurrency2', 5000000);"
+                "pm.environment.set('fxpCurrency2fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('fxpCurrency2fundsInPrepareAmount', 5000000);"
               ]
             }
           }
@@ -1552,10 +1629,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.PERF_FSP8_ID}/accounts",
+          "path": "/participants/{$inputs.FXP_TESTFXP1_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.PERF_FSP8_ID}"
+            "name": "{$inputs.FXP_TESTFXP1_ID}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -1575,12 +1652,12 @@
                 "id": 2,
                 "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
                 "exec": [
-                  "expect(+environment.senderCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.senderCurrency2SettlementAccountBalanceBeforeFundsIn - +environment.senderfundsInPrepareAmountCurrency2)"
+                  "expect(+environment.fxpCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.fxpCurrency2SettlementAccountBalanceBeforeFundsIn - +environment.fxpCurrency1fundsInPrepareAmount)"
                 ]
               }
             ]
           },
-          "delay": "2500",
+          "delay": "500",
           "scripts": {
             "postRequest": {
               "exec": [
@@ -1588,59 +1665,17 @@
                 "console.log(jsonData)",
                 "for(var i in jsonData) {",
                 "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
-                "    pm.environment.set(\"senderCurrency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "    pm.environment.set(\"fxpCurrency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
                 "  }",
                 "}"
               ]
             }
           }
         }
-      ]
-    },
-    {
-      "id": 3,
-      "name": "Add parties to Oracle",
-      "meta": {
-        "info": "Add parties to Oracle."
-      },
+      ],
       "fileInfo": {
-        "labels": []
-      },
-      "requests": [
-        {
-          "id": 1,
-          "meta": {
-            "info": "This request allows us to add a new participant to Account Lookup Service."
-          },
-          "description": "Add Participant to ALS",
-          "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
-            "type": "fspiop",
-            "asynchronous": true
-          },
-          "operationPath": "/participants/{Type}/{ID}",
-          "path": "/participants/{$inputs.toIdType}/{$inputs.PERF_FSP8_ADDRESS}",
-          "method": "post",
-          "params": {
-            "Type": "{$inputs.toIdType}",
-            "ID": "{$inputs.PERF_FSP8_ADDRESS}"
-          },
-          "headers": {
-            "FSPIOP-Source": "{$inputs.PERF_FSP8_ID}",
-            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
-            "Accept": "{$inputs.acceptParticipants}",
-            "Content-Type": "{$inputs.contentTypeParticipants}",
-            "Date": "{$function.generic.curDate}"
-          },
-          "body": {
-            "fspId": "{$inputs.PERF_FSP8_ID}",
-            "currency": "{$inputs.currency}"
-          },
-          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
-          "ignoreCallbacks": true
-        }
-      ]
+        "path": "collections/provisioning/participant_testfxp1.json"
+      }
     }
   ]
 }

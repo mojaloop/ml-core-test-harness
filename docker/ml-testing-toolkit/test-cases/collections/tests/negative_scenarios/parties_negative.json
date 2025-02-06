@@ -19,8 +19,8 @@
           },
           "description": "Party info with missing fspiop source header",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -31,6 +31,7 @@
             "Content-Type": "{$inputs.contentType}",
             "Date": "{$function.generic.curDate}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -86,8 +87,8 @@
           },
           "description": "Party info with missing date header",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -98,6 +99,7 @@
             "Content-Type": "{$inputs.contentType}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -137,9 +139,9 @@
               },
               {
                 "id": 5,
-                "description": "Response should contain '3102'",
+                "description": "Response should contain '3101'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               }
             ]
@@ -153,8 +155,8 @@
           },
           "description": "Party info with missing content header",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -165,6 +167,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -220,8 +223,8 @@
           },
           "description": "Party info with missing accept header",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -232,6 +235,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Content-Type": "{$inputs.contentType}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -299,8 +303,8 @@
           },
           "description": "Party info of unprovisioned party",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -312,6 +316,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "123"
@@ -332,7 +337,7 @@
                 "id": 3,
                 "description": "Request content-type to be parties",
                 "exec": [
-                  "expect('{$request.headers['Content-Type']}').to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "expect('{$request.headers['Content-Type']}').to.equal('application/vnd.interoperability.parties+json;version=2.0')"
                 ]
               },
               {
@@ -382,8 +387,8 @@
           },
           "description": "Party info of unused type",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -395,6 +400,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "BUSINESS",
             "ID": "{$inputs.toIdValue}"
@@ -415,7 +421,7 @@
                 "id": 3,
                 "description": "Request content-type to be parties",
                 "exec": [
-                  "expect('{$request.headers['Content-Type']}').to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "expect('{$request.headers['Content-Type']}').to.equal('application/vnd.interoperability.parties+json;version=2.0')"
                 ]
               },
               {
@@ -478,8 +484,8 @@
           },
           "description": "Party info with wrong date header (BUG)",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -491,6 +497,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Date": "thursday"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -540,8 +547,8 @@
           },
           "description": "Party info with wrong content header(BUG)",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -553,6 +560,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "Content-Type": "application/vnd.interoperability.parties+xml;version=15.5"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -601,8 +609,8 @@
           },
           "description": "Party info with wrong accept header(BUG)",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -614,6 +622,7 @@
             "Content-Type": "{$inputs.contentType}",
             "Accept": "application/vnd.interoperability.parties+xml;version=3.0"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -667,8 +676,8 @@
           },
           "description": "Get party information",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -680,6 +689,7 @@
             "Date": "{$function.generic.curDate}",
             "FSPIOP-Source": "{$inputs.fromFspId}"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -726,7 +736,7 @@
                 "id": 7,
                 "description": "Callback content-type to be parties",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=2.0')"
                 ]
               },
               {
@@ -748,8 +758,8 @@
           },
           "description": "Get party information with wrong optional HTTP header",
           "apiVersion": {
-            "minorVersion": 1,
-            "majorVersion": 1,
+            "minorVersion": 0,
+            "majorVersion": 2,
             "type": "fspiop",
             "asynchronous": true
           },
@@ -762,6 +772,7 @@
             "FSPIOP-Source": "{$inputs.fromFspId}",
             "FSPIOP-HTTP-Method": "PUT"
           },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "params": {
             "Type": "{$inputs.toIdType}",
             "ID": "{$inputs.toIdValue}"
@@ -808,7 +819,7 @@
                 "id": 7,
                 "description": "Callback content-type to be parties",
                 "exec": [
-                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=1.0')"
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version=2.0')"
                 ]
               },
               {

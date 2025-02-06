@@ -1,0 +1,25 @@
+{
+  "order": [
+    {
+      "name": "p2p.json",
+      "type": "file",
+      "labels": [
+        "std"
+      ]
+    },
+    {
+      "name": "fx",
+      "type": "folder",
+      "labels": [
+        "fx"
+      ]
+    },
+    {
+      "name": "fx-sdk",
+      "type": "folder",
+      "labels": [
+        "fx-sdk"
+      ]
+    }
+  ]
+}

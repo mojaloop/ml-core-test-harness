@@ -3,9 +3,9 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "perffsp6 provisioning",
+      "name": "perffsp4 provisioning",
       "meta": {
-        "info": "perffsp6 provisioning"
+        "info": "perffsp4 provisioning"
       },
       "requests": [
         {
@@ -23,7 +23,7 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "{$inputs.PERF_FSP6_ID}",
+            "name": "{$inputs.PERF_FSP4_ID}",
             "currency": "{$inputs.currency}"
           },
           "headers": {
@@ -58,10 +58,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "body": {
             "currency": "{$inputs.currency}",
@@ -103,10 +103,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -114,7 +114,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -140,10 +140,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -151,7 +151,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "tests": {
             "assertions": [
@@ -177,10 +177,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -188,7 +188,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_GET",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -214,10 +214,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -225,7 +225,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
           },
           "tests": {
             "assertions": [
@@ -251,10 +251,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -262,7 +262,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_QUOTES",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}"
           },
           "tests": {
             "assertions": [
@@ -288,10 +288,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -299,7 +299,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_QUOTES",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}"
           },
           "tests": {
             "assertions": [
@@ -325,10 +325,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -336,7 +336,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/transfers"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/transfers"
           },
           "tests": {
             "assertions": [
@@ -362,10 +362,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -373,7 +373,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/transfers/{{transferId}}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/transfers/{{transferId}}"
           },
           "tests": {
             "assertions": [
@@ -399,10 +399,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -410,7 +410,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}"
           },
           "tests": {
             "assertions": [
@@ -436,10 +436,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -447,7 +447,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/transfers/{{transferId}}/error"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/transfers/{{transferId}}/error"
           },
           "tests": {
             "assertions": [
@@ -473,10 +473,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -484,7 +484,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_ERROR",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}/error"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -510,10 +510,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -521,7 +521,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -547,10 +547,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -558,7 +558,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
           },
           "tests": {
             "assertions": [
@@ -584,10 +584,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -595,7 +595,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -621,10 +621,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -632,7 +632,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -658,10 +658,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -669,7 +669,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
           },
           "tests": {
             "assertions": [
@@ -695,10 +695,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -706,7 +706,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
           },
           "tests": {
             "assertions": [
@@ -732,10 +732,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -743,7 +743,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}"
           },
           "tests": {
             "assertions": [
@@ -769,10 +769,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -806,10 +806,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -843,10 +843,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -880,10 +880,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -891,7 +891,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers"
           },
           "tests": {
             "assertions": [
@@ -917,10 +917,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -928,7 +928,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers/{{id}}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers/{{id}}"
           },
           "tests": {
             "assertions": [
@@ -954,10 +954,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -965,7 +965,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers/{{id}}/error"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/bulkTransfers/{{id}}/error"
           },
           "tests": {
             "assertions": [
@@ -991,10 +991,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1002,7 +1002,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/participants/{{requestId}}"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/participants/{{requestId}}"
           },
           "tests": {
             "assertions": [
@@ -1028,10 +1028,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1039,7 +1039,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/participants/{{requestId}}/error"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/participants/{{requestId}}/error"
           },
           "tests": {
             "assertions": [
@@ -1065,10 +1065,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/endpoints",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/endpoints",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/endpoints",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "url": "{$inputs.HOST_CENTRAL_LEDGER}",
           "headers": {
@@ -1076,7 +1076,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
-            "value": "{$inputs.PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+            "value": "{$inputs.PERF_FSP4_CALLBACK_ENDPOINT_BASE_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
           },
           "tests": {
             "assertions": [
@@ -1105,7 +1105,7 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "{$inputs.PERF_FSP6_ID}",
+            "name": "{$inputs.PERF_FSP4_ID}",
             "currency": "{$inputs.currency2}"
           },
           "headers": {
@@ -1140,10 +1140,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "body": {
             "currency": "{$inputs.currency2}",
@@ -1188,7 +1188,7 @@
           "path": "/participants",
           "method": "post",
           "body": {
-            "name": "{$inputs.PERF_FSP6_ID}",
+            "name": "{$inputs.PERF_FSP4_ID}",
             "currency": "{$inputs.cgscurrency}"
           },
           "headers": {
@@ -1223,10 +1223,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/initialPositionAndLimits",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/initialPositionAndLimits",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "body": {
             "currency": "{$inputs.cgscurrency}",
@@ -1277,10 +1277,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/accounts",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -1325,10 +1325,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/accounts/{$environment.senderSettlementAccountId}",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/accounts/{$environment.senderSettlementAccountId}",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}",
+            "name": "{$inputs.PERF_FSP4_ID}",
             "id": "{$environment.senderSettlementAccountId}"
           },
           "body": {
@@ -1387,10 +1387,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/accounts",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -1442,10 +1442,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/accounts",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -1490,10 +1490,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts/{id}",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/accounts/{$environment.senderCurrency2SettlementAccountId}",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/accounts/{$environment.senderCurrency2SettlementAccountId}",
           "method": "post",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}",
+            "name": "{$inputs.PERF_FSP4_ID}",
             "id": "{$environment.senderCurrency2SettlementAccountId}"
           },
           "body": {
@@ -1552,10 +1552,10 @@
             "type": "central_admin"
           },
           "operationPath": "/participants/{name}/accounts",
-          "path": "/participants/{$inputs.PERF_FSP6_ID}/accounts",
+          "path": "/participants/{$inputs.PERF_FSP4_ID}/accounts",
           "method": "get",
           "params": {
-            "name": "{$inputs.PERF_FSP6_ID}"
+            "name": "{$inputs.PERF_FSP4_ID}"
           },
           "headers": {
             "Content-Type": "application/json",
@@ -1620,21 +1620,21 @@
             "asynchronous": true
           },
           "operationPath": "/participants/{Type}/{ID}",
-          "path": "/participants/{$inputs.toIdType}/{$inputs.PERF_FSP6_ADDRESS}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.PERF_FSP4_ADDRESS}",
           "method": "post",
           "params": {
             "Type": "{$inputs.toIdType}",
-            "ID": "{$inputs.PERF_FSP6_ADDRESS}"
+            "ID": "{$inputs.PERF_FSP4_ADDRESS}"
           },
           "headers": {
-            "FSPIOP-Source": "{$inputs.PERF_FSP6_ID}",
+            "FSPIOP-Source": "{$inputs.PERF_FSP4_ID}",
             "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
             "Accept": "{$inputs.acceptParticipants}",
             "Content-Type": "{$inputs.contentTypeParticipants}",
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "fspId": "{$inputs.PERF_FSP6_ID}",
+            "fspId": "{$inputs.PERF_FSP4_ID}",
             "currency": "{$inputs.currency}"
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",

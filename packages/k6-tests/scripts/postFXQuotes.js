@@ -4,8 +4,9 @@ import { check, fail, sleep, group } from 'k6';
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
+import { replaceHeaders } from '../common/replaceHeaders.js';
 import { getTwoItemsFromArray } from "../common/utils.js";
-import { uuid } from '../common/uuid.js'
+import { ulid } from '../common/uuid.js'
 import exec from 'k6/execution';
 
 function log() {
@@ -35,9 +36,10 @@ export function postFXQuotes() {
     const startTs = Date.now();
     // const quoteId = crypto.randomUUID();
     // const transactionId = crypto.randomUUID();
-    const conversionRequestId = uuid();
-    const conversionId = uuid();
-    const transactionId = uuid();
+    const conversionRequestId = ulid();
+    const conversionId = ulid();
+    const transactionId = ulid();
+    const msgId = ulid();
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = 'perffxp';
     const wsUrl = payerFsp['wsUrl'];
@@ -80,18 +82,94 @@ export function postFXQuotes() {
           payerFspId,
           payeeFspId
         },
-        headers: {
-          'accept': 'application/vnd.interoperability.fxQuotes+json;version=1.0',
+        headers: replaceHeaders({
+          'Accept': 'application/vnd.interoperability.fxQuotes+json;version=1.0',
           'Content-Type': 'application/vnd.interoperability.fxQuotes+json;version=1.0',
           'FSPIOP-Source': payerFspId,
           'FSPIOP-Destination': payeeFspId,
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
           'tracestate': `tx_end2end_start_ts=${startTs}`
-        },
+        }),
       };
 
-      const body = {
+      const body = __ENV.API_TYPE === 'iso20022' ? {
+        GrpHdr: {
+          MsgId: msgId,
+          CreDtTm: new Date().toISOString(),
+          NbOfTxs: '1',
+          SttlmInf: {
+            SttlmMtd: 'CLRG'
+          },
+          PmtInstrXpryDtTm: '2030-01-01T00:00:00.000Z'
+        },
+        CdtTrfTxInf: {
+          PmtId: {
+            TxId: conversionRequestId,
+            InstrId: transactionId,
+            EndToEndId: transactionId
+          },
+          Dbtr: {
+            FinInstnId: {
+              Othr: {
+                Id: payerFspId
+              }
+            }
+          },
+          UndrlygCstmrCdtTrf: {
+            Dbtr: {
+              Id: {
+                OrgId: {
+                  Othr: {
+                    Id: payerFspId
+                  }
+                }
+              }
+            },
+            DbtrAgt: {
+              FinInstnId: {
+                Othr: {
+                  Id: payerFspId
+                }
+              }
+            },
+            Cdtr: {
+              Id: {
+                OrgId: {
+                  Othr: {
+                    Id: payeeFspId
+                  }
+                }
+              }
+            },
+            CdtrAgt: {
+              FinInstnId: {
+                Othr: {
+                  Id: payeeFspId
+                }
+              }
+            },
+            InstdAmt: {
+              Ccy: currency,
+              ActiveOrHistoricCurrencyAndAmount: `${amount}`
+            }
+          },
+          Cdtr: {
+            FinInstnId: {
+              Othr: {
+                Id: payeeFspId
+              }
+            }
+          },
+          IntrBkSttlmAmt: {
+            Ccy: targetCurrency,
+            ActiveCurrencyAndAmount: '0'
+          },
+          InstrForCdtrAgt: {
+            InstrInf: 'SEND'
+          }
+        }
+      } : {
         "conversionRequestId": conversionRequestId,
         "conversionTerms": {
           "conversionId": conversionId,
@@ -108,7 +186,7 @@ export function postFXQuotes() {
             "currency": `${targetCurrency}`
           }
         }
-      }
+      };
 
       // Lets send the FSPIOP POST /quotes request
       const res = http.post(`${__ENV.K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL}/fxQuotes`, JSON.stringify(body), params);
