@@ -507,5 +507,95 @@
     },
     "type": "response",
     "version": 1
+  },
+  {
+    "ruleId": 11,
+    "priority": 1,
+    "description": "post /repository/parties",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 0,
+      "type": "mojaloop_simulator",
+      "asynchronous": false,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/mojaloop_simulator_0.1/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/mojaloop_simulator_0.1/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/mojaloop_simulator_0.1/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/mojaloop_simulator_0.1/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_simulator_0.1/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/repository/parties"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": null,
+      "path": null,
+      "params": {
+        "body": null,
+        "statusCode": "204",
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "FIXED_RESPONSE"
+    },
+    "type": "response",
+    "version": 1
+  },
+  {
+    "ruleId": 12,
+    "priority": 1,
+    "description": "get /repository/parties",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 0,
+      "type": "mojaloop_simulator",
+      "asynchronous": false,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/mojaloop_simulator_0.1/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/mojaloop_simulator_0.1/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/mojaloop_simulator_0.1/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/mojaloop_simulator_0.1/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/mojaloop_simulator_0.1/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/repository/parties"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": null,
+      "path": null,
+      "params": {
+        "body": null,
+        "statusCode": "200",
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "FIXED_RESPONSE"
+    },
+    "type": "response",
+    "version": 1
   }
 ]
