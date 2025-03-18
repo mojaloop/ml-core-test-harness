@@ -1,0 +1,57 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": 1,
+      "type": "Oracle Onboarding",
+      "name": "Oracle Onboarding",
+      "requests": [
+        {
+          "id": 1,
+          "meta": {
+            "info": "Register ACCOUNT_ID Oracle"
+          },
+          "description": "Register ACCOUNT_ID Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "als_admin"
+          },
+          "operationPath": "/oracles",
+          "path": "/oracles",
+          "method": "post",
+          "body": {
+            "oracleIdType": "ACCOUNT_ID",
+            "endpoint": {
+              "value": "{$inputs.HOST_SIMULATOR}/oracle",
+              "endpointType": "URL"
+            },
+            "currency": "{$inputs.currency}",
+            "isDefault": true
+          },
+          "headers": {
+            "Content-Type": "application/vnd.interoperability.participants+json;version=2.0",
+            "Accept": "application/vnd.interoperability.participants+json;version=1",
+            "Date": "{$function.generic.curDate}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_ADMIN}",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "status to be 201 or errorCode 2001 already exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.body.errorInformation.errorCode).to.equal(\"2001\")",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
