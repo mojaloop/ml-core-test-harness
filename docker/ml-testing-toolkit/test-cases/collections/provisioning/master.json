@@ -32,6 +32,14 @@
       ]
     },
     {
+      "name": "fxp.json",
+      "type": "file",
+      "labels": [
+        "std",
+        "prod-tests"
+      ]
+    },
+    {
       "name": "participants_perf",
       "type": "folder",
       "labels": [
