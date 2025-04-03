@@ -29,7 +29,7 @@ class TraceParent {
     // Ref: https://github.com/mojaloop/mojaloop-specification/blob/master/fspiop-api/documents/Tracing%20v1.0.md#table-2--data-model-for-tracing-values
     this.traceId = hex(crypto.randomBytes(16));
     this.parentId = hex(crypto.randomBytes(8));
-    this.traceFlags = '01';
+    this.traceFlags = '00';
   }
 
   toString () {
