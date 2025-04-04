@@ -2,6 +2,7 @@ import crypto from "k6/crypto";
 
 // Precomputed Hex Octets w/ for Loop (Fastest/Baseline)
 const byteToHex = [];
+let prevTrace = 0;
 
 for (let n = 0; n <= 0xff; ++n)
 {
@@ -29,7 +30,11 @@ class TraceParent {
     // Ref: https://github.com/mojaloop/mojaloop-specification/blob/master/fspiop-api/documents/Tracing%20v1.0.md#table-2--data-model-for-tracing-values
     this.traceId = hex(crypto.randomBytes(16));
     this.parentId = hex(crypto.randomBytes(8));
-    this.traceFlags = '00';
+    const now = Date.now();
+    if (now - prevTrace > 10000) { // trace every 10 seconds
+      this.traceFlags = '01';
+      prevTrace = now;
+    } else this.traceFlags = '00';
   }
 
   toString () {
