@@ -462,7 +462,7 @@
         {
           "fact": "headers",
           "operator": "equal",
-          "value": "perffsp1",
+          "value": "perffsp-1",
           "path": "FSPIOP-Source"
         },
         {
@@ -493,7 +493,7 @@
         "body": {
           "party": {
             "partyIdInfo": {
-              "fspId": "perffsp2"
+              "fspId": "perffsp-2"
             },
             "merchantClassificationCode": null,
             "name": "Justin Pierre",
@@ -509,7 +509,7 @@
         },
         "headers": {
           "Content-Type": "application/vnd.interoperability.parties+json;version=1.1",
-          "FSPIOP-Source": "perffsp2",
+          "FSPIOP-Source": "perffsp-2",
           "tracestate": "{$environment.tracestate}"
         }
       },
