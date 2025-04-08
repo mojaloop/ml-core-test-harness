@@ -1,4 +1,5 @@
 import crypto from "k6/crypto";
+import { vu } from 'k6/execution';
 
 // Precomputed Hex Octets w/ for Loop (Fastest/Baseline)
 const byteToHex = [];
@@ -31,7 +32,7 @@ class TraceParent {
     this.traceId = hex(crypto.randomBytes(16));
     this.parentId = hex(crypto.randomBytes(8));
     const now = Date.now();
-    if (now - prevTrace > 10000) { // trace every 10 seconds
+    if (vu.idInTest === 1 && (now - prevTrace > 10000)) { // trace every 10 seconds
       this.traceFlags = '01';
       prevTrace = now;
     } else this.traceFlags = '00';
