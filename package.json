@@ -6,10 +6,14 @@
     "lint": "true",
     "dep:check": "true",
     "audit:check": "true",
+    "release": "standard-version --no-verify --releaseCommitMessageFormat 'chore(release): {{currentTag}} [skip ci]'",
     "test:xunit": "true",
     "test:integration": "true",
     "test:functional": "true",
     "test:coverage-check": "true"
+  },
+  "devDependencies": {
+    "standard-version": "^9.5.0"
   },
   "license": "Apache-2.0"
 }
