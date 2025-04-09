@@ -1,15 +1,19 @@
 {
   "name": "@mojaloop/ml-core-test-harness",
-  "version": "2.2.0-trace.3",
+  "version": "2.2.0-log.1",
   "private": true,
   "scripts": {
     "lint": "true",
     "dep:check": "true",
     "audit:check": "true",
+    "release": "standard-version --no-verify --releaseCommitMessageFormat 'chore(release): {{currentTag}} [skip ci]'",
     "test:xunit": "true",
     "test:integration": "true",
     "test:functional": "true",
     "test:coverage-check": "true"
+  },
+  "devDependencies": {
+    "standard-version": "^9.5.0"
   },
   "license": "Apache-2.0"
 }
