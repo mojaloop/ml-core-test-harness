@@ -3,7 +3,7 @@ import { check, group } from 'k6';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
 import { crypto } from "k6/experimental/webcrypto";
-import { exec, vu } from 'k6/execution';
+import exec from 'k6/execution';
 
 
 // K6_SCRIPT_FSPIOP_ALS_PAYEE_PARTYID=${__ENV.K6_SCRIPT_FSPIOP_ALS_PAYEE_PARTYID},
@@ -27,7 +27,7 @@ const ilpPacket = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ILPPACKET
 const condition = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CONDITION
 
 export function parallelRequests() {
-  !exec.instance.iterationsCompleted && (vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("parallelRequests", function () {
     let payerFsp
     let payeeFsp

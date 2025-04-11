@@ -4,7 +4,7 @@ import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout } from 'k6/timers';
 import { randomItem } from "https://jslib.k6.io/k6-utils/1.1.0/index.js";
 import { Trace } from "../common/trace.js";
-import { exec, vu } from 'k6/execution';
+import exec from 'k6/execution';
 
 function log() {
   console.log('Env Vars -->');
@@ -16,7 +16,7 @@ function log() {
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function getParties() {
-  !exec.instance.iterationsCompleted && (vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("Get Parties", function () {
     let payerFsp
     let payeeFsp

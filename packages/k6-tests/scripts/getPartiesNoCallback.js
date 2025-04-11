@@ -2,7 +2,7 @@ import http from 'k6/http';
 import { check, group } from 'k6';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
-import { exec, vu } from 'k6/execution';
+import exec from 'k6/execution';
 
 function log() {
   console.log('Env Vars -->');
@@ -13,7 +13,7 @@ function log() {
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function getPartiesNoCallback() {
-  !exec.instance.iterationsCompleted && (vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("getPartiesNoCallback", function () {
     let payerFsp
     let payeeFsp

@@ -5,7 +5,7 @@ import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
-import { exec, vu } from 'k6/execution';
+import exec from 'k6/execution';
 import { uuid } from '../common/uuid.js'
 
 function log() {
@@ -25,7 +25,7 @@ const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 export function E2E() {
-  !exec.instance.iterationsCompleted && (vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("E2E", function () {
     let payerFsp
     let payeeFsp

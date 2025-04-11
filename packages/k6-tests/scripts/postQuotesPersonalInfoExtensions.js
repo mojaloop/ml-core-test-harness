@@ -5,7 +5,7 @@ import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
-import { exec, vu } from 'k6/execution';
+import exec from 'k6/execution';
 
 function log() {
   console.log('Env Vars -->');
@@ -19,7 +19,7 @@ const amount = __ENV.K6_SCRIPT_FSPIOP_QUOTES_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 
 export function postQuotesPersonalInfoExtensions() {
-  !exec.instance.iterationsCompleted && (vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("Post Quotes", function () {
     let payerFsp
     let payeeFsp

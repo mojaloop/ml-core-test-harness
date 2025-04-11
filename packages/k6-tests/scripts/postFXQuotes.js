@@ -7,7 +7,7 @@ import { Trace } from "../common/trace.js";
 import { replaceHeaders } from '../common/replaceHeaders.js';
 import { getTwoItemsFromArray } from "../common/utils.js";
 import { ulid } from '../common/uuid.js'
-import { exec, vu } from 'k6/execution';
+import exec from 'k6/execution';
 
 function log() {
   console.log(`Env Vars -->`);
@@ -22,7 +22,7 @@ const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 const targetCurrency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_TARGET_CURRENCY
 
 export function postFXQuotes() {
-  !exec.instance.iterationsCompleted && (vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("Post FX Quotes", function () {
     let payerFsp
 
