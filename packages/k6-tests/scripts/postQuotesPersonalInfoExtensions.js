@@ -19,7 +19,7 @@ const amount = __ENV.K6_SCRIPT_FSPIOP_QUOTES_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 
 export function postQuotesPersonalInfoExtensions() {
-  (vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (vu.idInTest === 1) && log();
   group("Post Quotes", function () {
     let payerFsp
     let payeeFsp

@@ -22,7 +22,7 @@ const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 const targetCurrency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_TARGET_CURRENCY
 
 export function postFXQuotes() {
-  (vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (vu.idInTest === 1) && log();
   group("Post FX Quotes", function () {
     let payerFsp
 

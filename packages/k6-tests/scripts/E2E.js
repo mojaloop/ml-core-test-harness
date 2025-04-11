@@ -25,7 +25,7 @@ const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 export function E2E() {
-  (vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (vu.idInTest === 1) && log();
   group("E2E", function () {
     let payerFsp
     let payeeFsp

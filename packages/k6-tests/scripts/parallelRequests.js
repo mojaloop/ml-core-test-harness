@@ -27,7 +27,7 @@ const ilpPacket = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ILPPACKET
 const condition = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CONDITION
 
 export function parallelRequests() {
-  (vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (vu.idInTest === 1) && log();
   group("parallelRequests", function () {
     let payerFsp
     let payeeFsp

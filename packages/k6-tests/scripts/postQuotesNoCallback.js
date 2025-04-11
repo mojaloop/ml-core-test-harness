@@ -18,7 +18,7 @@ const amount = __ENV.K6_SCRIPT_FSPIOP_QUOTES_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 
 export function postQuotesNoCallback() {
-  (vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (vu.idInTest === 1) && log();
   group("postQuotesNoCallback", function () {
     let payerFsp
     let payeeFsp
