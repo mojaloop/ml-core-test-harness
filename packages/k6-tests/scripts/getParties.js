@@ -5,7 +5,7 @@ import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers'
 import { Trace } from "../common/trace.js";
 import { replaceHeaders } from '../common/replaceHeaders.js';
 import { getTwoItemsFromArray } from "../common/utils.js";
-import exec from 'k6/execution';
+import { exec, vu } from 'k6/execution';
 
 
 // K6_SCRIPT_FSPIOP_ALS_PAYEE_PARTYID=${__ENV.K6_SCRIPT_FSPIOP_ALS_PAYEE_PARTYID},
@@ -26,7 +26,7 @@ function log() {
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function getParties() {
-  !exec.instance.iterationsCompleted && log();
+  (vu.idInTest === 1) && log();
   group("Get Parties", function () {
     let payerFsp
     let payeeFsp

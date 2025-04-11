@@ -1,7 +1,7 @@
 import http from 'k6/http';
 import { crypto } from "k6/experimental/webcrypto";
 import { check, fail, sleep, group } from 'k6';
-import exec from 'k6/execution';
+import { exec, vu } from 'k6/execution';
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers';
 import { Trace } from "../common/trace.js";
@@ -24,7 +24,7 @@ const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 export function postTransfers() {
-  !exec.instance.iterationsCompleted && log();
+  (vu.idInTest === 1) && log();
   group("Post Transfers", function () {
     let payerFsp
     let payeeFsp
