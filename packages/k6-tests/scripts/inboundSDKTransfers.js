@@ -24,7 +24,7 @@ const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 export function postTransfers() {
-  !exec.instance.iterationsCompleted && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("Post Transfers", function () {
     let payerFsp
     let payeeFsp

@@ -13,7 +13,7 @@ function log() {
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function getPartiesNoCallback() {
-  !exec.instance.iterationsCompleted && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("getPartiesNoCallback", function () {
     let payerFsp
     let payeeFsp
