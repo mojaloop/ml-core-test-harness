@@ -6,7 +6,7 @@ import { setTimeout, clearTimeout, setInterval, clearInterval } from 'k6/timers'
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
 import { ulid } from '../common/uuid.js'
-import exec from 'k6/execution';
+import { exec, vu } from 'k6/execution';
 import { replaceHeaders } from '../common/replaceHeaders.js';
 
 function log() {
@@ -21,7 +21,7 @@ const amount = __ENV.K6_SCRIPT_FSPIOP_QUOTES_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 
 export function postQuotes() {
-  !exec.instance.iterationsCompleted && log();
+  (vu.idInTest === 1) && log();
   group("Post Quotes", function () {
     let payerFsp
     let payeeFsp

@@ -2,7 +2,7 @@ import http from 'k6/http';
 import { crypto } from "k6/experimental/webcrypto";
 import { check, group } from 'k6';
 import { getTwoItemsFromArray } from "../common/utils.js";
-import exec from 'k6/execution';
+import { exec, vu } from 'k6/execution';
 
 function log() {
   console.log('Env Vars -->');
@@ -15,7 +15,7 @@ const amount = __ENV.K6_SCRIPT_FSPIOP_QUOTES_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 
 export function postQuotes() {
-  !exec.instance.iterationsCompleted && log();
+  (vu.idInTest === 1) && log();
   group("Post Quotes", function () {
     let payerFsp
     let payeeFsp

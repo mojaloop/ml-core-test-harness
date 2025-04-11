@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
-import exec from 'k6/execution';
+import { exec, vu } from 'k6/execution';
 import { getTwoItemsFromArray } from "../common/utils.js";
 
 function log() {
@@ -15,7 +15,7 @@ const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 export function postTransfers() {
-  !exec.instance.iterationsCompleted && log();
+  (vu.idInTest === 1) && log();
   group("Post Transfers", function () {
     let payerFsp
     let payeeFsp
