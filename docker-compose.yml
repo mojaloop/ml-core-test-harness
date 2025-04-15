@@ -48,6 +48,7 @@ services:
 
   central-handler-position-batch:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    container_name: central-handler-position-batch
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --positionbatch"
     # ports:
     #   - "3001:3001"
@@ -459,6 +460,7 @@ services:
 
   mojaloop-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:${TEST_TTK_UI_VERSION}
+    container_name: mojaloop-testing-toolkit-ui
     ports:
       - "9660:6060"
     environment:

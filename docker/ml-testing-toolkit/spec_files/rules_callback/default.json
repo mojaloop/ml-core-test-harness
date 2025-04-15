@@ -547,16 +547,31 @@
       "path": "/parties/{Type}/{ID}",
       "params": {
         "headers": {
-          "Content-Type": "application/vnd.interoperability.parties+json;version=2.0"
+          "Content-Type": "{$request.headers.content-type}"
         },
         "body": {
           "party": {
             "partyIdInfo": {
-              "partySubIdOrType": null
+              "partyIdType": "{$request.params.Type}",
+              "partyIdentifier": "{$request.params.ID}",
+              "partySubIdOrType": null,
+              "fspId": "{$config.FSPID}"
+            },
+            "merchantClassificationCode": "4321",
+            "name": "Justin Trudeau",
+            "personalInfo": {
+              "complexName": {
+                "firstName": "Justin",
+                "middleName": "Pierre",
+                "lastName": "Trudeau"
+              },
+              "dateOfBirth": "1971-12-25"
             }
           }
         },
-        "scripts": {}
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
       },
       "type": "MOCK_CALLBACK"
     },
@@ -908,8 +923,6 @@
     }
   },
   {
-    "type": "callback",
-    "version": 1,
     "ruleId": 11,
     "priority": 1,
     "description": "get /parties/{Type}/{ID}/{SubId}",
@@ -921,6 +934,12 @@
     },
     "conditions": {
       "all": [
+        {
+          "fact": "pathParams",
+          "operator": "equal",
+          "value": "30",
+          "path": "SubId"
+        },
         {
           "fact": "operationPath",
           "operator": "equal",
@@ -936,10 +955,40 @@
     "event": {
       "method": "put",
       "path": "/parties/{Type}/{ID}/{SubId}",
-      "params": {},
+      "params": {
+        "body": {
+          "party": {
+            "partyIdInfo": {
+              "partyIdType": "{$request.params.Type}",
+              "partyIdentifier": "{$request.params.ID}",
+              "partySubIdOrType": "{$request.params.SubId}",
+              "fspId": "{$config.FSPID}"
+            },
+            "merchantClassificationCode": "4321",
+            "name": "Justin Trudeau",
+            "personalInfo": {
+              "complexName": {
+                "firstName": "Justin",
+                "middleName": "Pierre",
+                "lastName": "Trudeau"
+              },
+              "dateOfBirth": "1971-12-25"
+            }
+          }
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "FSPIOP-URI": "/parties/{$request.params.Type}/{$request.params.ID}/{$request.params.SubId}"
+        },
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
       "delay": 0,
       "type": "MOCK_CALLBACK"
-    }
+    },
+    "type": "callback",
+    "version": 1
   },
   {
     "type": "callback",
@@ -2279,6 +2328,65 @@
         }
       },
       "type": "NO_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 53,
+    "priority": 1,
+    "description": "/parties/{Type}/{ID}/{SubId} - Error",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "pathParams",
+          "operator": "equal",
+          "value": "32",
+          "path": "SubId"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}/{SubId}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}/{SubId}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "body": {
+          "errorInformation": {
+            "errorCode": "3200",
+            "errorDescription": "Generic ID not found"
+          }
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}"
+        }
+      },
+      "type": "MOCK_CALLBACK"
     },
     "type": "callback",
     "version": 1
