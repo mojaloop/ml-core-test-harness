@@ -20,7 +20,7 @@ const amount = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_AMOUNT.toString()
 const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 
 export function postTransfersNoCallback() {
-  !exec.instance.iterationsCompleted && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("Post Transfers", function () {
     let payerFsp
     let payeeFsp
