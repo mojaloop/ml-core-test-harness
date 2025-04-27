@@ -1551,8 +1551,7 @@
             "Date": "{$function.generic.curDate}"
           },
           "body": {
-            "fspId": "{$inputs.PERF_FSP5_ID}",
-            "currency": "{$inputs.currency}"
+            "fspId": "{$inputs.PERF_FSP5_ID}"
           },
           "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
           "ignoreCallbacks": true
