@@ -1,0 +1,1037 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "p2p-balance-checks",
+      "name": "p2p_money_transfer - p2p_happy_path BALANCE CHECKS",
+      "meta": {
+        "info": "This is a happy path to test an end to end transfers. It includes party lookup, quote and transfer phases."
+      },
+      "fileInfo": {
+        "path": "collections/tests/golden_path/feature_tests/p2p_money_transfer/p2p_happy_path_with_balance_checks.json",
+        "labels": [
+          "prod-tests",
+          "p2p"
+        ]
+      },
+      "requests": [
+        {
+          "id": "Add-part-ALS",
+          "meta": {
+            "info": "This request allows us to add a new participant to Account Lookup Service."
+          },
+          "description": "Add Participant to ALS",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "baggage": "errorExpect=ALS.1001",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "fspId": "{$inputs.toFspId}",
+            "currency": "{$inputs.currency}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.toIdValue}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "Add-Party-Simulator",
+          "meta": {
+            "info": "This request allows us to add a new party to Simulator."
+          },
+          "description": "Add Party to Simulator",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "Test PayeeFSP",
+            "firstName": "Test",
+            "middleName": "Test",
+            "lastName": "Test",
+            "dateOfBirth": "1984-01-01",
+            "idType": "{$inputs.toIdType}",
+            "idValue": "{$inputs.toIdValue}"
+          },
+          "disabled": false
+        },
+        {
+          "id": "Get-party-information",
+          "meta": {
+            "info": "This request allows us to get the personal information associated with a MSISDN and the FSP associated to it."
+          },
+          "description": "Get party information",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeParties}"
+          },
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-party",
+                "description": "Callback body should contain party",
+                "exec": [
+                  "expect(callback.body).to.have.property('party')"
+                ]
+              },
+              {
+                "id": "req-src-inputs-fromFspId",
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "cb-content-type-parties",
+                "description": "Callback content-type to be parties",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
+                ]
+              },
+              {
+                "id": "cb-partyIdInfo-partyIdType-par",
+                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
+                "exec": [
+                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')"
+                ]
+              },
+              {
+                "id": "Payee-src",
+                "description": "Payee FSPIOP-Source",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Content-Type",
+                "description": "Payee Content-Type",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.toIdValue}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "Get-Accounts-Payer-BEFORE-tran",
+          "description": "Get Accounts for Payer BEFORE transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.fromFspId}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "    environment.payerSettlementBalanceBefore= curAccount.value",
+                "  }",
+                "",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.payerPositionBalanceBefore= curAccount.value",
+                "    environment.payerReservedPositionBalanceBefore= curAccount.reservedValue",
+                "  }",
+                "  if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "    environment.payerInterchFeeBalanceBefore= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`environment.payerSettlementBalanceBefore=${environment.payerSettlementBalanceBefore}`);",
+                "console.log(`environment.payerPositionBalanceBefore=${environment.payerPositionBalanceBefore}`);",
+                "console.log(`environment.payerReservedPositionBalanceBefore=${environment.payerReservedPositionBalanceBefore}`)",
+                "console.log(`environment.payerInterchFeeBalanceBefore=${environment.payerInterchFeeBalanceBefore}`);",
+                ""
+              ]
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "Get-Accounts-Payee-BEFORE-tran",
+          "description": "Get Accounts for Payee BEFORE transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": []
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var res = response.body;",
+                "",
+                "res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "",
+                "  if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "    environment.payeeSettlementBalanceBefore= curAccount.value",
+                "    environment.payeeReservedPositionBalanceBefore= curAccount.reservedValue",
+                "  }",
+                "",
+                "  if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "    environment.payeePositionBalanceBefore= curAccount.value",
+                "  }",
+                "  if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "    environment.payeeInterchFeeBalanceBefore= curAccount.value",
+                "  }",
+                "})",
+                "",
+                "console.log(`environment.payeeSettlementBalanceBefore=${environment.payeeSettlementBalanceBefore}`);",
+                "console.log(`environment.payeePositionBalanceBefore=${environment.payeePositionBalanceBefore}`);",
+                "console.log(`environment.payeeReservedPositionBalanceBefore=${environment.payeeReservedPositionBalanceBefore}`)",
+                "console.log(`environment.payeeInterchFeeBalanceBefore=${environment.payeeInterchFeeBalanceBefore}`);",
+                ""
+              ]
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "Send-quote",
+          "meta": {
+            "info": "This request allows us to send a request for Quote (payerfsp to payeefsp), for the calculation of possible fees and FSP commission involved in performing an interoperable financial transaction."
+          },
+          "description": "Send quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdType}",
+                "partyIdentifier": "{$prev.Get-party-information.callback.body.party.partyIdInfo.partyIdentifier}",
+                "fspId": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "cb-transferAmount",
+                "description": "Callback body should contain transferAmount",
+                "exec": [
+                  "expect(callback.body).to.have.property('transferAmount')"
+                ]
+              },
+              {
+                "id": "cb-transferAmount-amt-curr-req",
+                "description": "Callback transferAmount (amount & currency)to match the request",
+                "exec": [
+                  "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": "cb-content-type-quotes",
+                "description": "Callback content-type to be quotes",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')"
+                ]
+              },
+              {
+                "id": "req-amountType-RECEIVE",
+                "description": "Request amountType to be RECEIVE",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('RECEIVE')"
+                ]
+              },
+              {
+                "id": "req-transactionType-scenario-t",
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": "req-transactionType-initiator-",
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": "req-transactionType-initiatorT",
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                ]
+              },
+              {
+                "id": "Payee-src",
+                "description": "Payee FSPIOP-Source",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Content-Type",
+                "description": "Payee Content-Type",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-QuoteId",
+                "description": "Payee Body QuoteId",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.data['quoteId']).to.equal('{$request.body.quoteId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-TransactionId",
+                "description": "Payee Body TransactionId",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.data['transactionId']).to.equal('{$request.body.transactionId}')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "Send-trans",
+          "meta": {
+            "info": "This request allows us to send a Transfer (payerfsp to payeefsp), resulting in an ILP transfer exchanged between two account holders on either side of a common ledger."
+          },
+          "description": "Send transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "cb-transferState-COMMITTED",
+                "description": "Callback transferState to be COMMITTED",
+                "exec": [
+                  "expect(callback.body.transferState).to.equal('COMMITTED')"
+                ]
+              },
+              {
+                "id": "cb-content-type-transfers",
+                "description": "Callback content-type to be transfers",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')"
+                ]
+              },
+              {
+                "id": "req-transferId-quote-req-trans",
+                "description": "Request transferId same as quote request transferId",
+                "exec": [
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
+                ]
+              },
+              {
+                "id": "req-transferAmount-amt-curr-qu",
+                "description": "Request transferAmount (amount & currency) to match quote request",
+                "exec": [
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": "req-src-quote-cb-dest",
+                "description": "Request FSP source the same as quote callback FSP destination",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
+                ]
+              },
+              {
+                "id": "Payee-src",
+                "description": "Payee FSPIOP-Source",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Content-Type",
+                "description": "Payee Content-Type",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-TransferId",
+                "description": "Payee Body TransferId",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.data['transferId']).to.equal('{$request.body.transferId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-amt",
+                "description": "Payee Body Amount",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.data.amount.amount).to.equal('{$request.body.amount.amount}')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.transferId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "Get-Accounts-Payer-AFTER-trans",
+          "description": "Get Accounts for Payer AFTER transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.fromFspId}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "pos-Check-increase-trans-amt",
+                "description": "Position Check increase with Transfer Amount",
+                "exec": [
+                  "expect(environment.payerPositiontBalanceAfterExpected).to.equal(environment.payerPositionBalanceAfterActual)"
+                ]
+              },
+              {
+                "id": "settle-Check-no-change",
+                "description": "Settlement Check with no change",
+                "exec": [
+                  "expect(requestVariables.payerSettlementBalanceBefore).to.equal(environment.payerSettlementBalanceAfter)",
+                  ""
+                ]
+              },
+              {
+                "id": "pos-Reserved-Check-no-change",
+                "description": "Position Reserved Check with no change",
+                "exec": [
+                  "expect(requestVariables.payerSettlementBalanceBefore).to.equal(environment.payerSettlementBalanceAfter)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// lets get retry configs",
+                "var maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20;",
+                "var maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250;",
+                "// var maxRetryWait = 1;",
+                "",
+                "const envSettlementRuleInterchangeFee = Number.parseFloat(environment.SETTLEMENT_RULE_INTERCHANGE_FEE) || 0.006;",
+                "",
+                "const envAmount = Number.parseFloat(environment.amount)",
+                "",
+                "var res = response.body;",
+                "",
+                "console.log(`environment.payerSettlementBalanceBefore=${environment.payerSettlementBalanceBefore}`);",
+                "console.log(`environment.payerPositionBalanceBefore=${environment.payerPositionBalanceBefore}`);",
+                "console.log(`environment.payerInterchFeeBalanceBefore=${environment.payerInterchFeeBalanceBefore}`);",
+                "",
+                "for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "  console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`);",
+                "",
+                "  res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "      environment.payerSettlementBalanceAfter= curAccount.value",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "      environment.payerPositionBalanceAfter= curAccount.value",
+                "      environment.payerReservedPositionBalanceAfter= curAccount.reservedValue",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "      environment.payerInterchFeeBalanceAfterTransfer= curAccount.value",
+                "    }",
+                "  })",
+                "",
+                "  // TODO: Reference previous POST /Scenarios request (e.g. '{$prev.54.request.body.amount}') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
+                "  const transferAmount = envAmount;",
+                "  ",
+                "  console.log(`transferAmount=${transferAmount}`)",
+                "",
+                "  // environment.payerSettlementBalanceAfterExpected = (Number.parseFloat(environment.payerSettlementBalanceBefore) + Number.parseFloat(transferAmount));",
+                "",
+                "  // console.log(`payerSettlementBalanceAfterExpected=${environment.payerSettlementBalanceAfterExpected}`)",
+                "",
+                "  // environment.payerSettlementBalanceAfterExpected = Number.parseFloat(environment.payerSettlementBalanceAfterExpected).toFixed(2);",
+                "  ",
+                "  // console.log(`payerSettlementBalanceAfterExpected=${environment.payerSettlementBalanceAfterExpected}`)",
+                "",
+                "  // environment.payerSettlementBalanceAfterActual = Number.parseFloat(environment.payerSettlementBalanceAfter).toFixed(2);",
+                "",
+                "  // console.log(`payerSettlementBalanceAfterActual=${environment.payerSettlementBalanceAfterActual}`)",
+                "",
+                "  // console.log(environment.payerSettlementBalanceAfterActual === environment.payerSettlementBalanceAfterExpected)",
+                "",
+                "  // console.log('extracted payer settlement balance before transfers',environment.payerSettlementBalanceBefore);",
+                "  // console.log('extracted payer settlement balance after transfers ACTUAL',environment.payerSettlementBalanceAfter);",
+                "  // console.log('calculated payer settlement balance before transfers '+environment.payerSettlementBalanceBefore +' transfer amount +'+transferAmount, environment.payerSettlementBalanceAfterExpected);",
+                "",
+                "  console.log('test fsp1 positions account before',environment.payerPositionBalanceBefore);",
+                "  console.log('test fsp1 positions account after',environment.payerPositionBalanceAfter);",
+                "",
+                "  environment.payerPositionBalanceAfterActual = Number.parseFloat(environment.payerPositionBalanceAfter).toFixed(2);",
+                "  ",
+                "  console.log(`payerPositionBalanceAfterActual=${environment.payerPositionBalanceAfterActual}`)",
+                "",
+                "  environment.payerPositiontBalanceAfterExpected = (Number.parseFloat(environment.payerPositionBalanceBefore) + Number.parseFloat(transferAmount)).toFixed(2);",
+                "",
+                "  console.log(`payerPositiontBalanceAfterExpected=${environment.payerPositiontBalanceAfterExpected}`)",
+                "",
+                "  // environment.payer_actual_interchange_transfer1 = Number.parseFloat(environment.payerInterchFeeBalanceAfterTransfer1) - Number.parseFloat(environment.payerInterchFeeBalanceBefore)",
+                "  // environment.payer_actual_interchange_transfer1 = Number(environment.payer_actual_interchange_transfer1.toFixed(2));",
+                "  ",
+                "  // environment.payer_expected_interchange_transfer1 = -1 * transferAmount * envSettlementRuleInterchangeFee",
+                "  // console.log(`interchange fee percentage @ ${envSettlementRuleInterchangeFee}`)",
+                "  // console.log(`interchange fee expected ${environment.payer_expected_interchange_transfer1}`);",
+                "",
+                "  console.log(`environment.payerSettlementBalanceAfter (${environment.payerSettlementBalanceAfter}) == environment.payerSettlementBalanceBefore (${environment.payerSettlementBalanceBefore})`)",
+                "  console.log(`environment.payerPositiontBalanceAfterExpected (${environment.payerPositiontBalanceAfterExpected}) == environment.payerPositionBalanceAfterActual (${environment.payerPositionBalanceAfterActual})`)",
+                "  console.log(`environment.payerInterchFeeBalanceAfterTransfer (${environment.payerInterchFeeBalanceAfterTransfer})`)",
+                "",
+                "  if ((environment.payerSettlementBalanceAfter == environment.payerSettlementBalanceBefore) && ",
+                "  (environment.payerPositiontBalanceAfterExpected == environment.payerPositionBalanceAfterActual) &&",
+                "   (environment.payerReservedPositionBalanceAfter == environment.payerReservedPositionBalanceBefore) // && ",
+                "  // (environment.payer_actual_interchange_transfer1 == environment.payer_expected_interchange_transfer1)",
+                "  ) {",
+                "    console.log('Everything is ok, lets continue')",
+                "    break; // lets break out of while loop",
+                "  } else {",
+                "    console.log(`Everything is NOT OK, lets wait for ${maxRetryWait}ms, and try again...`)",
+                "    await custom.sleep(maxRetryWait);",
+                "    const axioResponse = await axios.get(`${environment.HOST_CENTRAL_LEDGER}/participants/${environment.fromFspId}/accounts`)",
+                "    res = axioResponse.data;",
+                "  }",
+                "}",
+                "",
+                "// Store *BalanceBefore in a local variable for assertion test",
+                "requestVariables.payerSettlementBalanceBefore = environment.payerSettlementBalanceBefore",
+                "requestVariables.payerReservedPositionBalanceBefore = environment.payerReservedPositionBalanceBefore",
+                "",
+                "// Reset *Balances for later tests",
+                "environment.payerPositionBalanceBefore = environment.payerPositionBalanceAfter",
+                "environment.payerReservedPositionBalanceBefore = environment.payerReservedPositionBalanceAfter",
+                "environment.payerSettlementBalanceBefore = environment.payerSettlementBalanceAfter",
+                "environment.payerInterchFeeBalanceBefore = environment.payerInterchFeeBalanceAfterTransfer1",
+                "",
+                "console.log(`RESET - environment.payerPositionBalanceBefore=${environment.payerPositionBalanceBefore}`)",
+                "console.log(`RESET - environment.payerSettlementBalanceBefore=${environment.payerSettlementBalanceBefore}`)",
+                "console.log(`RESET - environment.payerInterchFeeBalanceBefore=${environment.payerInterchFeeBalanceBefore}`)",
+                ""
+              ]
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "Get-Accounts-Payee-AFTER-trans",
+          "description": "Get Accounts for Payee AFTER transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin",
+            "specFile": "spec_files/api_definitions/central_admin_1.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/central_admin_1.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/central_admin_1.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/central_admin_1.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/central_admin_1.0/trigger_templates"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$prev.Get-party-information.callback.body.party.partyIdInfo.fspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "pos-Check-decrease-trans-amt",
+                "description": "Position Check decrease with Transfer Amount",
+                "exec": [
+                  "expect(environment.payeePositiontBalanceAfterExpected).to.equal(environment.payeePositionBalanceAfterActual)"
+                ]
+              },
+              {
+                "id": "settle-Check-no-change",
+                "description": "Settlement Check with no change",
+                "exec": [
+                  "expect(requestVariables.payeeSettlementBalanceBefore).to.equal(environment.payeeSettlementBalanceAfter)"
+                ]
+              },
+              {
+                "id": "pos-Reserved-Check-no-change",
+                "description": "Position Reserved Check with no change",
+                "exec": [
+                  "expect(requestVariables.payeeSettlementBalanceBefore).to.equal(environment.payeeSettlementBalanceAfter)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// lets get retry configs",
+                "var maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20;",
+                "var maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250;",
+                "// var maxRetryWait = 1;",
+                "",
+                "const envSettlementRuleInterchangeFee = Number.parseFloat(environment.SETTLEMENT_RULE_INTERCHANGE_FEE) || 0.006;",
+                "",
+                "const envAmount = Number.parseFloat(environment.amount)",
+                "",
+                "var res = response.body;",
+                "",
+                "console.log(`environment.payeeSettlementBalanceBefore=${environment.payeeSettlementBalanceBefore}`);",
+                "console.log(`environment.payeePositionBalanceBefore=${environment.payeePositionBalanceBefore}`);",
+                "console.log(`environment.payeeInterchFeeBalanceBefore=${environment.payeeInterchFeeBalanceBefore}`);",
+                "",
+                "for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "  console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`);",
+                "",
+                "  res.filter(account => account.currency === environment.currency).forEach(curAccount => {",
+                "    if(curAccount.ledgerAccountType === \"SETTLEMENT\") {",
+                "      environment.payeeSettlementBalanceAfter= curAccount.value",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "      environment.payeePositionBalanceAfter= curAccount.value",
+                "      environment.payeeReservedPositionBalanceAfter= curAccount.reservedValue",
+                "    }",
+                "",
+                "    if(curAccount.ledgerAccountType === \"INTERCHANGE_FEE\") {",
+                "      environment.payeeInterchFeeBalanceAfterTransfer= curAccount.value",
+                "    }",
+                "  })",
+                "",
+                "  // TODO: Reference previous POST /Scenarios request (e.g. '{$prev.54.request.body.amount}') once https://github.com/mojaloop/project/issues/2890 (issue 6) has been resolved.",
+                "  const transferAmount = envAmount;",
+                "  ",
+                "  console.log(`transferAmount=${transferAmount}`)",
+                "",
+                "  // environment.payeeSettlementBalanceAfterExpected = (Number.parseFloat(environment.payeeSettlementBalanceBefore) + Number.parseFloat(transferAmount));",
+                "",
+                "  // console.log(`payeeSettlementBalanceAfterExpected=${environment.payeeSettlementBalanceAfterExpected}`)",
+                "",
+                "  // environment.payeeSettlementBalanceAfterExpected = Number.parseFloat(environment.payeeSettlementBalanceAfterExpected).toFixed(2);",
+                "  ",
+                "  // console.log(`payeeSettlementBalanceAfterExpected=${environment.payeeSettlementBalanceAfterExpected}`)",
+                "",
+                "  // environment.payeeSettlementBalanceAfterActual = Number.parseFloat(environment.payeeSettlementBalanceAfter).toFixed(2);",
+                "",
+                "  // console.log(`payeeSettlementBalanceAfterActual=${environment.payeeSettlementBalanceAfterActual}`)",
+                "",
+                "  // console.log(environment.payeeSettlementBalanceAfterActual === environment.payeeSettlementBalanceAfterExpected)",
+                "",
+                "  // console.log('extracted payee settlement balance before transfers',environment.payeeSettlementBalanceBefore);",
+                "  // console.log('extracted payee settlement balance after transfers ACTUAL',environment.payeeSettlementBalanceAfter);",
+                "  // console.log('calculated payee settlement balance before transfers '+environment.payeeSettlementBalanceBefore +' transfer amount +'+transferAmount, environment.payeeSettlementBalanceAfterExpected);",
+                "",
+                "  console.log('test fsp1 positions account before',environment.payeePositionBalanceBefore);",
+                "  console.log('test fsp1 positions account after',environment.payeePositionBalanceAfter);",
+                "",
+                "  environment.payeePositionBalanceAfterActual = Number.parseFloat(environment.payeePositionBalanceAfter).toFixed(2);",
+                "  ",
+                "  console.log(`payeePositionBalanceAfterActual=${environment.payeePositionBalanceAfterActual}`)",
+                "",
+                "  environment.payeePositiontBalanceAfterExpected = (Number.parseFloat(environment.payeePositionBalanceBefore) - Number.parseFloat(transferAmount)).toFixed(2);",
+                "",
+                "  console.log(`payeePositiontBalanceAfterExpected=${environment.payeePositiontBalanceAfterExpected}`)",
+                "",
+                "  // environment.payee_actual_interchange_transfer1 = Number.parseFloat(environment.payeeInterchFeeBalanceAfterTransfer1) - Number.parseFloat(environment.payeeInterchFeeBalanceBefore)",
+                "  // environment.payee_actual_interchange_transfer1 = Number(environment.payee_actual_interchange_transfer1.toFixed(2));",
+                "  ",
+                "  // environment.payee_expected_interchange_transfer1 = -1 * transferAmount * envSettlementRuleInterchangeFee",
+                "  // console.log(`interchange fee percentage @ ${envSettlementRuleInterchangeFee}`)",
+                "  // console.log(`interchange fee expected ${environment.payee_expected_interchange_transfer1}`);",
+                "",
+                "  console.log(`environment.payeeSettlementBalanceAfter (${environment.payeeSettlementBalanceAfter}) == environment.payeeSettlementBalanceBefore (${environment.payeeSettlementBalanceBefore})`)",
+                "  console.log(`environment.payeePositiontBalanceAfterExpected (${environment.payeePositiontBalanceAfterExpected}) == environment.payeePositionBalanceAfterActual (${environment.payeePositionBalanceAfterActual})`)",
+                "  console.log(`environment.payeeInterchFeeBalanceAfterTransfer (${environment.payeeInterchFeeBalanceAfterTransfer})`)",
+                "",
+                "  if ((environment.payeeSettlementBalanceAfter == environment.payeeSettlementBalanceBefore) && ",
+                "  (environment.payeePositiontBalanceAfterExpected == environment.payeePositionBalanceAfterActual) &&",
+                "   (environment.payerReservedPositionBalanceAfter == environment.payerReservedPositionBalanceBefore) ",
+                "  // && ",
+                "  // (environment.payee_actual_interchange_transfer1 == environment.payee_expected_interchange_transfer1)",
+                "  ) {",
+                "    console.log('Everything is ok, lets continue')",
+                "    break; // lets break out of while loop",
+                "  } else {",
+                "    console.log(`Everything is NOT OK, lets wait for ${maxRetryWait}ms, and try again...`)",
+                "    await custom.sleep(maxRetryWait);",
+                "    const axioResponse = await axios.get(`${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIM1_NAME}/accounts`) // TODO: FIX",
+                "    res = axioResponse.data;",
+                "  }",
+                "}",
+                "",
+                "// Store *BalanceBefore in a local variable for assertion test",
+                "requestVariables.payeeSettlementBalanceBefore = environment.payeeSettlementBalanceAfter",
+                "requestVariables.payeeReservedPositionBalanceBefore = environment.payeeReservedPositionBalanceBefore",
+                "",
+                "// Reset *Balances for later tests",
+                "environment.payeePositionBalanceBefore = environment.payeePositionBalanceAfter",
+                "environment.payeeReservedPositionBalanceBefore = environment.payeeReservedPositionBalanceAfter",
+                "environment.payeeSettlementBalanceBefore = environment.payeeSettlementBalanceAfter",
+                "environment.payeeInterchFeeBalanceBefore = environment.payeeInterchFeeBalanceAfterTransfer1",
+                "",
+                "console.log(`RESET - environment.payeePositionBalanceBefore=${environment.payeePositionBalanceBefore}`)",
+                "console.log(`RESET - environment.payeeSettlementBalanceBefore=${environment.payeeSettlementBalanceBefore}`)",
+                "console.log(`RESET - environment.payeeInterchFeeBalanceBefore=${environment.payeeInterchFeeBalanceBefore}`)",
+                ""
+              ]
+            }
+          },
+          "disabled": false
+        }
+      ]
+    }
+  ]
+}

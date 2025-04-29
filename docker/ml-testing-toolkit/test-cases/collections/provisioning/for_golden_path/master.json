@@ -1,0 +1,29 @@
+{
+  "order": [
+    {
+      "name": "MojaloopHub_Setup",
+      "type": "folder",
+      "labels": [
+        "min-func-tests"
+      ]
+    },
+    {
+      "name": "MojaloopHub_Setup_prod",
+      "type": "folder",
+      "labels": [
+        "prod-tests"
+      ]
+    },
+    {
+      "name": "MojaloopSims_Onboarding",
+      "type": "folder",
+      "labels": [
+        "prod-tests"
+      ]
+    },
+    {
+      "name": "CGS_Specific",
+      "type": "folder"
+    }
+  ]
+}

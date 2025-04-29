@@ -1,0 +1,1053 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "positive-scenarios",
+      "name": "Positive Scenarios",
+      "meta": {
+        "info": "Positive Scenarios"
+      },
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/post_scenarios/positive.json",
+        "labels": [
+          "prod-tests"
+        ]
+      },
+      "requests": [
+        {
+          "id": "Add-part-ALS",
+          "meta": {
+            "info": "Add Participant to ALS"
+          },
+          "description": "Add Participant to ALS",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/MSISDN/{$inputs.SIMPAYEE_MSISDN}",
+          "method": "post",
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.SIMPAYEE_MSISDN}"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "baggage": "errorExpect=ALS.1001",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+          },
+          "body": {
+            "fspId": "{$inputs.toFspId}",
+            "currency": "{$inputs.currency}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": true,
+          "disabled": true
+        },
+        {
+          "id": "Delete-party-from-simulator",
+          "meta": {
+            "info": "Delete party from simulator"
+          },
+          "description": "Delete party from simulator",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/repository/parties/{idType}/{idValue}",
+          "path": "/repository/parties/MSISDN/{$inputs.SIMPAYEE_MSISDN}",
+          "method": "delete",
+          "params": {
+            "idType": "MSISDN",
+            "idValue": "{$inputs.SIMPAYEE_MSISDN}"
+          },
+          "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "disabled": true
+        },
+        {
+          "id": "Add-Party-Simulator",
+          "meta": {
+            "info": "Add Party to Simulator"
+          },
+          "description": "Add Party to Simulator",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator",
+            "asynchronous": false,
+            "additionalApi": true
+          },
+          "operationPath": "/repository/parties",
+          "path": "/repository/parties",
+          "method": "post",
+          "url": "{$inputs.PAYEEFSP_BACKEND_TESTAPI_URL}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "displayName": "Test PayeeFSP",
+            "firstName": "PayeeFirst",
+            "middleName": "PayeeMiddle",
+            "lastName": "PayeeLast",
+            "dateOfBirth": "2010-10-10",
+            "idType": "MSISDN",
+            "idValue": "{$inputs.SIMPAYEE_MSISDN}"
+          },
+          "disabled": true
+        },
+        {
+          "id": "Get-party-information",
+          "meta": {
+            "info": "Get party information"
+          },
+          "description": "Get party information",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeParties}"
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.SIMPAYEE_MSISDN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-party",
+                "description": "Callback body should contain party",
+                "exec": [
+                  "expect(callback.body).to.have.property('party')"
+                ]
+              },
+              {
+                "id": "req-src-inputs-fromFspId",
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "cb-content-type-parties",
+                "description": "Callback content-type to be parties",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
+                ]
+              },
+              {
+                "id": "cb-partyIdInfo-partyIdType-par",
+                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
+                "exec": [
+                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('MSISDN')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.SIMPAYEE_MSISDN}')"
+                ]
+              },
+              {
+                "id": "Payee-src",
+                "description": "Payee FSPIOP-Source",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Content-Type",
+                "description": "Payee Content-Type",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "path": "/parties/MSISDN/{$inputs.SIMPAYEE_MSISDN}",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.SIMPAYEE_MSISDN}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          },
+          "disabled": true
+        },
+        {
+          "id": "Post-scenario",
+          "meta": {
+            "info": "Post scenario"
+          },
+          "description": "Post scenario",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator"
+          },
+          "operationPath": "/scenarios",
+          "path": "/scenarios",
+          "method": "post",
+          "url": "{$inputs.PAYERFSP_BACKEND_TESTAPI_URL}",
+          "body": [
+            {
+              "name": "scenario1",
+              "operation": "postTransfers",
+              "body": {
+                "from": {
+                  "displayName": "{$requestVariables.payerName}",
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.SIMPAYER_MSISDN}"
+                },
+                "to": {
+                  "idType": "MSISDN",
+                  "idValue": "{$inputs.SIMPAYEE_MSISDN}"
+                },
+                "amountType": "SEND",
+                "currency": "{$inputs.SIMPAYER_CURRENCY}",
+                "amount": "10",
+                "transactionType": "TRANSFER",
+                "initiatorType": "CONSUMER",
+                "note": "test payment",
+                "homeTransactionId": "123ABC"
+              }
+            },
+            {
+              "name": "scenario2",
+              "operation": "putTransfers",
+              "params": {
+                "transferId": "{{scenario1.result.transferId}}"
+              },
+              "body": {
+                "acceptQuote": true
+              }
+            }
+          ],
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Payer-name-matches",
+                "description": "Payer name matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.from.displayName).to.equal(requestVariables.payerName)"
+                ]
+              },
+              {
+                "id": "Payer-IdType-matches",
+                "description": "Payer IdType matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.from.idType).to.equal('MSISDN')"
+                ]
+              },
+              {
+                "id": "Payer-IdValue-matches",
+                "description": "Payer IdValue matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.from.idValue).to.equal('{$inputs.SIMPAYER_MSISDN}')"
+                ]
+              },
+              {
+                "id": "Payee-IdType-matches",
+                "description": "Payee IdType matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.to.idType).to.equal('MSISDN')"
+                ]
+              },
+              {
+                "id": "Payee-IdValue-matches",
+                "description": "Payee IdValue matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.to.idValue).to.equal(environment.SIMPAYEE_MSISDN)"
+                ]
+              },
+              {
+                "id": "Payee-fspId-matches",
+                "description": "Payee fspId matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.to.fspId).to.equal(environment.SIMPAYEE_NAME)"
+                ]
+              },
+              {
+                "id": "Payee-First-Name-matches",
+                "description": "Payee First Name matches",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario1.result.to.firstName).to.equal(requestVariables.expectedPayeeFirstName)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Last-Name-matches",
+                "description": "Payee Last Name matches",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario1.result.to.lastName).to.equal(requestVariables.expectedPayeeLastName)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-DOB-matches",
+                "description": "Payee DOB matches",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario1.result.to.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)",
+                  "}"
+                ]
+              },
+              {
+                "id": "amt-Type-SEND",
+                "description": "Amount Type is 'SEND'",
+                "exec": [
+                  "expect(response.body.scenario1.result.amountType).to.equal('SEND')"
+                ]
+              },
+              {
+                "id": "curr-matches",
+                "description": "Currency matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.currency).to.equal(environment.SIMPAYER_CURRENCY)"
+                ]
+              },
+              {
+                "id": "trans-amt-matches",
+                "description": "Transfer Amount matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.amount).to.equal('10')"
+                ]
+              },
+              {
+                "id": "txn-Type-trans",
+                "description": "Transaction Type is 'Transfer'",
+                "exec": [
+                  "expect(response.body.scenario1.result.transactionType).to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": "Initiator-Type-CONSUMER",
+                "description": "Initiator Type is 'CONSUMER'",
+                "exec": [
+                  "expect(response.body.scenario1.result.initiatorType).to.equal('CONSUMER')"
+                ]
+              },
+              {
+                "id": "Note-matches",
+                "description": "Note matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.note).to.equal('test payment')"
+                ]
+              },
+              {
+                "id": "trans-ID-matches",
+                "description": "Transfer ID matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.transferId).to.equal(response.body.scenario2.result.transferId)"
+                ]
+              },
+              {
+                "id": "Home-txn-ID-matches",
+                "description": "Home transaction ID matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.homeTransactionId).to.equal('123ABC')"
+                ]
+              },
+              {
+                "id": "Current-state-quote-COMPLETED",
+                "description": "Current state on quote is 'COMPLETED'",
+                "exec": [
+                  "expect(response.body.scenario1.result.currentState).to.equal('COMPLETED')"
+                ]
+              },
+              {
+                "id": "Quote-amt-matches",
+                "description": "Quote amount matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.body.transferAmount.amount).to.equal('10')"
+                ]
+              },
+              {
+                "id": "curr-matches",
+                "description": "Currency matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.body.transferAmount.currency).to.equal(environment.SIMPAYER_CURRENCY)"
+                ]
+              },
+              {
+                "id": "Quote-rsp-expiration-not-null",
+                "description": "Quote response expiration is not null",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.body.expiration).to.not.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Quote-rsp-ilp-packet-not-null",
+                "description": "Quote response ilp packet is not null",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.body.ilpPacket).to.not.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Quote-rsp-condition-not-null",
+                "description": "Quote response condition is not null",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.body.condition).to.not.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payee-fee-amt-zero-0",
+                "description": "Payee fee amount is zero (0)",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.body.payeeFspFee.amount).to.equal('0')"
+                ]
+              },
+              {
+                "id": "Payee-fee-curr-matches",
+                "description": "Payee fee currency matches",
+                "exec": [
+                  "expect(response.body.scenario1.result.quoteResponse.body.payeeFspFee.currency).to.equal(environment.SIMPAYEE_CURRENCY)"
+                ]
+              },
+              {
+                "id": "Payee-commission-amt-zero-0",
+                "description": "Payee commission amount is zero (0)",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.amount).to.equal('0')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-commission-curr-matches",
+                "description": "Payee FSP commission currency matches",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario1.result.quoteResponse.body.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-name-matches",
+                "description": "Payer FSP name matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.from.displayName).to.equal(requestVariables.payerName)"
+                ]
+              },
+              {
+                "id": "Payer-IdType-matches",
+                "description": "Payer IdType matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.from.idType).to.equal('MSISDN')"
+                ]
+              },
+              {
+                "id": "Payer-IdValue-matches",
+                "description": "Payer IdValue matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.from.idValue).to.equal(environment.SIMPAYER_MSISDN)"
+                ]
+              },
+              {
+                "id": "Payee-IdType-matches",
+                "description": "Payee IdType matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.to.idType).to.equal('MSISDN')"
+                ]
+              },
+              {
+                "id": "Payee-ReceiverMSISDN-IdValue-m",
+                "description": "Payee  ReceiverMSISDN IdValue matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.to.idValue).to.equal(environment.SIMPAYEE_MSISDN)"
+                ]
+              },
+              {
+                "id": "Payee-fspId-matches",
+                "description": "Payee fspId matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.to.fspId).to.equal(environment.SIMPAYEE_NAME)"
+                ]
+              },
+              {
+                "id": "Payee-First-Name-matches",
+                "description": "Payee First Name matches",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.to.firstName).to.equal(requestVariables.expectedPayeeFirstName)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Last-Name-matches",
+                "description": "Payee Last Name matches",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.to.lastName).to.equal(requestVariables.expectedPayeeLastName)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-DOB-matches",
+                "description": "Payee DOB matches",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.to.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)",
+                  "}"
+                ]
+              },
+              {
+                "id": "amt-type-quote-rsp-SEND",
+                "description": "Amount type in quote response is 'SEND'",
+                "exec": [
+                  "expect(response.body.scenario2.result.amountType).to.equal('SEND')"
+                ]
+              },
+              {
+                "id": "curr-quotes-matches",
+                "description": "Currency in quotes matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.currency).to.equal(environment.SIMPAYER_CURRENCY)"
+                ]
+              },
+              {
+                "id": "trans-amt-matches",
+                "description": "Transfer amount matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.amount).to.equal('10')"
+                ]
+              },
+              {
+                "id": "txn-Type-trans",
+                "description": "Transaction Type is TRANSFER",
+                "exec": [
+                  "expect(response.body.scenario2.result.transactionType).to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": "Initiator-type-CONSUMER",
+                "description": "Initiator type is CONSUMER",
+                "exec": [
+                  "expect(response.body.scenario2.result.initiatorType).to.equal('CONSUMER')"
+                ]
+              },
+              {
+                "id": "Note-matches",
+                "description": "Note matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.note).to.equal('test payment')"
+                ]
+              },
+              {
+                "id": "Home-txn-ID-123ABC",
+                "description": "Home transaction ID is 123ABC",
+                "exec": [
+                  "expect(response.body.scenario2.result.homeTransactionId).to.equal('123ABC')"
+                ]
+              },
+              {
+                "id": "Current-state-trans-COMPLETED",
+                "description": "Current state of the transfer is 'COMPLETED'",
+                "exec": [
+                  "expect(response.body.scenario2.result.currentState).to.equal('COMPLETED')"
+                ]
+              },
+              {
+                "id": "trans-amt-matches",
+                "description": "Transfer Amount matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.body.transferAmount.amount).to.equal('10')"
+                ]
+              },
+              {
+                "id": "curr-matches",
+                "description": "Currency matches",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.body.transferAmount.currency).to.equal(environment.SIMPAYER_CURRENCY)"
+                ]
+              },
+              {
+                "id": "Quote-expiration-not-null",
+                "description": "Quote expiration is not null",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.expiration).to.not.equal(null)"
+                ]
+              },
+              {
+                "id": "rsp-ilpPacket-not-null",
+                "description": "Response ilpPacket is not null",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.ilpPacket).to.not.equal(null)"
+                ]
+              },
+              {
+                "id": "rsp-condition-not-null",
+                "description": "Response condition is not null",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.condition).to.not.equal(null)"
+                ]
+              },
+              {
+                "id": "Payee-Fee-zero-0",
+                "description": "Payee FSP Fee is zero (0)",
+                "exec": [
+                  "expect(response.body.scenario2.result.quoteResponse.body.payeeFspFee.amount).to.equal('0')"
+                ]
+              },
+              {
+                "id": "Payee-commission-zero-0",
+                "description": "Payee FSP commission is zero (0)",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.amount).to.equal('0')",
+                  "}"
+                ]
+              },
+              {
+                "id": "trans-curr-matches",
+                "description": "Transfer currency matches",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "  expect(response.body.scenario2.result.quoteResponse.body.payeeFspCommission.currency).to.equal(environment.SIMPAYEE_CURRENCY)",
+                  "}"
+                ]
+              },
+              {
+                "id": "CompletedTimestamp-not-empty",
+                "description": "CompletedTimestamp is not empty",
+                "exec": [
+                  "expect(response.body.scenario2.result.fulfil.completedTimestamp).to.not.equal(null)"
+                ]
+              },
+              {
+                "id": "trans-state-COMMITTED",
+                "description": "Transfer state is 'COMMITTED'",
+                "exec": [
+                  "expect(response.body.scenario2.result.fulfil.body.transferState).to.equal('COMMITTED')"
+                ]
+              },
+              {
+                "id": "Fulfilment-not-empty",
+                "description": "Fulfilment is not empty",
+                "exec": [
+                  "expect(response.body.scenario2.result.fulfil.fulfilment).to.not.equal(null)"
+                ]
+              },
+              {
+                "id": "Payee-req-src-hdr-payerfsp",
+                "description": "Payee Request: fspiop-source header is 'payerfsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-dest-hdr-payeefsp",
+                "description": "Payee Request: fspiop-destination header is 'payeefsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-Date-not-null",
+                "description": "Payee Request: Date is not null",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['date']).to.not.equal(null)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-src-hdr-payeefsp",
+                "description": "Payer Callback: 'fspiop-source' header is 'payeefsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-dest-hdr-payerfsp",
+                "description": "Payer Callback: 'fspiop-destination' header is 'payerfsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.headers['fspiop-destination']).to.equal(environment.SIMPAYER_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-content-type-hdr-matc",
+                "description": "Payer Callback: 'content-type' header matches",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-Accept-hdr-empty",
+                "description": "Payer Callback: 'Accept' header is empty",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.headers['accept']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-uri-hdr-matches",
+                "description": "Payer Callback: 'fspiop-uri' header matches",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(requestVariables.payerCallback.headers['fspiop-uri']).to.equal('/parties/MSISDN/{$inputs.SIMPAYEE_MSISDN}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-method-headers-PUT",
+                "description": "Payer Callback: 'fspiop-http-method' headers is 'PUT'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-Expected-partyIdType-",
+                "description": "Payer Callback: Expected partyIdType is MSISDN",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.data.party.partyIdInfo.partyIdType).to.equal('MSISDN')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-Payee-partyIdentifier",
+                "description": "Payer Callback: Payee partyIdentifier matches",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.data.party.partyIdInfo.partyIdentifier).to.equal(environment.SIMPAYEE_MSISDN)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-Payee-fspId-matches",
+                "description": "Payer Callback: Payee fspId matches",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerCallback.data.party.partyIdInfo.fspId).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-Payee-first-name-matc",
+                "description": "Payer Callback: Payee first name matches",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
+                  " expect(requestVariables.payerCallback.data.party.personalInfo.complexName.firstName).to.equal(requestVariables.expectedPayeeFirstName)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-Payee-last-name-match",
+                "description": "Payer Callback: Payee last name matches",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
+                  " expect(requestVariables.payerCallback.data.party.personalInfo.complexName.lastName).to.equal(requestVariables.expectedPayeeLastName)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-Payee-DOB-matches",
+                "description": "Payer Callback: Payee DOB matches",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true && environment.API_TYPE === 'fspiop') {",
+                  " expect(requestVariables.payerCallback.data.party.personalInfo.dateOfBirth).to.equal(requestVariables.expectedPayeeDOB)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-src-hdr-matches",
+                "description": "Payee Request: 'fspiop-source' header matches",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['fspiop-source']).to.equal(environment.SIMPAYER_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-dest-hdr-matches",
+                "description": "Payee Request: 'fspiop-destination' header matches",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-content-type-hdr-pro",
+                "description": "Payee Request: 'content-type' header should be in proper format",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-method-i-s-POST",
+                "description": "Payee Request: 'fspiop-http-method' i s POST",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['fspiop-http-method']).to.equal('POST')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-uri-transfers",
+                "description": "Payee Request: 'fspiop-uri'  is /transfers",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.headers['fspiop-uri']).to.equal('/transfers')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-data-have-transferId",
+                "description": "Payee Request: data should have the same \"transferId\" as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.data.transferId).to.equal(requestVariables.scenario1TransferId)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-data-have-Payer-req",
+                "description": "Payee Request: data should have the same Payer FSP as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.data.payerFsp).to.equal(environment.SIMPAYER_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-data-have-Payee-req",
+                "description": "Payee Request: data should have the same Payee FSP as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.data.payeeFsp).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-data-have-amt-req",
+                "description": "Payee Request: data should have the same amount as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.data.amount.amount).to.equal('10')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-data-have-curr-req",
+                "description": "Payee Request: data should have the same currency as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeSideTransferRequest.data.amount.currency).to.equal(environment.SIMPAYER_CURRENCY)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-src-hdr-matches",
+                "description": "Payer Callback: 'fspiop-source' header matches",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-dest-hdr-matches",
+                "description": "Payer Callback: 'fspiop-destination' header matches",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['fspiop-destination']).to.equal(environment.SIMPAYER_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-content-type-hdr-corr",
+                "description": "Payer Callback: 'content-type' header is correct",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-accept-hdr-empty",
+                "description": "Payer Callback: 'accept' header is empty",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['accept']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-uri-hdr-includes-tran",
+                "description": "Payer Callback: 'fspiop-uri' header includes /transfers",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['fspiop-uri']).to.include('/transfers')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-method-hdr-PUT",
+                "description": "Payer Callback: 'fspiop-http-method' header is 'PUT'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-rsp-data-does-not-hav",
+                "description": "Payer Callback: Response data does not have transferId",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.data.transferId).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-trans-state-COMMITTED",
+                "description": "Payer Callback: Transfer state is 'COMMITTED'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payerSideTransferCallback.data.transferState).to.equal('COMMITTED')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.SIMPAYEE_MSISDN}', 'payeeRequest')",
+                "  ",
+                "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.SIMPAYEE_MSISDN}', 'payerCallback')",
+                "}",
+                "",
+                "requestVariables.expectedPayeeFirstName = \"PayeeFirst\"",
+                "requestVariables.expectedPayeeLastName = \"PayeeLast\"",
+                "requestVariables.expectedPayeeDOB = \"2010-10-10\"",
+                "requestVariables.payerName = \"PayerFirst PayerLast\""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "  console.log(requestVariables.payeeRequest)",
+                "  requestVariables.payerCallback = await websocket.getMessage('payerCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "  console.log(requestVariables.payerCallback)",
+                "  ",
+                "  requestVariables.scenario1TransferId = response.body.scenario1.result.transferId",
+                "  ",
+                "  let url = `${environment.PAYEEFSP_SDK_TESTAPI_URL}/requests/${response.body.scenario1.result.transferId}`",
+                "  ",
+                "  try {",
+                "    const res = await axios.get(url)",
+                "    requestVariables.payeeSideTransferRequest = res.data",
+                "  } catch (err) {",
+                "    console.log(err)",
+                "  }",
+                "  ",
+                "  url = `${environment.PAYERFSP_SDK_TESTAPI_URL}/callbacks/${response.body.scenario1.result.transferId}`",
+                "  ",
+                "  try {",
+                "    const res = await axios.get(url)",
+                "    requestVariables.payerSideTransferCallback = res.data",
+                "  } catch (err) {",
+                "    console.log(err)",
+                "  }",
+                "}"
+              ]
+            }
+          },
+          "disabled": true
+        }
+      ]
+    }
+  ]
+}

@@ -269,6 +269,7 @@ services:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
+      - ./docker/secrets/jwsSigningKey.key:/opt/app/secrets/jwsSigningKey.key
     environment:
       - LOG_LEVEL=info
     networks:
@@ -355,6 +356,41 @@ services:
       - all-services
       - fx
 
+  als-msisdn-oracle-svc:
+    image: mojaloop/als-msisdn-oracle-svc:${ALS_MSISDN_ORACLE_SVC_VERSION}
+    container_name: als-msisdn-oracle-svc
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/dist/config/default.json /opt/app/config-modifier/configs/als-msisdn-oracle-svc.js /opt/app/dist/config/default.json && /opt/app/wait4/wait4.js als-msisdn-oracle-svc && npm run migrate && node ./dist/src/cli.js"
+    # ports:
+    #   - "4001:4001"
+    #   - "4002:4002"
+    # environment:
+    #   - LOG_LEVEL=info
+
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql-als:
+        condition: service_healthy
+      central-ledger:
+        condition: service_started
+      simulator:
+        condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: wget -q http://127.0.0.1:3000/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - als-msisdn-oracle-svc
+      - discovery
+      - all-services
+      - fx
+
   mysql-als:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
     container_name: mysql-als
@@ -377,6 +413,7 @@ services:
       interval: 30s
     profiles:
       - account-lookup-service
+      - als-msisdn-oracle-svc
       - discovery
       - all-services
       - fx

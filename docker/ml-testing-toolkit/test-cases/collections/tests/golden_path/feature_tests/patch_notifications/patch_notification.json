@@ -1,0 +1,692 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "p2p-patch-committed",
+      "name": "p2p_money_transfer_patch_notifications - payee receives PATCH Notification with COMMITTED after sending callback with RESERVED",
+      "meta": {
+        "info": "p2p_money_transfer - payee_request_for_notification_v.1.1"
+      },
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/patch_notifications/patch_notification.json",
+        "labels": [
+          "prod-tests"
+        ]
+      },
+      "requests": [
+        {
+          "id": "Send-quote",
+          "meta": {
+            "info": "Send quote"
+          },
+          "description": "Send quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "ttkpayeefsp"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "ttkpayeefsp"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$environment.patchAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "cb-transferAmount",
+                "description": "Callback body should contain transferAmount",
+                "exec": [
+                  "expect(callback.body).to.have.property('transferAmount')"
+                ]
+              },
+              {
+                "id": "cb-transferAmount-amt-curr-req",
+                "description": "Callback transferAmount (amount & currency)to match the request",
+                "exec": [
+                  "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": "req-amountType-SEND",
+                "description": "Request amountType to be SEND",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('SEND')"
+                ]
+              },
+              {
+                "id": "req-transactionType-scenario-t",
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": "req-transactionType-initiator-",
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": "req-transactionType-initiatorT",
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "pm.environment.set('patchAmount', '101')"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-trans",
+          "meta": {
+            "info": "Send transfer"
+          },
+          "description": "Send transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "ttkpayeefsp"
+          },
+          "body": {
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "ttkpayeefsp",
+            "amount": {
+              "amount": "{$environment.patchAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "Payer-cb-Content-Length-not-0",
+                "description": "Payer Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "Payer-cb-dest-req-src",
+                "description": "Payer Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "Payer-cb-transferState-COMMITT",
+                "description": "Payer Callback transferState to be COMMITTED",
+                "exec": [
+                  "expect(callback.body.transferState).to.equal('COMMITTED')"
+                ]
+              },
+              {
+                "id": "Payer-cb-content-type-transfer",
+                "description": "Payer Callback content-type to be transfers",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('{$inputs.contentTypeTransfers}')"
+                ]
+              },
+              {
+                "id": "req-transferId-quote-req-trans",
+                "description": "Request transferId same as quote request transferId",
+                "exec": [
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
+                ]
+              },
+              {
+                "id": "req-transferAmount-amt-curr-qu",
+                "description": "Request transferAmount (amount & currency) to match quote request",
+                "exec": [
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": "req-src-quote-cb-dest",
+                "description": "Request FSP source the same as quote callback FSP destination",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
+                ]
+              },
+              {
+                "id": "Payer-cb-rsp-data-does-not-hav",
+                "description": "Payer Callback Response data does not have transferId",
+                "exec": [
+                  "expect(callback.body.transferId).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payee-Notification-method-PATC",
+                "description": "Payee Notification method is PATCH",
+                "exec": [
+                  "expect(environment.payeeCallbackNotification.method).to.equal('patch') &&",
+                  "expect(environment.payeeCallbackNotification.headers['fspiop-http-method']).to.equal('PATCH')"
+                ]
+              },
+              {
+                "id": "Payee-Notification-path-includ",
+                "description": "Payee Notification path includes correct transferId",
+                "exec": [
+                  "expect(environment.payeeCallbackNotification.path).to.equal('/transfers/{$request.body.transferId}')"
+                ]
+              },
+              {
+                "id": "Payee-Notification-src-switch-",
+                "description": "Payee Notification FSP Source is switch's name",
+                "exec": [
+                  "expect(environment.payeeCallbackNotification.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
+                ]
+              },
+              {
+                "id": "Payee-Notification-transferSta",
+                "description": "Payee Notification transferState to be COMMITTED",
+                "exec": [
+                  "expect(environment.payeeCallbackNotification.body.transferState).to.equal('COMMITTED')"
+                ]
+              },
+              {
+                "id": "Payee-Patch-Notification-cb-co",
+                "description": "Payee Patch Notification Callback content-type to be transfers",
+                "exec": [
+                  "expect(environment.payeeCallbackNotification.headers['content-type']).to.equal('{$inputs.contentTypeTransfers}')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment.payeeCallbackNotification = await inboundEvent.getMessage('patch-callback')",
+                "",
+                "console.log(environment.payeeCallbackNotification)",
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "await inboundEvent.addListener('patch-callback', 'patch', '/transfers/{$request.body.transferId}')",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "p2p-patch-aborted",
+      "name": "p2p_money_transfer_patch_notifications - payee receives PATCH Notification with ABORTED status after sending invalid fulfilment",
+      "meta": {
+        "info": "p2p_money_transfer - payee_request_for_notification_v.1.1"
+      },
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/patch_notifications/patch_notification.json",
+        "labels": [
+          "prod-tests"
+        ]
+      },
+      "requests": [
+        {
+          "id": "Send-quote",
+          "meta": {
+            "info": "Send quote"
+          },
+          "description": "Send quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "ttkpayeefsp"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "ttkpayeefsp"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "{$environment.patchAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "cb-transferAmount",
+                "description": "Callback body should contain transferAmount",
+                "exec": [
+                  "expect(callback.body).to.have.property('transferAmount')"
+                ]
+              },
+              {
+                "id": "cb-transferAmount-amt-curr-req",
+                "description": "Callback transferAmount (amount & currency)to match the request",
+                "exec": [
+                  "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": "req-amountType-SEND",
+                "description": "Request amountType to be SEND",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('SEND')"
+                ]
+              },
+              {
+                "id": "req-transactionType-scenario-t",
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": "req-transactionType-initiator-",
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": "req-transactionType-initiatorT",
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "pm.environment.set('patchAmount', '103')",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-trans",
+          "meta": {
+            "info": "Send transfer"
+          },
+          "description": "Send transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "ttkpayeefsp"
+          },
+          "body": {
+            "transferId": "{$prev.Send-quote.request.body.transactionId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "ttkpayeefsp",
+            "amount": {
+              "amount": "{$environment.patchAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "expiration": "{$prev.Send-quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-quote.callback.body.condition}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "Payer-cb-Content-Length-not-0",
+                "description": "Payer Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "Payer-cb-dest-req-src",
+                "description": "Payer Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "Payer-cb-errorCode-3100",
+                "description": "Payer Callback errorCode to be 3100",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3100')"
+                ]
+              },
+              {
+                "id": "Payer-cb-content-type-transfer",
+                "description": "Payer Callback content-type to be transfers",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')"
+                ]
+              },
+              {
+                "id": "req-transferId-quote-req-trans",
+                "description": "Request transferId same as quote request transferId",
+                "exec": [
+                  "expect('{$request.body.transferId}').to.equal('{$prev.Send-quote.request.body.transactionId}')"
+                ]
+              },
+              {
+                "id": "req-transferAmount-amt-curr-qu",
+                "description": "Request transferAmount (amount & currency) to match quote request",
+                "exec": [
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.amount}').to.equal('{$request.body.amount.amount}')",
+                  "expect('{$prev.Send-quote.callback.body.transferAmount.currency}').to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": "req-src-quote-cb-dest",
+                "description": "Request FSP source the same as quote callback FSP destination",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$prev.Send-quote.callback.headers.fspiop-destination}')"
+                ]
+              },
+              {
+                "id": "Payer-cb-rsp-data-does-not-hav",
+                "description": "Payer Callback Response data does not have transferId",
+                "exec": [
+                  "expect(callback.body.transferId).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payee-Notification-method-PATC",
+                "description": "Payee Notification method is PATCH",
+                "exec": [
+                  "expect(environment.payeeCallbackNotification.method).to.equal('patch') &&",
+                  "expect(environment.payeeCallbackNotification.headers['fspiop-http-method']).to.equal('PATCH')"
+                ]
+              },
+              {
+                "id": "Payee-Notification-path-includ",
+                "description": "Payee Notification path includes correct transferId",
+                "exec": [
+                  "expect(environment.payeeCallbackNotification.path).to.equal('/transfers/{$request.body.transferId}')"
+                ]
+              },
+              {
+                "id": "Payee-Notification-src-switch-",
+                "description": "Payee Notification FSP Source is switch's name",
+                "exec": [
+                  "expect(environment.payeeCallbackNotification.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
+                ]
+              },
+              {
+                "id": "Payee-Notification-transferSta",
+                "description": "Payee Notification transferState to be ABORTED",
+                "exec": [
+                  "",
+                  "expect(environment.payeeCallbackNotification.body.transferState).to.equal('ABORTED')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment.payeeCallbackNotification = await inboundEvent.getMessage('patch-callback')",
+                "",
+                "console.log(environment.payeeCallbackNotification)",
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "await inboundEvent.addListener('patch-callback', 'patch', '/transfers/{$request.body.transferId}')",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-trans",
+          "description": "Get Transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/{$prev.Send-quote.request.body.transactionId}",
+          "method": "get",
+          "params": {
+            "ID": "{$prev.Send-quote.request.body.transactionId}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "cb-transferState-ABORTED",
+                "description": "Callback transferState is ABORTED",
+                "exec": [
+                  "expect(callback.body.transferState).to.equal('ABORTED')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

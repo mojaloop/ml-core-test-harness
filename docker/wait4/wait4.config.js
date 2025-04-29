@@ -79,6 +79,31 @@ module.exports = {
       ]
     },
     {
+      name: 'als-msisdn-oracle-svc',
+      wait4: [
+        {
+          description: 'central-ledger api server',
+          uri: 'central-ledger:3001',
+          method: 'ncat',
+
+          // we have to wait much longer for central-ledger
+          // to spin up so we overload `retires` default parameter value
+          retries: 60
+        },
+        {
+          description: 'MySQL ALS',
+          uri: 'mysql-als:3306',
+          method: 'mysql',
+          // customized RC setup
+          rc: {
+            namespace: 'ALS',
+            configPath: '../dist/config/default.json'
+          },
+          retries: 60
+        }
+      ]
+    },    
+    {
       name: 'ml-api-adapter',
       wait4: [
         {

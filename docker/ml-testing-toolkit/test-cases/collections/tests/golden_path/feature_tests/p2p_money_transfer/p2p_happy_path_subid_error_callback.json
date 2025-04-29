@@ -1,0 +1,212 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "p2p-invalid-subid",
+      "name": "p2p_money_transfer - p2p_unhappy_path with invalid subID at PayeeFSP",
+      "meta": {
+        "info": "p2p_money_transfer - p2p_unhappy_path with invalid subID at PayeeFSP"
+      },
+      "requests": [
+        {
+          "id": "Add-part-ALS",
+          "meta": {
+            "info": "Add Participant to ALS"
+          },
+          "description": "Add Participant to ALS",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}/31",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}",
+            "SubId": "31"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "baggage": "errorExpect=ALS.1001",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+          },
+          "body": {
+            "fspId": "{$inputs.toFspId}",
+            "currency": "{$inputs.currency}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$inputs.toIdValue}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          },
+          "disabled": true
+        },
+        {
+          "id": "Get-party-information",
+          "meta": {
+            "info": "Get party information"
+          },
+          "description": "Get party information",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/parties/{Type}/{ID}/{SubId}",
+          "method": "get",
+          "headers": {
+            "Accept": "{$inputs.acceptParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeParties}"
+          },
+          "params": {
+            "SubId": "31",
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-party",
+                "description": "Callback body should contain party",
+                "exec": [
+                  "expect(callback.body).to.have.property('errorInformation')"
+                ]
+              },
+              {
+                "id": "req-src-inputs-fromFspId",
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "cb-content-type-parties",
+                "description": "Callback content-type to be parties",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
+                ]
+              },
+              {
+                "id": "Payee-src",
+                "description": "Payee FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.toFspId}')",
+                  ""
+                ]
+              },
+              {
+                "id": "Payee-Content-Type",
+                "description": "Payee Content-Type",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-uri-ID-SubID",
+                "description": "Callback FSPIOP-URI should contain ID and SubID",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal('/parties/{$inputs.toIdType}/{$inputs.toIdValue}/31/error')"
+                ]
+              },
+              {
+                "id": "Validate-errorInformation",
+                "description": "Validate errorInformation",
+                "exec": [
+                  "if (environment.API_TYPE === 'fspiop') {",
+                  "  expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorCode).to.equal('3200')",
+                  "  expect(environment.put_parties_type_id_subid_error.body.errorInformation.errorDescription).to.equal('ID not found')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}/31",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "await inboundEvent.addListener('put_parties_type_id_subid_error', 'put', '/parties/{$inputs.toIdType}/{$inputs.toIdValue}/31/error')",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "",
+                "environment.put_parties_type_id_subid_error = await inboundEvent.getMessage('put_parties_type_id_subid_error')",
+                "",
+                "// console.log(JSON.stringify(environment.put_parties_type_id_subid_error))",
+                "",
+                "// console.log('/parties/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}/error')"
+              ]
+            }
+          },
+          "disabled": true
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/feature_tests/p2p_money_transfer/p2p_happy_path_subid_error_callback.json",
+        "labels": [
+          "prod-tests",
+          "p2p"
+        ]
+      }
+    }
+  ]
+}

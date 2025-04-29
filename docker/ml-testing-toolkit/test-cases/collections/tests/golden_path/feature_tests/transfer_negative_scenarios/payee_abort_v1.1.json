@@ -1,0 +1,657 @@
+{
+  "options": {},
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "payee-abort-v1_1",
+      "name": "payee_abort_v1.1",
+      "meta": {
+        "info": "payee_abort_v1.1"
+      },
+      "requests": [
+        {
+          "id": "Store-SIMPAYER-pos-before-prep",
+          "meta": {
+            "info": "Store SIMPAYER position before prepare"
+          },
+          "description": "Store SIMPAYER position before prepare",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment[environment.fromFspId + 'PositionBeforePrepare'] = response.body[0].value"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Store-NORESPONSE_SIMPAYEE-pos-",
+          "meta": {
+            "info": "Store NORESPONSE_SIMPAYEE position before prepare"
+          },
+          "description": "Store NORESPONSE_SIMPAYEE position before prepare",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.NORESPONSE_SIMPAYEE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment[environment.NORESPONSE_SIMPAYEE_NAME + 'PositionBeforePrepare'] = response.body[0].value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Prepare",
+          "meta": {
+            "info": "Send Prepare"
+          },
+          "description": "Send Prepare",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateID}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "expiration": "{$requestVariables.transferExpiration}",
+            "ilpPacket": "{$inputs.ilpPacket}",
+            "condition": "{$inputs.validCondition}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 2000).toISOString()",
+                "await inboundEvent.addListener('payeePostTransfer', 'post', '/transfers', (headers, body) => {",
+                "  return headers['fspiop-destination'] === '{$inputs.NORESPONSE_SIMPAYEE_NAME}'",
+                "})"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "requestVariables.payeePostTransfer = await inboundEvent.getMessage('payeePostTransfer')",
+                "console.log(requestVariables.payeePostTransfer)"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Store-SIMPAYER-pos-after-Prepa",
+          "meta": {
+            "info": "Store SIMPAYER position after Prepare"
+          },
+          "description": "Store SIMPAYER position after Prepare",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "",
+                "environment[environment.fromFspId + 'PositionAfterPrepare'] = response.body[0].value"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-SIMPAYEE-Abort-do-nothing",
+          "meta": {
+            "info": "Send SIMPAYEE Abort - should do nothing but log in fulfil handler"
+          },
+          "description": "Send SIMPAYEE Abort - should do nothing but log in fulfil handler",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/{$prev.Send-Prepare.request.body.transferId}",
+          "method": "put",
+          "params": {
+            "ID": "{$prev.Send-Prepare.request.body.transferId}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "transferState": "ABORTED",
+            "fulfilment": "{$inputs.validFulfillment}",
+            "completedTimestamp": "{$requestVariables.completedTimestamp}"
+          },
+          "ignoreCallbacks": true,
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.completedTimestamp = new Date().toISOString()",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Check-SIMPAYER-pos-after-Abort",
+          "meta": {
+            "info": "Check SIMPAYER position after Abort to wrong URL"
+          },
+          "description": "Check SIMPAYER position after Abort to wrong URL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Payeefsp-pos-after-Payee-Inval",
+                "description": "Payeefsp position after Payee Invalid Fulfillment should be same as position before transfer.",
+                "exec": [
+                  "expect(response.body[0].value).to.equal(+environment[environment.fromFspId + 'PositionAfterPrepare'])"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Fulfill-Reject",
+          "meta": {
+            "info": "Send Fulfill-Reject"
+          },
+          "description": "Send Fulfill-Reject",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}/error",
+          "path": "/transfers/{$prev.Send-Prepare.request.body.transferId}/error",
+          "method": "put",
+          "params": {
+            "ID": "{$prev.Send-Prepare.request.body.transferId}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": "5101",
+              "errorDescription": "Payee transaction limit reached",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "errorDetail",
+                    "value": "This is an abort extension"
+                  }
+                ]
+              }
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "await inboundEvent.addListener('payee_abort_v1.1_put_transfer_id_error', 'put', '/transfers/{$prev.Send-Prepare.request.body.transferId}/error')",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "const inboundEventResult = await inboundEvent.getMessage('payee_abort_v1.1_put_transfer_id_error')",
+                "",
+                "console.log('Callback result:')",
+                "console.log(inboundEventResult)",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Check-trans-status-ABORTED",
+          "meta": {
+            "info": "Check Transfer status - ABORTED"
+          },
+          "description": "Check Transfer status - ABORTED",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/{$prev.Send-Prepare.request.body.transferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$prev.Send-Prepare.request.body.transferId}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "Content-Type": "{$inputs.contentTypeTransfers}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-hdr-src-switch-s-name",
+                "description": "Callback Header - fspiop-source is switch's name",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-fspiop-desination-src-r",
+                "description": "Callback Header - fspiop-desination is fspiop-source in request",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-content-type-correct",
+                "description": "Callback Header - content-type is correct",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('{$inputs.contentTypeTransfers}')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-accept-empty",
+                "description": "Callback Header - accept is empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-Date-not-empty",
+                "description": "Callback Header - Date is not empty",
+                "exec": [
+                  "expect(callback.headers['date']).to.not.equal(undefined)",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-hdr-method-PUT",
+                "description": "Callback Header - fspiop-http-method is PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')",
+                  ""
+                ]
+              },
+              {
+                "id": "cb-transferState-ABORTED",
+                "description": "Callback transferState is ABORTED",
+                "exec": [
+                  "expect(callback.body.transferState).to.equal('ABORTED')",
+                  ""
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Check-SIMPAYER-pos-after-Abort-1",
+          "meta": {
+            "info": "Check SIMPAYER position after Abort"
+          },
+          "description": "Check SIMPAYER position after Abort",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Payeefsp-pos-after-after-Payee",
+                "description": "Payeefsp position after after Payee ABORT should be same as position before prepare",
+                "exec": [
+                  "expect(response.body[0].value).to.equal(+environment[environment.fromFspId + 'PositionBeforePrepare'])"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  const expectedBalance = +environment[environment.fromFspId + 'PositionBeforePrepare']",
+                "",
+                "  let _response = response",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    response = _response ",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    const isOk = +response.body?.[0]?.value === expectedBalance;",
+                "    ",
+                "    if (isOk) {",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break;",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await custom.sleep(maxRetryWait)",
+                "      const axiosRes = await makeRequest()",
+                "      _response = { code: axiosRes.status, status: axiosRes.statusText, body: axiosRes.data }",
+                "      console.log(`retryCount: ${retryCount+1} - value: `, axiosRes.data?.[0]?.value)",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "async function makeRequest() {",
+                "  const reqParams = {",
+                "      method: 'get', ",
+                "      url: `{$inputs.HOST_CENTRAL_LEDGER}/participants/{$inputs.fromFspId}/positions`,",
+                "      headers: {",
+                "        'Content-Type': `{$inputs.contentTypeTransfers}`,",
+                "        Accept: `{$inputs.acceptTransfers}`,",
+                "        Date: `{$function.generic.curDate}`,",
+                "        'FSPIOP-Source': `{$inputs.fromFspId}`,",
+                "        Authorization: `{$inputs.TTK_BEARER_TOKEN}`",
+                "      }",
+                "  };",
+                "  ",
+                "  return axios(reqParams);",
+                "}",
+                "",
+                "await main()"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Check-NORESPONSE_SIMPAYEE-pos-",
+          "meta": {
+            "info": "Check NORESPONSE_SIMPAYEE position after Abort"
+          },
+          "description": "Check NORESPONSE_SIMPAYEE position after Abort",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.NORESPONSE_SIMPAYEE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.NORESPONSE_SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Payeefsp-pos-after-Payee-ABORT",
+                "description": "Payeefsp position after Payee ABORT should be same as position before prepare",
+                "exec": [
+                  "expect(response.body[0].value).to.equal(+environment[environment.NORESPONSE_SIMPAYEE_NAME + 'PositionBeforePrepare'])"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "",
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/transfer_negative_scenarios/payee_abort_v1.1.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

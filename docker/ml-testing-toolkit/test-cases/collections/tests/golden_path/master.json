@@ -1,0 +1,11 @@
+{
+  "order": [
+    {
+      "name": "feature_tests",
+      "type": "folder",
+      "labels": [
+        "feature-tests"
+      ]
+    }
+  ]
+}

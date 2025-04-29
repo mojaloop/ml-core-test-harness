@@ -1,0 +1,648 @@
+{
+  "options": {},
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "participants-endpoints",
+      "name": "tests against participants endpoints",
+      "fileInfo": {
+        "path": "collections/hub/golden_path/feature_tests/resources_based/participants/participants.json",
+        "labels": [
+          "prod-tests"
+        ]
+      },
+      "meta": {
+        "info": "tests against participants endpoints"
+      },
+      "requests": [
+        {
+          "id": "Create-part-information",
+          "description": "Create participant information",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.fromIdType}/{$inputs.FX_MSISDN_1}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.fromIdType}",
+            "ID": "{$inputs.FX_MSISDN_1}"
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-202",
+                "description": "Response should be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "fspId": "{$inputs.FX_PAYEE_DFSP_ID}"
+          }
+        },
+        {
+          "id": "Look-up-part-information",
+          "description": "Look up participant information",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.fromIdType}/{$inputs.FX_MSISDN_1}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.fromIdType}",
+            "ID": "{$inputs.FX_MSISDN_1}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-202",
+                "description": "Response should be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Return-part-information",
+          "description": "Return participant information",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.fromIdType}/{$inputs.FX_MSISDN_1}",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.fromIdType}",
+            "ID": "{$inputs.FX_MSISDN_1}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": []
+          }
+        },
+        {
+          "id": "Delete-part-information",
+          "description": "Delete participant information",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.fromIdType}/{$inputs.FX_MSISDN_1}",
+          "method": "delete",
+          "params": {
+            "Type": "{$inputs.fromIdType}",
+            "ID": "{$inputs.FX_MSISDN_1}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          },
+          "tests": {
+            "assertions": []
+          }
+        },
+        {
+          "id": "Return-part-information-error",
+          "description": "Return participant information error",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/error",
+          "path": "/participants/{$inputs.fromIdType}/{$inputs.FX_MSISDN_1}/error",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.fromIdType}",
+            "ID": "{$inputs.FX_MSISDN_1}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-200",
+                "description": "Response should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-OK",
+                "description": "Response statusText be OK",
+                "exec": [
+                  "expect(response.statusText).to.equal('OK')"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": 5100,
+              "errorDescription": "This is an error description.",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "string",
+                    "value": "string"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "Create-part-information-subId",
+          "description": "Create participant information - subId",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}",
+          "path": "/participants/{$inputs.fromIdType}/{$inputs.FX_MSISDN_1}/",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.fromIdType}",
+            "ID": "{$inputs.FX_MSISDN_1}",
+            "SubId": ""
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          },
+          "body": {
+            "fspId": "string",
+            "currency": "AED",
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-202",
+                "description": "Response should be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Look-up-part-information-subId",
+          "description": "Look up participant information - subId",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}",
+          "path": "/participants/{$inputs.fromIdType}/{$inputs.FX_MSISDN_1}/",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.fromIdType}",
+            "ID": "{$inputs.FX_MSISDN_1}",
+            "SubId": ""
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-202",
+                "description": "Response should be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              }
+            ]
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          }
+        },
+        {
+          "id": "Return-part-information-subId",
+          "description": "Return participant information - subId",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}",
+          "path": "/participants/{$inputs.fromIdType}/{$inputs.FX_MSISDN_1}/",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.fromIdType}",
+            "ID": "{$inputs.FX_MSISDN_1}",
+            "SubId": ""
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "fspId": "string"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-200",
+                "description": "Response should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-OK",
+                "description": "Response statusText be OK",
+                "exec": [
+                  "expect(response.statusText).to.equal('OK')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Delete-part-information-subId",
+          "description": "Delete participant information - subId",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}",
+          "path": "/participants/{$inputs.fromIdType}/{$inputs.FX_MSISDN_1}/",
+          "method": "delete",
+          "params": {
+            "Type": "{$inputs.fromIdType}",
+            "ID": "{$inputs.FX_MSISDN_1}",
+            "SubId": ""
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          },
+          "tests": {
+            "assertions": []
+          }
+        },
+        {
+          "id": "Return-part-information-error-",
+          "description": "Return participant information error - subId",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}/error",
+          "path": "/participants/{$inputs.fromIdType}/{$inputs.FX_MSISDN_1}//error",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.fromIdType}",
+            "ID": "{$inputs.FX_MSISDN_1}",
+            "SubId": ""
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": 5100,
+              "errorDescription": "This is an error description.",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "string",
+                    "value": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-200",
+                "description": "Response should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-OK",
+                "description": "Response statusText be OK",
+                "exec": [
+                  "expect(response.statusText).to.equal('OK')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Create-bulk-part-information",
+          "description": "Create bulk participant information",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "requestId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+            "partyList": [
+              {
+                "partyIdType": "PERSONAL_ID",
+                "partyIdentifier": 16135551212,
+                "partySubIdOrType": "DRIVING_LICENSE",
+                "fspId": 1234,
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "string",
+                      "value": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "currency": "USD"
+          },
+          "tests": {
+            "assertions": []
+          }
+        },
+        {
+          "id": "Return-bulk-part-information",
+          "description": "Return bulk participant information",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{ID}",
+          "path": "/participants/{$inputs.FX_MSISDN_1}",
+          "method": "put",
+          "params": {
+            "ID": "{$inputs.FX_MSISDN_1}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "partyList": [
+              {
+                "partyId": {
+                  "partyIdType": "PERSONAL_ID",
+                  "partyIdentifier": 16135551212,
+                  "partySubIdOrType": "DRIVING_LICENSE",
+                  "fspId": 1234,
+                  "extensionList": {
+                    "extension": [
+                      {
+                        "key": "string",
+                        "value": "string"
+                      }
+                    ]
+                  }
+                },
+                "errorInformation": {
+                  "errorCode": 5100,
+                  "errorDescription": "This is an error description.",
+                  "extensionList": {
+                    "extension": [
+                      {
+                        "key": "string",
+                        "value": "string"
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "currency": "USD"
+          },
+          "tests": {
+            "assertions": []
+          }
+        },
+        {
+          "id": "Return-bulk-part-information-e",
+          "description": "Return bulk participant information error",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+          },
+          "operationPath": "/participants/{ID}/error",
+          "path": "/participants/{$inputs.FX_MSISDN_1}/error",
+          "method": "put",
+          "params": {
+            "ID": "{$inputs.FX_MSISDN_1}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": 5100,
+              "errorDescription": "This is an error description.",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "string",
+                    "value": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "tests": {
+            "assertions": []
+          }
+        }
+      ]
+    }
+  ]
+}

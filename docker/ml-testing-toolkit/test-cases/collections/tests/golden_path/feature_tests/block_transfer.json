@@ -1,0 +1,1477 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "block-transfer",
+      "name": "Block Transfer",
+      "meta": {
+        "info": "Block Transfer"
+      },
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/block_transfer.json",
+        "labels": [
+          "prod-tests"
+        ]
+      },
+      "requests": [
+        {
+          "id": "Get-PAYER-settle-acc-balances-",
+          "description": "Get PAYER Settlement account balances for Liquidity and Position",
+          "meta": {
+            "info": "Get PAYER Settlement account balances for Liquidity and Position"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.fromFspId}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "delay": "500",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// Find the Settlement account for the set currency to determine the liquidity of the payer",
+                "const settlementAccount = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY && item.ledgerAccountType === 'SETTLEMENT'))",
+                "environment.payerSettlementAccountBalance = settlementAccount?.value",
+                "",
+                "console.log(`environment.payerSettlementAccountBalance=${environment.payerSettlementAccountBalance}`)",
+                "",
+                "// Find the Position account for the set currency to determine the position of the payer",
+                "const positionAccount = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY && item.ledgerAccountType === 'POSITION'))",
+                "environment.payerPositionBeforeTransfer = positionAccount?.value",
+                "",
+                "console.log(`environment.payerPositionBeforeTransfer=${environment.payerPositionBeforeTransfer}`)",
+                "",
+                "",
+                "environment.payerReservedPositionBeforeTransfer = positionAccount?.reservedValue",
+                "",
+                "console.log(`environment.payerReservedPositionBeforeTransfer=${environment.payerReservedPositionBeforeTransfer}`)",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "GET-SIMPAYEE-pos-before-trans",
+          "meta": {
+            "info": "GET SIMPAYEE position before the transfer"
+          },
+          "description": "GET SIMPAYEE position before the transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Payee-pos-correctly-set",
+                "description": "Payee FSP position correctly set",
+                "exec": [
+                  "expect(environment.payeePositionBeforeTransfer).to.not.equal(undefined)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYEE_CURRENCY))",
+                "environment.payeePositionBeforeTransfer = positionItem.value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Quote",
+          "meta": {
+            "info": "Send Quote"
+          },
+          "description": "Send Quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "scriptingEngine": "javascript",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
+            "FSPIOP-HTTP-Method": "POST",
+            "FSPIOP-URI": "/quotes",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "quoteId": "{$requestVariables.quoteId}",
+            "transactionId": "{$requestVariables.transactionId}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Mats",
+                  "lastName": "Hagman"
+                },
+                "dateOfBirth": "1983-10-25"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.SIMPAYEE_NAME}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$requestVariables.amount}",
+              "currency": "{$inputs.SIMPAYEE_CURRENCY}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "hej"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "Payee-src-testingtoolkitdfsp",
+                "description": "Payee FSP 'fspiop-source' is 'testingtoolkitdfsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(environment.fromFspId)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-dest-payeefsp",
+                "description": "Payee FSP 'fspiop-destination' is 'payeefsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-fspiop-signature-sent-re",
+                "description": "Payee FSP: 'fspiop-signature' is same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(requestSent.headers['fspiop-signature'])",
+                  "}",
+                  ""
+                ]
+              },
+              {
+                "id": "Payee-accept-sent-req",
+                "description": "Payee FSP 'accept' is same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['accept'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-content-type-sent-req",
+                "description": "Payee FSP 'content-type' is same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-uri-quotes",
+                "description": "Payee FSP 'fspiop-uri' is /quotes",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(\"/quotes\")",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-method-POST",
+                "description": "Payee FSP 'fspiop-http-method' is 'POST'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(\"POST\")",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-src-payeefsp",
+                "description": "Payer FSP Callback: 'fspiop-source' is 'payeefsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)",
+                  ""
+                ]
+              },
+              {
+                "id": "Payer-cb-dest-testingtoolkitdf",
+                "description": "Payer FSP Callback: 'fspiop-destination' is 'testingtoolkitdfsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
+                ]
+              },
+              {
+                "id": "Payer-cb-JWS-signature-valid",
+                "description": "Payer FSP Callback:  JWS signature valid",
+                "exec": [
+                  "if(environment.ENABLE_JWS_VALIDATION) {",
+                  "expect(requestVariables.payerCallbackJWSValidationStatus).to.equal('VALID')",
+                  "}",
+                  ""
+                ]
+              },
+              {
+                "id": "Payer-cb-JWS-protected-headers",
+                "description": "Payer Callback: JWS protected headers are valid",
+                "exec": [
+                  "if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                  "expect(requestVariables.payerCallbackJWSHeadersValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-accept-empty",
+                "description": "Payer FSP Callback: 'accept' is empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payer-cb-content-type-expected",
+                "description": "Payer FSP Callback: 'content-type' is as expected",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal(\"application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}\")"
+                ]
+              },
+              {
+                "id": "Payer-cb-uri-quotes",
+                "description": "Payer FSP Callback: 'fspiop-uri' is /quotes",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal(\"/quotes/{$request.body.quoteId}\")"
+                ]
+              },
+              {
+                "id": "Payer-cb-method-PUT",
+                "description": "Payer FSP Callback: 'fspiop-http-method' is 'PUT'",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal(\"PUT\")"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.quoteId = '{$function.generic.generateID}'",
+                "requestVariables.transactionId = '{$function.generic.generateID}'",
+                "",
+                "console.log(`environment.payerNetDebitCapLimit=${environment.payerNetDebitCapLimit}`)",
+                "",
+                "console.log(`environment.payerSettlementAccountBalance=${environment.payerSettlementAccountBalance}`)",
+                "",
+                "console.log(`environment.payerPositionBeforeTransfer=${environment.payerPositionBeforeTransfer}`)",
+                "",
+                "console.log(`environment.payerReservedPositionBeforeTransfer=${environment.payerReservedPositionBeforeTransfer}`)",
+                "",
+                "const payerLiquidityCover = -Number(environment.payerSettlementAccountBalance);",
+                "",
+                "console.log(`payerLiquidityCover=${payerLiquidityCover}`)",
+                "",
+                "const payerPositionBeforeTransfer = Number(environment.payerPositionBeforeTransfer);",
+                "",
+                "console.log(`payerPositionBeforeTransfer=${payerPositionBeforeTransfer}`)",
+                "",
+                "const payerReservedPositionBeforeTransfer = Number(environment.payerReservedPositionBeforeTransfer);",
+                "",
+                "console.log(`payerReservedPositionBeforeTransfer=${payerReservedPositionBeforeTransfer}`)",
+                "",
+                "const effectivePosition = payerPositionBeforeTransfer + payerReservedPositionBeforeTransfer;",
+                "",
+                "console.log(`effectivePosition=${effectivePosition}`)",
+                "",
+                " const liquidityAndPositionDifference = (payerLiquidityCover - effectivePosition);",
+                " ",
+                " console.log(`liquidityAndPositionDifference=${liquidityAndPositionDifference}`);",
+                "",
+                "requestVariables.amount = Number((liquidityAndPositionDifference + 1000).toFixed(0));",
+                "",
+                "console.log(`requestVariables.amount=${requestVariables.amount}`)",
+                "",
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(",
+                "    environment.PAYEEFSP_SDK_TESTAPI_WS_URL + `/requests/${requestVariables.quoteId}`, ",
+                "    'payeeRequest'",
+                "  )",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "",
+                "if (environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.payerCallbackJWSValidationStatus = custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.payerCallbackJWSHeadersValidationStatus = custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Block-trans",
+          "meta": {
+            "info": "Send Block Transfer"
+          },
+          "description": "Send Block Transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "transferId": "{$prev.Send-Quote.request.body.transactionId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
+            "amount": {
+              "amount": "{$prev.Send-Quote.request.body.amount.amount}",
+              "currency": "{$inputs.SIMPAYEE_CURRENCY}"
+            },
+            "expiration": "{$prev.Send-Quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-Quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-Quote.callback.body.condition}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
+            "FSPIOP-HTTP-Method": "POST",
+            "FSPIOP-URI": "/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "Error-code-returned",
+                "description": "Error code should be returned",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.eql('4001');"
+                ]
+              },
+              {
+                "id": "Error-description-returned",
+                "description": "Error description should be returned",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "expect(typeof callback.body.errorInformation.errorDescription).to.equal('string');",
+                  "} else {",
+                  "expect(callback.body.errorInformation.errorDescription).to.not.equal(undefined);",
+                  "}"
+                ]
+              },
+              {
+                "id": "src-switch-s-name",
+                "description": "'fspiop-source' should be switch's name",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}');"
+                ]
+              },
+              {
+                "id": "dest-testingtoolkitdfsp",
+                "description": "'fspiop-destination' should be 'testingtoolkitdfsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}');"
+                ]
+              },
+              {
+                "id": "accept-empty",
+                "description": "'accept' should be empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined);"
+                ]
+              },
+              {
+                "id": "content-type-proper-format",
+                "description": "'content-type' should be in proper format",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=');"
+                ]
+              },
+              {
+                "id": "fspiop-signature-present",
+                "description": "'fspiop-signature' should be present",
+                "exec": [
+                  "expect(callback.headers['fspiop-signature']).to.not.equal(undefined);"
+                ]
+              },
+              {
+                "id": "uri-transfers-transferId-error",
+                "description": "'fspiop-uri' is /transfers/{transferId}/error",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal(`/transfers/{$request.body.transferId}/error`);"
+                ]
+              },
+              {
+                "id": "method-PUT",
+                "description": "'fspiop-http-method' is PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT');"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 600000).toISOString();",
+                "",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "GET-SIMPAYER-pos-after-trans",
+          "meta": {
+            "info": "GET SIMPAYER position after the transfer"
+          },
+          "description": "GET SIMPAYER position after the transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "pos-before-after-trans",
+                "description": "Position before and after transfer should be the same",
+                "exec": [
+                  "expect(environment.payerPositionBeforeTransfer).to.equal(environment.payerPositionAfterTransfer)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY))",
+                "environment.payerPositionAfterTransfer = positionItem.value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "GET-SIMPAYEE-pos-after-trans",
+          "meta": {
+            "info": "GET SIMPAYEE position after the transfer"
+          },
+          "description": "GET SIMPAYEE position after the transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "pos-before-after-trans",
+                "description": "Position before and after transfer should be the same",
+                "exec": [
+                  "expect(environment.payeePositionBeforeTransfer).to.equal(environment.payeePositionAfterTransfer)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYEE_CURRENCY))",
+                "environment.payeePositionAfterTransfer = positionItem.value"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "block-transfer-ndc",
+      "name": "Block Transfer due to NDC limit",
+      "meta": {
+        "info": "Block Transfer due to NDC limit"
+      },
+      "fileInfo": {
+        "path": "hub/golden_path/feature_tests/block_transfer.json",
+        "labels": [
+          "prod-tests"
+        ]
+      },
+      "requests": [
+        {
+          "id": "GET-limits-SIMPAYER",
+          "meta": {
+            "info": "GET limits - SIMPAYER"
+          },
+          "description": "GET limits - SIMPAYER",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.fromFspId}/limits",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "id": "NDC-limit-set-correctly",
+                "description": "NDC limit set correctly",
+                "exec": [
+                  "expect(environment.payerNDC).to.not.equal(undefined)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const limitItem = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY))",
+                "environment.payerNDC = limitItem.limit.value",
+                "environment.origPayerLimitData = limitItem.limit"
+              ]
+            }
+          }
+        },
+        {
+          "id": "GET-limits-SIMPAYEE",
+          "meta": {
+            "info": "GET limits - SIMPAYEE"
+          },
+          "description": "GET limits - SIMPAYEE",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/limits",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "id": "NDC-limit-set-correctly",
+                "description": "NDC limit set correctly",
+                "exec": [
+                  "expect(environment.payeeNDC).to.not.equal(undefined)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const limitItem = response.body.find(item => (item.currency === environment.SIMPAYEE_CURRENCY))",
+                "environment.payeeNDC = limitItem.limit.value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-PAYER-settle-acc-balances-",
+          "description": "Get PAYER Settlement account balances for Liquidity and Position",
+          "meta": {
+            "info": "Get PAYER Settlement account balances for Liquidity and Position"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.fromFspId}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "delay": "500",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "// Find the Settlement account for the set currency to determine the liquidity of the payer",
+                "const settlementAccount = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY && item.ledgerAccountType === 'SETTLEMENT'))",
+                "environment.payerSettlementAccountBalance = settlementAccount?.value",
+                "",
+                "console.log(`environment.payerSettlementAccountBalance=${environment.payerSettlementAccountBalance}`)",
+                "",
+                "// Find the Position account for the set currency to determine the position of the payer",
+                "const positionAccount = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY && item.ledgerAccountType === 'POSITION'))",
+                "environment.payerPositionBeforeTransfer = positionAccount?.value",
+                "",
+                "console.log(`environment.payerPositionBeforeTransfer=${environment.payerPositionBeforeTransfer}`)",
+                "",
+                "",
+                "environment.payerReservedPositionBeforeTransfer = positionAccount?.reservedValue",
+                "",
+                "console.log(`environment.payerReservedPositionBeforeTransfer=${environment.payerReservedPositionBeforeTransfer}`)",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Set-NDC-limit-temporarily",
+          "description": "Set NDC limit temporarily",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.fromFspId}/limits",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "currency": "{$inputs.SIMPAYER_CURRENCY}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.tempNDCLimit}",
+              "alarmPercentage": "{$environment.origPayerLimitData.alarmPercentage}"
+            }
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "// environment.tempNDCLimit = -Number(environment.payerSettlementAccountBalance) - 1000",
+                "",
+                "",
+                "console.log(`environment.payerNetDebitCapLimit=${environment.payerNetDebitCapLimit}`)",
+                "",
+                "console.log(`environment.payerSettlementAccountBalance=${environment.payerSettlementAccountBalance}`)",
+                "",
+                "console.log(`environment.payerPositionBeforeTransfer=${environment.payerPositionBeforeTransfer}`)",
+                "",
+                "console.log(`environment.payerReservedPositionBeforeTransfer=${environment.payerReservedPositionBeforeTransfer}`)",
+                "",
+                "const payerLiquidityCover = -Number(environment.payerSettlementAccountBalance);",
+                "",
+                "console.log(`payerLiquidityCover=${payerLiquidityCover}`)",
+                "",
+                "const payerPositionBeforeTransfer = Number(environment.payerPositionBeforeTransfer);",
+                "",
+                "console.log(`payerPositionBeforeTransfer=${payerPositionBeforeTransfer}`)",
+                "",
+                "const payerReservedPositionBeforeTransfer = Number(environment.payerReservedPositionBeforeTransfer);",
+                "",
+                "console.log(`payerReservedPositionBeforeTransfer=${payerReservedPositionBeforeTransfer}`)",
+                "",
+                "// const effectivePosition = payerPositionBeforeTransfer + payerReservedPositionBeforeTransfer;",
+                "",
+                "// console.log(`effectivePosition=${effectivePosition}`)",
+                "",
+                "// const liquidityAndPositionDifference = (payerLiquidityCover - effectivePosition);",
+                " ",
+                "// console.log(`liquidityAndPositionDifference=${liquidityAndPositionDifference}`);",
+                "",
+                "// environment.tempNDCLimit = (liquidityAndPositionDifference - 1000).toFixed(2);",
+                "",
+                "// console.log(`environment.tempNDCLimitt=${environment.tempNDCLimit}`)",
+                "",
+                "environment.tempNDCLimit = (Math.abs(payerLiquidityCover) - 1000).toFixed(2)",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "GET-SIMPAYEE-pos-before-trans",
+          "meta": {
+            "info": "GET SIMPAYEE position before the transfer"
+          },
+          "description": "GET SIMPAYEE position before the transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Payee-pos-correctly-set",
+                "description": "Payee FSP position correctly set",
+                "exec": [
+                  "expect(environment.payeePositionBeforeTransfer).to.not.equal(undefined)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYEE_CURRENCY))",
+                "environment.payeePositionBeforeTransfer = positionItem.value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Quote",
+          "meta": {
+            "info": "Send Quote"
+          },
+          "description": "Send Quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "scriptingEngine": "javascript",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
+            "FSPIOP-HTTP-Method": "POST",
+            "FSPIOP-URI": "/quotes",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "quoteId": "{$requestVariables.quoteId}",
+            "transactionId": "{$requestVariables.transactionId}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Mats",
+                  "lastName": "Hagman"
+                },
+                "dateOfBirth": "1983-10-25"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.SIMPAYEE_NAME}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$requestVariables.amount}",
+              "currency": "{$inputs.SIMPAYEE_CURRENCY}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "hej"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "Payee-src-testingtoolkitdfsp",
+                "description": "Payee FSP 'fspiop-source' is 'testingtoolkitdfsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(environment.fromFspId)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-dest-payeefsp",
+                "description": "Payee FSP 'fspiop-destination' is 'payeefsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-fspiop-signature-sent-re",
+                "description": "Payee FSP: 'fspiop-signature' is same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(requestSent.headers['fspiop-signature'])",
+                  "}",
+                  ""
+                ]
+              },
+              {
+                "id": "Payee-accept-sent-req",
+                "description": "Payee FSP 'accept' is same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['accept'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-content-type-sent-req",
+                "description": "Payee FSP 'content-type' is same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-uri-quotes",
+                "description": "Payee FSP 'fspiop-uri' is /quotes",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(\"/quotes\")",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-method-POST",
+                "description": "Payee FSP 'fspiop-http-method' is 'POST'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(\"POST\")",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-src-payeefsp",
+                "description": "Payer FSP Callback: 'fspiop-source' is 'payeefsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)",
+                  ""
+                ]
+              },
+              {
+                "id": "Payer-cb-dest-testingtoolkitdf",
+                "description": "Payer FSP Callback: 'fspiop-destination' is 'testingtoolkitdfsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
+                ]
+              },
+              {
+                "id": "Payer-cb-JWS-signature-valid",
+                "description": "Payer FSP Callback:  JWS signature valid",
+                "exec": [
+                  "if(environment.ENABLE_JWS_VALIDATION) {",
+                  "expect(requestVariables.payerCallbackJWSValidationStatus).to.equal('VALID')",
+                  "}",
+                  ""
+                ]
+              },
+              {
+                "id": "Payer-cb-JWS-protected-headers",
+                "description": "Payer Callback: JWS protected headers are valid",
+                "exec": [
+                  "if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                  "expect(requestVariables.payerCallbackJWSHeadersValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-accept-empty",
+                "description": "Payer FSP Callback: 'accept' is empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payer-cb-content-type-expected",
+                "description": "Payer FSP Callback: 'content-type' is as expected",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal(\"application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}\")"
+                ]
+              },
+              {
+                "id": "Payer-cb-uri-quotes",
+                "description": "Payer FSP Callback: 'fspiop-uri' is /quotes",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal(\"/quotes/{$request.body.quoteId}\")"
+                ]
+              },
+              {
+                "id": "Payer-cb-method-PUT",
+                "description": "Payer FSP Callback: 'fspiop-http-method' is 'PUT'",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal(\"PUT\")"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.quoteId = '{$function.generic.generateID}'",
+                "requestVariables.transactionId = '{$function.generic.generateID}'",
+                "",
+                "console.log(`environment.payerNetDebitCapLimit=${environment.payerNetDebitCapLimit}`)",
+                "",
+                "console.log(`environment.payerPositionBeforeTransfer=${environment.payerPositionBeforeTransfer}`)",
+                "",
+                "console.log(`environment.payerReservedPositionBeforeTransfer=${environment.payerReservedPositionBeforeTransfer}`)",
+                "",
+                "console.log(`environment.tempNDCLimit=${environment.tempNDCLimit}`)",
+                "",
+                "const currentNDCLimit = environment.tempNDCLimit",
+                "",
+                "const payerPositionBeforeTransfer = Number(environment.payerPositionBeforeTransfer);",
+                "",
+                "console.log(`payerPositionBeforeTransfer=${payerPositionBeforeTransfer}`)",
+                "",
+                "const payerReservedPositionBeforeTransfer = Number(environment.payerReservedPositionBeforeTransfer);",
+                "",
+                "console.log(`payerReservedPositionBeforeTransfer=${payerReservedPositionBeforeTransfer}`)",
+                "",
+                "const effectivePosition = payerPositionBeforeTransfer + payerReservedPositionBeforeTransfer;",
+                "",
+                "console.log(`effectivePosition=${effectivePosition}`)",
+                "",
+                "const positionLimitDifference = Math.abs(currentNDCLimit - effectivePosition)",
+                " ",
+                "console.log(`positionLimitDifference=${positionLimitDifference}`);",
+                "",
+                "requestVariables.amount = Number((positionLimitDifference + 1).toFixed(0));",
+                "",
+                "console.log(`requestVariables.amount=${requestVariables.amount}`)",
+                "",
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(",
+                "    environment.PAYEEFSP_SDK_TESTAPI_WS_URL + `/requests/${requestVariables.quoteId}`, ",
+                "    'payeeRequest'",
+                "  )",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "",
+                "if (environment.ENABLE_JWS_VALIDATION) {",
+                "  requestVariables.payerCallbackJWSValidationStatus = custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.payerCallbackJWSHeadersValidationStatus = custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-Block-trans",
+          "meta": {
+            "info": "Send Block Transfer"
+          },
+          "description": "Send Block Transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "transferId": "{$prev.Send-Quote.request.body.transactionId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
+            "amount": {
+              "amount": "{$prev.Send-Quote.request.body.amount.amount}",
+              "currency": "{$inputs.SIMPAYEE_CURRENCY}"
+            },
+            "expiration": "{$prev.Send-Quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-Quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-Quote.callback.body.condition}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
+            "FSPIOP-HTTP-Method": "POST",
+            "FSPIOP-URI": "/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "Error-code-returned",
+                "description": "Error code should be returned",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.eql('4200');"
+                ]
+              },
+              {
+                "id": "Error-description-returned",
+                "description": "Error description should be returned",
+                "exec": [
+                  "expect(callback.body.errorInformation).to.have.property('errorDescription');"
+                ]
+              },
+              {
+                "id": "src-switch-s-name",
+                "description": "'fspiop-source' should be switch's name",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}');"
+                ]
+              },
+              {
+                "id": "dest-testingtoolkitdfsp",
+                "description": "'fspiop-destination' should be 'testingtoolkitdfsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$inputs.fromFspId}');"
+                ]
+              },
+              {
+                "id": "accept-empty",
+                "description": "'accept' should be empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined);"
+                ]
+              },
+              {
+                "id": "content-type-proper-format",
+                "description": "'content-type' should be in proper format",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=');"
+                ]
+              },
+              {
+                "id": "fspiop-signature-present",
+                "description": "'fspiop-signature' should be present",
+                "exec": [
+                  "expect(callback.headers['fspiop-signature']).to.not.equal(undefined);"
+                ]
+              },
+              {
+                "id": "uri-transfers-transferId-error",
+                "description": "'fspiop-uri' is /transfers/{transferId}/error",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal(`/transfers/{$request.body.transferId}/error`);"
+                ]
+              },
+              {
+                "id": "method-PUT",
+                "description": "'fspiop-http-method' is PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT');"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 600000).toISOString();",
+                "",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "GET-SIMPAYER-pos-after-trans",
+          "meta": {
+            "info": "GET SIMPAYER position after the transfer"
+          },
+          "description": "GET SIMPAYER position after the transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.fromFspId}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "pos-before-after-trans",
+                "description": "Position before and after transfer should be the same",
+                "exec": [
+                  "expect(environment.payerPositionBeforeTransfer).to.equal(environment.payerPositionAfterTransfer)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYER_CURRENCY))",
+                "environment.payerPositionAfterTransfer = positionItem.value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "GET-SIMPAYEE-pos-after-trans",
+          "meta": {
+            "info": "GET SIMPAYEE position after the transfer"
+          },
+          "description": "GET SIMPAYEE position after the transfer",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "pos-before-after-trans",
+                "description": "Position before and after transfer should be the same",
+                "exec": [
+                  "expect(environment.payeePositionBeforeTransfer).to.equal(environment.payeePositionAfterTransfer)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const positionItem = response.body.find(item => (item.currency === environment.SIMPAYEE_CURRENCY))",
+                "environment.payeePositionAfterTransfer = positionItem.value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Reset-NDC-limit-previous-value",
+          "description": "Reset NDC limit to previous values",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.fromFspId}/limits",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.fromFspId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "currency": "{$inputs.SIMPAYER_CURRENCY}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.origPayerLimitData.value}",
+              "alarmPercentage": "{$environment.origPayerLimitData.alarmPercentage}"
+            }
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-200",
+                "description": "Status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tempNDCLimit = -environment.payerSettlementAccountBalance + 200"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
