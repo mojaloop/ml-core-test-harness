@@ -332,14 +332,14 @@ For reference here are the provisioned dfsps with an associated partyId availabl
 
 ```json
 [
-  {"partyId":19012345001,"fspId":"perffsp1","wsUrl":"ws://sim-perffsp1:3002"},
-  {"partyId":19012345002,"fspId":"perffsp2","wsUrl":"ws://sim-perffsp2:3002"},
-  {"partyId":19012345003,"fspId":"perffsp3","wsUrl":"ws://sim-perffsp3:3002"},
-  {"partyId":19012345004,"fspId":"perffsp4","wsUrl":"ws://sim-perffsp4:3002"},
-  {"partyId":19012345005,"fspId":"perffsp5","wsUrl":"ws://sim-perffsp5:3002"},
-  {"partyId":19012345006,"fspId":"perffsp6","wsUrl":"ws://sim-perffsp6:3002"},
-  {"partyId":19012345007,"fspId":"perffsp7","wsUrl":"ws://sim-perffsp7:3002"},
-  {"partyId":19012345008,"fspId":"perffsp8","wsUrl":"ws://sim-perffsp8:3002"},
+  {"partyId":19012345001,"fspId":"perffsp-1","wsUrl":"ws://sim-perffsp-1:3002"},
+  {"partyId":19012345002,"fspId":"perffsp-2","wsUrl":"ws://sim-perffsp-2:3002"},
+  {"partyId":19012345003,"fspId":"perffsp-3","wsUrl":"ws://sim-perffsp-3:3002"},
+  {"partyId":19012345004,"fspId":"perffsp-4","wsUrl":"ws://sim-perffsp-4:3002"},
+  {"partyId":19012345005,"fspId":"perffsp-5","wsUrl":"ws://sim-perffsp-5:3002"},
+  {"partyId":19012345006,"fspId":"perffsp-6","wsUrl":"ws://sim-perffsp-6:3002"},
+  {"partyId":19012345007,"fspId":"perffsp-7","wsUrl":"ws://sim-perffsp-7:3002"},
+  {"partyId":19012345008,"fspId":"perffsp-8","wsUrl":"ws://sim-perffsp-8:3002"},
 ]
 ```
 

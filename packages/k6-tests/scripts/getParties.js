@@ -26,7 +26,7 @@ function log() {
 const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
 
 export function getParties() {
-  !exec.instance.iterationsCompleted && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("Get Parties", function () {
     let payerFsp
     let payeeFsp
@@ -48,7 +48,8 @@ export function getParties() {
     const wsUrl = payerFsp['wsUrl'];
     const traceParent = Trace();
     const traceId = traceParent.traceId;
-    const wsChannel = `${traceParent.traceId}/PUT/parties/ACCOUNT_ID/${payeeId}`;
+    const idType = __ENV.K6_SCRIPT_ID_TYPE || 'ACCOUNT_ID';
+    const wsChannel = `${traceParent.traceId}/PUT/parties/${idType}/${payeeId}`;
     const wsURL = `${wsUrl}/${wsChannel}`
     const ws = new WebSocket(wsURL, null, {tags: {name: 'parties ws'}});
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
@@ -110,11 +111,11 @@ export function getParties() {
 
       // // OPTIONAL: Lets send the ORACLE GET /participants request to the Oracle to resolve FSPID for payeeId.
       // // Useful when bypassing the ALS and testing directly against a Simulator.
-      // const resOracleGetParticipantsForPayee = http.get(`${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL}/participants/ACCOUNT_ID/${payeeId}`, params);
+      // const resOracleGetParticipantsForPayee = http.get(`${__ENV.K6_SCRIPT_ORACLE_ENDPOINT_URL}/participants/${idType}/${payeeId}`, params);
       // check(resOracleGetParticipantsForPayee, { 'ALS_ORACLE_GET_PARTICIPANTS_RESPONSE_IS_200' : (r) => r.status == 200 });
 
       // Lets send the FSPIOP GET /parties request to the ALS
-      const res = http.get(`${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}/parties/ACCOUNT_ID/${payeeId}`, params);
+      const res = http.get(`${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}/parties/${idType}/${payeeId}`, params);
       check(res, { 'ALS_FSPIOP_GET_PARTIES_RESPONSE_IS_202' : (r) => r.status == 202 });
 
       wsTimeoutId = setTimeout(() => {

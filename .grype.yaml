@@ -1,0 +1,21 @@
+ignore:
+  - vulnerability: CVE-2024-12797
+  - vulnerability: CVE-2024-13176
+  - vulnerability: CVE-2024-45336
+  - vulnerability: CVE-2024-45341
+  - vulnerability: CVE-2024-9143
+  - vulnerability: CVE-2025-22866
+  - vulnerability: CVE-2025-26519
+  - vulnerability: GHSA-qxp5-gwg8-xv66
+  - vulnerability: CVE-2025-22871
+  - vulnerability: GHSA-vvgc-356p-c3xw
+# Set output format defaults
+output:
+  - "table"
+  - "json"
+
+# Modify your CircleCI job to check critical count
+search:
+  scope: "squashed"
+quiet: false
+check-for-app-update: false

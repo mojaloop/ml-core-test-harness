@@ -1,4 +1,4 @@
-const FSPS = ['perffsp1','perffsp2','perffsp3','perffsp4','perffsp5','perffsp6','perffsp7','perffsp8']
+const FSPS = ['perffsp-1','perffsp-2','perffsp-3','perffsp-4','perffsp-5','perffsp-6','perffsp-7','perffsp-8']
 const PARTITION_NUM = 17
 
 function MurmurHashV2(str, seed) {

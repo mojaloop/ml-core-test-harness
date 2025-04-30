@@ -6,7 +6,8 @@ import { setTimeout, clearTimeout } from 'k6/timers';
 import { Trace } from "../common/trace.js";
 import { getTwoItemsFromArray } from "../common/utils.js";
 import exec from 'k6/execution';
-import { uuid } from '../common/uuid.js'
+import { replaceHeaders } from '../common/replaceHeaders.js';
+import { ulid } from '../common/uuid.js'
 
 function log() {
   console.log('Env Vars -->');
@@ -25,7 +26,7 @@ const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 export function E2E() {
-  !exec.instance.iterationsCompleted && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("E2E", function () {
     let payerFsp
     let payeeFsp
@@ -46,9 +47,11 @@ export function E2E() {
     const wsUrl = payerFsp['wsUrl'];
     const traceParent = Trace();
     const traceId = traceParent.traceId;
+    const transactionId = ulid();
     const wsTimeoutMs = Number(__ENV.K6_SCRIPT_WS_TIMEOUT_MS) || 2000; // user session between 5s and 1m
 
-    const wsChannelParties = `${traceParent.traceId}/PUT/parties/ACCOUNT_ID/${payeeId}`;
+    const idType = __ENV.K6_SCRIPT_ID_TYPE || 'ACCOUNT_ID';
+    const wsChannelParties = `${traceParent.traceId}/PUT/parties/${idType}/${payeeId}`;
     const wsURLParties = `${wsUrl}/${wsChannelParties}`
     const wsParties = new WebSocket(wsURLParties, null, {tags: {name: 'e2e parties ws'}});
 
@@ -78,8 +81,7 @@ export function E2E() {
       const startTsQuotes = Date.now();
       // const quoteId = crypto.randomUUID();
       // const transactionId = crypto.randomUUID();
-      const quoteId = uuid();
-      const transactionId = uuid();
+      const quoteId = ulid();
       const wsChannelQuotes = `${traceParent.traceId}/PUT/quotes/${quoteId}`;
       const wsURLQuotes = `${wsUrl}/${wsChannelQuotes}`
       const wsQuotes = new WebSocket(wsURLQuotes, null, {tags: {name: 'e2e quotes ws'}});
@@ -109,7 +111,7 @@ export function E2E() {
 
         const startTsTransfers = Date.now();
         // const transferId = crypto.randomUUID();
-        const transferId = uuid();
+        const transferId = transactionId;
         const wsChannelTransfers = `${traceParent.traceId}/PUT/transfers/${transferId}`;
         const wsURLTransfers = `${wsUrl}/${wsChannelTransfers}`
         const wsTransfers = new WebSocket(wsURLTransfers, null, {tags: {name: 'e2e transfers ws'}});
@@ -145,7 +147,7 @@ export function E2E() {
               payerFspId,
               payeeFspId
             },
-            headers: {
+            headers: replaceHeaders({
               'Accept': 'application/vnd.interoperability.transfers+json;version=1.1',
               'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
               'FSPIOP-Source': payerFspId,
@@ -153,10 +155,66 @@ export function E2E() {
               'Date': (new Date()).toUTCString(),
               'traceparent': traceParent.toString(),
               'tracestate': `tx_end2end_start_ts=${startTsTransfers}`
-            },
+            }),
           };
 
-          const body = {
+          const msgId = ulid();
+          const body = __ENV.API_TYPE === 'iso20022' ? {
+            GrpHdr: {
+              MsgId: msgId,
+              CreDtTm: new Date().toISOString(),
+              NbOfTxs: '1',
+              SttlmInf: {
+                SttlmMtd: 'CLRG'
+              },
+              PmtInstrXpryDtTm: '2030-01-01T00:00:00.000Z'
+            },
+            CdtTrfTxInf: {
+              PmtId: {
+                TxId: transferId
+              },
+              ChrgBr: 'SHAR',
+              Cdtr: {
+                Id: {
+                  OrgId: {
+                    Othr: {
+                      Id: payeeFspId
+                    }
+                  }
+                }
+              },
+              Dbtr: {
+                Id: {
+                  OrgId: {
+                    Othr: {
+                      Id: payerFspId
+                    }
+                  }
+                }
+              },
+              CdtrAgt: {
+                FinInstnId: {
+                  Othr: {
+                    Id: payeeFspId
+                  }
+                }
+              },
+              DbtrAgt: {
+                FinInstnId: {
+                  Othr: {
+                    Id: payerFspId
+                  }
+                }
+              },
+              IntrBkSttlmAmt: {
+                Ccy: currency,
+                ActiveCurrencyAndAmount: `${amount}`
+              },
+              VrfctnOfTerms: {
+                IlpV4PrepPacket: ilpPacket
+              }
+            }
+          } : {
             "transferId": transferId,
             "payerFsp": payerFspId,
             "payeeFsp": payeeFspId,
@@ -201,30 +259,92 @@ export function E2E() {
             payerFspId,
             payeeFspId
           },
-          headers: {
-            'accept': 'application/vnd.interoperability.quotes+json;version=1.0',
+          headers: replaceHeaders({
+            'Accept': 'application/vnd.interoperability.quotes+json;version=1.0',
             'Content-Type': 'application/vnd.interoperability.quotes+json;version=1.0',
             'FSPIOP-Source': payerFspId,
             'FSPIOP-Destination': payeeFspId,
             'Date': (new Date()).toUTCString(),
             'traceparent': traceParent.toString(),
             'tracestate': `tx_end2end_start_ts=${startTsQuotes}`
-          },
+          }),
         };
 
-        const body = {
+        const msgId = ulid();
+        const body = __ENV.API_TYPE === 'iso20022' ? {
+          GrpHdr: {
+            MsgId: msgId,
+            CreDtTm: new Date().toISOString(),
+            NbOfTxs: '1',
+            SttlmInf: {
+              SttlmMtd: 'CLRG'
+            }
+          },
+          CdtTrfTxInf: {
+            PmtId: {
+              TxId: quoteId,
+              EndToEndId: transactionId
+            },
+            Cdtr: {
+              Id: {
+                PrvtId: {
+                  Othr: {
+                    SchmeNm: {
+                      Prtry: `${idType}`
+                    },
+                    Id: payeeFsp['partyId']
+                  }
+                }
+              }
+            },
+            CdtrAgt: {
+              FinInstnId: {
+                Othr: {
+                  Id: payeeFspId
+                }
+              }
+            },
+            Dbtr: {
+              Id: {
+                PrvtId: {
+                  Othr: {
+                    SchmeNm: {
+                      Prtry: `${idType}`
+                    },
+                    Id: payerFsp['partyId']
+                  }
+                }
+              }
+            },
+            DbtrAgt: {
+              FinInstnId: {
+                Othr: {
+                  Id: payeeFspId
+                }
+              }
+            },
+            IntrBkSttlmAmt: {
+              Ccy: currency,
+              ActiveCurrencyAndAmount: `${amount}`
+            },
+            Purp: {
+              Prtry: 'TRANSFER'
+            },
+            ChrgBr: 'DEBT'
+          }
+        } : {
           "quoteId": quoteId,
           "transactionId": transactionId,
           "payer": {
             "partyIdInfo": {
-              "partyIdType": "ACCOUNT_ID",
+              "partyIdType": `${idType}`,
               "partyIdentifier": `${payerFsp['partyId']}`,
               "fspId": payerFspId
             }
           },
           "payee": {
             "partyIdInfo": {
-              "partyIdType": "ACCOUNT_ID",
+              "partyIdType": `${idType}`,
               "partyIdentifier": `${payeeFsp['partyId']}`,
               "fspId": payeeFspId
             }
@@ -261,17 +381,17 @@ export function E2E() {
           payerFspId,
           payeeFspId
         },
-        headers: {
+        headers: replaceHeaders({
           'Accept': 'application/vnd.interoperability.parties+json;version=1.1',
           'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',
           'FSPIOP-Source': payerFspId,
           'Date': (new Date()).toUTCString(),
           'traceparent': traceParent.toString(),
           'tracestate': `tx_end2end_start_ts=${startTsParties}`
-        },
+        }),
       };
 
-      const res = http.get(`${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}/parties/ACCOUNT_ID/${payeeId}`, params);
+      const res = http.get(`${__ENV.K6_SCRIPT_FSPIOP_ALS_ENDPOINT_URL}/parties/${idType}/${payeeId}`, params);
       check(res, { 'ALS_FSPIOP_GET_PARTIES_RESPONSE_IS_202' : (r) => r.status == 202 });
 
       wsTimeoutId = setTimeout(() => {
