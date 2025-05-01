@@ -212,6 +212,7 @@
             "conversionRequestId": "{$function.generic.generateUUID}",
             "conversionTerms": {
               "conversionId": "{$function.generic.generateUUID}",
+              "determiningTransferId": "{$function.generic.generateUUID}",
               "initiatingFsp": "{$inputs.FXP_PAYER_DFSP_ID}",
               "counterPartyFsp": "{$inputs.FXP_TESTFXP1_ID}",
               "amountType": "SEND",
