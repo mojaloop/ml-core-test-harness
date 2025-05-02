@@ -84,6 +84,8 @@ http://localhost:9660/mobilesimulator
 | all-services | All mojaloop services including TTK | - |
 | ttk-provisioning | For setting up mojaloop switch and onboard sample DFSPs | - |
 | ttk-tests | TTK tests | - |
+| ttk-provisioning-gp | For Running golden path tests | - |
+| ttk-tests-gp | TTK GP tests | - |
 | debug | Debug utilities (kowl) | kafka |
 | central-ledger | Central Ledger service | kafka |
 | ml-api-adapter | ML API Adapter service | central-ledger |
@@ -153,6 +155,12 @@ docker-compose --profile agreement up
 
 ```bash
 docker-compose --profile transfer up
+```
+
+### Golden Path Tests
+
+```bash
+docker-compose --profile all-services --profile ttk-provisioning-gp --profile ttk-tests-gp up
 ```
 
 ### Settlements
