@@ -1,0 +1,281 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "bugfix-1009",
+      "name": "Tests for Bugfix #1009 - ML Adapter and ALS service health should include broker status",
+      "meta": {
+        "info": "Tests for Bugfix #1009 - ML Adapter and ALS service health should include broker status"
+      },
+      "requests": [
+        {
+          "id": "txn-service-health",
+          "meta": {
+            "info": "transaction service health"
+          },
+          "description": "transaction service health",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "ML-Adaptor-Expected-Status-OK",
+                "description": "ML Adaptor - Expected Status is OK",
+                "exec": [
+                  "expect(response.body.status).to.eql(\"OK\");"
+                ]
+              },
+              {
+                "id": "ML-Adaptor-Expected-have-servi",
+                "description": "ML Adaptor - Expected body to have services array",
+                "exec": [
+                  "expect(response.body.services).to.be.an('array');"
+                ]
+              },
+              {
+                "id": "ML-Adaptor-Expected-services-h",
+                "description": "ML Adaptor - Expected services to have broker and status is OK",
+                "exec": [
+                  "expect(environment.var1).to.be.an('object');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                " const brokerOk = response.body.services.find(item => {\r",
+                "               return item.name=='broker' && item.status=='OK'; \r",
+                "            });\r",
+                "            \r",
+                "environment.var1 = brokerOk;"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-health-status-ALS",
+          "meta": {
+            "info": "Get health status of ALS"
+          },
+          "description": "Get health status of ALS",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Expected-Status-OK",
+                "description": "Expected Status is OK",
+                "exec": [
+                  "expect(response.body.status).to.eql(\"OK\");"
+                ]
+              },
+              {
+                "id": "Expected-have-services-array",
+                "description": "Expected body to have services array",
+                "exec": [
+                  "expect(response.body.services).to.be.an('array');"
+                ]
+              },
+              {
+                "id": "Expected-services-have-datasto",
+                "description": "Expected services to have datastore and status is OK",
+                "exec": [
+                  "expect(environment.var1).to.be.an('object');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                " const brokerOk = response.body.services.find(item => {\r",
+                "               return item.name=='datastore' && item.status=='OK'; \r",
+                "            });\r",
+                "            \r",
+                "environment.var1 = brokerOk;"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-health-status-Central-Ledg",
+          "meta": {
+            "info": "Get health status of Central Ledger"
+          },
+          "description": "Get health status of Central Ledger",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Expected-Status-OK",
+                "description": "Expected Status is OK",
+                "exec": [
+                  "expect(response.body.status).to.eql(\"OK\");"
+                ]
+              },
+              {
+                "id": "Expected-have-services-array",
+                "description": "Expected body to have services array",
+                "exec": [
+                  "expect(response.body.services).to.be.an('array');"
+                ]
+              },
+              {
+                "id": "Expected-services-have-broker-",
+                "description": "Expected services to have broker and status is OK",
+                "exec": [
+                  "expect(environment.var1).to.be.an('object');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                " const brokerOk = response.body.services.find(item => {\r",
+                "               return item.name=='broker' && item.status=='OK'; \r",
+                "            });\r",
+                "            \r",
+                "environment.var1 = brokerOk;"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-health-status-Central-sett",
+          "meta": {
+            "info": "Get health status of Central Settlement"
+          },
+          "description": "Get health status of Central Settlement",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Expected-Status-OK",
+                "description": "Expected Status is OK",
+                "exec": [
+                  "expect(response.body.status).to.eql(\"OK\");"
+                ]
+              },
+              {
+                "id": "Expected-have-services-array",
+                "description": "Expected body to have services array",
+                "exec": [
+                  "expect(response.body.services).to.be.an('array');"
+                ]
+              },
+              {
+                "id": "Expected-services-have-datasto",
+                "description": "Expected services to have datastore and status is OK",
+                "exec": [
+                  "expect(environment.var1).to.be.an('object');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                " const brokerOk = response.body.services.find(item => {\r",
+                "               return item.name=='datastore' && item.status=='OK'; \r",
+                "            });\r",
+                "            \r",
+                "environment.var1 = brokerOk;"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/bug fixes/Tests for Bugfix #1009 - ML Adapter and ALS service health should include broker status.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

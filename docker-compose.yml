@@ -925,3 +925,202 @@ services:
       mode: global
     profiles:
       - finance-portal
+
+  central-settlement:
+    image: mojaloop/central-settlement:${CENTRAL_SETTLEMENT_VERSION}
+    container_name: central-settlement
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-settlement.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-settlement && node src/api/index.js"
+    volumes:
+       - ./docker/wait4:/opt/app/wait4
+       - ./docker/config-modifier:/opt/app/config-modifier
+       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
+    environment:
+      - LOG_LEVEL=info
+      - CLEDG_MONGODB__DISABLED=false
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      objstore:
+        condition: service_healthy
+      kafka-provisioning:
+        condition: service_completed_successfully
+    healthcheck:
+      test: wget -q http://127.0.0.1:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 30s
+      start_period: 30s
+    user: root
+    profiles:
+      - central-settlement
+      - all-services
+
+  payeefsp-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: payeefsp-redis
+    command: redis-server --port 6381
+    ports:
+      - "6381:6381"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+  
+  payeefsp-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: payeefsp-sdk
+    env_file: envs/payeefsp-sdk.env
+    depends_on:
+      - payeefsp-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  payerfsp-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: payerfsp-redis
+    command: redis-server --port 6383
+    ports:
+      - "6383:6383"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  payerfsp-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: payerfsp-sdk
+    env_file: envs/payerfsp-sdk.env
+    depends_on:
+      - payerfsp-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  testfsp1-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: testfsp1-redis
+    command: redis-server --port 6385
+    ports:
+      - "6385:6385"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  testfsp1-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: testfsp1-sdk
+    env_file: envs/testfsp1-sdk.env
+    depends_on:
+      - testfsp1-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - central-settlement
+      - all-services
+      - fx
+
+  testfsp2-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: testfsp2-redis
+    command: redis-server --port 6387
+    ports:
+      - "6387:6387"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  testfsp2-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: testfsp2-sdk
+    env_file: envs/testfsp2-sdk.env
+    depends_on:
+      - testfsp2-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - central-settlement
+      - all-services
+      - fx
+
+  testfsp3-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: testfsp3-redis
+    command: redis-server --port 6389
+    ports:
+      - "6389:6389"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  testfsp3-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: testfsp3-sdk
+    env_file: envs/testfsp3-sdk.env
+    depends_on:
+      - testfsp3-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - central-settlement
+      - all-services
+      - fx
+
+  testfsp4-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: testfsp4-redis
+    command: redis-server --port 6391
+    ports:
+      - "6391:6391"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  testfsp4-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: testfsp4-sdk
+    env_file: envs/testfsp4-sdk.env
+    depends_on:
+      - testfsp4-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - central-settlement
+      - all-services
+      - fx

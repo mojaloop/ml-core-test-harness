@@ -383,11 +383,11 @@
           "displayName": "Yaro",
           "firstName": "Yaro",
           "fspId": "fxpayeedfsp",
-          "idType": "ACCOUNT_ID",
+          "idType": "{$request.params.idType}",
           "idValue": "{$request.params.idValue}",
           "lastName": "Smith",
           "merchantClassificationCode": "1234",
-          "middleName": "",
+          "middleName": "Mark",
           "kycInformation": "This is encrypted KYC information"
         },
         "statusCode": "200",
@@ -439,6 +439,9 @@
           "transactionId": "{$request.body.transactionId}",
           "transferAmount": "{$request.body.amount}",
           "transferAmountCurrency": "{$request.body.currency}"
+        },
+        "headers": {
+          "FSPIOP-URI": "/quotes/{$request.body.quoteId}"
         },
         "statusCode": "200",
         "scripts": {
@@ -586,6 +589,66 @@
         }
       },
       "type": "MOCK_RESPONSE"
+    },
+    "type": "response",
+    "version": 1
+  },
+  {
+    "ruleId": 13,
+    "priority": 1,
+    "description": "get /parties/{idType}/{idValue}/{idSubValue}",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 2,
+      "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+      "asynchronous": false,
+      "prefix": "/backend",
+      "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{idType}/{idValue}/{idSubValue}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": null,
+      "path": null,
+      "params": {
+        "body": {
+          "dateOfBirth": "1966-06-16",
+          "displayName": "Yaro",
+          "firstName": "Yaro",
+          "fspId": "fxpayeedfsp",
+          "idSubValue": "{$request.params.idSubValue}",
+          "idType": "{$request.params.idType}",
+          "idValue": "{$request.params.idValue}",
+          "lastName": "Smith",
+          "merchantClassificationCode": "1234",
+          "middleName": "Mark",
+          "kycInformation": "This is encrypted KYC information"
+        },
+        "headers": {
+          "FSPIOP-URI": "/parties/{$request.params.idType}/{$request.params.idValue}/{$request.params.idSubValue}"
+        },
+        "statusCode": "200",
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "FIXED_RESPONSE"
     },
     "type": "response",
     "version": 1

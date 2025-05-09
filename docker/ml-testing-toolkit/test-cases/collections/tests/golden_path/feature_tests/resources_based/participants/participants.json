@@ -6,8 +6,9 @@
       "id": "participants-endpoints",
       "name": "tests against participants endpoints",
       "fileInfo": {
-        "path": "collections/hub/golden_path/feature_tests/resources_based/participants/participants.json",
+        "path": "collections/tests/golden_path/feature_tests/resources_based/participants/participants.json",
         "labels": [
+          "std-gp",
           "prod-tests"
         ]
       },

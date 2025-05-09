@@ -44,12 +44,23 @@ module.exports = {
       name: 'central-settlement',
       wait4: [
         {
-          uri: 'kafka:29092',
-          method: 'ncat'
+          description: 'central-ledger api server',
+          uri: 'central-ledger:3001',
+          method: 'ncat',
+
+          // we have to wait much longer for central-ledger
+          // to spin up so we overload `retires` default parameter value
+          retries: 60
         },
         {
           uri: 'mysql:3306',
-          method: 'mysql'
+          method: 'mysql',
+          // customized RC setup
+          rc: {
+            namespace: 'CSTTLMNT',
+            configPath: '../config/default.json'
+          },
+          retries: 60
         }
       ]
     },

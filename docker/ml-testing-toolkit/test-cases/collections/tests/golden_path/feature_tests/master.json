@@ -46,6 +46,10 @@
     {
       "name": "backward_compatibility",
       "type": "folder"
+    },
+    {
+      "name": "resources_based",
+      "type": "folder"
     }
   ]
 }

@@ -8,8 +8,9 @@
         "info": "Positive Scenarios"
       },
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/post_scenarios/positive.json",
+        "path": "collections/tests/golden_path/feature_tests/post_scenarios/positive.json",
         "labels": [
+          "std-gp",
           "prod-tests"
         ]
       },

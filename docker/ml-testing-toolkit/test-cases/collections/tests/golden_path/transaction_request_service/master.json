@@ -1,0 +1,28 @@
+{
+  "order": [
+    {
+      "name": "authorizations.json",
+      "type": "file"
+    },
+    {
+      "name": "Error-framework-authorizations.json",
+      "type": "file"
+    },
+    {
+      "name": "error-framework.json",
+      "type": "file"
+    },
+    {
+      "name": "received State.json",
+      "type": "file"
+    },
+    {
+      "name": "rejected State.json",
+      "type": "file"
+    },
+    {
+      "name": "transaction_request_service_health.json",
+      "type": "file"
+    }
+  ]
+}

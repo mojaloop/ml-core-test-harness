@@ -1,0 +1,166 @@
+{
+  "options": {},
+  "name": "hub_golden_path_bug fixes_other-bug-fixes",
+  "test_cases": [
+    {
+      "id": "check-settle-error-956",
+      "name": "Check Settlements Error #956",
+      "meta": {
+        "info": "Check Settlements Error #956"
+      },
+      "fileInfo": {
+        "path": "collections/tests/golden_path/bug fixes/other-bug-fixes.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      },
+      "requests": [
+        {
+          "id": "Check-Settlements-Error-956",
+          "meta": {
+            "info": "Check Settlements Error #956"
+          },
+          "description": "Check Settlements Error #956",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows",
+          "path": "/settlementWindows",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "ignoreCallbacks": true,
+          "queryParams": {
+            "participantId": "0",
+            "state": "open"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-status-400",
+                "description": "Response code status 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Check-Malformed-syntax-settlem",
+                "description": "Check Malformed syntax in settlements",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3101",
+                "description": "Check Error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3101');"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          }
+        },
+        {
+          "id": "Check-FSPIOP-Headers-from-ML-A",
+          "meta": {
+            "info": "Check FSPIOP Headers from ML-API-Adapter #1032"
+          },
+          "description": "Check FSPIOP Headers from ML-API-Adapter #1032",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
+            "FSPIOP-Destination": "payeefspNOTFOUND",
+            "FSPIOP-URI": "/transfers",
+            "FSPIOP-HTTP-Method": "POST"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateID}",
+            "payerFsp": "{$inputs.SIMPAYER_NAME}",
+            "payeeFsp": "payeefspNOTFOUND",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "expiration": "{$environment.transferExpirationx}",
+            "ilpPacket": "{$inputs.ilpPacket}",
+            "condition": "{$inputs.validCondition}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-status-202",
+                "description": "Response code status 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-data-does-not-have-transfe",
+                "description": "Response data does not have transferId",
+                "exec": [
+                  "expect(environment.payercallbackx.data.transferId).to.equal(undefined);"
+                ]
+              },
+              {
+                "id": "Error-code-3100-3200",
+                "description": "Error code is 3100 or 3200",
+                "exec": [
+                  "// With INTERSCHEME enabled, we expect 3200, otherwise we expect 3100 ",
+                  "expect(environment.payercallbackx.data.errorInformation.errorCode).to.satisfy(value => value === '3100' || value === '3200');"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "",
+            "ID": ""
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.transferExpirationx= new Date(new Date().getTime() + 600000).toISOString();",
+                "",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}', 'payercallback')",
+                "}  ",
+                "  console.log(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}');"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "",
+                "  ",
+                "  environment.payercallbackx = await websocket.getMessage('payercallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "console.log(environment.payercallbackx);"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

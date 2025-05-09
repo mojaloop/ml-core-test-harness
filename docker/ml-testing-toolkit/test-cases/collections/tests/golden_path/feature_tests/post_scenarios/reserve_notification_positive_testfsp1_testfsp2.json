@@ -8,8 +8,9 @@
         "info": "Reserve Notification Positive - Testfsp1 Testfsp2"
       },
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/post_scenarios/reserve_notification_positive_testfsp1_testfsp2.json",
+        "path": "collections/tests/golden_path/feature_tests/post_scenarios/reserve_notification_positive_testfsp1_testfsp2.json",
         "labels": [
+          "std-gp",
           "prod-tests"
         ]
       },

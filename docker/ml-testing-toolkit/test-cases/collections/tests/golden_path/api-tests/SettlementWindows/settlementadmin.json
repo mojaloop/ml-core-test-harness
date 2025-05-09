@@ -1,0 +1,197 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "api-tests-settle-win",
+      "name": "api-tests/SettlementWindows",
+      "meta": {
+        "info": "api-tests/SettlementWindows"
+      },
+      "requests": [
+        {
+          "id": "Window-state-OPEN",
+          "meta": {
+            "info": "Window- state (OPEN)"
+          },
+          "description": "Window- state (OPEN)",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows",
+          "path": "/settlementWindows",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "queryParams": {
+            "state": "OPEN"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Check-state-window-OPEN",
+                "description": "Check state for window is OPEN",
+                "exec": [
+                  "expect(response.body[0].state).to.equal(\"OPEN\")"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment.setwinid= response.body[0].settlementWindowId;",
+                "console.log(environment.setwinid);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "ValidRequest-closedWindowById",
+          "meta": {
+            "info": "ValidRequest - closedWindowById"
+          },
+          "description": "ValidRequest - closedWindowById",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows/{id}",
+          "path": "/settlementWindows/{$environment.setwinid}",
+          "method": "get",
+          "params": {
+            "id": "{$environment.setwinid}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Bad-Request-CloseWindow",
+          "meta": {
+            "info": "Bad Request-CloseWindow"
+          },
+          "description": "Bad Request-CloseWindow",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows/{id}",
+          "path": "/settlementWindows/{id}",
+          "method": "post",
+          "params": {
+            "id": ""
+          },
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "state": "CLOSE",
+            "reason": "TESTING"
+          }
+        },
+        {
+          "id": "Window-state-SETTLED",
+          "meta": {
+            "info": "Window- state (SETTLED)"
+          },
+          "description": "Window- state (SETTLED)",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "settlements"
+          },
+          "operationPath": "/settlementWindows",
+          "path": "/settlementWindows",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_SETTLEMENT}",
+          "queryParams": {
+            "state": "SETTLED"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Check-state-window-SETTLED",
+                "description": "Check state for window is SETTLED",
+                "exec": [
+                  "for (var i in environment.resx){",
+                  "   ",
+                  "        expect(environment.resx[i].state).to.equal('SETTLED');",
+                  "    ",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment.resx = response.body;",
+                "",
+                ""
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/api-tests/SettlementWindows/settlementadmin.json",
+        "labels": [
+          "std-gp"
+        ]
+      }
+    }
+  ]
+}
