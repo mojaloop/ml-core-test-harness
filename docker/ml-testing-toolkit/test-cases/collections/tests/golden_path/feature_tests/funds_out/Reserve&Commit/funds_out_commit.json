@@ -841,8 +841,9 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/funds_out/Reserve&Commit/funds_out_commit.json",
+        "path": "collections/tests/golden_path/feature_tests/funds_out/Reserve&Commit/funds_out_commit.json",
         "labels": [
+          "std-gp",
           "prod-tests"
         ]
       }

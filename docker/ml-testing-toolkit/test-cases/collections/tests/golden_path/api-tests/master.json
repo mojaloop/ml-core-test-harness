@@ -1,0 +1,15 @@
+{
+  "order": [
+    {
+      "name": "admin-api-tests",
+      "type": "folder",
+      "labels": [
+        "prod-tests"
+      ]
+    },
+    {
+      "name": "SettlementWindows",
+      "type": "folder"
+    }
+  ]
+}

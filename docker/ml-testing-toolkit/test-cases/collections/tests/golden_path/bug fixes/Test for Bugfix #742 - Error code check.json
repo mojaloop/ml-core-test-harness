@@ -1,0 +1,194 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "bugfix-742",
+      "name": "Test for Bugfix #742 - Error code check",
+      "meta": {
+        "info": "Test for Bugfix #742 - Error code check"
+      },
+      "requests": [
+        {
+          "id": "Add-part-Invalid-curr",
+          "meta": {
+            "info": "Add Participant - Invalid Currency"
+          },
+          "description": "Add Participant - Invalid Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "ignoreCallbacks": true,
+          "body": {
+            "name": "payer10",
+            "currency": "A#"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Check-Malformed-syntax-malform",
+                "description": "Check Malformed syntax - malformed currency",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3101",
+                "description": "Check Error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3101');"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "name": ""
+          }
+        },
+        {
+          "id": "Check-Error-3003-Add-Party-inf",
+          "meta": {
+            "info": "Check Error 3003 Add Party information error #742"
+          },
+          "description": "Check Error 3003 Add Party information error #742",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "ignoreCallbacks": true,
+          "body": {
+            "name": "{$inputs.SIMPAYER_NAME}",
+            "currency": "XOF"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Check-ID-missing",
+                "description": "Check ID missing",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Add Party information error');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3003",
+                "description": "Check Error code 3003",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3003');"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "name": ""
+          }
+        },
+        {
+          "id": "Check-Error-3101-Malformed-syn",
+          "meta": {
+            "info": "Check Error 3101 Malformed syntax #742"
+          },
+          "description": "Check Error 3101 Malformed syntax #742",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateID}+´+1´",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.payeefsp}",
+            "amount": {
+              "amount": "60.1234",
+              "currency": "{$inputs.currency}"
+            },
+            "expiration": "{$environment.transferExpirationxx}",
+            "ilpPacket": "{$inputs.ilpPacket}",
+            "condition": "{$inputs.validCondition}"
+          },
+          "scriptingEngine": "javascript",
+          "ignoreCallbacks": true,
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3100",
+                "description": "Check Error code 3100",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3100');"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.transferExpirationxx = new Date(new Date().getTime() + 600000).toISOString();"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/bug fixes/Test for Bugfix #742 - Error code check.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

@@ -8,8 +8,9 @@
         "info": "p2p_money_transfer - payee_request_for_notification_v.1.1"
       },
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/patch_notifications/patch_notification.json",
+        "path": "collections/tests/golden_path/feature_tests/patch_notifications/patch_notification.json",
         "labels": [
+          "std-gp",
           "prod-tests"
         ]
       },
@@ -337,8 +338,9 @@
         "info": "p2p_money_transfer - payee_request_for_notification_v.1.1"
       },
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/patch_notifications/patch_notification.json",
+        "path": "collections/tests/golden_path/feature_tests/patch_notifications/patch_notification.json",
         "labels": [
+          "std-gp",
           "prod-tests"
         ]
       },

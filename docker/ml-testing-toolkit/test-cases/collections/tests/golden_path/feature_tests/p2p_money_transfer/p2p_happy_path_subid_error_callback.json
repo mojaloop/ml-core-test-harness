@@ -203,6 +203,7 @@
       "fileInfo": {
         "path": "collections/tests/golden_path/feature_tests/p2p_money_transfer/p2p_happy_path_subid_error_callback.json",
         "labels": [
+          "std-gp",
           "prod-tests",
           "p2p"
         ]

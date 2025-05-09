@@ -1,0 +1,54 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "transaction-req-svc",
+      "name": "transaction_request_service",
+      "meta": {
+        "info": "transaction_request_service"
+      },
+      "requests": [
+        {
+          "id": "txn-service-health",
+          "meta": {
+            "info": "transaction service health"
+          },
+          "description": "transaction service health",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "headers": {
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Source": "testingtoolkitdfsp"
+          },
+          "disabled": true
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/transaction_request_service/transaction_request_service_health.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

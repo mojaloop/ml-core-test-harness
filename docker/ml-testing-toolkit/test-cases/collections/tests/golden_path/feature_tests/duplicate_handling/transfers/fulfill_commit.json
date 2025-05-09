@@ -516,8 +516,9 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json",
+        "path": "collections/tests/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json",
         "labels": [
+          "std-gp",
           "prod-tests"
         ]
       }
@@ -974,8 +975,9 @@
         }
       ],
       "fileInfo": {
-        "path": "hub/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json",
+        "path": "collections/tests/golden_path/feature_tests/duplicate_handling/transfers/fulfill_commit.json",
         "labels": [
+          "std-gp",
           "prod-tests"
         ]
       }

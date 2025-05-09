@@ -1,0 +1,658 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "quoting-service",
+      "name": "quoting_service",
+      "meta": {
+        "info": "quoting_service"
+      },
+      "requests": [
+        {
+          "id": "Send-quote",
+          "meta": {
+            "info": "Send quote"
+          },
+          "description": "Send quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payerIdentifier}",
+                "fspId": "{$inputs.SIMPAYER_NAME}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.toFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "5",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(environment.callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(environment.callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "cb-transferAmount",
+                "description": "Callback body should contain transferAmount",
+                "exec": [
+                  "expect(environment.callback.data).to.have.property('transferAmount')"
+                ]
+              },
+              {
+                "id": "cb-transferAmount-amt-curr-req",
+                "description": "Callback transferAmount (amount & currency)to match the request",
+                "exec": [
+                  "expect(environment.callback.data.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
+                  "expect(environment.callback.data.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": "cb-content-type-quotes",
+                "description": "Callback content-type to be quotes",
+                "exec": [
+                  "expect(environment.callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')"
+                ]
+              },
+              {
+                "id": "req-amountType-SEND",
+                "description": "Request amountType to be SEND",
+                "exec": [
+                  "expect('{$request.body.amountType}').to.equal('SEND')"
+                ]
+              },
+              {
+                "id": "req-transactionType-scenario-t",
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": "req-transactionType-initiator-",
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": "req-transactionType-initiatorT",
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                ]
+              },
+              {
+                "id": "Payee-src",
+                "description": "Payee FSPIOP-Source",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.callback.headers['fspiop-source']).to.equal('{$inputs.payeefsp}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Content-Type",
+                "description": "Payee Content-Type",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "IlpPacket-exists",
+                "description": "IlpPacket exists",
+                "exec": [
+                  "",
+                  "expect(environment.callback.data.ilpPacket).not.equal(undefined)"
+                ]
+              },
+              {
+                "id": "confition-exists",
+                "description": "confition exists",
+                "exec": [
+                  "expect(environment.callback.data.condition).not.equal(undefined)"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "",
+                "//if(environment.ON_US_TRANSFERS_ENABLED===true){",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYERFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'payeecallbacks')",
+                "}",
+                "//}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "//if(environment.ON_US_TRANSFERS_ENABLED===true){",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.callback = await websocket.getMessage('payeecallbacks', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "console.log(environment.callback);",
+                "//}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-health-status-Quoting-Serv",
+          "meta": {
+            "info": "Get health status of Quoting Service"
+          },
+          "description": "Get health status of Quoting Service",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/health",
+          "path": "/health",
+          "method": "get",
+          "url": "{$inputs.HOST_QUOTING_SERVICE_HANDLER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "rsp-services-array",
+                "description": "Response services to be an array",
+                "exec": [
+                  "expect(response.body.services).to.be.an('array');"
+                ]
+              },
+              {
+                "id": "Expected-services-have-data-st",
+                "description": "Expected services to have data store and status is OK",
+                "exec": [
+                  "if(!environment.SIMPLE_ROUTING_MODE_ENABLED) {",
+                  "  expect(environment.datastoreOKx).to.be.an('object')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payerfsp}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                " const datastoreOK = response.body.services.find(item => {\r",
+                "               return item.name=='datastore' && item.status=='OK'; \r",
+                "            });\r",
+                "            \r",
+                "environment.datastoreOKx=datastoreOK;            \r",
+                "console.log(environment.datastoreOKx);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Quote",
+          "meta": {
+            "info": "Get Quote"
+          },
+          "description": "Get Quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/{$prev.Send-quote.request.body.quoteId}",
+          "method": "get",
+          "params": {
+            "ID": "{$prev.Send-quote.request.body.quoteId}"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.payerfsp}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeQuotes}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Send-quote-missing-date",
+          "meta": {
+            "info": "Send quote - missing date"
+          },
+          "description": "Send quote - missing date",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.toFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.toFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "5",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3102",
+                "description": "Check Error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102')"
+                ]
+              },
+              {
+                "id": "Error-message-date-required",
+                "description": "Error message date is required",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('date');"
+                ]
+              },
+              {
+                "id": "Missing-element-error",
+                "description": "Missing element error",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element');"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-quote-Copy",
+          "meta": {
+            "info": "Send quote Copy"
+          },
+          "description": "Send quote Copy",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "method": "post",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.payerIdentifier}",
+                "fspId": "{$inputs.SIMPAYER_NAME}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.toIdType}",
+                "partyIdentifier": "{$inputs.payeeIdentifier}",
+                "fspId": "{$inputs.toFspId}"
+              }
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "5",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3102",
+                "description": "Check Error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102')"
+                ]
+              },
+              {
+                "id": "Check-Missing-mandatory-elemen",
+                "description": "Check Missing mandatory element - Invalid accept header",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('/header must have required property \\'accept\\'');"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "Type": "MSISDN",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "path": "/quotes",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Quote-Missing-content-type",
+          "meta": {
+            "info": "Get Quote - Missing content type"
+          },
+          "description": "Get Quote - Missing content type",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/{$prev.Send-quote.request.body.quoteId}",
+          "method": "get",
+          "params": {
+            "ID": "{$prev.Send-quote.request.body.quoteId}"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "ignoreCallbacks": false,
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.payerfsp}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Missing-mandatory-element-erro",
+                "description": "Missing mandatory element error",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Missing mandatory element ');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3102",
+                "description": "Check Error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3102')"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.API_TYPE != 'fspiop') {",
+                "  custom.skipRequest()",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Quote-Invalid-content-type",
+          "meta": {
+            "info": "Get Quote - Invalid content type"
+          },
+          "description": "Get Quote - Invalid content type",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/{$prev.Send-quote.request.body.quoteId}",
+          "method": "get",
+          "params": {
+            "ID": "{$prev.Send-quote.request.body.quoteId}"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "ignoreCallbacks": false,
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.payerfsp}",
+            "FSPIOP-Destination": "{$inputs.toFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeTransfers}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-400",
+                "description": "Response status to be 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Check-Malformed-syntax-error",
+                "description": "Check Malformed syntax error",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3101",
+                "description": "Check Error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.equal('3101')"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/quoting_service/quoting_service.json",
+        "labels": [
+          "std-gp",
+          "quotes",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}
