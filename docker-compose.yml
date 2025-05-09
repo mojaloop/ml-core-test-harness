@@ -48,6 +48,7 @@ services:
 
   central-handler-position-batch:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    container_name: central-handler-position-batch
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --positionbatch"
     # ports:
     #   - "3001:3001"
@@ -268,6 +269,7 @@ services:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
+      - ./docker/secrets/jwsSigningKey.key:/opt/app/secrets/jwsSigningKey.key
     environment:
       - LOG_LEVEL=info
     networks:
@@ -354,6 +356,41 @@ services:
       - all-services
       - fx
 
+  als-msisdn-oracle-svc:
+    image: mojaloop/als-msisdn-oracle-svc:${ALS_MSISDN_ORACLE_SVC_VERSION}
+    container_name: als-msisdn-oracle-svc
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/dist/config/default.json /opt/app/config-modifier/configs/als-msisdn-oracle-svc.js /opt/app/dist/config/default.json && /opt/app/wait4/wait4.js als-msisdn-oracle-svc && npm run migrate && node ./dist/src/cli.js"
+    # ports:
+    #   - "4001:4001"
+    #   - "4002:4002"
+    # environment:
+    #   - LOG_LEVEL=info
+
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql-als:
+        condition: service_healthy
+      central-ledger:
+        condition: service_started
+      simulator:
+        condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: wget -q http://127.0.0.1:3000/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - als-msisdn-oracle-svc
+      - discovery
+      - all-services
+      - fx
+
   mysql-als:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
     container_name: mysql-als
@@ -376,6 +413,7 @@ services:
       interval: 30s
     profiles:
       - account-lookup-service
+      - als-msisdn-oracle-svc
       - discovery
       - all-services
       - fx
@@ -459,6 +497,7 @@ services:
 
   mojaloop-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:${TEST_TTK_UI_VERSION}
+    container_name: mojaloop-testing-toolkit-ui
     ports:
       - "9660:6060"
     environment:
@@ -505,6 +544,37 @@ services:
     user: root
     profiles:
       - ttk-provisioning
+
+  ttk-provisioning-gp:
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+      central-ledger:
+        condition: service_healthy
+      central-handler-position-batch:
+        condition: service_healthy
+      ml-api-adapter:
+        condition: service_healthy
+      account-lookup-service:
+        condition: service_healthy
+      quoting-service:
+        condition: service_healthy
+      quoting-service-handler:
+        condition: service_healthy
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --labels std-gp --save-report true --report-format html --report-target file://reports/ttk-provisioning-gp-report.html"
+    user: root
+    profiles:
+      - ttk-provisioning-gp
 
   ttk-provisioning-fx:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
@@ -600,6 +670,39 @@ services:
     user: root
     profiles:
       - ttk-tests
+
+  ttk-tests-gp:
+    image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
+    volumes:
+      - "./docker/ml-testing-toolkit/test-cases/collections:/opt/app/collections"
+      - "./docker/ml-testing-toolkit/test-cases/environments:/opt/app/environments"
+      - "./reports:/opt/app/reports"
+    depends_on:
+      mojaloop-testing-toolkit:
+        condition: service_healthy
+      central-ledger:
+        condition: service_healthy
+      central-handler-position-batch:
+        condition: service_healthy
+      ml-api-adapter:
+        condition: service_healthy
+      account-lookup-service:
+        condition: service_healthy
+      quoting-service:
+        condition: service_healthy
+      quoting-service-handler:
+        condition: service_healthy
+      ttk-provisioning-gp:
+        condition: service_completed_successfully
+    networks:
+      - mojaloop-net
+    command:
+      - sh
+      - -c
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/tests -e environments/default-env.json --labels std-gp --report-format html --save-report true --report-target file://reports/ttk-gp-tests-report.html"
+    user: root
+    profiles:
+      - ttk-tests-gp
 
   ttk-fx-tests:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
@@ -822,3 +925,202 @@ services:
       mode: global
     profiles:
       - finance-portal
+
+  central-settlement:
+    image: mojaloop/central-settlement:${CENTRAL_SETTLEMENT_VERSION}
+    container_name: central-settlement
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-settlement.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-settlement && node src/api/index.js"
+    volumes:
+       - ./docker/wait4:/opt/app/wait4
+       - ./docker/config-modifier:/opt/app/config-modifier
+       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
+    environment:
+      - LOG_LEVEL=info
+      - CLEDG_MONGODB__DISABLED=false
+    networks:
+      - mojaloop-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      objstore:
+        condition: service_healthy
+      kafka-provisioning:
+        condition: service_completed_successfully
+    healthcheck:
+      test: wget -q http://127.0.0.1:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 30s
+      start_period: 30s
+    user: root
+    profiles:
+      - central-settlement
+      - all-services
+
+  payeefsp-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: payeefsp-redis
+    command: redis-server --port 6381
+    ports:
+      - "6381:6381"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+  
+  payeefsp-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: payeefsp-sdk
+    env_file: envs/payeefsp-sdk.env
+    depends_on:
+      - payeefsp-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  payerfsp-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: payerfsp-redis
+    command: redis-server --port 6383
+    ports:
+      - "6383:6383"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  payerfsp-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: payerfsp-sdk
+    env_file: envs/payerfsp-sdk.env
+    depends_on:
+      - payerfsp-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  testfsp1-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: testfsp1-redis
+    command: redis-server --port 6385
+    ports:
+      - "6385:6385"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  testfsp1-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: testfsp1-sdk
+    env_file: envs/testfsp1-sdk.env
+    depends_on:
+      - testfsp1-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - central-settlement
+      - all-services
+      - fx
+
+  testfsp2-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: testfsp2-redis
+    command: redis-server --port 6387
+    ports:
+      - "6387:6387"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  testfsp2-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: testfsp2-sdk
+    env_file: envs/testfsp2-sdk.env
+    depends_on:
+      - testfsp2-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - central-settlement
+      - all-services
+      - fx
+
+  testfsp3-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: testfsp3-redis
+    command: redis-server --port 6389
+    ports:
+      - "6389:6389"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  testfsp3-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: testfsp3-sdk
+    env_file: envs/testfsp3-sdk.env
+    depends_on:
+      - testfsp3-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - central-settlement
+      - all-services
+      - fx
+
+  testfsp4-redis:
+    image: "redis:6.2.4-alpine"
+    container_name: testfsp4-redis
+    command: redis-server --port 6391
+    ports:
+      - "6391:6391"
+    networks:
+      - mojaloop-net
+    profiles:
+      - all-services
+      - fx
+
+  testfsp4-sdk:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    container_name: testfsp4-sdk
+    env_file: envs/testfsp4-sdk.env
+    depends_on:
+      - testfsp4-redis
+      - mojaloop-testing-toolkit
+    command: yarn start:api-svc
+    user: root
+    networks:
+      - mojaloop-net
+    profiles:
+      - central-settlement
+      - all-services
+      - fx

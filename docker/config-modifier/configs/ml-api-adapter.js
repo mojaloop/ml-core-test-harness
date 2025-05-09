@@ -12,6 +12,15 @@ module.exports = {
       "port": 6379,
     }
   },
+  "ENDPOINT_SECURITY":{                                                
+    "JWS": {                                                         
+      "JWS_SIGN": true,                                              
+      "JWS_SIGNING_KEY_PATH": "secrets/jwsSigningKey.key"            
+    },                                                               
+    "TLS": {                                                         
+        "rejectUnauthorized": true                                   
+    }                                                                
+  }, 
   "KAFKA": {
     "CONSUMER": {
       "NOTIFICATION": {

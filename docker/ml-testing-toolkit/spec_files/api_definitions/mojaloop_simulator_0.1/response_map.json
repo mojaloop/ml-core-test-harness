@@ -1,0 +1,10 @@
+{
+    "/repository/parties": {
+      "get": {
+        "response": {
+          "bodyOverride": {
+          }
+        }
+      }
+    }
+  }

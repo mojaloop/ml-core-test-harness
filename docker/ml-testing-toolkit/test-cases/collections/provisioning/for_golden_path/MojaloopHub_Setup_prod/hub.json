@@ -1,0 +1,270 @@
+{
+  "options": {},
+  "name": "hub_provisioning_for_golden_path_MojaloopHub_Setup_prod",
+  "test_cases": [
+    {
+      "id": "hub-account",
+      "name": "Hub Account",
+      "meta": {
+        "info": "Provisioning to onboard only hub accounts with test currencies. Settlement models, oracles and emails are expected to be provisioned beforehand"
+      },
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopHub_Setup_prod/hub.json"
+      },
+      "requests": [
+        {
+          "id": "Add-Hub-Account-HUB_MULTILATER",
+          "meta": {
+            "info": "Add Hub Account-HUB_MULTILATERAL_SETTLEMENT"
+          },
+          "description": "Add Hub Account-HUB_MULTILATERAL_SETTLEMENT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "HUB_MULTILATERAL_SETTLEMENT",
+            "currency": "{$inputs.currency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-HUB_RECONCILIA",
+          "meta": {
+            "info": "Add Hub Account-HUB_RECONCILIATION"
+          },
+          "description": "Add Hub Account-HUB_RECONCILIATION",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "HUB_RECONCILIATION",
+            "currency": "{$inputs.currency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-HUB_MULTILATER-1",
+          "meta": {
+            "info": "Add Hub Account-HUB_MULTILATERAL_SETTLEMENT Second Currency"
+          },
+          "description": "Add Hub Account-HUB_MULTILATERAL_SETTLEMENT Second Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "HUB_MULTILATERAL_SETTLEMENT",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-HUB_RECONCILIA-1",
+          "meta": {
+            "info": "Add Hub Account-HUB_RECONCILIATION Second Currency"
+          },
+          "description": "Add Hub Account-HUB_RECONCILIATION Second Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "HUB_RECONCILIATION",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-HUB_MULTILATER-2",
+          "description": "Add Hub Account-HUB_MULTILATERAL_SETTLEMENT Third Currency",
+          "meta": {
+            "info": "Add Hub Account-HUB_MULTILATERAL_SETTLEMENT Second Currency"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "HUB_MULTILATERAL_SETTLEMENT",
+            "currency": "{$inputs.currency3}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-Hub-Account-HUB_RECONCILIA-2",
+          "description": "Add Hub Account-HUB_RECONCILIATION Third Currency",
+          "meta": {
+            "info": "Add Hub Account-HUB_RECONCILIATION Second Currency"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "body": {
+            "type": "HUB_RECONCILIATION",
+            "currency": "{$inputs.currency3}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "hub_operator"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

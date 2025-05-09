@@ -1,0 +1,67 @@
+{
+  "order": [
+    {
+      "name": "payerfsp.json",
+      "type": "file"
+    },
+    {
+      "name": "payeefsp.json",
+      "type": "file"
+    },
+    {
+      "name": "noresponsepayeefsp.json",
+      "type": "file"
+    },
+    {
+      "name": "testfsp1.json",
+      "type": "file"
+    },
+    {
+      "name": "testfsp2.json",
+      "type": "file"
+    },
+    {
+      "name": "testingtoolkitdfsp.json",
+      "type": "file",
+      "labels": [
+        "min-func-tests"
+      ]
+    },
+    {
+      "name": "ttkpayeefsp.json",
+      "type": "file",
+      "labels": [
+        "min-func-tests"
+      ]
+    },
+    {
+      "name": "testfsp3.json",
+      "type": "file"
+    },
+    {
+      "name": "testfsp4.json",
+      "type": "file"
+    },
+    {
+      "name": "ttkfxp1.json",
+      "type": "file",
+      "labels": [
+        "min-func-tests"
+      ]
+    },
+    {
+      "name": "ttkfxpayee.json",
+      "type": "file",
+      "labels": [
+        "min-func-tests"
+      ]
+    },
+    {
+      "name": "ttkfxpayer.json",
+      "type": "file",
+      "labels": [
+        "min-func-tests"
+      ]
+    }
+  ]
+}

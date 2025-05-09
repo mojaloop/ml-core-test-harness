@@ -1,0 +1,385 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "adjust-all-parti-1e89",
+      "name": "adjust ALL participants limits  NET DEBIT CAP (parametrized)",
+      "meta": {
+        "info": "adjust ALL participants limits  NET DEBIT CAP (parametrized)"
+      },
+      "requests": [
+        {
+          "id": "GET-participants-limits-before",
+          "meta": {
+            "info": "GET /participants/limits before updating NDC"
+          },
+          "description": "GET /participants/limits before updating NDC",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/limits",
+          "path": "/participants/limits",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "response code 200",
+                "exec": [
+                  "const statusCode = requestVariables.participantLimitsResponseCode",
+                  "expect(statusCode).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "delay": "{$inputs.DELAY_CGS}",
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const expectedStatusCode = 200;",
+                "requestVariables.participantLimitsResponseCode = null",
+                "",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let statusCode = response.code",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    requestVariables.participantLimitsResponseCode = statusCode",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    const isOk = statusCode === expectedStatusCode;",
+                "    ",
+                "    if (isOk) {",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break;",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await custom.sleep(maxRetryWait);",
+                "      statusCode = (await makeRequest()).status",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "function makeRequest() {",
+                "    const reqParams = {",
+                "        method: 'get', ",
+                "        url: `{$inputs.HOST_CENTRAL_LEDGER}/participants/limits`,",
+                "        headers: {",
+                "          'Content-Type': 'application/json',",
+                "        }",
+                "    };",
+                "    ",
+                "    return axios(reqParams);",
+                "}",
+                "",
+                "await main()"
+              ]
+            }
+          }
+        },
+        {
+          "id": "PUT-participants-payerfsp-limi",
+          "meta": {
+            "info": "PUT /participants/payerfsp/limits adjust participants limits  NDC"
+          },
+          "description": "PUT /participants/payerfsp/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.SIMPAYER_NAME}/limits",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIMPAYER_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.cgscurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript"
+        },
+        {
+          "id": "PUT-participants-payeefsp-limi",
+          "meta": {
+            "info": "PUT /participants/payeefsp/limits adjust participants limits  NDC"
+          },
+          "description": "PUT /participants/payeefsp/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/limits",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.cgscurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript"
+        },
+        {
+          "id": "PUT-participants-testfsp1-limi",
+          "meta": {
+            "info": "PUT /participants/testfsp1/limits adjust participants limits  NDC"
+          },
+          "description": "PUT /participants/testfsp1/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.SIM1_NAME}/limits",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIM1_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.cgscurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript"
+        },
+        {
+          "id": "PUT-participants-testfsp2-limi",
+          "meta": {
+            "info": "PUT /participants/testfsp2/limits adjust participants limits  NDC"
+          },
+          "description": "PUT /participants/testfsp2/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.SIM2_NAME}/limits",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.cgscurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript"
+        },
+        {
+          "id": "PUT-participants-testfsp3-limi",
+          "meta": {
+            "info": "PUT /participants/testfsp3/limits adjust participants limits  NDC"
+          },
+          "description": "PUT /participants/testfsp3/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.SIM3_NAME}/limits",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.cgscurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript"
+        },
+        {
+          "id": "PUT-participants-testfsp4-limi",
+          "meta": {
+            "info": "PUT /participants/testfsp4/limits adjust participants limits  NDC"
+          },
+          "description": "PUT /participants/testfsp4/limits adjust participants limits  NDC",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/limits",
+          "path": "/participants/{$inputs.SIM4_NAME}/limits",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIM4_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "queryParams": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "currency": "{$environment.cgscurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": "{$environment.NET_DEBIT_CAP}",
+              "alarmPercentage": 0
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript"
+        },
+        {
+          "id": "GET-participants-limits-after-",
+          "meta": {
+            "info": "GET /participants/limits after updating NDC"
+          },
+          "description": "GET /participants/limits after updating NDC",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/limits",
+          "path": "/participants/limits",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "response code 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript"
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/CGS_Specific/adjust-participants-limits.json"
+      }
+    }
+  ]
+}

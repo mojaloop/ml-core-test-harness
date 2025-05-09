@@ -1,0 +1,153 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "bugfix-849",
+      "name": "Test for Bugfix #849 - missing ID for transfers and quotes",
+      "meta": {
+        "info": "Test for Bugfix #849 - missing ID for transfers and quotes"
+      },
+      "requests": [
+        {
+          "id": "Check-transfers-Missing-ID-849",
+          "meta": {
+            "info": "Check transfers/ Missing ID #849"
+          },
+          "description": "Check transfers/ Missing ID #849",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/ ",
+          "method": "put",
+          "params": {
+            "ID": " "
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}"
+          },
+          "body": {
+            "fulfilment": "{$inputs.validFulfillment}",
+            "completedTimestamp": "{$environment.completedTimestamp}",
+            "transferState": "COMMITTED"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-404",
+                "description": "Response status to be 404",
+                "exec": [
+                  "expect(response.status).to.equal(404)"
+                ]
+              },
+              {
+                "id": "Check-ID-missing",
+                "description": "Check ID missing",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Unknown URI');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3002",
+                "description": "Check Error code 3002",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3002');"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.completedTimestamp = new Date().toISOString();"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Check-quotes-Missing-ID-849",
+          "meta": {
+            "info": "Check quotes/ Missing ID #849"
+          },
+          "description": "Check quotes/ Missing ID #849",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/ ",
+          "method": "put",
+          "params": {
+            "ID": " "
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.NORESPONSE_SIMPAYEE_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Authorization": "{$inputs.NORESPONSE_BEARER_TOKEN}"
+          },
+          "body": {
+            "fulfilment": "{$inputs.validFulfillment}",
+            "completedTimestamp": "{$environment.completedTimestamp}",
+            "transferState": "COMMITTED"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-equals-404",
+                "description": "Response status equals 404",
+                "exec": [
+                  "expect(response.status).to.equal(404)"
+                ]
+              },
+              {
+                "id": "Check-error-description-equals",
+                "description": "Check error description equals 'Unknown URI'",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Unknown URI');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-equals-3002",
+                "description": "Check Error code equals 3002",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3002');"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.completedTimestamp = new Date().toISOString();"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/bug fixes/Test for Bugfix #849 - missing ID for transfers and quotes.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

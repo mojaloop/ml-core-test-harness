@@ -1,0 +1,58 @@
+{
+  "order": [
+    {
+      "name": "feature_tests",
+      "type": "folder",
+      "labels": [
+        "prod-tests"
+      ]
+    },
+    {
+      "name": "bug fixes",
+      "type": "folder",
+      "labels": [
+        "prod-tests"
+      ]
+    },
+    {
+      "name": "p2p_on_us_transfers",
+      "type": "folder",
+      "labels": [
+        "prod-tests"
+      ]
+    },
+    {
+      "name": "quoting_service",
+      "type": "folder",
+      "labels": [
+        "quotes",
+        "prod-tests"
+      ]
+    },
+    {
+      "name": "transaction_request_service",
+      "type": "folder",
+      "labels": [
+        "prod-tests"
+      ]
+    },
+    {
+      "name": "settlement_management",
+      "type": "folder",
+      "labels": [
+        "settlements"
+      ]
+    },
+    {
+      "name": "settlement_management_prod",
+      "type": "folder",
+      "labels": [
+        "prod-tests"
+      ]
+    },
+    {
+      "name": "api-tests",
+      "type": "folder"
+    }
+  ]
+}

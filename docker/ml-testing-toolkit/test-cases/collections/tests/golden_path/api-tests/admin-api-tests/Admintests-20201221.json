@@ -1,0 +1,229 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "api-tests-admin-api",
+      "name": "api-tests/admin-api-tests",
+      "meta": {
+        "info": "api-tests/admin-api-tests"
+      },
+      "requests": [
+        {
+          "id": "Get-participants-list",
+          "meta": {
+            "info": "Get participants list"
+          },
+          "description": "Get participants list",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Get-part",
+          "meta": {
+            "info": "Get participant"
+          },
+          "description": "Get participant",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}",
+          "path": "/participants/{$inputs.payeefsp}",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.payeefsp}"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Get-Hub-acc",
+          "meta": {
+            "info": "Get Hub account"
+          },
+          "description": "Get Hub account",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Get-participants-endpoints",
+          "meta": {
+            "info": "Get participants endpoints"
+          },
+          "description": "Get participants endpoints",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.payeefsp}/endpoints",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.payeefsp}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Get-limits-all-FSPs",
+          "meta": {
+            "info": "Get limits all FSPs"
+          },
+          "description": "Get limits all FSPs",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/limits",
+          "path": "/participants/limits",
+          "method": "get",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Get-part-pos",
+          "meta": {
+            "info": "Get participant position"
+          },
+          "description": "Get participant position",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/positions",
+          "path": "/participants/{$inputs.payeefsp}/positions",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.payeefsp}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "id": "Atleast-one-acc-pos-returned",
+                "description": "Atleast one account position should be returned",
+                "exec": [
+                  "",
+                  "expect(response).to.be.not.empty"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/api-tests/admin-api-tests/Admintests-20201221.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

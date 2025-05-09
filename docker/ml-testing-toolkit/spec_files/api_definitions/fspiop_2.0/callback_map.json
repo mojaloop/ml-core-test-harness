@@ -9,6 +9,7 @@
         "headerOverride": {
           "FSPIOP-Source": "{$request.body.payeeFsp}",
           "FSPIOP-Destination": "{$request.headers.fspiop-source}",
+          "FSPIOP-Signature": "{\"signature\":\"hLfvv_zTBUoFJNusPYD4iIRMagNiL3DqAnHeZRuHpzbjZnTkb_zMY2RiEgkFSF639k6kXvBfeN7Mpl5fHUt-tqx9m5uKLoCFyti_zALUb8NuBSr9RNJ1i0Rk5IbCGP9FjqtqffT7jsosmJCWyujMyOIVz2LC5p73-yMNDA1PV963ekayAKCGUqZID0nBHokl2RsrsnyhUk0z-WPcQMc-Puj1mOqkYQEmfolRxE_ArHGGO2dUTxSzRtmc2gyByzuFRKbZ2-Bdu0MJu-qdgaBd5EDlg5L2Sa62zhb7vIV0U2l_AXfdZyHO4wt9mKjdCNGM7RfPm12hGICh8bcQtjwGO4b5jHBP4dKOOgXHh5UgS-xbwlPil8JyDGxJtYDe4sWpL1i3BtaSY-Z4qBhm5_L-xfm2aidouXGIWqsNytayDqRA_6tHnFnGAyYqT7TUI4ReuqzuhxCQQ31I8p0H4o_csRkaIYBx3u3sVf_-J11HShCEN7c96sMAZaA7KC4ZwQh8vbxqqMMZbZjK9SWOkzfG5-KeRPuvdTxVJDm0ciVgrGE8lAsJtMn1Fcb6sTsQlDj7w9fno3F9HPBYysK_t4l-SsPhUT5JpFYoZxV3vZzAPrVJD1EUy1yU5ngNEztW5jfJwYj53ZoMf27W7SduuBXJrb7oNz_u3jm8p-KD13iSSQ0","protectedHeader":"eyJhbGciOiJSUzI1NiIsIkZTUElPUC1VUkkiOiIvdHJhbnNmZXJzIiwiRlNQSU9QLUhUVFAtTWV0aG9kIjoiUE9TVCIsIkZTUElPUC1Tb3VyY2UiOiJ0ZXN0aW5ndG9vbGtpdGRmc3AiLCJEYXRlIjoiRnJpLCAyNSBBcHIgMjAyNSAxNToyNjoxNSBHTVQifQ\"}",
           "Content-Type": "{$session.negotiatedContentType}",
           "Date": "{$request.headers.date}"
         },
@@ -23,8 +24,9 @@
         "path": "/transfers/{ID}/error",
         "pathPattern": "/transfers/{$request.body.transferId}/error",
         "headerOverride": {
-          "FSPIOP-Source": "{$config.FSPID}",
+          "FSPIOP-Source": "{$request.body.payeeFsp}",
           "FSPIOP-Destination": "{$request.headers.fspiop-source}",
+          "FSPIOP-Signature": "{\"signature\":\"hLfvv_zTBUoFJNusPYD4iIRMagNiL3DqAnHeZRuHpzbjZnTkb_zMY2RiEgkFSF639k6kXvBfeN7Mpl5fHUt-tqx9m5uKLoCFyti_zALUb8NuBSr9RNJ1i0Rk5IbCGP9FjqtqffT7jsosmJCWyujMyOIVz2LC5p73-yMNDA1PV963ekayAKCGUqZID0nBHokl2RsrsnyhUk0z-WPcQMc-Puj1mOqkYQEmfolRxE_ArHGGO2dUTxSzRtmc2gyByzuFRKbZ2-Bdu0MJu-qdgaBd5EDlg5L2Sa62zhb7vIV0U2l_AXfdZyHO4wt9mKjdCNGM7RfPm12hGICh8bcQtjwGO4b5jHBP4dKOOgXHh5UgS-xbwlPil8JyDGxJtYDe4sWpL1i3BtaSY-Z4qBhm5_L-xfm2aidouXGIWqsNytayDqRA_6tHnFnGAyYqT7TUI4ReuqzuhxCQQ31I8p0H4o_csRkaIYBx3u3sVf_-J11HShCEN7c96sMAZaA7KC4ZwQh8vbxqqMMZbZjK9SWOkzfG5-KeRPuvdTxVJDm0ciVgrGE8lAsJtMn1Fcb6sTsQlDj7w9fno3F9HPBYysK_t4l-SsPhUT5JpFYoZxV3vZzAPrVJD1EUy1yU5ngNEztW5jfJwYj53ZoMf27W7SduuBXJrb7oNz_u3jm8p-KD13iSSQ0","protectedHeader":"eyJhbGciOiJSUzI1NiIsIkZTUElPUC1VUkkiOiIvdHJhbnNmZXJzIiwiRlNQSU9QLUhUVFAtTWV0aG9kIjoiUE9TVCIsIkZTUElPUC1Tb3VyY2UiOiJ0ZXN0aW5ndG9vbGtpdGRmc3AiLCJEYXRlIjoiRnJpLCAyNSBBcHIgMjAyNSAxNToyNjoxNSBHTVQifQ\"}",
           "Content-Type": "{$session.negotiatedContentType}",
           "Date": "{$request.headers.date}"
         }
@@ -128,7 +130,7 @@
         "path": "/parties/{Type}/{ID}",
         "pathPattern": "/parties/{$request.params.Type}/{$request.params.ID}",
         "headerOverride": {
-          "FSPIOP-Source": "{$config.FSPID}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}",
           "FSPIOP-Destination": "{$request.headers.fspiop-source}",
           "Content-Type": "{$session.negotiatedContentType}",
           "Date": "{$request.headers.date}"

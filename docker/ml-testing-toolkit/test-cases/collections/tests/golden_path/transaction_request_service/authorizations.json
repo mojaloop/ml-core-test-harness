@@ -1,0 +1,137 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "authorizations",
+      "name": "Authorizations",
+      "meta": {
+        "info": "Authorizations"
+      },
+      "requests": [
+        {
+          "id": "Get-authorizations",
+          "meta": {
+            "info": "Get authorizations"
+          },
+          "description": "Get authorizations",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranid}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Accept": "{$inputs.acceptAuthorizations}",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/authorizations",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeAuthorizations}"
+          },
+          "scriptingEngine": "javascript",
+          "queryParams": {
+            "authenticationType": "OTP",
+            "retriesLeft": "2",
+            "amount": "102",
+            "currency": "{$inputs.currency}"
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          },
+          "disabled": true
+        },
+        {
+          "id": "authorizations",
+          "meta": {
+            "info": "authorizations"
+          },
+          "description": "authorizations",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/authorizations/{ID}",
+          "path": "/authorizations/{$environment.tranid}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "authenticationInfo": {
+              "authentication": "OTP",
+              "authenticationValue": "234567"
+            },
+            "responseType": "REJECTED"
+          },
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payeefsp}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "{$inputs.contentTypeAuthorizations}",
+            "FSPIOP-HTTP-Method": "PUT",
+            "FSPIOP-URI": "/authorizations",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateID}'",
+                "console.log(environment.tranid)"
+              ]
+            }
+          },
+          "disabled": true
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/transaction_request_service/authorizations.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

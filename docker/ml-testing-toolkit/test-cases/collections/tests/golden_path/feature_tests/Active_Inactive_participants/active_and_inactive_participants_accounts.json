@@ -1,0 +1,1033 @@
+{
+  "test_cases": [
+    {
+      "id": "act-inact-participant-acc",
+      "name": "Active and inactive participant account",
+      "meta": {
+        "info": "Active and inactive participant account"
+      },
+      "requests": [
+        {
+          "id": "Get-SIM2-part-acc",
+          "meta": {
+            "info": "Get SIM2 Participant Account"
+          },
+          "description": "Get SIM2 Participant Account",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-code-200",
+                "description": "Response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "headers": {
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "response.body",
+                "    .filter(account => account.currency === environment.currency)",
+                "    .forEach(curAccount => {",
+                "        if(curAccount.ledgerAccountType === \"POSITION\") {",
+                "            environment['SIM2_PositionAccountId'] = curAccount.id",
+                "        }",
+                "    })"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Update-SIM2-inactive_XOF-acc",
+          "meta": {
+            "info": "Update SIM2 to inactive_XOF account"
+          },
+          "description": "Update SIM2 to inactive_XOF account",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts/{$environment.SIM2_PositionAccountId}",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}",
+            "id": "{$environment.SIM2_PositionAccountId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "isActive": false
+          }
+        },
+        {
+          "id": "Send-Quote-fail-SIM1-SIM2",
+          "meta": {
+            "info": "Send Quote fail (SIM1 to SIM2)"
+          },
+          "description": "Send Quote fail (SIM1 to SIM2)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM1_NAME}",
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIM1_MSISDN}",
+                "fspId": "{$inputs.SIM1_NAME}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIM2_MSISDN}",
+                "fspId": "{$inputs.SIM2_NAME}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "delay": "{$inputs.DELAY_QUOTES}",
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.SIM1_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.TESTFSP1_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'sim1Callback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.sim1Callback = await websocket.getMessage('sim1Callback', environment.WS_ASSERTION_TIMEOUT)",
+                "",
+                "  // JWS Validation",
+                "  if(environment.ENABLE_JWS_VALIDATION) {",
+                "    requestVariables.jwsValidationStatus =  custom.jws.validateCallback(requestVariables.sim1Callback.headers, requestVariables.sim1Callback.data, environment.TESTFSP2_JWS_PUB_KEY)",
+                "  }",
+                "  else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "    requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(requestVariables.sim1Callback.headers)",
+                "  }",
+                "}",
+                ""
+              ]
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Validate-Protected-Headers",
+                "description": "Callback Validate Protected Headers",
+                "exec": [
+                  "if(environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                  "  expect(requestVariables.protectedHeadersValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "cb-Validate-JWS",
+                "description": "Callback Validate JWS",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_JWS_VALIDATION) {",
+                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-src-switch-s-name",
+                "description": "Payer side Callback Header - fspiop-source is switch's name",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-dest-SIM1",
+                "description": "Payer side Callback Header - fspiop-destination is SIM1",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-destination']).to.equal(environment.SIM1_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-accept-empty",
+                "description": "Payer side Callback Header - accept is empty",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['accept']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-content-type",
+                "description": "Payer side Callback Header - content-type is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-uri-quotes-quoteI",
+                "description": "Payer side Callback Header - fspiop-uri is /quotes/quoteId/error",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-uri']).to.equal('/quotes/{$request.body.quoteId}/error')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-method-PUT",
+                "description": "Payer side Callback Header - fspiop-http-method is PUT",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-errorCode-3201",
+                "description": "Payer side Callback Body - errorCode is 3201",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorCode']).to.equal('3201')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-Error-Description-des",
+                "description": "Payer side Callback Body - Error Description is Destination FSP Error",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.include('Unsupported participant')",
+                  "  } else {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "  }",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Send-trans-fail-SIM1-SIM2",
+          "meta": {
+            "info": "Send Transfer fail (SIM1 to SIM2)"
+          },
+          "description": "Send Transfer fail (SIM1 to SIM2)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM1_NAME}",
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "transferId": "{$prev.Send-Quote-fail-SIM1-SIM2.request.body.transactionId}",
+            "payerFsp": "{$inputs.SIM1_NAME}",
+            "payeeFsp": "{$inputs.SIM2_NAME}",
+            "amount": {
+              "currency": "{$inputs.currency}",
+              "amount": "{$inputs.amount}"
+            },
+            "ilpPacket": "{$inputs.ilpPacket}",
+            "condition": "{$inputs.validCondition}",
+            "expiration": "{$requestVariables.transferExpiration}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 60000).toISOString()",
+                "",
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.SIM1_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.TESTFSP1_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}', 'sim1Callback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.sim1Callback = await websocket.getMessage('sim1Callback', environment.WS_ASSERTION_TIMEOUT)",
+                "",
+                "  // JWS Validation",
+                "  if(environment.ENABLE_JWS_VALIDATION) {",
+                "    requestVariables.jwsValidationStatus =  custom.jws.validateCallback(requestVariables.sim1Callback.headers, requestVariables.sim1Callback.data, environment.TESTFSP2_JWS_PUB_KEY)",
+                "  }",
+                "  else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "    requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(requestVariables.sim1Callback.headers)",
+                "  }",
+                "}",
+                ""
+              ]
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Validate-Protected-Headers",
+                "description": "Callback Validate Protected Headers",
+                "exec": [
+                  "if(environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                  "  expect(requestVariables.protectedHeadersValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "cb-Validate-JWS",
+                "description": "Callback Validate JWS",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_JWS_VALIDATION) {",
+                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-src-switch-s-name",
+                "description": "Payer side Callback Header - fspiop-source is switch's name",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-dest-SIM1",
+                "description": "Payer side Callback Header - fspiop-destination is SIM1",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-destination']).to.equal(environment.SIM1_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-accept-empty",
+                "description": "Payer side Callback Header - accept is empty",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['accept']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-content-type",
+                "description": "Payer side Callback Header - content-type is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-uri-transfers-tra",
+                "description": "Payer side Callback Header - fspiop-uri is /transfers/transferId/error",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-uri']).to.equal('/transfers/{$request.body.transferId}/error')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-method-PUT",
+                "description": "Payer side Callback Header - fspiop-http-method is PUT",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-errorCode-3100-3200",
+                "description": "Payer side Callback Body - errorCode is 3100 or 3200",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  // With INTERSCHEME enabled, we expect 3200, otherwise we expect 3100",
+                  "  expect(requestVariables.sim1Callback.data.errorInformation['errorCode']).to.satisfy(value => value === '3100' || value === '3200' )",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-Error-Description-Gen",
+                "description": "Payer side Callback Body - Error Description is Generic ID not found",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    // The error descriptions are different when INTERSCHEME is enabled",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.satisfy(value => value.includes('account is inactive') || value.includes('Generic ID not found - Payer proxy or payee proxy not found'))",
+                  "  } else {",
+                  "    expect(requestVariables.sim1Callback.data.errorInformation['errorDescription']).to.not.equal(undefined)",
+                  "  }",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Update-part-SIM2-active-acc",
+          "meta": {
+            "info": "Update participant (SIM2 to active) account"
+          },
+          "description": "Update participant (SIM2 to active) account",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts/{$environment.SIM2_PositionAccountId}",
+          "method": "put",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}",
+            "id": "{$environment.SIM2_PositionAccountId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "isActive": true
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-code-200",
+                "description": "Response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Send-Quote-SIM1-SIM2",
+          "meta": {
+            "info": "Send Quote (SIM1 to SIM2)"
+          },
+          "description": "Send Quote (SIM1 to SIM2)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM1_NAME}",
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIM1_MSISDN}",
+                "fspId": "{$inputs.SIM1_NAME}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIM2_MSISDN}",
+                "fspId": "{$inputs.SIM2_NAME}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "delay": "{$inputs.DELAY_QUOTES}",
+          "ignoreCallbacks": true,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.SIM1_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.TESTFSP1_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.quoteId}', 'sim1Callback')",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  // await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'sim2Request')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.sim1Callback = await websocket.getMessage('sim1Callback', environment.WS_ASSERTION_TIMEOUT)",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  // requestVariables.sim2Request = await websocket.getMessage('sim2Request', environment.WS_ASSERTION_TIMEOUT)",
+                "  ",
+                "  requestVariables.sim2Request = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/requests/{$request.body.quoteId}')).data;",
+                "  ",
+                "  environment.sim1IlpPacket =  requestVariables.sim1Callback.data.ilpPacket",
+                "  environment.sim1Condition =  requestVariables.sim1Callback.data.condition",
+                "  // JWS Validation",
+                "  if(environment.ENABLE_JWS_VALIDATION) {",
+                "    requestVariables.jwsValidationStatus =  custom.jws.validateCallback(requestVariables.sim1Callback.headers, requestVariables.sim1Callback.data, environment.TESTFSP2_JWS_PUB_KEY)",
+                "  }",
+                "  else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "    requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(requestVariables.sim1Callback.headers)",
+                "  }",
+                "}",
+                ""
+              ]
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Validate-Protected-Headers",
+                "description": "Callback Validate Protected Headers",
+                "exec": [
+                  "if(environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                  "  expect(requestVariables.protectedHeadersValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "cb-Validate-JWS",
+                "description": "Callback Validate JWS",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_JWS_VALIDATION) {",
+                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-src-SIM1",
+                "description": "Payee side Request Header - fspiop-source is SIM1",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['fspiop-source']).to.equal(environment.SIM1_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-dest-SIM2",
+                "description": "Payee side Request Header - fspiop-destination is SIM2",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['fspiop-destination']).to.equal(environment.SIM2_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-accept",
+                "description": "Payee side Request Header - accept is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['accept'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-content-type",
+                "description": "Payee side Request Header - content-type is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-uri-quotes",
+                "description": "Payee side Request Header - fspiop-uri is /quotes",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['fspiop-uri']).to.equal('/quotes')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-method-POST",
+                "description": "Payee side Request Header - fspiop-http-method is POST",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['fspiop-http-method']).to.equal('POST')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-src-SIM2",
+                "description": "Payer side Callback Header - fspiop-source is SIM2",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-source']).to.equal(environment.SIM2_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-dest-SIM1",
+                "description": "Payer side Callback Header - fspiop-destination is SIM1",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-destination']).to.equal(environment.SIM1_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-accept-empty",
+                "description": "Payer side Callback Header - accept is empty",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['accept']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-content-type-expe",
+                "description": "Payer side Callback Header - content-type is as expected",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal('application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-uri-quotes-quoteI",
+                "description": "Payer side Callback Header - fspiop-uri is /quotes/quoteId",
+                "exec": [
+                  "// TODO: Need to address this failure later as TTK is not generating correct headers",
+                  "// if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "//   expect(requestVariables.sim1Callback.headers['fspiop-uri']).to.equal('/quotes/{$request.body.quoteId}')",
+                  "// }"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-method-PUT",
+                "description": "Payer side Callback Header - fspiop-http-method is PUT",
+                "exec": [
+                  "// TODO: Need to address this failure later as TTK is not generating correct headers",
+                  "// if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "//   expect(requestVariables.sim1Callback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "// }"
+                ]
+              },
+              {
+                "id": "Payer-cb-quoteId-null",
+                "description": "Payer side Callback Body - quoteId is null",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.data['quoteId']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-ilpPacket-not-null",
+                "description": "Payer side Callback Body - ilpPacket is not null",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.data['ilpPacket']).to.not.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-condition-not-null",
+                "description": "Payer side Callback Body - condition is not null",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.data['condition']).to.not.equal(undefined)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Send-trans-SIM1-SIM2",
+          "meta": {
+            "info": "Send Transfer (SIM1 to SIM2)"
+          },
+          "description": "Send Transfer (SIM1 to SIM2)",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM1_NAME}",
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "transferId": "{$prev.Send-Quote-SIM1-SIM2.request.body.transactionId}",
+            "payerFsp": "{$inputs.SIM1_NAME}",
+            "payeeFsp": "{$inputs.SIM2_NAME}",
+            "amount": {
+              "currency": "{$inputs.currency}",
+              "amount": "{$inputs.amount}"
+            },
+            "ilpPacket": "{$environment.sim1IlpPacket}",
+            "condition": "{$environment.sim1Condition}",
+            "expiration": "{$requestVariables.transferExpiration}"
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.transferExpiration = new Date(new Date().getTime() + 60000).toISOString()",
+                "",
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.SIM1_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.TESTFSP1_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}', 'sim1Callback')",
+                "  await websocket.connect(environment.TESTFSP2_SDK_TESTAPI_WS_URL + '/requests/{$request.body.transferId}', 'sim2Request')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.sim1Callback = await websocket.getMessage('sim1Callback', environment.WS_ASSERTION_TIMEOUT)",
+                "  // NOTE: This has been commented out due to the WS issue https://github.com/mojaloop/project/issues/3164, with a work-around to call the HTTP equivalent API on the postRequest instead until it can be resolved.",
+                "  // requestVariables.sim2Request = await websocket.getMessage('sim2Request', environment.WS_ASSERTION_TIMEOUT)",
+                "  ",
+                "  requestVariables.sim2Request = (await axios.get(environment.TESTFSP2_SDK_TESTAPI_URL + '/requests/{$request.body.transferId}')).data;",
+                "  ",
+                "  // JWS Validation",
+                "  if(environment.ENABLE_JWS_VALIDATION) {",
+                "    requestVariables.jwsValidationStatus =  custom.jws.validateCallback(requestVariables.sim1Callback.headers, requestVariables.sim1Callback.data, environment.TESTFSP2_JWS_PUB_KEY)",
+                "  }",
+                "  else if(environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "    requestVariables.protectedHeadersValidationStatus =  custom.jws.validateCallbackProtectedHeaders(requestVariables.sim1Callback.headers)",
+                "  }",
+                "}",
+                ""
+              ]
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": [
+                  "expect(response.statusText).to.equal('Accepted')"
+                ]
+              },
+              {
+                "id": "cb-Validate-Protected-Headers",
+                "description": "Callback Validate Protected Headers",
+                "exec": [
+                  "if(environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                  "  expect(requestVariables.protectedHeadersValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "cb-Validate-JWS",
+                "description": "Callback Validate JWS",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS && environment.ENABLE_JWS_VALIDATION) {",
+                  "  expect(requestVariables.jwsValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-src-SIM1",
+                "description": "Payee side Request Header - fspiop-source is SIM1",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['fspiop-source']).to.equal(environment.SIM1_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-dest-SIM2",
+                "description": "Payee side Request Header - fspiop-destination is SIM2",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['fspiop-destination']).to.equal(environment.SIM2_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-accept",
+                "description": "Payee side Request Header - accept is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['accept']).to.equal(request.headers['accept'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-content-type",
+                "description": "Payee side Request Header - content-type is same",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-uri-transfers",
+                "description": "Payee side Request Header - fspiop-uri is /transfers",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['fspiop-uri']).to.equal('/transfers')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-req-hdr-method-POST",
+                "description": "Payee side Request Header - fspiop-http-method is POST",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim2Request.headers['fspiop-http-method']).to.equal('POST')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-src-SIM2",
+                "description": "Payer side Callback Header - fspiop-source is SIM2",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-source']).to.equal(environment.SIM2_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-dest-SIM1",
+                "description": "Payer side Callback Header - fspiop-destination is SIM1",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-destination']).to.equal(environment.SIM1_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-accept-empty",
+                "description": "Payer side Callback Header - accept is empty",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['accept']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-content-type-expe",
+                "description": "Payer side Callback Header - content-type is as expected",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-uri-transfers-tra",
+                "description": "Payer side Callback Header - fspiop-uri is /transfers/transferId",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-uri']).to.equal('/transfers/{$request.body.transferId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-hdr-method-PUT",
+                "description": "Payer side Callback Header - fspiop-http-method is PUT",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-transferId-null",
+                "description": "Payer side Callback Body - transferId is null",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.data['transferId']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-transferState-COMMITT",
+                "description": "Payer side Callback Body - transferState is COMMITTED",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(requestVariables.sim1Callback.data['transferState']).to.equal('COMMITTED')",
+                  "}"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/feature_tests/Active_Inactive_participants/active_and_inactive_participants_accounts.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

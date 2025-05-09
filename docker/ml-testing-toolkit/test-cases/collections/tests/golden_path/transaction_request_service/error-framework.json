@@ -1,0 +1,603 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "error-framework",
+      "name": "error-framework",
+      "meta": {
+        "info": "error-framework"
+      },
+      "requests": [
+        {
+          "id": "Check-transactionRequest-state",
+          "meta": {
+            "info": "Check transactionRequest state - invalid transactionid"
+          },
+          "description": "Check transactionRequest state - invalid transactionid",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transactionRequests/{ID}",
+          "path": "/transactionRequests/{$environment.tranid}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.tranid}"
+          },
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Date": "{$function.generic.curDate}",
+            "Accept": "{$inputs.acceptTransactionRequests}",
+            "FSPIOP-HTTP-Method": "GET",
+            "FSPIOP-URI": "/transactionRequests",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-status-202",
+                "description": "Response code status 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateID}'",
+                "/*",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/callbacks/{$request.body.transferId}', 'payeecallback')",
+                "  ",
+                " ",
+                "}*/"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "/*if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                " ",
+                "  ",
+                "  environment.payeecallback = await websocket.getMessage('payeecallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "",
+                "console.log(environment.payeecallback);*/"
+              ]
+            }
+          },
+          "disabled": true
+        },
+        {
+          "id": "Payee-initiate-req-MIssing-dat",
+          "meta": {
+            "info": "Payee initiate request - MIssing date"
+          },
+          "description": "Payee initiate request - MIssing date",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transactionRequests",
+          "path": "/transactionRequests",
+          "method": "post",
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.payeefsp}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}",
+            "Accept": "{$inputs.acceptTransactionRequests}",
+            "FSPIOP-HTTP-Method": "POST",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+          },
+          "body": {
+            "transactionRequestId": "{$environment.tranid}",
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "PERSONAL_ID",
+                "partyIdentifier": "16135551212",
+                "partySubIdOrType": "DRIVING_LICENSE",
+                "fspId": "1234"
+              },
+              "merchantClassificationCode": "4321",
+              "name": "Justin Trudeau",
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Justin",
+                  "middleName": "Pierre",
+                  "lastName": "Trudeau"
+                },
+                "dateOfBirth": "1971-12-25"
+              }
+            },
+            "payer": {
+              "partyIdType": "PERSONAL_ID",
+              "partyIdentifier": "16135551212",
+              "partySubIdOrType": "DRIVING_LICENSE",
+              "fspId": "1234"
+            },
+            "amount": {
+              "currency": "{$inputs.currency}",
+              "amount": "123.45"
+            },
+            "transactionType": {
+              "scenario": "DEPOSIT",
+              "subScenario": "CUSTOM_SUBSCENARIO",
+              "initiator": "PAYEE",
+              "initiatorType": "CONSUMER",
+              "refundInfo": {
+                "originalTransactionId": "{$environment.tranid}",
+                "refundReason": "free text indicating reason for the refund"
+              },
+              "balanceOfPayments": "123"
+            },
+            "note": "Free-text memo",
+            "geoCode": {
+              "latitude": "+45.4215",
+              "longitude": "+75.6972"
+            },
+            "authenticationType": "OTP",
+            "expiration": "{$environment.transferExpirationx}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-status-400",
+                "description": "Response code status 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Error-message-date-required",
+                "description": "Error message date is required",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('date');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3102",
+                "description": "Check Error code 3102",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3102');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateID}'",
+                "console.log(environment.tranid)",
+                "",
+                "environment.transferExpirationx= new Date(new Date().getTime() + 600000);",
+                "",
+                "console.log(environment.transferExpirationx)",
+                "",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "",
+                "",
+                ""
+              ]
+            }
+          },
+          "disabled": true
+        },
+        {
+          "id": "Payee-initiate-req-Missing-src",
+          "meta": {
+            "info": "Payee initiate request - Missing fspiop-source"
+          },
+          "description": "Payee initiate request - Missing fspiop-source",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transactionRequests",
+          "path": "/transactionRequests",
+          "method": "post",
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "headers": {
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}",
+            "Accept": "{$inputs.acceptTransactionRequests}",
+            "FSPIOP-HTTP-Method": "POST",
+            "Date": "{$function.generic.curDate}",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}"
+          },
+          "body": {
+            "transactionRequestId": "{$environment.tranid}",
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "PERSONAL_ID",
+                "partyIdentifier": "16135551212",
+                "partySubIdOrType": "DRIVING_LICENSE",
+                "fspId": "1234"
+              },
+              "merchantClassificationCode": "4321",
+              "name": "Justin Trudeau",
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Justin",
+                  "middleName": "Pierre",
+                  "lastName": "Trudeau"
+                },
+                "dateOfBirth": "1971-12-25"
+              }
+            },
+            "payer": {
+              "partyIdType": "PERSONAL_ID",
+              "partyIdentifier": "16135551212",
+              "partySubIdOrType": "DRIVING_LICENSE",
+              "fspId": "1234"
+            },
+            "amount": {
+              "currency": "{$inputs.currency}",
+              "amount": "123.45"
+            },
+            "transactionType": {
+              "scenario": "DEPOSIT",
+              "subScenario": "CUSTOM_SUBSCENARIO",
+              "initiator": "PAYEE",
+              "initiatorType": "CONSUMER",
+              "refundInfo": {
+                "originalTransactionId": "{$environment.tranid}",
+                "refundReason": "free text indicating reason for the refund"
+              },
+              "balanceOfPayments": "123"
+            },
+            "note": "Free-text memo",
+            "geoCode": {
+              "latitude": "+45.4215",
+              "longitude": "+75.6972"
+            },
+            "authenticationType": "OTP",
+            "expiration": "{$environment.transferExpirationx}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-status-400",
+                "description": "Response code status 400",
+                "exec": [
+                  "if (environment.WS02_OAUTH_ENABLED===true) {",
+                  "expect(response.status).to.equal(403)",
+                  "}else{",
+                  "  expect(response.status).to.equal(400)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Error-message-src-required",
+                "description": "Error message fspiop-source is required",
+                "exec": [
+                  "if (environment.WS02_OAUTH_ENABLED===true) {",
+                  "",
+                  "}else{expect(response.body.errorInformation.errorDescription).to.include('fspiop-source');}"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3102",
+                "description": "Check Error code 3102",
+                "exec": [
+                  "if (environment.WS02_OAUTH_ENABLED===true) {",
+                  "",
+                  "}else{expect(response.body.errorInformation.errorCode).to.include('3102');}"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateID}'",
+                "console.log(environment.tranid)",
+                "",
+                "environment.transferExpirationx= new Date(new Date().getTime() + 600000);",
+                "",
+                "console.log(environment.transferExpirationx)",
+                "",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "",
+                "",
+                ""
+              ]
+            }
+          },
+          "disabled": true
+        },
+        {
+          "id": "Payee-initiate-req-Wrong-conte",
+          "meta": {
+            "info": "Payee initiate request - Wrong content type version"
+          },
+          "description": "Payee initiate request - Wrong content type version",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transactionRequests",
+          "path": "/transactionRequests",
+          "method": "post",
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "headers": {
+            "FSPIOP-Destination": "{$inputs.SIMPAYER_NAME}",
+            "Content-Type": "application/vnd.interoperability.transactionRequests+json;version=9.9",
+            "Accept": "{$inputs.acceptTransactionRequests}",
+            "FSPIOP-HTTP-Method": "POST",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+          },
+          "body": {
+            "transactionRequestId": "{$environment.tranid}",
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "PERSONAL_ID",
+                "partyIdentifier": "16135551212",
+                "partySubIdOrType": "DRIVING_LICENSE",
+                "fspId": "1234"
+              },
+              "merchantClassificationCode": "4321",
+              "name": "Justin Trudeau",
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Justin",
+                  "middleName": "Pierre",
+                  "lastName": "Trudeau"
+                },
+                "dateOfBirth": "1971-12-25"
+              }
+            },
+            "payer": {
+              "partyIdType": "PERSONAL_ID",
+              "partyIdentifier": "16135551212",
+              "partySubIdOrType": "DRIVING_LICENSE",
+              "fspId": "1234"
+            },
+            "amount": {
+              "currency": "{$inputs.currency}",
+              "amount": "123.45"
+            },
+            "transactionType": {
+              "scenario": "DEPOSIT",
+              "subScenario": "CUSTOM_SUBSCENARIO",
+              "initiator": "PAYEE",
+              "initiatorType": "CONSUMER",
+              "refundInfo": {
+                "originalTransactionId": "{$environment.tranid}",
+                "refundReason": "free text indicating reason for the refund"
+              },
+              "balanceOfPayments": "123"
+            },
+            "note": "Free-text memo",
+            "geoCode": {
+              "latitude": "+45.4215",
+              "longitude": "+75.6972"
+            },
+            "authenticationType": "OTP",
+            "expiration": "{$environment.transferExpirationx}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-status-406",
+                "description": "Response code status 406",
+                "exec": [
+                  "expect(response.status).to.equal(406)"
+                ]
+              },
+              {
+                "id": "Error-message-Unacceptable-ver",
+                "description": "Error message Unacceptable version requested ",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Unacceptable version requested');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3001",
+                "description": "Check Error code 3001",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3001');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateID}'",
+                "console.log(environment.tranid)",
+                "",
+                "environment.transferExpirationx= new Date(new Date().getTime() + 600000);",
+                "",
+                "console.log(environment.transferExpirationx)",
+                "",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "",
+                "",
+                ""
+              ]
+            }
+          },
+          "disabled": true
+        },
+        {
+          "id": "Payee-initiate-req-Unsupported",
+          "meta": {
+            "info": "Payee initiate request - Unsupported Media Type"
+          },
+          "description": "Payee initiate request - Unsupported Media Type",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transactionRequests",
+          "path": "/transactionRequests",
+          "method": "post",
+          "url": "{$inputs.HOST_TRANSACTION_REQUESTS_SERVICE}",
+          "headers": {
+            "FSPIOP-Destination": "{$inputs.payeefsp}",
+            "Content-Type": "application/vnd.interoperability.transactionRequests+xml;version=1.1",
+            "Accept": "{$inputs.acceptTransactionRequests}",
+            "FSPIOP-HTTP-Method": "POST",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+          },
+          "body": {
+            "transactionRequestId": "{$environment.tranid}",
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "PERSONAL_ID",
+                "partyIdentifier": "16135551212",
+                "partySubIdOrType": "DRIVING_LICENSE",
+                "fspId": "1234"
+              },
+              "merchantClassificationCode": "4321",
+              "name": "Justin Trudeau",
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Justin",
+                  "middleName": "Pierre",
+                  "lastName": "Trudeau"
+                },
+                "dateOfBirth": "1971-12-25"
+              }
+            },
+            "payer": {
+              "partyIdType": "PERSONAL_ID",
+              "partyIdentifier": "16135551212",
+              "partySubIdOrType": "DRIVING_LICENSE",
+              "fspId": "1234"
+            },
+            "amount": {
+              "currency": "{$inputs.currency}",
+              "amount": "123.45"
+            },
+            "transactionType": {
+              "scenario": "DEPOSIT",
+              "subScenario": "locally defined sub-scenario",
+              "initiator": "PAYEE",
+              "initiatorType": "CONSUMER",
+              "refundInfo": {
+                "originalTransactionId": "{$environment.tranid}",
+                "refundReason": "free text indicating reason for the refund"
+              },
+              "balanceOfPayments": "123"
+            },
+            "note": "Free-text memo",
+            "geoCode": {
+              "latitude": "+45.4215",
+              "longitude": "+75.6972"
+            },
+            "authenticationType": "OTP",
+            "expiration": "2016-05-24T08:38:08.699-04:00",
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "errorDescription",
+                  "value": "This is a more detailed error description"
+                },
+                {
+                  "key": "errorDescription",
+                  "value": "This is a more detailed error description"
+                }
+              ]
+            }
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-status-400",
+                "description": "Response code status 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Check-Malformed-syntax-Unsuppo",
+                "description": "Check Malformed syntax - Unsupported Media Type",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax - Unsupported Media Type');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3101",
+                "description": "Check Error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3101');"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.tranid = '{$function.generic.generateID}'",
+                "console.log(environment.tranid)",
+                "",
+                "//environment.transferExpirationx= new Date(new Date().getTime() + 600000);",
+                "",
+                "console.log(environment.transferExpirationx)",
+                "",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "",
+                "",
+                ""
+              ]
+            }
+          },
+          "disabled": true
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/transaction_request_service/error-framework.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

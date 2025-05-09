@@ -1,0 +1,1022 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "get-transfers",
+      "name": "Get Transfers",
+      "meta": {
+        "info": "Get Transfers"
+      },
+      "requests": [
+        {
+          "id": "Send-Quote",
+          "meta": {
+            "info": "Send Quote"
+          },
+          "description": "Send Quote",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "scriptingEngine": "javascript",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
+            "FSPIOP-HTTP-Method": "POST",
+            "FSPIOP-URI": "/quotes",
+            "Date": "{$function.generic.curDate}"
+          },
+          "body": {
+            "quoteId": "{$requestVariables.quoteId}",
+            "transactionId": "{$requestVariables.transactionId}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Mats",
+                  "lastName": "Hagman"
+                },
+                "dateOfBirth": "1983-10-25"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "{$inputs.SIMPAYEE_MSISDN}",
+                "fspId": "{$inputs.SIMPAYEE_NAME}"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "60",
+              "currency": "{$inputs.SIMPAYEE_CURRENCY}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "hej"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "Payee-src-testingtoolkitdfsp",
+                "description": "Payee FSP 'fspiop-source' is 'testingtoolkitdfsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal(environment.fromFspId)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-dest-payeefsp",
+                "description": "Payee FSP 'fspiop-destination' is 'payeefsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-fspiop-signature-sent-re",
+                "description": "Payee FSP: 'fspiop-signature' is same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(requestSent.headers['fspiop-signature'])",
+                  "}",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "id": "Payee-accept-sent-req",
+                "description": "Payee FSP 'accept' is same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['accept'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-content-type-sent-req",
+                "description": "Payee FSP 'content-type' is same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-uri-quotes",
+                "description": "Payee FSP 'fspiop-uri' is /quotes",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal(\"/quotes\")",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-method-POST",
+                "description": "Payee FSP 'fspiop-http-method' is 'POST'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal(\"POST\")",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-src-payeefsp",
+                "description": "Payer FSP Callback: 'fspiop-source' is 'payeefsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME)"
+                ]
+              },
+              {
+                "id": "Payer-cb-dest-testingtoolkitdf",
+                "description": "Payer FSP Callback: 'fspiop-destination' is 'testingtoolkitdfsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
+                ]
+              },
+              {
+                "id": "Payer-cb-JWS-signature-valid",
+                "description": "Payer FSP Callback:  JWS signature valid",
+                "exec": [
+                  "if(environment.ENABLE_JWS_VALIDATION) {",
+                  "expect(requestVariables.payerCallbackJWSValidationStatus).to.equal('VALID')",
+                  "}",
+                  ""
+                ]
+              },
+              {
+                "id": "Payer-cb-JWS-protected-headers",
+                "description": "Payer Callback: JWS protected headers are valid",
+                "exec": [
+                  "if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                  "expect(requestVariables.payerCallbackJWSHeadersValidationStatus).to.equal('VALID')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-cb-accept-empty",
+                "description": "Payer FSP Callback: 'accept' is empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payer-cb-content-type-sent-req",
+                "description": "Payer FSP Callback: 'content-type' is same as sent in the request",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal(\"application/vnd.interoperability.quotes+json;version={$inputs.expectedQuotesVersion}\")"
+                ]
+              },
+              {
+                "id": "Payer-cb-uri-quotes-quoteId",
+                "description": "Payer FSP Callback: 'fspiop-uri' is /quotes/{quoteId}",
+                "exec": [
+                  "// TODO: Need to address this failure later as TTK is not generating correct headers",
+                  "// expect(callback.headers['fspiop-uri']).to.equal(\"/quotes/{$request.body.quoteId}\")"
+                ]
+              },
+              {
+                "id": "Payer-cb-method-PUT",
+                "description": "Payer FSP Callback: 'fspiop-http-method' is 'PUT'",
+                "exec": [
+                  "// TODO: Need to address this failure later as TTK is not generating correct headers",
+                  "// expect(callback.headers['fspiop-http-method']).to.equal(\"PUT\")"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.quoteId = \"{$function.generic.generateID}\"",
+                "",
+                "requestVariables.transactionId = \"{$function.generic.generateID}\"",
+                "",
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + `/requests/${requestVariables.quoteId}`, 'payeeRequest')",
+                "}",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}",
+                "  ",
+                "if (environment.ENABLE_JWS_VALIDATION) {  ",
+                "  requestVariables.payerCallbackJWSValidationStatus = custom.jws.validateCallback(callback.headers, callback.body, environment.SIMPAYEE_JWS_PUB_KEY)",
+                "}",
+                "  ",
+                "if (environment.ENABLE_PROTECTED_HEADERS_VALIDATION) {",
+                "  requestVariables.payerCallbackJWSHeadersValidationStatus = custom.jws.validateCallbackProtectedHeaders(callback.headers)",
+                "}  ",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Send-trans",
+          "meta": {
+            "info": "Send Transfer"
+          },
+          "description": "Send Transfer",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "scriptingEngine": "javascript",
+          "body": {
+            "transferId": "{$prev.Send-Quote.request.body.transactionId}",
+            "payerFsp": "{$inputs.fromFspId}",
+            "payeeFsp": "{$inputs.SIMPAYEE_NAME}",
+            "amount": {
+              "amount": "10",
+              "currency": "{$inputs.SIMPAYEE_CURRENCY}"
+            },
+            "expiration": "{$prev.Send-Quote.callback.body.expiration}",
+            "ilpPacket": "{$prev.Send-Quote.callback.body.ilpPacket}",
+            "condition": "{$prev.Send-Quote.callback.body.condition}"
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.SIMPAYEE_NAME}",
+            "FSPIOP-HTTP-Method": "POST",
+            "FSPIOP-URI": "/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "Payee-src-testingtoolkitdfsp",
+                "description": "Payee FSP: 'fspiop-source' should be 'testingtoolkitdfsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}');",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-dest-payeefsp",
+                "description": "Payee FSP: 'fspiop-destination' should be 'payeefsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-destination']).to.equal('{$inputs.SIMPAYEE_NAME}');",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-content-type-sent-req",
+                "description": "Payee FSP: 'content-type' should be same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['content-type']).to.equal(request.headers['content-type']);",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-accept-sent-req",
+                "description": "Payee FSP: 'accept' should be same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['accept']).to.equal(request.headers['accept']);",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-fspiop-signature-sent-re",
+                "description": "Payee FSP: 'fspiop-signature' should be same as sent in the request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-signature']).to.equal(requestSent.headers['fspiop-signature']);",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-method-POST",
+                "description": "Payee FSP: 'fspiop-http-method' is POST",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-http-method']).to.equal('POST');",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-uri-transfers",
+                "description": "Payee FSP: 'fspiop-uri' is /transfers",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.headers['fspiop-uri']).to.equal('/transfers');",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Data-have-transferId-req",
+                "description": "Payee FSP: Data should have the same transferId as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.data.transferId).to.equal(request.body.transferId);",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Data-have-Payer-ID-req",
+                "description": "Payee FSP: Data should have the same Payer FSP ID as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.data.payerFsp).to.equal(request.body.payerFsp);",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Data-have-Payee-ID-req",
+                "description": "Payee FSP: Data should have the same Payee FSP ID as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.data.payeeFsp).to.equal(request.body.payeeFsp);",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Data-have-amt-req",
+                "description": "Payee FSP: Data should have the same amount as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.data.amount.amount).to.equal(request.body.amount.amount);",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Data-have-curr-req",
+                "description": "Payee FSP: Data should have the same currency as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.data.amount.currency).to.equal(request.body.amount.currency);",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Data-have-expiration-req",
+                "description": "Payee FSP: Data should have the same expiration as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.data.expiration).to.equal(request.body.expiration);",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Data-have-ilpPacket-req",
+                "description": "Payee FSP: Data should have the same ilpPacket as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.data.ilpPacket).to.equal(request.body.ilpPacket);",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Data-have-condition-req",
+                "description": "Payee FSP: Data should have the same condition as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeRequest.data.condition).to.equal(request.body.condition);",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payer-src-payefsp",
+                "description": "Payer FSP: 'fspiop-source' is 'payefsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal(environment.SIMPAYEE_NAME);"
+                ]
+              },
+              {
+                "id": "Payer-dest-testingtoolkitdfsp",
+                "description": "Payer FSP: 'fspiop-destination' is 'testingtoolkitdfsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId);"
+                ]
+              },
+              {
+                "id": "Payer-content-type-correct",
+                "description": "Payer FSP: 'content-type' should be correct",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.transfers+json;version={$inputs.expectedTransfersVersion}');"
+                ]
+              },
+              {
+                "id": "Payer-accept-empty",
+                "description": "Payer FSP: 'accept' should be empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined);"
+                ]
+              },
+              {
+                "id": "Payer-uri-include-transfers-tr",
+                "description": "Payer FSP: 'fspiop-uri' should include '/transfers/{transferId}'",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal('/transfers/{$request.body.transferId}');"
+                ]
+              },
+              {
+                "id": "Payer-method-PUT",
+                "description": "Payer FSP: 'fspiop-http-method' should be 'PUT'",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT');"
+                ]
+              },
+              {
+                "id": "Payer-rsp-data-does-not-have-t",
+                "description": "Payer FSP: Response data does not have transferId",
+                "exec": [
+                  "expect(callback.body.transferId).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payer-rsp-status-COMMITTED",
+                "description": "Payer FSP: Response status is 'COMMITTED'",
+                "exec": [
+                  "expect(callback.body.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "",
+                "if(environment.ENABLE_JWS_SIGNING) {",
+                "  custom.jws.signRequest(environment.TTKFSP_JWS_KEY)",
+                "}",
+                "",
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + `/requests/{$prev.Send-Quote.request.body.transactionId}`, 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "GET-trans-COMMITTED",
+          "meta": {
+            "info": "GET transfer - COMMITTED"
+          },
+          "description": "GET transfer - COMMITTED",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/{$requestVariables.transferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$requestVariables.transferId}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "scriptingEngine": "javascript",
+          "headers": {
+            "Accept": "{$inputs.acceptTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "{$inputs.contentTypeTransfers}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "Payer-src-switch-s-name",
+                "description": "Payer FSP: 'fspiop-source' is switch's name",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
+                ]
+              },
+              {
+                "id": "Payer-dest-payerfsp",
+                "description": "Payer FSP: 'fspiop-destination' is 'payerfsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
+                ]
+              },
+              {
+                "id": "Payer-content-type-proper-form",
+                "description": "Payer FSP: 'content-type' should be in proper format",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=')"
+                ]
+              },
+              {
+                "id": "Payer-accept-empty",
+                "description": "Payer FSP: 'accept' should be empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payer-fspiop-signature-not-emp",
+                "description": "Payer FSP: 'fspiop-signature' is not empty",
+                "exec": [
+                  "expect(callback.headers['fspiop-signature']).to.not.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payer-uri-includes-transfers-t",
+                "description": "Payer FSP: 'fspiop-uri' includes /transfers/{transferId}",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal('/transfers/{$requestVariables.transferId}')"
+                ]
+              },
+              {
+                "id": "Payer-method-PUT",
+                "description": "Payer FSP: 'fspiop-http-method' is PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": "Payer-rsp-data-does-not-have-t",
+                "description": "Payer FSP: Response data does not have transfer ID",
+                "exec": [
+                  "expect(callback.body.transferId).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payer-rsp-status-COMMITTED",
+                "description": "Payer FSP: Response status is 'COMMITTED'",
+                "exec": [
+                  "expect(callback.body.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                "requestVariables.transferId = \"{$prev.Send-trans.request.body.transferId}\""
+              ]
+            }
+          }
+        },
+        {
+          "id": "src-original-receiver",
+          "meta": {
+            "info": "Source is original receiver"
+          },
+          "description": "Source is original receiver",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/{$prev.Send-trans.request.body.transferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$prev.Send-trans.request.body.transferId}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "FSPIOP-Source": "{$environment.SIMPAYEE_NAME}",
+            "Authorization": "{$inputs.PAYEE_BEARER_TOKEN}",
+            "Accept": "{$inputs.acceptTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "{$inputs.contentTypeTransfers}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "Payee-src-switch-s-name",
+                "description": "Payee FSP: 'fspiop-source' is switch's name",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-dest-payerfsp",
+                "description": "Payee FSP: 'fspiop-destination' is 'payerfsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['fspiop-destination']).to.equal(environment.SIMPAYEE_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-content-type-req",
+                "description": "Payee FSP: 'content-type' should be same as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-accept-empty",
+                "description": "Payee FSP: 'accept' should be empty",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['accept']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-uri-includes-transfers-t",
+                "description": "Payee FSP: 'fspiop-uri' includes /transfers/{transferId}",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['fspiop-uri']).to.equal('/transfers/{$prev.Send-trans.request.body.transferId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-fspiop-signature-not-emp",
+                "description": "Payee FSP: 'fspiop-signature' is not empty",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['fspiop-signature']).to.not.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-method-PUT",
+                "description": "Payee FSP: 'fspiop-http-method' is PUT",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-rsp-status-COMMITTED",
+                "description": "Payee FSP: Response status is 'COMMITTED'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.data.transferState).to.equal('COMMITTED')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + `/callbacks/{$prev.Send-trans.request.body.transferId}`, 'payeeCallback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "src-not-part-original-sender-r",
+          "meta": {
+            "info": "Source is not part of original sender/receiver"
+          },
+          "description": "Source is not part of original sender/receiver",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/{$prev.Send-trans.request.body.transferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$prev.Send-trans.request.body.transferId}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "FSPIOP-Source": "{$environment.SIM1_NAME}",
+            "Authorization": "{$inputs.TESTFSP1_BEARER_TOKEN}",
+            "Accept": "{$inputs.acceptTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "{$inputs.contentTypeTransfers}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "Payee-src-switch-s-name",
+                "description": "Payee FSP: 'fspiop-source' is switch's name",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-dest-payerfsp",
+                "description": "Payee FSP: 'fspiop-destination' is 'payerfsp'",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['fspiop-destination']).to.equal(environment.SIM1_NAME)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-content-type-req",
+                "description": "Payee FSP: 'content-type' should be same as request",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-accept-empty",
+                "description": "Payee FSP: 'accept' should be empty",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['accept']).to.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-uri-includes-transfers-t",
+                "description": "Payee FSP: 'fspiop-uri' includes /transfers/{transferId}/error",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['fspiop-uri']).to.equal('/transfers/{$prev.Send-trans.request.body.transferId}/error')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-fspiop-signature-not-emp",
+                "description": "Payee FSP: 'fspiop-signature' is not empty",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['fspiop-signature']).to.not.equal(undefined)",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-method-PUT",
+                "description": "Payee FSP: 'fspiop-http-method' is PUT",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.headers['fspiop-http-method']).to.equal('PUT')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Error-Code-returned",
+                "description": "Payee FSP: Error Code should be returned",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  " expect(requestVariables.payeeCallback.data.errorInformation.errorCode).to.equal('3000')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Error-Description-return",
+                "description": "Payee FSP: Error Description should be returned",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  if(environment.API_TYPE === 'fspiop') {",
+                  "    expect(requestVariables.payeeCallback.data.errorInformation.errorDescription).to.equal('Generic client error')",
+                  "  } else {",
+                  "    expect(requestVariables.payeeCallback.data.errorInformation.errorDescription).to.not.equal(undefined)",
+                  "  }",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.TESTFSP1_SDK_TESTAPI_WS_URL + `/callbacks/{$prev.Send-trans.request.body.transferId}`, 'payeeCallback')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  requestVariables.payeeCallback = await websocket.getMessage('payeeCallback', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "200-3208-trans-ID-not-found",
+          "meta": {
+            "info": "200 - 3208 - Transfer ID not found"
+          },
+          "description": "200 - 3208 - Transfer ID not found",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/{$requestVariables.transferId}",
+          "method": "get",
+          "params": {
+            "ID": "{$requestVariables.transferId}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "FSPIOP-Source": "{$environment.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Accept": "{$inputs.acceptTransfers}",
+            "Date": "{$function.generic.curDate}",
+            "Content-Type": "{$inputs.contentTypeTransfers}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "Payer-src-switch-s-name",
+                "description": "Payer FSP: 'fspiop-source' is switch's name",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
+                ]
+              },
+              {
+                "id": "Payer-dest-payerfsp",
+                "description": "Payer FSP: 'fspiop-destination' is 'payerfsp'",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal(environment.fromFspId)"
+                ]
+              },
+              {
+                "id": "Payer-content-type-proper-form",
+                "description": "Payer FSP: 'content-type' should be in proper format",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=')"
+                ]
+              },
+              {
+                "id": "Payer-accept-empty",
+                "description": "Payer FSP: 'accept' should be empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payer-uri-includes-transfers-t",
+                "description": "Payer FSP: 'fspiop-uri' includes /transfers/{transferId}/error",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal('/transfers/{$requestVariables.transferId}/error')"
+                ]
+              },
+              {
+                "id": "Payer-fspiop-signature-not-emp",
+                "description": "Payer FSP: 'fspiop-signature' is not empty",
+                "exec": [
+                  "expect(callback.headers['fspiop-signature']).to.not.equal(undefined)"
+                ]
+              },
+              {
+                "id": "Payer-method-PUT",
+                "description": "Payer FSP: 'fspiop-http-method' is PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": "Payer-Error-Code-returned",
+                "description": "Payer FSP: Error Code should be returned",
+                "exec": [
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3208')"
+                ]
+              },
+              {
+                "id": "Payer-Error-Description-return",
+                "description": "Payer FSP: Error Description should be returned",
+                "exec": [
+                  "if(environment.API_TYPE === 'fspiop') {",
+                  "expect(callback.body.errorInformation.errorDescription).to.equal('Transfer ID not found - Provided Transfer ID was not found on the server.')",
+                  "} else {",
+                  "expect(callback.body.errorInformation.errorDescription).to.not.equal(undefined)",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "requestVariables.transferId = '{$function.generic.generateID}'"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/feature_tests/get_transfers.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,455 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "fundsin-ttk",
+      "name": "Funds_in_ttk",
+      "meta": {
+        "info": "Funds_in_ttk"
+      },
+      "requests": [
+        {
+          "id": "Get-ttkdfsp-settle-acc",
+          "meta": {
+            "info": "Get testingtoolkitdfsp settlement account"
+          },
+          "description": "Get testingtoolkitdfsp settlement account",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/testingtoolkitdfsp/accounts",
+          "method": "get",
+          "params": {
+            "name": "testingtoolkitdfsp"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'SETTLEMENT') && (jsonData[i].currency === environment.SIMPAYER_CURRENCY)) {\r",
+                "environment.testingtoolkitdfspSettlementAccountId=jsonData[i].id;\r",
+                "environment.testingtoolkitdfspSettlementAccountBalanceBeforeFundsIn=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "console.log(environment.testingtoolkitdfspSettlementAccountId);\r",
+                "console.log(environment.testingtoolkitdfspSettlementAccountBalanceBeforeFundsIn);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Hub-Reconcilliation-acc",
+          "meta": {
+            "info": "Get Hub Reconcilliation account"
+          },
+          "description": "Get Hub Reconcilliation account",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'HUB_RECONCILIATION') && (jsonData[i].currency === environment.SIMPAYER_CURRENCY)) {\r",
+                "\r",
+                "environment.hubReconAccountBalanceBeforeFundsIn=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "console.log(environment.hubReconAccountBalanceBeforeFundsIn);\r",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Record-funds-prepare-2",
+          "meta": {
+            "info": "Record funds in - prepare 2"
+          },
+          "description": "Record funds in - prepare 2",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/testingtoolkitdfsp/accounts/{$environment.testingtoolkitdfspSettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "testingtoolkitdfsp",
+            "id": "{$environment.testingtoolkitdfspSettlementAccountId}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Content-Type": "application/json"
+          },
+          "scriptingEngine": "javascript",
+          "body": {
+            "transferId": "{$function.generic.generateID}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$requestVariables.fundsInPrepareAmount}",
+              "currency": "{$inputs.SIMPAYER_CURRENCY}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-202",
+                "description": "Response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "\r",
+                "requestVariables.fundsInPrepareAmount= 10;\r",
+                "environment.fundsInPrepareAmount= requestVariables.fundsInPrepareAmount;\r",
+                "requestVariables.payerid= environment.testingtoolkitdfspSettlementAccountId\r",
+                "\r",
+                "\r",
+                "console.log(requestVariables.payerid);\r",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "/*var url = environment.HOST_CENTRAL_LEDGER;\r",
+                "console.log(url);\r",
+                "\r",
+                "\r",
+                "const res = await axios.get(environment.HOST_CENTRAL_LEDGER+'/participants/testingtoolkitdfsp/accounts');\r",
+                "console.log(res.data);\r",
+                "*/\r",
+                "\r",
+                "environment.transferidfi = '{$request.body.transferId}'\r",
+                "console.log(environment.transferidfi);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-ttkdfsp-settle-acc-after-f",
+          "meta": {
+            "info": "Get testingtoolkitdfsp settlement account after funds in"
+          },
+          "description": "Get testingtoolkitdfsp settlement account after funds in",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/testingtoolkitdfsp/accounts",
+          "method": "get",
+          "params": {
+            "name": "testingtoolkitdfsp"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "testingtoolkitdfsp-settle-acc-",
+                "description": "testingtoolkitdfsp Settlement Account Balance should be same as before FundsIn + fundsInPrepareAmount",
+                "exec": [
+                  "expect(environment.testingtoolkitdfspSettlementAccountBalanceAfterFundsIn).to.eql(environment.testingtoolkitdfspExpectedBalance);"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "delay": "2000",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'SETTLEMENT') && (jsonData[i].currency === environment.SIMPAYER_CURRENCY)) {\r",
+                "\r",
+                "environment.testingtoolkitdfspSettlementAccountBalanceAfterFundsIn=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "\r",
+                "\r",
+                "console.log(environment.testingtoolkitdfspSettlementAccountBalanceAfterFundsIn)\r",
+                "\r",
+                "  environment.testingtoolkitdfspExpectedBalance = (Number(environment.testingtoolkitdfspSettlementAccountBalanceBeforeFundsIn) - Number(environment.fundsInPrepareAmount))\r",
+                "  \r",
+                "console.log(environment.testingtoolkitdfspExpectedBalance)"
+              ]
+            },
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Hub-Reconcilliation-acc-af",
+          "meta": {
+            "info": "Get Hub Reconcilliation account after funds in"
+          },
+          "description": "Get Hub Reconcilliation account after funds in",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.HUB_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.HUB_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-200",
+                "description": "Response code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "Final-Hub-Reconciliation-acc-b",
+                "description": "Final Hub Reconciliation Account Balance should be same as before FundsIn + fundsInPrepareAmount",
+                "exec": [
+                  " expect(environment.hubReconAccountBalanceAfterFundsIn).to.eql(environment.hubExpectedBalance);"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log(response);\r",
+                "var jsonData = response.body;\r",
+                "\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'HUB_RECONCILIATION') && (jsonData[i].currency === environment.SIMPAYER_CURRENCY)) {\r",
+                "\r",
+                "environment.hubReconAccountBalanceAfterFundsIn=jsonData[i].value;\r",
+                "        }\r",
+                "    }\r",
+                "console.log(environment.hubReconAccountBalanceAfterFundsIn);\r",
+                "\r",
+                "  environment.hubExpectedBalance = Number(environment.hubReconAccountBalanceBeforeFundsIn)+Number(environment.fundsInPrepareAmount)\r",
+                "console.log(environment.hubExpectedBalance);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Record-Funds-prepare-trans-sta",
+          "meta": {
+            "info": "Record Funds in - prepare transfer status"
+          },
+          "description": "Record Funds in - prepare transfer status",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/{$environment.transferidfi}",
+          "method": "get",
+          "params": {
+            "ID": "{$environment.transferidfi}"
+          },
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "testingtoolkitdfsp",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "Accept": "{$inputs.acceptTransfers}",
+            "Content-Type": "{$inputs.contentTypeTransfers}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-202",
+                "description": "Response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              },
+              {
+                "id": "src-switch-s-name",
+                "description": "fspiop-source is switch's name",
+                "exec": [
+                  "expect(callback.headers['fspiop-source']).to.equal('{$inputs.HUB_NAME}')"
+                ]
+              },
+              {
+                "id": "dest-testingtoolkitdfsp",
+                "description": "fspiop-destination is testingtoolkitdfsp",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('testingtoolkitdfsp')"
+                ]
+              },
+              {
+                "id": "content-type-proper-format",
+                "description": "content-type should be in the proper format",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.have.string('application/vnd.interoperability.transfers+json;version=')"
+                ]
+              },
+              {
+                "id": "accept-empty",
+                "description": "accept is empty",
+                "exec": [
+                  "expect(callback.headers['accept']).to.equal(undefined)"
+                ]
+              },
+              {
+                "id": "fspiop-signature-not-empty",
+                "description": "fspiop-signature is not empty",
+                "exec": [
+                  "expect(callback.headers['fspiop-signature']).not.equal(undefined)"
+                ]
+              },
+              {
+                "id": "uri-includes-trans-transferid",
+                "description": "fspiop-uri includes \"transfer/transferid\"",
+                "exec": [
+                  "expect(callback.headers['fspiop-uri']).to.equal('/transfers/'+ environment.transferidfi)"
+                ]
+              },
+              {
+                "id": "method-PUT",
+                "description": "fspiop-http-method is PUT",
+                "exec": [
+                  "expect(callback.headers['fspiop-http-method']).to.equal('PUT')"
+                ]
+              },
+              {
+                "id": "trans-State-COMMITTED",
+                "description": "Transfer State should be COMMITTED",
+                "exec": [
+                  "expect(callback.body.transferState).to.equal('COMMITTED')"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "/*environment.transid= $prev.3.request.body.transferId",
+                "console.log(environment.transid);*/",
+                "",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "/*var callbackpayer = await axios.get(environment.testingtoolkitdfsp_SDK_TESTAPI_WS_URL + '/callbacks/'+environment.transferidfi);\r",
+                "//console.log(callbackpayer.data);\r",
+                "\r",
+                "environment.payercallback = callbackpayer.data;\r",
+                "console.log(environment.payercallback);\r",
+                "*/"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/feature_tests/funds_in/funds_in_ttk.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

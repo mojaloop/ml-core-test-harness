@@ -1,0 +1,50 @@
+{
+  "order": [
+    {
+      "name": "other-bug-fixes.json",
+      "type": "file"
+    },
+    {
+      "name": "Test for Bugfix #1378 - extension list missing.json",
+      "type": "file"
+    },
+    {
+      "name": "Test for Bugfix #742 - Error code check.json",
+      "type": "file"
+    },
+    {
+      "name": "Test for Bugfix #849 - missing ID for transfers and quotes.json",
+      "type": "file"
+    },
+    {
+      "name": "Tests for Bugfix #1009 - ML Adapter and ALS service health should include broker status.json",
+      "type": "file"
+    },
+    {
+      "name": "Tests for Bugfix #981 - Fix 500 http code instead of 400.json",
+      "type": "file"
+    },
+    {
+      "name": "Tests for Bugfix #990 and #1016 - Quotes.json",
+      "type": "file",
+      "labels": [
+        "quotes"
+      ]
+    },
+    {
+      "name": "Tests for Bugfix #998 - Quoting service not using most recent endpoint.json",
+      "type": "file",
+      "labels": [
+        "quotes"
+      ]
+    },
+    {
+      "name": "Test for 4 decimal points #949.json",
+      "type": "file"
+    },
+    {
+      "name": "Test for Bugfix #2697 - Fulfil Handler does not correctly invalidate requests.json",
+      "type": "file"
+    }
+  ]
+}

@@ -1,0 +1,177 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "bugfix-981",
+      "name": "Tests for Bugfix #981 - Fix 500 http code instead of 400",
+      "meta": {
+        "info": "Tests for Bugfix #981 - Fix 500 http code instead of 400"
+      },
+      "requests": [
+        {
+          "id": "Add-part-duplicate-acc",
+          "meta": {
+            "info": "Add participant - duplicate account"
+          },
+          "description": "Add participant - duplicate account",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "ignoreCallbacks": true,
+          "body": {
+            "name": "{$inputs.SIMPAYER_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Check-Generic-client-error-dup",
+                "description": "Check Generic client error for duplicate currency",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Generic client error');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3000",
+                "description": "Check Error code 3000",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3000');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-non-existing-part",
+          "meta": {
+            "info": "Add non existing Participant"
+          },
+          "description": "Add non existing Participant",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}",
+          "path": "/participants/xyz",
+          "method": "get",
+          "params": {
+            "name": "xyz"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "FSPIOP-Source": "{$inputs.SIMPAYER_NAME}",
+            "Authorization": "{$inputs.PAYER_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Check-Generic-ID-not-found-non",
+                "description": "Check Generic ID not found - non existing participant",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Generic ID not found');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3200",
+                "description": "Check Error code 3200",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3200');"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-part-Invalid-curr",
+          "meta": {
+            "info": "Add Participant - Invalid Currency"
+          },
+          "description": "Add Participant - Invalid Currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "ignoreCallbacks": true,
+          "body": {
+            "name": "payer10",
+            "currency": "A#"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-400",
+                "description": "Response code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": "Check-Malformed-syntax-malform",
+                "description": "Check Malformed syntax - malformed currency",
+                "exec": [
+                  "expect(response.body.errorInformation.errorDescription).to.include('Malformed syntax');"
+                ]
+              },
+              {
+                "id": "Check-Error-code-3101",
+                "description": "Check Error code 3101",
+                "exec": [
+                  "expect(response.body.errorInformation.errorCode).to.include('3101');"
+                ]
+              }
+            ]
+          },
+          "params": {
+            "name": ""
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "collections/tests/golden_path/bug fixes/Tests for Bugfix #981 - Fix 500 http code instead of 400.json",
+        "labels": [
+          "std-gp",
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}
