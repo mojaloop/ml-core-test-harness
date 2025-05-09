@@ -1,0 +1,22 @@
+{
+  "scenarios": {
+    "fxSendE2E": {
+      "executor": "ramping-vus",
+      "exec": "fxSendE2EScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false"
+      },
+      "startVUs": 1,
+      "stages": [
+        { "duration": "30s", "target": 600 },
+        { "duration": "1m", "target": 5000 },
+        { "duration": "2h", "target": 5000 }
+      ]
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}

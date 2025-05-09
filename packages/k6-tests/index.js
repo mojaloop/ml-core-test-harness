@@ -9,6 +9,7 @@ export { fspiopQuotesNoCallbackScenarios } from './scenarios/fspiopQuotesNoCallb
 export { fspiopParallelScenarios } from './scenarios/fspiopParallel.js';
 export { fspiopQuotesPersonalInfoExtensionsScenarios } from './scenarios/fspiopQuotesPersonalInfoExtensions.js';
 export { fspiopE2EScenarios } from './scenarios/fspiopE2E.js';
+export { fxSendE2EScenarios } from './scenarios/fxSendE2E.js';
 export { inboundSDKDiscoveryScenarios } from './scenarios/inboundSDKDiscovery.js';
 export { inboundSDKQuotesScenarios } from './scenarios/inboundSDKQuotes.js';
 export { inboundSDKTransfersScenarios } from './scenarios/inboundSDKTransfers.js';
