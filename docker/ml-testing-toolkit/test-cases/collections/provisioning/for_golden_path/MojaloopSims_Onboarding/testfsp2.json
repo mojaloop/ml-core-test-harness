@@ -1,0 +1,1641 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "testfsp2-account",
+      "name": "testfsp2 account",
+      "meta": {
+        "info": "testfsp2 account"
+      },
+      "requests": [
+        {
+          "id": "Add-testfsp2",
+          "meta": {
+            "info": "Add testfsp2"
+          },
+          "description": "Add testfsp2",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.SIM2_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-initial-pos-limits-testfsp",
+          "meta": {
+            "info": "Add initial position and limits - testfsp2"
+          },
+          "description": "Add initial position and limits - testfsp2",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.SIM2_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.currency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 10000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-500-i",
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "testfsp2-Get-Status-req-before",
+          "meta": {
+            "info": "testfsp2 Get Status Request before deposit"
+          },
+          "description": "testfsp2 Get Status Request before deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
+                "    pm.environment.set(\"testfsp2SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"testfsp2SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Deposit-Funds-settle-acc-testf",
+          "meta": {
+            "info": "Deposit Funds in Settlement Account - testfsp2"
+          },
+          "description": "Deposit Funds in Settlement Account - testfsp2",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts/{$environment.testfsp2SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}",
+            "id": "{$environment.testfsp2SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.testfsp2fundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.testfsp2fundsInPrepareAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('testfsp2fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('testfsp2fundsInPrepareAmount', 5000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "testfsp2-Get-Status-req-after-",
+          "meta": {
+            "info": "testfsp2 Get Status Request after deposit"
+          },
+          "description": "testfsp2 Get Status Request after deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "testfsp2-settle-acc-bal-After-",
+                "description": "testfsp2 Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.testfsp2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.testfsp2SettlementAccountBalanceBeforeFundsIn - +environment.testfsp2fundsInPrepareAmount)"
+                ]
+              }
+            ]
+          },
+          "delay": "{$inputs.DELAY_FUNDS_IN}",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"testfsp2SettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"testfsp2fundsInPrepareAmount\"))",
+                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"testfsp2SettlementAccountBalanceBeforeFundsIn\")))",
+                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"testfsp2fundsInPrepareAmount\")))",
+                "console.log(`expectedBalance: `, expectedBalance)",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let res = pm.response",
+                "  let jsonData = res.body",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    let isOk = false;",
+                "    ",
+                "    for(var i in jsonData) {",
+                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency') && Number.parseFloat(jsonData[i].value) == expectedBalance) {",
+                "        pm.environment.set(\"testfsp2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "        isOk = true",
+                "      }",
+                "    }",
+                "    if (isOk) {",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break; // lets break out of retry loop loop",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await wait(maxRetryWait)",
+                "      const pmResponse = await makeRequest()",
+                "      jsonData = JSON.parse(pmResponse.body)",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "async function makeRequest() {",
+                "    const requestParams = {",
+                "        method: 'GET', ",
+                "        url: `${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIM2_NAME}/accounts`,",
+                "        header: {",
+                "          'Content-Type': 'application/json',",
+                "        },",
+                "    };",
+                "    ",
+                "    return new Promise((resolve, reject) => {",
+                "      pm.sendRequest(requestParams, (error, response) => {",
+                "        if (error) reject(error)",
+                "        resolve(response)",
+                "      })",
+                "    })",
+                "}",
+                "",
+                "function wait(ms) {",
+                "  return new Promise((resolve) => {",
+                "    setTimeout(resolve, ms)",
+                "  });",
+                "}",
+                "",
+                "main()"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Add-testfsp2-second-curr",
+          "meta": {
+            "info": "Add testfsp2 with second currency"
+          },
+          "description": "Add testfsp2 with second currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.SIM2_NAME}",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-initial-pos-limits-testfsp-1",
+          "meta": {
+            "info": "Add initial position and limits - testfsp2 with second currency"
+          },
+          "description": "Add initial position and limits - testfsp2 with second currency",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.SIM2_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.currency2}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 10000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-500-i",
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-second-curr-CGS",
+          "description": "Add testfsp2 with second currency CGS",
+          "meta": {
+            "info": "Add testfsp2 with second currency"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.SIM2_NAME}",
+            "currency": "{$inputs.cgscurrency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-initial-pos-limits-testfsp-2",
+          "description": "Add initial position and limits - testfsp2 with second currency CGS",
+          "meta": {
+            "info": "Add initial position and limits - testfsp2 with second currency"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.SIM2_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.cgscurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 10000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-500-i",
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Get-Status-req-before-deposit-",
+          "description": "Get Status Request before deposit for currency2",
+          "meta": {
+            "info": "Get Status Request before deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "    pm.environment.set(\"testfsp2Currency2SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"testfsp2Currency2SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Deposit-Funds-settle-acc-curre",
+          "description": "Deposit Funds in Settlement Account currency2",
+          "meta": {
+            "info": "Deposit Funds in Settlement Account"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts/{$environment.testfsp2Currency2SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}",
+            "id": "{$environment.testfsp2Currency2SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.testfsp2fundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.testfsp2fundsInPrepareAmountCurrency2}",
+              "currency": "{$inputs.currency2}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('testfsp2fundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('testfsp2fundsInPrepareAmountCurrency2', 5000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Status-req-after-deposit-c",
+          "description": "Get Status Request after deposit for currency2",
+          "meta": {
+            "info": "Get Status Request after deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM2_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "settle-acc-bal-After-FundsIn-b",
+                "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.testfsp2Currency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.testfsp2Currency2SettlementAccountBalanceBeforeFundsIn - +environment.testfsp2fundsInPrepareAmountCurrency2)"
+                ]
+              }
+            ]
+          },
+          "delay": "{$inputs.DELAY_FUNDS_IN}",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"testfsp2Currency2SettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"testfsp2fundsInPrepareAmountCurrency2\"))",
+                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"testfsp2Currency2SettlementAccountBalanceBeforeFundsIn\")))",
+                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"testfsp2fundsInPrepareAmountCurrency2\")))",
+                "console.log(`expectedBalance: `, expectedBalance)",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let res = pm.response",
+                "  let jsonData = res.body",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    let isOk = false;",
+                "    ",
+                "    for(var i in jsonData) {",
+                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2') && Number.parseFloat(jsonData[i].value) == expectedBalance) {",
+                "        pm.environment.set(\"testfsp2Currency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "        isOk = true",
+                "      }",
+                "    }",
+                "    if (isOk) {",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break; // lets break out of retry loop loop",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await wait(maxRetryWait)",
+                "      const pmResponse = await makeRequest()",
+                "      jsonData = JSON.parse(pmResponse.body)",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "async function makeRequest() {",
+                "    const requestParams = {",
+                "        method: 'GET', ",
+                "        url: `${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIM2_NAME}/accounts`,",
+                "        header: {",
+                "          'Content-Type': 'application/json',",
+                "        },",
+                "    };",
+                "    ",
+                "    return new Promise((resolve, reject) => {",
+                "      pm.sendRequest(requestParams, (error, response) => {",
+                "        if (error) reject(error)",
+                "        resolve(response)",
+                "      })",
+                "    })",
+                "}",
+                "",
+                "function wait(ms) {",
+                "  return new Promise((resolve) => {",
+                "    setTimeout(resolve, ms)",
+                "  });",
+                "}",
+                "",
+                "main()"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp2.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    },
+    {
+      "id": "testfsp2-callbacks",
+      "name": "testfsp2 callbacks",
+      "meta": {
+        "info": "testfsp2 callbacks"
+      },
+      "requests": [
+        {
+          "id": "Add-testfsp2-cb-PARTIES-GET",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTIES GET"
+          },
+          "description": "Add testfsp2 callback - PARTIES GET",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_GET",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-PARTIES-PUT",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTIES PUT"
+          },
+          "description": "Add testfsp2 callback - PARTIES PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-PARTIES-PUT-Er",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTIES PUT Error"
+          },
+          "description": "Add testfsp2 callback - PARTIES PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-part-PUT",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTICIPANT PUT"
+          },
+          "description": "Add testfsp2 callback - PARTICIPANT PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-part-PUT-Error",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTICIPANT PUT Error"
+          },
+          "description": "Add testfsp2 callback - PARTICIPANT PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-part-PUT-Batch",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTICIPANT PUT Batch"
+          },
+          "description": "Add testfsp2 callback - PARTICIPANT PUT Batch",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/participants/{{requestId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-part-PUT-Batch-1",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTICIPANT PUT Batch Error"
+          },
+          "description": "Add testfsp2 callback - PARTICIPANT PUT Batch Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/participants/{{requestId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-QUOTES",
+          "meta": {
+            "info": "Add testfsp2 callback - QUOTES"
+          },
+          "description": "Add testfsp2 callback - QUOTES",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_QUOTES",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-TRANSFERS-POST",
+          "meta": {
+            "info": "Add testfsp2 callback - TRANSFERS POST"
+          },
+          "description": "Add testfsp2 callback - TRANSFERS POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-TRANSFERS-PUT",
+          "meta": {
+            "info": "Add testfsp2 callback - TRANSFERS PUT"
+          },
+          "description": "Add testfsp2 callback - TRANSFERS PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/transfers/{{transferId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-TRANSFERS-ERRO",
+          "meta": {
+            "info": "Add testfsp2 callback - TRANSFERS ERROR"
+          },
+          "description": "Add testfsp2 callback - TRANSFERS ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/transfers/{{transferId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-part-SUB-ID-PU",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTICIPANT SUB-ID PUT"
+          },
+          "description": "Add testfsp2 callback - PARTICIPANT SUB-ID PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-part-SUB-ID-PU-1",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTICIPANT SUB-ID PUT Error"
+          },
+          "description": "Add testfsp2 callback - PARTICIPANT SUB-ID PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-part-SUB-ID-DE",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTICIPANT SUB-ID DELETE"
+          },
+          "description": "Add testfsp2 callback - PARTICIPANT SUB-ID DELETE",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-PARTIES-SUB-ID",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTIES SUB-ID GET"
+          },
+          "description": "Add testfsp2 callback - PARTIES SUB-ID GET",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-PARTIES-SUB-ID-1",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTIES SUB-ID PUT"
+          },
+          "description": "Add testfsp2 callback - PARTIES SUB-ID PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp2-cb-PARTIES-SUB-ID-2",
+          "meta": {
+            "info": "Add testfsp2 callback - PARTIES SUB-ID ERROR PUT"
+          },
+          "description": "Add testfsp2 callback - PARTIES SUB-ID ERROR PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
+            "value": "{$inputs.TESTFSP2_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp2.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    },
+    {
+      "id": "testfsp2-notific-96e6",
+      "name": "testfsp2 notification_emails",
+      "meta": {
+        "info": "testfsp2 notification_emails"
+      },
+      "requests": [
+        {
+          "id": "Set-Email-NET_DEBIT_CAP_THRESH",
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+            "value": "{$inputs.testfsp2Email}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Set-Email-NET_DEBIT_CAP_ADJUST",
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+            "value": "{$inputs.testfsp2Email}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Set-Email-SETTLEMENT_TRANSFER_",
+          "meta": {
+            "info": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL"
+          },
+          "description": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM2_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM2_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "type": "SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+            "value": "{$inputs.testfsp2Email}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp2.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    },
+    {
+      "id": "testfsp2-oracler-95f0",
+      "name": "testfsp2 oracle_registration",
+      "meta": {
+        "info": "testfsp2 oracle_registration"
+      },
+      "requests": [
+        {
+          "id": "Add-payeeIdentifier-payeeIdTyp",
+          "meta": {
+            "info": "Add payeeIdentifier in payeeIdType Oracle"
+          },
+          "description": "Add payeeIdentifier in payeeIdType Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.payeeIdType}/{$inputs.testfsp2Identifier}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.payeeIdType}",
+            "ID": "{$inputs.testfsp2Identifier}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIM2_NAME}"
+          },
+          "body": {
+            "fspId": "{$inputs.SIM2_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp2.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    },
+    {
+      "id": "testfsp2-addusers",
+      "name": "testfsp2 add_users",
+      "meta": {
+        "info": "testfsp2 add_users"
+      },
+      "requests": [
+        {
+          "id": "Add-SubId-User-testfsp2IdType-",
+          "meta": {
+            "info": "Add SubId User - testfsp2IdType - testfsp2Identifier - 100"
+          },
+          "description": "Add SubId User - testfsp2IdType - testfsp2Identifier - 100",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}",
+          "path": "/participants/{$inputs.testfsp2IdType}/{$inputs.testfsp2Identifier}/100",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.testfsp2IdType}",
+            "ID": "{$inputs.testfsp2Identifier}",
+            "SubId": "100"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "baggage": "errorExpect=ALS.3200",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "fspId": "{$inputs.SIM2_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "pm.environment.set('fullName', 'Testfsp2First Testfsp2Last');\r",
+                "pm.environment.set('firstName', 'Testfsp2First');\r",
+                "pm.environment.set('middleName', 'Testfsp2Middle');\r",
+                "pm.environment.set('lastName', 'Testfsp2Last');\r",
+                "pm.environment.set('dob', '2010-10-10');\r",
+                "const testApiAddParty = {\r",
+                "    url: pm.environment.get(\"TESTFSP2_BACKEND_TESTAPI_URL\") + '/repository/parties',\r",
+                "    method: 'POST',\r",
+                "    header: {\r",
+                "        'Content-Type': 'application/json'\r",
+                "    },\r",
+                "    body: {\r",
+                "      mode: 'raw',\r",
+                "      raw: JSON.stringify({\r",
+                "        \"displayName\": \"Testfsp2First Testfsp2Last\",\r",
+                "        \"firstName\": \"Testfsp2First\",\r",
+                "        \"middleName\": \"Testfsp2Middle\",\r",
+                "        \"lastName\": \"Testfsp2Last\",\r",
+                "        \"dateOfBirth\": \"2010-10-10\",\r",
+                "        \"idType\": pm.environment.get(\"testfsp2IdType\"),\r",
+                "        \"idValue\": pm.environment.get(\"testfsp2Identifier\")\r",
+                "    })\r",
+                "    }\r",
+                "}\r",
+                "  \r",
+                "pm.sendRequest(testApiAddParty, function (err, response) {\r",
+                "    console.log('testApiAddParty: ', JSON.stringify(response.json()))\r",
+                "});"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp2.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

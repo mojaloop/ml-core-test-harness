@@ -1,0 +1,16 @@
+{
+  "order": [
+    {
+      "name": "add-users-to-new-sims-and-als-registration.json",
+      "type": "file"
+    },
+    {
+      "name": "adjust-participants-limits.json",
+      "type": "file"
+    },
+    {
+      "name": "oracle-onboarding.json",
+      "type": "file"
+    }
+  ]
+}

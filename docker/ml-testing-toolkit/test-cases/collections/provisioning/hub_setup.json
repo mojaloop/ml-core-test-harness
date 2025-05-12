@@ -398,9 +398,9 @@
         {
           "id": 1,
           "meta": {
-            "info": "Register ACCOUNT_ID Oracle"
+            "info": "Register IdType Oracle"
           },
-          "description": "Register ACCOUNT_ID Oracle",
+          "description": "Register IdType Oracle",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 1,
@@ -410,7 +410,7 @@
           "path": "/oracles",
           "method": "post",
           "body": {
-            "oracleIdType": "ACCOUNT_ID",
+            "oracleIdType": "{$inputs.payeeIdType}",
             "endpoint": {
               "value": "{$inputs.HOST_SIMULATOR}/oracle",
               "endpointType": "URL"

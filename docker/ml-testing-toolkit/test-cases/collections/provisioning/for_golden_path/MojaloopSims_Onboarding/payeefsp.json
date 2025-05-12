@@ -1,0 +1,1827 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "payeefsp-account",
+      "name": "payeefsp account",
+      "meta": {
+        "info": "payeefsp account"
+      },
+      "requests": [
+        {
+          "id": "Add-payeefsp",
+          "meta": {
+            "info": "Add payeefsp"
+          },
+          "description": "Add payeefsp",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.SIMPAYEE_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-initial-pos-limits-payeefs",
+          "meta": {
+            "info": "Add initial position and limits - payeefsp"
+          },
+          "description": "Add initial position and limits - payeefsp",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.currency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 10000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-500-i",
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "payeefsp-Get-Status-req-before",
+          "meta": {
+            "info": "payeefsp Get Status Request before deposit"
+          },
+          "description": "payeefsp Get Status Request before deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency')) {",
+                "    pm.environment.set(\"payeefspSettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"payeefspSettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Deposit-Funds-settle-acc-payee",
+          "meta": {
+            "info": "Deposit Funds in Settlement Account - payeefsp"
+          },
+          "description": "Deposit Funds in Settlement Account - payeefsp",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts/{$environment.payeefspSettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}",
+            "id": "{$environment.payeefspSettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.payeefspfundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.payeefspfundsInPrepareAmount}",
+              "currency": "{$inputs.currency}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('payeefspfundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('payeefspfundsInPrepareAmount', 5000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "payeefsp-Get-Status-req-after-",
+          "meta": {
+            "info": "payeefsp Get Status Request after deposit"
+          },
+          "description": "payeefsp Get Status Request after deposit",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "payeefsp-settle-acc-bal-After-",
+                "description": "payeefsp Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.payeefspSettlementAccountBalanceAfterFundsIn).to.equal(+environment.payeefspSettlementAccountBalanceBeforeFundsIn - +environment.payeefspfundsInPrepareAmount)"
+                ]
+              }
+            ]
+          },
+          "delay": "{$inputs.DELAY_FUNDS_IN}",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"payeefspSettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"payeefspfundsInPrepareAmount\"))",
+                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"payeefspSettlementAccountBalanceBeforeFundsIn\")))",
+                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"payeefspfundsInPrepareAmount\")))",
+                "console.log(`expectedBalance: `, expectedBalance)",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let res = pm.response",
+                "  let jsonData = res.body",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    let isOk = false;",
+                "    ",
+                "    for(var i in jsonData) {",
+                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency') && Number.parseFloat(jsonData[i].value) == expectedBalance) {",
+                "        pm.environment.set(\"payeefspSettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "        isOk = true",
+                "      }",
+                "    }",
+                "    if (isOk) {",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break; // lets break out of retry loop loop",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await wait(maxRetryWait)",
+                "      const pmResponse = await makeRequest()",
+                "      jsonData = JSON.parse(pmResponse.body)",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "async function makeRequest() {",
+                "    const requestParams = {",
+                "        method: 'GET', ",
+                "        url: `${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIMPAYEE_NAME}/accounts`,",
+                "        header: {",
+                "          'Content-Type': 'application/json',",
+                "        },",
+                "    };",
+                "    ",
+                "    return new Promise((resolve, reject) => {",
+                "      pm.sendRequest(requestParams, (error, response) => {",
+                "        if (error) reject(error)",
+                "        resolve(response)",
+                "      })",
+                "    })",
+                "}",
+                "",
+                "function wait(ms) {",
+                "  return new Promise((resolve) => {",
+                "    setTimeout(resolve, ms)",
+                "  });",
+                "}",
+                "",
+                "main()"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Add-payeefsp-different-curr-de",
+          "meta": {
+            "info": "Add payeefsp with different currency for default settlement case"
+          },
+          "description": "Add payeefsp with different currency for default settlement case",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.SIMPAYEE_NAME}",
+            "currency": "{$inputs.currency2}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-initial-pos-limits-differe",
+          "meta": {
+            "info": "Add initial position and limits with different currency - payeefsp"
+          },
+          "description": "Add initial position and limits with different currency - payeefsp",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.currency2}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 10000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-500-i",
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-different-curr-de-1",
+          "description": "Add payeefsp with different currency for default settlement case CGS",
+          "meta": {
+            "info": "Add payeefsp with different currency for default settlement case"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "body": {
+            "name": "{$inputs.SIMPAYEE_NAME}",
+            "currency": "{$inputs.cgscurrency}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-400-i",
+                "description": "status to be 201 if not exists or 400 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(400)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-initial-pos-limits-differe-1",
+          "description": "Add initial position and limits with different currency - payeefsp CGS",
+          "meta": {
+            "info": "Add initial position and limits with different currency - payeefsp"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "body": {
+            "currency": "{$inputs.cgscurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 10000
+            },
+            "initialPosition": 0
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-201-if-not-exists-500-i",
+                "description": "status to be 201 if not exists or 500 if exists",
+                "exec": [
+                  "if (response.body.errorInformation) {",
+                  "  expect(response.status).to.equal(500)",
+                  "} else {",
+                  "  expect(response.status).to.equal(201)",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Get-Status-req-before-deposit-",
+          "description": "Get Status Request before deposit for currency2",
+          "meta": {
+            "info": "Get Status Request before deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const jsonData = pm.response.body",
+                "console.log(jsonData)",
+                "for(var i in jsonData) {",
+                "  if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2')) {",
+                "    pm.environment.set(\"payeefspCurrency2SettlementAccountId\", jsonData[i].id)",
+                "    pm.environment.set(\"payeefspCurrency2SettlementAccountBalanceBeforeFundsIn\", jsonData[i].value)",
+                "  }",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Deposit-Funds-settle-acc-curre",
+          "description": "Deposit Funds in Settlement Account currency2",
+          "meta": {
+            "info": "Deposit Funds in Settlement Account"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts/{$environment.payeefspCurrency2SettlementAccountId}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}",
+            "id": "{$environment.payeefspCurrency2SettlementAccountId}"
+          },
+          "body": {
+            "transferId": "{$environment.payeefspfundsInPrepareTransferId}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.payeefspfundsInPrepareAmountCurrency2}",
+              "currency": "{$inputs.currency2}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-202",
+                "description": "status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "var uuid = require('uuid');",
+                "pm.environment.set('payeefspfundsInPrepareTransferId', uuid.v4())",
+                "pm.environment.set('payeefspfundsInPrepareAmountCurrency2', 5000);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Get-Status-req-after-deposit-c",
+          "description": "Get Status Request after deposit for currency2",
+          "meta": {
+            "info": "Get Status Request after deposit"
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "status-200",
+                "description": "status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": "settle-acc-bal-After-FundsIn-b",
+                "description": "Settlement Account Balance After FundsIn should be equal to the balance before plus the transfer amount",
+                "exec": [
+                  "expect(+environment.payeefspCurrency2SettlementAccountBalanceAfterFundsIn).to.equal(+environment.payeefspCurrency2SettlementAccountBalanceBeforeFundsIn - +environment.payeefspfundsInPrepareAmountCurrency2)"
+                ]
+              }
+            ]
+          },
+          "delay": "{$inputs.DELAY_FUNDS_IN}",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "const expectedBalance = Number.parseFloat(pm.environment.get(\"payeefspCurrency2SettlementAccountBalanceBeforeFundsIn\")) - Number.parseFloat(pm.environment.get(\"payeefspfundsInPrepareAmountCurrency2\"))",
+                "console.log(`balanceBeforeFundsIn: `, Number.parseFloat(pm.environment.get(\"payeefspCurrency2SettlementAccountBalanceBeforeFundsIn\")))",
+                "console.log(`fundsInPrepareAmount: `, Number.parseFloat(pm.environment.get(\"payeefspfundsInPrepareAmountCurrency2\")))",
+                "console.log(`expectedBalance: `, expectedBalance)",
+                "// lets get retry config",
+                "const maxRetryCount = Number.parseFloat(environment.RETRY_MAX_ATTEMPTS) || 20",
+                "const maxRetryWait = Number.parseFloat(environment.RETRY_MAX_WAIT_IN_MS) || 250",
+                "",
+                "async function main() {",
+                "  let res = pm.response",
+                "  let jsonData = res.body",
+                "",
+                "  for (let retryCount = 0 ; retryCount < maxRetryCount; retryCount++) {",
+                "    console.log(`retry-count=${retryCount+1}, max-count=${maxRetryCount}, max-wait=${maxRetryWait}`)",
+                "    ",
+                "    let isOk = false;",
+                "    ",
+                "    for(var i in jsonData) {",
+                "      if(jsonData[i].ledgerAccountType === 'SETTLEMENT' && jsonData[i].currency === pm.environment.get('currency2') && Number.parseFloat(jsonData[i].value) == expectedBalance) {",
+                "        pm.environment.set(\"payeefspCurrency2SettlementAccountBalanceAfterFundsIn\", jsonData[i].value)",
+                "        isOk = true",
+                "      }",
+                "    }",
+                "    if (isOk) {",
+                "      console.log(`Everything is OK, let's continue`)",
+                "      break; // lets break out of retry loop loop",
+                "    } else {",
+                "      console.log(`Everything is NOT OK, let's wait for ${maxRetryWait}ms, and try again...`)",
+                "      await wait(maxRetryWait)",
+                "      const pmResponse = await makeRequest()",
+                "      jsonData = JSON.parse(pmResponse.body)",
+                "    }",
+                "  }",
+                "}",
+                "",
+                "async function makeRequest() {",
+                "    const requestParams = {",
+                "        method: 'GET', ",
+                "        url: `${environment.HOST_CENTRAL_LEDGER}/participants/${environment.SIMPAYEE_NAME}/accounts`,",
+                "        header: {",
+                "          'Content-Type': 'application/json',",
+                "        },",
+                "    };",
+                "    ",
+                "    return new Promise((resolve, reject) => {",
+                "      pm.sendRequest(requestParams, (error, response) => {",
+                "        if (error) reject(error)",
+                "        resolve(response)",
+                "      })",
+                "    })",
+                "}",
+                "",
+                "function wait(ms) {",
+                "  return new Promise((resolve) => {",
+                "    setTimeout(resolve, ms)",
+                "  });",
+                "}",
+                "",
+                "main()"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/payeefsp.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    },
+    {
+      "id": "payeefsp-callbacks",
+      "name": "payeefsp callbacks",
+      "meta": {
+        "info": "payeefsp callbacks"
+      },
+      "requests": [
+        {
+          "id": "Add-payeefsp-cb-AUTHORIZATIONS",
+          "meta": {
+            "info": "Add payeefsp callback - AUTHORIZATIONS"
+          },
+          "description": "Add payeefsp callback - AUTHORIZATIONS",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_AUTHORIZATIONS",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-part-PUT",
+          "meta": {
+            "info": "Add payeefsp callback - PARTICIPANT PUT"
+          },
+          "description": "Add payeefsp callback - PARTICIPANT PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-part-PUT-Error",
+          "meta": {
+            "info": "Add payeefsp callback - PARTICIPANT PUT Error"
+          },
+          "description": "Add payeefsp callback - PARTICIPANT PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-part-PUT-Batch",
+          "meta": {
+            "info": "Add payeefsp callback - PARTICIPANT PUT Batch"
+          },
+          "description": "Add payeefsp callback - PARTICIPANT PUT Batch",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/participants/{{requestId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-part-PUT-Batch-1",
+          "meta": {
+            "info": "Add payeefsp callback - PARTICIPANT PUT Batch Error"
+          },
+          "description": "Add payeefsp callback - PARTICIPANT PUT Batch Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/participants/{{requestId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-PARTIES-GET",
+          "meta": {
+            "info": "Add payeefsp callback - PARTIES GET"
+          },
+          "description": "Add payeefsp callback - PARTIES GET",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_GET",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-PARTIES-PUT",
+          "meta": {
+            "info": "Add payeefsp callback - PARTIES PUT"
+          },
+          "description": "Add payeefsp callback - PARTIES PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-PARTIES-PUT-Er",
+          "meta": {
+            "info": "Add payeefsp callback - PARTIES PUT Error"
+          },
+          "description": "Add payeefsp callback - PARTIES PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-QUOTES",
+          "meta": {
+            "info": "Add payeefsp callback - QUOTES"
+          },
+          "description": "Add payeefsp callback - QUOTES",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_QUOTES",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-TXN-req",
+          "meta": {
+            "info": "Add payeefsp callback - TXN REQUEST"
+          },
+          "description": "Add payeefsp callback - TXN REQUEST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-TRANSFERS-POST",
+          "meta": {
+            "info": "Add payeefsp callback - TRANSFERS POST"
+          },
+          "description": "Add payeefsp callback - TRANSFERS POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/transfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-TRANSFERS-PUT",
+          "meta": {
+            "info": "Add payeefsp callback - TRANSFERS PUT"
+          },
+          "description": "Add payeefsp callback - TRANSFERS PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/transfers/{{transferId}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-TRANSFERS-ERRO",
+          "meta": {
+            "info": "Add payeefsp callback - TRANSFERS ERROR"
+          },
+          "description": "Add payeefsp callback - TRANSFERS ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/transfers/{{transferId}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-BULK-TRANSFER-",
+          "meta": {
+            "info": "Add payeefsp callback - BULK-TRANSFER POST"
+          },
+          "description": "Add payeefsp callback - BULK-TRANSFER POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/bulkTransfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-BULK-TRANSFER--1",
+          "meta": {
+            "info": "Add payeefsp callback - BULK-TRANSFER PUT"
+          },
+          "description": "Add payeefsp callback - BULK-TRANSFER PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/bulkTransfers/{{id}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-payeefsp-cb-BULK-TRANSFER--2",
+          "meta": {
+            "info": "Add payeefsp callback - BULK-TRANSFER ERROR"
+          },
+          "description": "Add payeefsp callback - BULK-TRANSFER ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/bulkTransfers/{{id}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-part-SUB-ID-PUT",
+          "meta": {
+            "info": "Add callback - PARTICIPANT SUB-ID PUT"
+          },
+          "description": "Add callback - PARTICIPANT SUB-ID PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-part-SUB-ID-PUT-Error",
+          "meta": {
+            "info": "Add callback - PARTICIPANT SUB-ID PUT Error"
+          },
+          "description": "Add callback - PARTICIPANT SUB-ID PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-part-SUB-ID-DELETE",
+          "meta": {
+            "info": "Add callback - PARTICIPANT SUB-ID DELETE"
+          },
+          "description": "Add callback - PARTICIPANT SUB-ID DELETE",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-PARTIES-SUB-ID-GET",
+          "meta": {
+            "info": "Add callback - PARTIES SUB-ID GET"
+          },
+          "description": "Add callback - PARTIES SUB-ID GET",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-PARTIES-SUB-ID-PUT",
+          "meta": {
+            "info": "Add callback - PARTIES SUB-ID PUT"
+          },
+          "description": "Add callback - PARTIES SUB-ID PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-cb-PARTIES-SUB-ID-ERROR-PU",
+          "meta": {
+            "info": "Add callback - PARTIES SUB-ID ERROR PUT"
+          },
+          "description": "Add callback - PARTIES SUB-ID ERROR PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR",
+            "value": "{$inputs.PAYEEFSP_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/{{partySubIdOrType}}/error"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/payeefsp.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    },
+    {
+      "id": "payeefsp-notific-ae2c",
+      "name": "payeefsp notification_emails",
+      "meta": {
+        "info": "payeefsp notification_emails"
+      },
+      "requests": [
+        {
+          "id": "Set-Email-NET_DEBIT_CAP_THRESH",
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+            "value": "{$inputs.payeefspEmail}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Set-Email-NET_DEBIT_CAP_ADJUST",
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+            "value": "{$inputs.payeefspEmail}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Set-Email-SETTLEMENT_TRANSFER_",
+          "meta": {
+            "info": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL"
+          },
+          "description": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIMPAYEE_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "body": {
+            "type": "SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+            "value": "{$inputs.payeefspEmail}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-201",
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/payeefsp.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    },
+    {
+      "id": "payeefsp-oracler-cb63",
+      "name": "payeefsp oracle_registration",
+      "meta": {
+        "info": "payeefsp oracle_registration"
+      },
+      "requests": [
+        {
+          "id": "Add-payeeIdentifier-payeeIdTyp",
+          "meta": {
+            "info": "Add payeeIdentifier in payeeIdType Oracle"
+          },
+          "description": "Add payeeIdentifier in payeeIdType Oracle",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.payeeIdType}/{$inputs.payeeIdentifier}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.payeeIdType}",
+            "ID": "{$inputs.payeeIdentifier}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.SIMPAYEE_NAME}"
+          },
+          "body": {
+            "fspId": "{$inputs.SIMPAYEE_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/payeefsp.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    },
+    {
+      "id": "payeefsp-addusers",
+      "name": "payeefsp add_users",
+      "meta": {
+        "info": "payeefsp add_users"
+      },
+      "requests": [
+        {
+          "id": "Add-SubId-User-payeeIdType-pay",
+          "meta": {
+            "info": "Add SubId User - payeeIdType - payeeIdentifier - 100"
+          },
+          "description": "Add SubId User - payeeIdType - payeeIdentifier - 100",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}",
+          "path": "/participants/{$inputs.payeeIdType}/{$inputs.payeeIdentifier}/100",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.payeeIdType}",
+            "ID": "{$inputs.payeeIdentifier}",
+            "SubId": "100"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "baggage": "errorExpect=ALS.3200",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Accept": "{$inputs.acceptParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.hub_operator}"
+          },
+          "body": {
+            "fspId": "{$inputs.SIMPAYEE_NAME}",
+            "currency": "{$inputs.currency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "Status-code-202",
+                "description": "Status code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "ignoreCallbacks": true,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "pm.environment.set('fullName', 'PayeeFirst PayeeLast');\r",
+                "pm.environment.set('firstName', 'PayeeFirst');\r",
+                "pm.environment.set('middleName', 'PayeeMiddle');\r",
+                "pm.environment.set('lastName', 'PayeeLast');\r",
+                "pm.environment.set('dob', '2010-10-10');\r",
+                "const testApiAddParty = {\r",
+                "    url: pm.environment.get(\"PAYEEFSP_BACKEND_TESTAPI_URL\") + '/repository/parties',\r",
+                "    method: 'POST',\r",
+                "    header: {\r",
+                "        'Content-Type': 'application/json'\r",
+                "    },\r",
+                "    body: {\r",
+                "      mode: 'raw',\r",
+                "      raw: JSON.stringify({\r",
+                "        \"displayName\": \"PayeeFirst PayeeLast\",\r",
+                "        \"firstName\": \"PayeeFirst\",\r",
+                "        \"middleName\": \"PayeeMiddle\",\r",
+                "        \"lastName\": \"PayeeLast\",\r",
+                "        \"dateOfBirth\": \"2010-10-10\",\r",
+                "        \"idType\": pm.environment.get(\"payeeIdType\"),\r",
+                "        \"idValue\": pm.environment.get(\"payeeIdentifier\")\r",
+                "    })\r",
+                "    }\r",
+                "}\r",
+                "  \r",
+                "pm.sendRequest(testApiAddParty, function (err, response) {\r",
+                "    console.log('testApiAddParty: ', JSON.stringify(response.json()))\r",
+                "});"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/payeefsp.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "order": [
+    {
+      "name": "mixed_settlement_model.json",
+      "type": "file"
+    },
+    {
+      "name": "Settlement-management-primary-currency-test.json",
+      "type": "file"
+    },
+    {
+      "name": "Settlement-management-second-currency-test.json",
+      "type": "file"
+    }
+  ]
+}

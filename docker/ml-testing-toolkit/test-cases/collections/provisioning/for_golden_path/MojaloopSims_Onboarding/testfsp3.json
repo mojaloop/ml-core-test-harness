@@ -1,0 +1,812 @@
+{
+  "name": "multi",
+  "test_cases": [
+    {
+      "id": "fsp-onboardingmo-a6dd",
+      "name": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp3",
+      "meta": {
+        "info": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp3"
+      },
+      "requests": [
+        {
+          "id": "Add-testfsp3",
+          "meta": {
+            "info": "Add testfsp3"
+          },
+          "description": "Add testfsp3",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "ignoreCallbacks": true,
+          "headers": {
+            "Content-Type": "application/json",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "name": "{$inputs.SIM3_NAME}",
+            "currency": "{$environment.cgscurrency}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-201",
+                "description": "response code 201",
+                "exec": [
+                  "if (response.status !=201) {",
+                  "  expect(response.body.errorInformation.errorDescription).to.contain('already been registered')",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "NBC-0-Add-initial-pos-limits-t",
+          "meta": {
+            "info": "[NBC=0]Add initial position and limits - testfsp3"
+          },
+          "description": "[NBC=0]Add initial position and limits - testfsp3",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/initialPositionAndLimits",
+          "path": "/participants/{$inputs.SIM3_NAME}/initialPositionAndLimits",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "ignoreCallbacks": true,
+          "body": {
+            "currency": "{$environment.cgscurrency}",
+            "limit": {
+              "type": "NET_DEBIT_CAP",
+              "value": 1000000
+            },
+            "initialPosition": 0
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-201",
+                "description": "response code is 201",
+                "exec": [
+                  "if (response.status !=201) {",
+                  "  expect(response.body.errorInformation.errorDescription).to.contain('already set')",
+                  "}"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "GET-participants-testfsp3",
+          "meta": {
+            "info": "GET /participants testfsp3"
+          },
+          "description": "GET /participants testfsp3",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts",
+          "path": "/participants/{$inputs.SIM3_NAME}/accounts",
+          "method": "get",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-200",
+                "description": "resposne code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "\r",
+                "var jsonData = response.body;\r",
+                "console.log(jsonData);\r",
+                "    for(var i in jsonData) {\r",
+                "        if((jsonData[i].ledgerAccountType === 'SETTLEMENT') && (jsonData[i].currency === environment.cgscurrency) ) {\r",
+                "          \r",
+                "environment.cgsparticipantsettlementaccountid=jsonData[i].id;\r",
+                "\r",
+                "        }\r",
+                "    }\r",
+                "console.log(environment.cgsparticipantsettlementaccountid);"
+              ]
+            }
+          }
+        },
+        {
+          "id": "Deposit-Funds-settle-acc-testf",
+          "meta": {
+            "info": "Deposit Funds in Settlement Account - testfsp3"
+          },
+          "description": "Deposit Funds in Settlement Account - testfsp3",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/accounts/{id}",
+          "path": "/participants/{$inputs.SIM3_NAME}/accounts/{$environment.cgsparticipantsettlementaccountid}",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}",
+            "id": "{$environment.cgsparticipantsettlementaccountid}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateID}",
+            "externalReference": "string",
+            "action": "recordFundsIn",
+            "reason": "string",
+            "amount": {
+              "amount": "{$environment.fundsInPrepareAmount}",
+              "currency": "{$environment.cgscurrency}"
+            },
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "scriptingEngine": "javascript",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-code-202",
+                "description": "response code is 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "//fundsInPrepareTransferId='{$function.generic.generateID}'",
+                "environment.fundsInPrepareAmount= 5000",
+                "",
+                "",
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.transferidfi = '{$request.body.transferId}'\r",
+                "console.log(environment.transferidfi);"
+              ]
+            }
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp3.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    },
+    {
+      "id": "fsp-onboardingmo-538f",
+      "name": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp3-callbacks",
+      "meta": {
+        "info": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp3-callbacks"
+      },
+      "requests": [
+        {
+          "id": "Add-testfsp3-cb-AUTHORIZATIONS",
+          "meta": {
+            "info": "Add testfsp3 callback - AUTHORIZATIONS"
+          },
+          "description": "Add testfsp3 callback - AUTHORIZATIONS",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/testfsp3/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_AUTHORIZATIONS",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-part-PUT",
+          "meta": {
+            "info": "Add testfsp3 callback - PARTICIPANT PUT"
+          },
+          "description": "Add testfsp3 callback - PARTICIPANT PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/testfsp3/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-part-PUT-Error",
+          "meta": {
+            "info": "Add testfsp3 callback - PARTICIPANT PUT Error"
+          },
+          "description": "Add testfsp3 callback - PARTICIPANT PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/testfsp3/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-part-PUT-Batch",
+          "meta": {
+            "info": "Add testfsp3 callback - PARTICIPANT PUT Batch"
+          },
+          "description": "Add testfsp3 callback - PARTICIPANT PUT Batch",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}/participants/{{requestId}}"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-part-PUT-Batch-1",
+          "meta": {
+            "info": "Add testfsp3 callback - PARTICIPANT PUT Batch Error"
+          },
+          "description": "Add testfsp3 callback - PARTICIPANT PUT Batch Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}/participants/{{requestId}}/error"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-PARTIES-GET",
+          "meta": {
+            "info": "Add testfsp3 callback - PARTIES GET"
+          },
+          "description": "Add testfsp3 callback - PARTIES GET",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_GET",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-PARTIES-PUT",
+          "meta": {
+            "info": "Add testfsp3 callback - PARTIES PUT"
+          },
+          "description": "Add testfsp3 callback - PARTIES PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-PARTIES-PUT-Er",
+          "meta": {
+            "info": "Add testfsp3 callback - PARTIES PUT Error"
+          },
+          "description": "Add testfsp3 callback - PARTIES PUT Error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-QUOTES",
+          "meta": {
+            "info": "Add testfsp3 callback - QUOTES"
+          },
+          "description": "Add testfsp3 callback - QUOTES",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_QUOTES",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-TXN-req",
+          "meta": {
+            "info": "Add testfsp3 callback - TXN REQUEST"
+          },
+          "description": "Add testfsp3 callback - TXN REQUEST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-trans-POST",
+          "meta": {
+            "info": "Add testfsp3 callback - TRANSFER POST"
+          },
+          "description": "Add testfsp3 callback - TRANSFER POST",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_POST",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}/transfers"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-trans-PUT",
+          "meta": {
+            "info": "Add testfsp3 callback - TRANSFER PUT"
+          },
+          "description": "Add testfsp3 callback - TRANSFER PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_PUT",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}/transfers/{{transferId}}"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "Add-testfsp3-cb-trans-ERROR",
+          "meta": {
+            "info": "Add testfsp3 callback - TRANSFER ERROR"
+          },
+          "description": "Add testfsp3 callback - TRANSFER ERROR",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_TRANSFER_ERROR",
+            "value": "{$environment.TESTFSP3_CALLBACK_URL}/transfers/{{transferId}}/error"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "resposne-code-201",
+                "description": "resposne code 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp3.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    },
+    {
+      "id": "fsp-onboardingmo-dd8e",
+      "name": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp3-notifications",
+      "meta": {
+        "info": "FSP Onboarding(MojaloopSims_Onboarding)-testfsp3-notifications"
+      },
+      "requests": [
+        {
+          "id": "Set-Email-NET_DEBIT_CAP_THRESH",
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL",
+            "value": "{$environment.MASTER_EMAIL}"
+          }
+        },
+        {
+          "id": "Set-Email-NET_DEBIT_CAP_ADJUST",
+          "meta": {
+            "info": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL"
+          },
+          "description": "Set Email-NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "NET_DEBIT_CAP_ADJUSTMENT_EMAIL",
+            "value": "{$environment.MASTER_EMAIL}"
+          }
+        },
+        {
+          "id": "Set-Email-SETTLEMENT_TRANSFER_",
+          "meta": {
+            "info": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL"
+          },
+          "description": "Set Email-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/{$inputs.SIM3_NAME}/endpoints",
+          "method": "post",
+          "params": {
+            "name": "{$inputs.SIM3_NAME}"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL",
+            "value": "{$environment.MASTER_EMAIL}"
+          }
+        }
+      ],
+      "fileInfo": {
+        "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp3.json",
+        "labels": [
+          "prod-tests"
+        ]
+      }
+    }
+  ]
+}

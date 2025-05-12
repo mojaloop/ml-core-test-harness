@@ -1,6 +1,13 @@
 {
   "order": [
     {
+      "name": "for_golden_path",
+      "type": "folder",
+      "labels": [
+        "std-gp"
+      ]
+    },
+    {
       "name": "hub_setup.json",
       "type": "file",
       "labels": [

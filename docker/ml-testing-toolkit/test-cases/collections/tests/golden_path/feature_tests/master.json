@@ -1,0 +1,55 @@
+{
+  "order": [
+    {
+      "name": "p2p_money_transfer",
+      "type": "folder",
+      "labels": [
+        "p2p"
+      ]
+    },
+    {
+      "name": "transfer_negative_scenarios",
+      "type": "folder"
+    },
+    {
+      "name": "duplicate_handling",
+      "type": "folder"
+    },
+    {
+      "name": "Active_Inactive_participants",
+      "type": "folder"
+    },
+    {
+      "name": "block_transfer.json",
+      "type": "file"
+    },
+    {
+      "name": "funds_in",
+      "type": "folder"
+    },
+    {
+      "name": "funds_out",
+      "type": "folder"
+    },
+    {
+      "name": "get_transfers.json",
+      "type": "file"
+    },
+    {
+      "name": "post_scenarios",
+      "type": "folder"
+    },
+    {
+      "name": "patch_notifications",
+      "type": "folder"
+    },
+    {
+      "name": "backward_compatibility",
+      "type": "folder"
+    },
+    {
+      "name": "resources_based",
+      "type": "folder"
+    }
+  ]
+}
