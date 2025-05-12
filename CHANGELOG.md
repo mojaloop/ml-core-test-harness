@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.3.0...v2.4.0) (2025-05-12)
+
+
+### Features
+
+* added settlement and all GP tests ([4bdb460](https://github.com/mojaloop/ml-core-test-harness/commit/4bdb4601b7f79485b35ec42ed9de776e18296b59))
+* run GP tests in docker ([ea3120b](https://github.com/mojaloop/ml-core-test-harness/commit/ea3120b469d81433ce287914b8958d74e55c19ad))
+* run GP tests in docker ([02ccdbb](https://github.com/mojaloop/ml-core-test-harness/commit/02ccdbbaa056115c5f8c5360b58d0f85d9bd59b7))
+* run GP tests in docker ([585584a](https://github.com/mojaloop/ml-core-test-harness/commit/585584a14120986d1e5f6058344ee0a394a7873a))
+
+
+### Bug Fixes
+
+* run fx tests ([03a8921](https://github.com/mojaloop/ml-core-test-harness/commit/03a8921af52110e1694ff3bed38f45968afa3587))
+* run golden path ([bdacb9b](https://github.com/mojaloop/ml-core-test-harness/commit/bdacb9b934df0981aad61801776cff52960b2308))
+* update service versions ([aca2039](https://github.com/mojaloop/ml-core-test-harness/commit/aca20394cb43bb2a450bc104483e1dbb2a019224))
+
 ## [2.3.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.2.1...v2.3.0) (2025-05-09)
 
 
