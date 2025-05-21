@@ -24,6 +24,7 @@ build_docker_image_from_repo() {
   git checkout "$TAG"
 
   # Build the Docker image for ARM64
+  export NODE_VERSION="$(cat .nvmrc)-alpine"
   docker build -t "$IMAGE" .
 
   # Cleanup and go back to parent directory
@@ -32,7 +33,10 @@ build_docker_image_from_repo() {
 }
 
 # Extract all images from docker-compose.yaml that reference environment variables
-IMAGES=$(grep -o 'image:.*${.*}' ../docker-compose.yml | sed -E 's/image: *//')
+IMAGES1=$(grep -h 'image:' ../docker-compose.yml | sed -E 's/image: *//')
+IMAGES2=$(grep -h 'image:' ../docker-compose-perf.yml | sed -E 's/image: *//')
+
+IMAGES=$(printf "%s\n%s\n" "$IMAGES1" "$IMAGES2" | tr -s ' ' '\n')
 
 # 2. Create a temporary file to track unique image repo + tag combinations
 touch processed_images.txt
@@ -42,21 +46,23 @@ do
   # Remove any quotes around the image string
   IMAGE=$(echo $IMAGE | sed 's/^"//;s/"$//')
 
-  # Extract the base image and variable name
-  BASE_IMAGE=$(echo "$IMAGE" | cut -d':' -f1)
-  VAR_NAME=$(echo "$IMAGE" | sed -E 's/.*\$\{([^}]+)\}.*/\1/')
-
-  # Check if the variable exists in the environment
-  if [ -z "${!VAR_NAME}" ]; then
-    echo "Error: Variable $VAR_NAME not found in the environment"
-    exit 1
-  fi
-
-  # Construct the full image name with the resolved version
-  RESOLVED_IMAGE="$BASE_IMAGE:${!VAR_NAME}"
-
   # Check if the image starts with "mojaloop/"
-  if [[ $RESOLVED_IMAGE == mojaloop/* ]] ; then
+  if [[ $IMAGE == mojaloop/* ]] ; then
+    # Extract the base image and variable name
+    BASE_IMAGE=$(echo "$IMAGE" | cut -d':' -f1)
+    VAR_NAME=$(echo "$IMAGE" | grep -o '\${[^}]*}' | sed 's/[${}]//g')
+    if [ -n "$VAR_NAME" ]; then
+      # Check if the variable exists in the environment
+      if [ -z "${!VAR_NAME}" ]; then
+        echo "Error: Variable $VAR_NAME not found in the environment"
+        exit 1
+      fi
+    fi
+
+
+    # Construct the full image name with the resolved version
+    RESOLVED_IMAGE="$BASE_IMAGE:${!VAR_NAME}"
+
     if { [[ $# -eq 0 ]] || [[ $RESOLVED_IMAGE == mojaloop/$*:* ]]; }; then
       # Extract the image repo name (mojaloop/account-lookup-service) and tag (v15.4.0-snapshot.33)
       REPO_NAME=$(echo "$RESOLVED_IMAGE" | cut -d ':' -f 1 | sed 's#mojaloop/##') # account-lookup-service
