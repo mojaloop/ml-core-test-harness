@@ -1,7 +1,7 @@
 networks:
   mojaloop-net:
     name: mojaloop-net
-    external: true
+    # external: true
 
 services:
 
@@ -314,6 +314,50 @@ services:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_FULFIL /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --fulfil"
+    # ports:
+    #   - "3001:3001"
+    volumes:
+       - ./docker/wait4:/opt/app/wait4
+       - ./docker/config-modifier:/opt/app/config-modifier
+    environment:
+      # - LOG_LEVEL=error
+      - CLEDG_MONGODB__DISABLED=true
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+    networks:
+      - mojaloop-net
+    depends_on:
+      central-ledger:
+        condition: service_healthy
+      mysql-cl:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      # objstore:
+      #   condition: service_started
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 30s
+      start_period: 30s
+    user: root
+    profiles:
+      - central-ledger
+      - transfer
+      - discovery
+      - agreement
+      - all-services
+      - transfers-test
+
+  central-handler-get:
+    image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
+    env_file:
+      - .env
+      - perf.env
+    deploy:
+      mode: replicated
+      replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/$$CONF_CL_HANDLER_GET /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --get"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -782,7 +826,7 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning-perf-als -e environments/default-env.json --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning-perf-als -e environments/default-env.json --save-report true --report-format html --report-target file://reports/ttk-provisioning-report.html"
     user: root
     profiles:
       - ttk-provisioning-als
@@ -820,7 +864,7 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --labels std,perf --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --labels std,perf --save-report true --report-format html --report-target file://reports/ttk-provisioning-report.html"
     user: root
     profiles:
       - ttk-provisioning-transfers
@@ -1010,6 +1054,7 @@ services:
     env_file:
       - .env
       - ./envs/perffxp.env
+      - perf.env
       - perf.override.env
     ports:
       - "25000:3001"
@@ -1042,6 +1087,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp1.env
+      - perf.env
       - perf.override.env
     ports:
       - "25001:3001"
@@ -1074,6 +1120,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp2.env
+      - perf.env
       - perf.override.env
     ports:
       - "25002:3001"
@@ -1106,6 +1153,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp3.env
+      - perf.env
       - perf.override.env
     ports:
       - "25003:3001"
@@ -1134,6 +1182,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp4.env
+      - perf.env
       - perf.override.env
     ports:
       - "25004:3001"
@@ -1162,6 +1211,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp5.env
+      - perf.env
       - perf.override.env
     ports:
       - "25005:3001"
@@ -1189,6 +1239,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp6.env
+      - perf.env
       - perf.override.env
     ports:
       - "25006:3001"
@@ -1216,6 +1267,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp7.env
+      - perf.env
       - perf.override.env
     ports:
       - "25007:3001"
@@ -1243,6 +1295,7 @@ services:
     env_file:
       - .env
       - ./envs/perffsp8.env
+      - perf.env
       - perf.override.env
     ports:
       - "25008:3001"
