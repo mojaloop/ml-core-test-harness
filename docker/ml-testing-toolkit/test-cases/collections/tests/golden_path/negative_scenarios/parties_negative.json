@@ -1,11 +1,20 @@
 {
-  "name": "parties_negative",
+  "options": {
+    "breakOnError": false,
+    "transformerName": "none",
+    "generateIDType": "ulid"
+  },
+  "name": "tests_golden_path_negative_scenarios",
   "test_cases": [
     {
       "id": 1,
-      "name": "Party info with missing header",
+      "name": "GET parties with missing headers",
       "meta": {
-        "info": "Party info with missing header"
+        "info": "GET parties with missing headers"
+      },
+      "fileInfo": {
+        "path": "tests/golden_path/negative_scenarios/parties_negative.json",
+        "labels": ["std-gp"]
       },
       "requests": [
         {
@@ -134,9 +143,9 @@
               },
               {
                 "id": 5,
-                "description": "Response should contain '3101'",
+                "description": "Response should contain '3102'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3102')"
                 ]
               }
             ]
@@ -280,9 +289,13 @@
     },
     {
       "id": 2,
-      "name": "Party info of unprovisioned party",
+      "name": "Party info of unprovisioned party (invalid party)",
       "meta": {
-        "info": "Party info of unprovisioned party"
+        "info": "Party info of unprovisioned party (invalid party)"
+      },
+      "fileInfo": {
+        "path": "tests/golden_path/negative_scenarios/parties_negative.json",
+        "labels": ["std-gp"]
       },
       "requests": [
         {
@@ -443,9 +456,9 @@
               },
               {
                 "id": 8,
-                "description": "Callback error should be 3003",
+                "description": "Callback error should be 3204",
                 "exec": [
-                  "expect(callback.body.errorInformation.errorCode).to.equal('3003')"
+                  "expect(callback.body.errorInformation.errorCode).to.equal('3204')"
                 ]
               }
             ]
@@ -456,9 +469,13 @@
     },
     {
       "id": 3,
-      "name": "Party info with wrong header values",
+      "name": "GET Party info with invalid header values",
       "meta": {
-        "info": "Party info with wrong header values"
+        "info": "Party info with invalid header values"
+      },
+      "fileInfo": {
+        "path": "tests/golden_path/negative_scenarios/parties_negative.json",
+        "labels": ["std-gp"]
       },
       "requests": [
         {
@@ -521,7 +538,7 @@
               }
             ]
           },
-          "disabled": true
+          "disabled": false
         },
         {
           "id": 3,
@@ -645,6 +662,10 @@
       "name": "Get Party with wrong optional headers",
       "meta": {
         "info": "Get Party with wrong optional headers"
+      },
+      "fileInfo": {
+        "path": "tests/golden_path/negative_scenarios/parties_negative.json",
+        "labels": ["std-gp"]
       },
       "requests": [
         {
