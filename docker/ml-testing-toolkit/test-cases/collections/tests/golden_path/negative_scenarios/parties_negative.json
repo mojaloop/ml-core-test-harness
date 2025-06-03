@@ -7,7 +7,7 @@
   "name": "tests_golden_path_negative_scenarios",
   "test_cases": [
     {
-      "id": 1,
+      "id": "party_missing_headers",
       "name": "GET parties with missing headers",
       "meta": {
         "info": "GET parties with missing headers"
@@ -288,7 +288,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": "info_of_unprovisioned_party",
       "name": "Party info of unprovisioned party (invalid party)",
       "meta": {
         "info": "Party info of unprovisioned party (invalid party)"
@@ -468,7 +468,7 @@
       ]
     },
     {
-      "id": 3,
+      "id": "party_invalid_header_values",
       "name": "GET Party info with invalid header values",
       "meta": {
         "info": "Party info with invalid header values"
@@ -658,7 +658,7 @@
       ]
     },
     {
-      "id": 14,
+      "id": "party_wrong_optional_header",
       "name": "Get Party with wrong optional headers",
       "meta": {
         "info": "Get Party with wrong optional headers"
