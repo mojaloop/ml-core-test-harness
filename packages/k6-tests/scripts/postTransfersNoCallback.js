@@ -12,11 +12,11 @@ function log() {
   console.log(`  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}`);
 }
 
-const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
+const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL || '[]');
 
 const ilpPacket = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ILPPACKET
 const condition = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CONDITION
-const amount = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_AMOUNT.toString()
+const amount = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_AMOUNT?.toString() || '2'
 const currency = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CURRENCY
 
 export function postTransfersNoCallback() {

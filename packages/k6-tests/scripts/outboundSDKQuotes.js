@@ -10,8 +10,8 @@ function log() {
   console.log(`  K6_SCRIPT_SDK_ENDPOINT_URL=${__ENV.K6_SCRIPT_SDK_ENDPOINT_URL},`);
 }
 
-const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
-const amount = __ENV.K6_SCRIPT_FSPIOP_QUOTES_AMOUNT.toString()
+const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL || '[]');
+const amount = __ENV.K6_SCRIPT_FSPIOP_QUOTES_AMOUNT?.toString() || '2';
 const currency = __ENV.K6_SCRIPT_FSPIOP_QUOTES_CURRENCY
 
 export function postQuotes() {
