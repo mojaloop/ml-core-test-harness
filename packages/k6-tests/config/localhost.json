@@ -1,0 +1,18 @@
+{
+  "scenarios": {
+    "localhost": {
+      "executor": "constant-arrival-rate",
+      "exec": "localhostScenarios",
+      "gracefulStop": "0s",
+      "duration": "2s",
+      "rate": 100,
+      "preAllocatedVUs": 20
+    }
+  },
+  "thresholds": {
+    "checks": ["rate>0.99"],
+    "iteration_duration": [ "p(95)<90" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}

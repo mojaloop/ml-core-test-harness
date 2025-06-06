@@ -1,3 +1,6 @@
+import http from 'k6/http';
+import { humanizeValue } from 'https://jslib.k6.io/k6-summary/0.1.0/index.js';
+
 export { fspiopDiscoveryScenarios } from './scenarios/fspiopDiscovery.js';
 export { fspiopDiscoveryNoCallbackScenarios } from './scenarios/fspiopDiscoveryNoCallbackConstantRate.js';
 export { fspiopTransfersScenarios } from './scenarios/fspiopTransfers.js';
@@ -17,6 +20,7 @@ export { inboundSDKTransfersScenarios } from './scenarios/inboundSDKTransfers.js
 export { outboundSDKDiscoveryScenarios } from './scenarios/outboundSDKDiscovery.js';
 export { outboundSDKQuotesScenarios } from './scenarios/outboundSDKQuotes.js';
 export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.js';
+export { localhostScenarios } from './scenarios/localhost.js';
 
 const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';
 const configFile = configFolder + __ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json';
@@ -44,4 +48,79 @@ globalThis.PAUSE_MAX = __ENV.K6_SCRIPT_PAUSE_MAX || 15;
 
 export default async () => {
   console.log("No scenarios found in config/test.json. Executing default function...");
+}
+
+const millisecondsToTime = (milliseconds) => {
+  const seconds = Math.floor(milliseconds / 1000)
+  const minutes = Math.floor(seconds / 60)
+  const hours = Math.floor(minutes / 60)
+  return `${String(hours).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`
+}
+
+export function handleSummary(data) {
+  console.log('Submitting the end-of-test summary...');
+  const {totalAssertions, totalPassedAssertions} = Object.values(data.metrics).reduce(
+    (acc, metric) => {
+      Object.values(metric.thresholds || {}).forEach(threshold => {
+        acc.totalAssertions++;
+        if (threshold.ok) acc.totalPassedAssertions++;
+      });
+      return acc;
+    },
+    { totalAssertions: 0, totalPassedAssertions: 0 }
+  );
+  const failed = totalAssertions !== totalPassedAssertions;
+
+  const releaseCdUrl = __ENV.K6_SCRIPT_RELEASE_CD_URL;
+  const testName = __ENV.K6_SCRIPT_CONFIG_FILE_NAME?.replace('.json', '') || 'k6-test';
+  if (releaseCdUrl) {
+    console.log('Sending summary to ReleaseCD at ' + releaseCdUrl);
+    const releaseCdData = JSON.stringify({
+      [`tests.${testName}`]: {
+        totalAssertions,
+        totalPassedAssertions,
+        k6: data
+      }
+    });
+    http.post(releaseCdUrl, releaseCdData, { headers: { 'Content-Type': 'application/json' } });
+  }
+
+  const slackUrl= __ENV.K6_SCRIPT_SLACK_URL;
+  const slackErrorUrl= __ENV.K6_SCRIPT_SLACK_ERROR_URL;
+  const slackPrefix = __ENV.K6_SCRIPT_SLACK_PREFIX;
+  const slackSuffix = __ENV.K6_SCRIPT_SLACK_SUFFIX;
+  if (slackUrl || slackErrorUrl) {
+    console.log('Sending summary to Slack...');
+    const slackData = JSON.stringify({
+      blocks: [{
+        type: 'rich_text',
+        elements: [{
+          type: 'rich_text_section',
+          elements: [
+            { type: 'text', text: `${failed ? '🔴' : '🟢'}` },
+            { type: 'text', text: `${slackPrefix || ''} ${testName} VUs: ` },
+            { type: 'text', text: String(data.metrics.vus.values.max), style: { code: true } },
+            { type: 'text', text: ', requests: ' },
+            { type: 'text', text: String(data.metrics.http_reqs.values.count), style: { code: true } },
+            { type: 'text', text: ', duration: ' },
+            { type: 'text', text: millisecondsToTime(data.state.testRunDurationMs), style: { code: true } },
+            ...Object
+              .entries(data.metrics)
+              .sort((a, b) => a[0].localeCompare(b[0]))
+              .map(([metricName, metric]) => metric.thresholds && [{
+              type: 'text',
+              text: `, ${metricName}: ${Object.values(metric.thresholds).some(threshold => !threshold.ok) ? '⚠️' : ''}`
+            }, {
+              type: 'text',
+              text: String(humanizeValue('rate' in metric.values ? metric.values['rate'] : metric.values['p(95)'], metric)),
+              style: { code: true }
+            }]).flat(),
+            slackSuffix && { type: 'text', text: ` ${slackSuffix}` }
+          ].filter(Boolean),
+        }]
+      }]
+    });
+    if (slackUrl) http.post(slackUrl, slackData, { headers: { 'Content-Type': 'application/json' } });
+    if (slackErrorUrl && failed) http.post(slackErrorUrl, slackData, { headers: { 'Content-Type': 'application/json' } });
+  }
 }

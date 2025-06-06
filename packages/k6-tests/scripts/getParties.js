@@ -23,7 +23,7 @@ function log() {
   console.log(`  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}`);
 }
 
-const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
+const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL || '[]');
 
 export function getParties() {
   !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
