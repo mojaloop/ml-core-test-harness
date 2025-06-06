@@ -98,7 +98,9 @@ export function handleSummary(data) {
           type: 'rich_text_section',
           elements: [
             { type: 'text', text: `${failed ? '🔴' : '🟢'}` },
-            { type: 'text', text: `${slackPrefix || ''} ${testName} requests:` },
+            { type: 'text', text: `${slackPrefix || ''} ${testName} VUs: ` },
+            { type: 'text', text: String(data.metrics.vus.values.max), style: { code: true } },
+            { type: 'text', text: ', requests: ' },
             { type: 'text', text: String(data.metrics.http_reqs.values.count), style: { code: true } },
             { type: 'text', text: ', duration: ' },
             { type: 'text', text: millisecondsToTime(data.state.testRunDurationMs), style: { code: true } },
