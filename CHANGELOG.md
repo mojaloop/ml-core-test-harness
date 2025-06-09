@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.4.1...v2.6.0) (2025-06-09)
+
+
+### Features
+
+* allow publishing results to Slack and release-cd ([#110](https://github.com/mojaloop/ml-core-test-harness/issues/110)) ([d1561cf](https://github.com/mojaloop/ml-core-test-harness/commit/d1561cffaad71baa67bcf8a707bdaf3bf908036b))
+
 ### [2.4.1](https://github.com/mojaloop/ml-core-test-harness/compare/v2.4.0...v2.4.1) (2025-05-22)
 
 
