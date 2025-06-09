@@ -18,12 +18,12 @@ function log() {
   console.log(`  K6_SCRIPT_FSPIOP_FSP_POOL=${__ENV.K6_SCRIPT_FSPIOP_FSP_POOL}`);
 }
 
-const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL)
+const fspList = JSON.parse(__ENV.K6_SCRIPT_FSPIOP_FSP_POOL || '[]');
 const ilpPacket = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ILPPACKET
 const condition = __ENV.K6_SCRIPT_FSPIOP_TRANSFERS_CONDITION
-const amount = __ENV.K6_SCRIPT_FX_E2E_SOURCE_AMOUNT.toString()
+const amount = __ENV.K6_SCRIPT_FX_E2E_SOURCE_AMOUNT?.toString() || '2'
 const currency = __ENV.K6_SCRIPT_FX_E2E_SOURCE_CURRENCY
-const targetAmount = __ENV.K6_SCRIPT_FX_E2E_TARGET_AMOUNT.toString()
+const targetAmount = __ENV.K6_SCRIPT_FX_E2E_TARGET_AMOUNT?.toString() || '2'
 const targetCurrency = __ENV.K6_SCRIPT_FX_E2E_TARGET_CURRENCY
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
@@ -116,53 +116,53 @@ export function fxSendE2E() {
         const wsChannelQuotes = `${traceParent.traceId}/PUT/quotes/${quoteId}`;
         const wsURLQuotes = `${wsUrl}/${wsChannelQuotes}`
         const wsQuotes = new WebSocket(wsURLQuotes, null, {tags: {name: 'e2e quotes ws'}});
-  
+
         var wsTimeoutId = null;
-  
+
         const clearTimersQuotes = () => {
           if (wsTimeoutId) { clearTimeout(wsTimeoutId); wsTimeoutId=null }
         }
-  
+
         wsQuotes.onclose(() => {
           clearTimersQuotes();
         });
-  
+
         wsQuotes.onerror((err) => {
           console.error(traceId, err);
           check(err, { 'QUOTES_E2E_FSPIOP_POST_QUOTES_SUCCESS': (cbMessage) => false });
           clearTimersQuotes();
           wsQuotes.close();
         });
-  
+
         wsQuotes.onmessage = (event) => {
           __ENV.K6_DEBUG && console.info(traceId, `WS message received [${wsChannelQuotes}]: ${event.data}`);
           check(event.data, { 'QUOTES_E2E_FSPIOP_POST_QUOTES_SUCCESS': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
           clearTimersQuotes();
           wsQuotes.close();
-  
+
           const startTsFxTransfers = Date.now();
           const commitRequestId = conversionId;
           const wsChannelFxTransfers = `${traceParent.traceId}/PUT/fxTransfers/${commitRequestId}`;
           const wsURLFxTransfers = `${wsUrl}/${wsChannelFxTransfers}`
           const wsFxTransfers = new WebSocket(wsURLFxTransfers, null, {tags: {name: 'e2e fxTransfers ws'}});
-  
+
           var wsTimeoutId = null;
-  
+
           const clearTimersFxTransfers = () => {
             if (wsTimeoutId) { clearTimeout(wsTimeoutId); wsTimeoutId=null }
           }
-  
+
           wsFxTransfers.onclose(() => {
             clearTimersFxTransfers();
           });
-  
+
           wsFxTransfers.onerror((err) => {
             console.error(traceId, err);
             check(err, { 'FXTRANSFERS_E2E_FSPIOP_POST_FXTRANSFERS_SUCCESS': (cbMessage) => false });
             clearTimersFxTransfers();
             wsFxTransfers.close();
           });
-  
+
           wsFxTransfers.onmessage = (event) => {
             __ENV.K6_DEBUG && console.info(traceId, `WS message received [${wsChannelFxTransfers}]: ${event.data}`);
             check(event.data, { 'FXTRANSFERS_E2E_FSPIOP_POST_FXTRANSFERS_SUCCESS': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
@@ -174,31 +174,31 @@ export function fxSendE2E() {
             const wsChannelTransfers = `${traceParent.traceId}/PUT/transfers/${transferId}`;
             const wsURLTransfers = `${wsUrl}/${wsChannelTransfers}`
             const wsTransfers = new WebSocket(wsURLTransfers, null, {tags: {name: 'e2e transfers ws'}});
-    
+
             var wsTimeoutId = null;
-    
+
             const clearTimersTransfers = () => {
               if (wsTimeoutId) { clearTimeout(wsTimeoutId); wsTimeoutId=null }
             }
-    
+
             wsTransfers.onclose(() => {
               clearTimersTransfers();
             });
-    
+
             wsTransfers.onerror((err) => {
               console.error(traceId, err);
               check(err, { 'TRANSFERS_E2E_FSPIOP_POST_TRANSFERS_SUCCESS': (cbMessage) => false });
               clearTimersTransfers();
               wsTransfers.close();
             });
-    
+
             wsTransfers.onmessage = (event) => {
               __ENV.K6_DEBUG && console.info(traceId, `WS message received [${wsChannelTransfers}]: ${event.data}`);
               check(event.data, { 'TRANSFERS_E2E_FSPIOP_POST_TRANSFERS_SUCCESS': (cbMessage) => cbMessage == 'SUCCESS_CALLBACK_RECEIVED' });
               clearTimersTransfers();
               wsTransfers.close();
             };
-    
+
             wsTransfers.onopen = () => {
               __ENV.K6_DEBUG && console.info(traceId, `WS open on URL: ${wsUrl}`);
               const params = {
@@ -216,7 +216,7 @@ export function fxSendE2E() {
                   'tracestate': `tx_end2end_start_ts=${startTsTransfers}`
                 }),
               };
-    
+
               const msgId = ulid();
               const body = __ENV.API_TYPE === 'iso20022' ? {
                 GrpHdr: {
@@ -285,18 +285,18 @@ export function fxSendE2E() {
                 ilpPacket,
                 condition
               }
-    
+
               // Lets send the FSPIOP POST /transfers request
               const res = http.post(`${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL}/transfers`, JSON.stringify(body), params);
               check(res, { 'TRANSFERS_FSPIOP_POST_TRANSFERS_RESPONSE_IS_202' : (r) => r.status == 202 });
-    
+
               if (abortOnError && res.status != 202) {
                 // Abort the entire k6 test execution runner
                 console.error(traceId, `FSPIOP POST /transfers returned status: ${res.status}`);
                 wsTransfers.close();
                 exec.test.abort()
               }
-    
+
               wsTimeoutId = setTimeout(() => {
                 const errorMsg = `WS timed-out on URL: ${wsURLTransfers}`
                 console.error(traceId, errorMsg);
@@ -310,7 +310,7 @@ export function fxSendE2E() {
               }, wsTimeoutMs);
             };
           };
-  
+
           wsFxTransfers.onopen = () => {
             __ENV.K6_DEBUG && console.info(traceId, `WS open on URL: ${wsUrl}`);
             const params = {
@@ -328,7 +328,7 @@ export function fxSendE2E() {
                 'tracestate': `tx_end2end_start_ts=${startTsFxTransfers}`
               }),
             };
-  
+
             const msgId = ulid();
             const body = __ENV.API_TYPE === 'iso20022' ? {
               GrpHdr: {
@@ -421,18 +421,18 @@ export function fxSendE2E() {
               "expiration": "2030-01-01T00:00:00.000Z",
               condition
             }
-  
+
             // Lets send the FSPIOP POST /transfers request
             const res = http.post(`${__ENV.K6_SCRIPT_FSPIOP_TRANSFERS_ENDPOINT_URL}/fxTransfers`, JSON.stringify(body), params);
             check(res, { 'FXTRANSFERS_FSPIOP_POST_FXTRANSFERS_RESPONSE_IS_202' : (r) => r.status == 202 });
-  
+
             if (abortOnError && res.status != 202) {
               // Abort the entire k6 test execution runner
               console.error(traceId, `FSPIOP POST /fxTransfers returned status: ${res.status}`);
               wsFxTransfers.close();
               exec.test.abort()
             }
-  
+
             wsTimeoutId = setTimeout(() => {
               const errorMsg = `WS timed-out on URL: ${wsURLFxTransfers}`
               console.error(traceId, errorMsg);
@@ -446,7 +446,7 @@ export function fxSendE2E() {
             }, wsTimeoutMs);
           };
         };
-  
+
         wsQuotes.onopen = () => {
           __ENV.K6_DEBUG && console.info(traceId, `WS open on URL: ${wsURLQuotes}`);
           const params = {
@@ -464,7 +464,7 @@ export function fxSendE2E() {
               'tracestate': `tx_end2end_start_ts=${startTsQuotes}`
             }),
           };
-  
+
           const msgId = ulid();
           const body = __ENV.API_TYPE === 'iso20022' ? {
             GrpHdr: {
@@ -555,11 +555,11 @@ export function fxSendE2E() {
               "initiatorType": "CONSUMER"
             }
           }
-  
+
           // Lets send the FSPIOP POST /quotes request
           const res = http.post(`${__ENV.K6_SCRIPT_FSPIOP_QUOTES_ENDPOINT_URL}/quotes`, JSON.stringify(body), params);
           check(res, { 'QUOTES_FSPIOP_POST_QUOTES_RESPONSE_IS_202' : (r) => r.status == 202 });
-  
+
           wsTimeoutId = setTimeout(() => {
             const errorMsg = `WS timed-out on URL: ${wsURLQuotes}`
             console.error(traceId, errorMsg);
