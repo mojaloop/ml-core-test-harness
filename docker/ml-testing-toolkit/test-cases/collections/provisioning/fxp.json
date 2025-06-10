@@ -166,6 +166,43 @@
           }
         },
         {
+          "id": 8.2,
+          "meta": {
+            "info": "Add callback - FX TRANSFERS PUT"
+          },
+          "description": "Add callback - FX TRANSFERS PUT",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "central_admin"
+          },
+          "operationPath": "/participants/{name}/endpoints",
+          "path": "/participants/perffxp/endpoints",
+          "method": "post",
+          "params": {
+            "name": "perffxp"
+          },
+          "url": "{$inputs.HOST_CENTRAL_LEDGER}",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
+            "value": "{$inputs.PERF_FXP_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status code is 201",
+                "exec": [
+                  "expect(response.status).to.equal(201)"
+                ]
+              }
+            ]
+          }
+        },
+        {
           "id": 19,
           "meta": {
             "info": "Set Endpoint-SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL"
