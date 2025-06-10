@@ -188,7 +188,7 @@
           },
           "body": {
             "type": "FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT",
-            "value": "{$inputs.PERF_FXP_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers"
+            "value": "{$inputs.PERF_FXP_CALLBACK_ENDPOINT_BASE_URL}/fxTransfers/{{commitRequestId}}"
           },
           "tests": {
             "assertions": [
