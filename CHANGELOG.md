@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.6.1...v2.7.0) (2025-06-10)
+
+
+### Features
+
+* **csi-1562:** added FSPIOP_CALLBACK_URL_FX_TRANSFER_PUT endpoint to perffxp ([21e254d](https://github.com/mojaloop/ml-core-test-harness/commit/21e254dd9b2c8955457cec0b4d5d538fa25a0529))
+
 ### [2.6.1](https://github.com/mojaloop/ml-core-test-harness/compare/v2.6.0...v2.6.1) (2025-06-09)
 
 ## [2.6.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.4.1...v2.6.0) (2025-06-09)
