@@ -5,7 +5,7 @@ module.exports = {
   },
   "SIMPLE_ROUTING_MODE": false,
   "ORIGINAL_PAYLOAD_STORAGE": "kafka",
-  "SWITCH_ENDPOINT": "http://callback-handler-svc-cl-sim:3001/admin",
+  "SWITCH_ENDPOINT": "http://central-ledger:3001",
   "KAFKA": {
     "CONSUMER": {
       "QUOTE": {

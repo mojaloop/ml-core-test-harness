@@ -1,4 +1,9 @@
 {
+  "options": {
+    "breakOnError": false,
+    "transformerName": "fspiopToISO20022",
+    "generateIDType": "ulid"
+  },
   "inputValues": {
     "HUB_NAME": "Hub",
     "CALLBACK_ENDPOINT_BASE_URL": "http://mojaloop-testing-toolkit:4040",
@@ -7,7 +12,9 @@
     "HOST_CENTRAL_LEDGER": "http://central-ledger:3001",
     "HOST_ML_API_ADAPTER": "http://ml-api-adapter:3000",
     "HOST_QUOTING_SERVICE": "http://quoting-service:3002",
-    "HOST_SIMULATOR": "http://callback-handler-svc-oracle-sim:3001",
+    "HOST_SIMULATOR": "http://als-msisdn-oracle-svc:3000",
+    "HOST_ORACLE_MSISDN": "http://als-msisdn-oracle-svc:3000",
+    "HOST_ORACLE_ACCOUNT_ID": "http://moja-simulator/oracle",
     "ENABLE_WS_ASSERTIONS": true,
     "WS_ASSERTION_TIMEOUT": 5000,
     "accept": "application/vnd.interoperability.parties+json;version=2.0",
@@ -25,7 +32,7 @@
     "fromDOB": "1984-01-01",
     "fromFirstName": "Firstname-Test",
     "fromFspId": "pinkbankfsp",
-    "fromIdType": "ACCOUNT_ID",
+    "fromIdType": "MSISDN",
     "fromIdValue": "44123456789",
     "fromLastName": "Lastname-Test",
     "hubEmail": "some.email@gmail.com",
@@ -35,8 +42,8 @@
     "payeefsp": "greenbankfsp",
     "payerfsp": "pinkbankfsp",
     "toFspId": "greenbankfsp",
-    "toIdType": "ACCOUNT_ID",
-    "payeeIdType": "ACCOUNT_ID",
+    "toIdType": "MSISDN",
+    "payeeIdType": "MSISDN",
     "toIdValue": "27713803912",
     "mobileSimPayerFsp": "pinkbankfsp",
     "mobileSimPayeeFsp": "greenbankfsp",
@@ -56,6 +63,9 @@
     "PERF_FSP6_ID": "perffsp-6",
     "PERF_FSP7_ID": "perffsp-7",
     "PERF_FSP8_ID": "perffsp-8",
+    "PERF_SDK_PAYER_ID": "perfsdkpayer",
+    "PERF_SDK_PAYEE_ID": "perfsdkpayee",
+    "PERF_SDK_FXP_ID": "perfsdkfxp",
     "PERF_FSP1_ADDRESS": "19012345001",
     "PERF_FSP2_ADDRESS": "19012345002",
     "PERF_FSP3_ADDRESS": "19012345003",
@@ -64,6 +74,9 @@
     "PERF_FSP6_ADDRESS": "19012345006",
     "PERF_FSP7_ADDRESS": "19012345007",
     "PERF_FSP8_ADDRESS": "19012345008",
+    "PERF_SDK_PAYER_ADDRESS": "19012345101",
+    "PERF_SDK_PAYEE_ADDRESS": "19012345102",
+    "PERF_SDK_FXP_ADDRESS": "19012345100",
     "PERF_FXP_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffxp:3001/fxp",
     "PERF_FSP1_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp-1:3001/fspiop",
     "PERF_FSP2_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp-2:3001/fspiop",
@@ -73,6 +86,9 @@
     "PERF_FSP6_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp-6:3001/fspiop",
     "PERF_FSP7_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp-7:3001/fspiop",
     "PERF_FSP8_CALLBACK_ENDPOINT_BASE_URL": "http://sim-perffsp-8:3001/fspiop",
-    "PERF_ORACLE_ENDPOINT_BASE_URL": "http://callback-handler-svc-oracle-sim:3001/oracle"
+    "PERF_SDK_PAYER_CALLBACK_ENDPOINT_BASE_URL": "http://perf-sdk-payer:4000",
+    "PERF_SDK_PAYEE_CALLBACK_ENDPOINT_BASE_URL": "http://perf-sdk-payee:4000",
+    "PERF_SDK_FXP_CALLBACK_ENDPOINT_BASE_URL": "http://perf-sdk-fxp:4000",
+    "PERF_ORACLE_ENDPOINT_BASE_URL": "http://als-msisdn-oracle-svc:3000"
   }
 }

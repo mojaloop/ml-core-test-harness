@@ -23,10 +23,9 @@
           "body": {
             "oracleIdType": "MSISDN",
             "endpoint": {
-              "value": "{$inputs.HOST_SIMULATOR}/oracle",
+              "value": "{$inputs.HOST_ORACLE_MSISDN}",
               "endpointType": "URL"
             },
-            "currency": "{$inputs.currency}",
             "isDefault": true
           },
           "headers": {

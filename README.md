@@ -209,7 +209,7 @@ Run the following commands to start an end2end FX transfer load test.
 
 ```bash
 docker compose --project-name monitoring -f docker-compose-monitoring.yml up -d
-docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile 8dfsp --profile ttk-provisioning-e2e up -d
+docker compose --project-name ml-core -f docker-compose-perf.yml --profile all-services --profile 8dfsp --profile fx-sdk-e2e --profile ttk-provisioning-e2e up -d
 env K6_SCRIPT_CONFIG_FILE_NAME=fxSendE2E.json docker compose --project-name load -f docker-compose-load.yml up
 ```
 
@@ -395,6 +395,8 @@ env K6_SCRIPT_CONFIG_FILE_NAME=inboundSDKQuotes.json docker compose --project-na
 env K6_SCRIPT_CONFIG_FILE_NAME=inboundSDKTransfer.json docker compose --project-name load -f docker-compose-load.yml up
 ( or )
 env K6_SCRIPT_CONFIG_FILE_NAME=fxSendE2E.json docker compose --project-name load -f docker-compose-load.yml up
+( or )
+env K6_SCRIPT_CONFIG_FILE_NAME=sdkFxSendE2E.json docker compose --project-name load -f docker-compose-load.yml up
 ```
 
 Cleanup tests

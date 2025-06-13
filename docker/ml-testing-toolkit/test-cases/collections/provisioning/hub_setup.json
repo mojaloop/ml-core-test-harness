@@ -393,14 +393,14 @@
     {
       "id": 3,
       "type": "Oracle Onboarding",
-      "name": "Oracle Onboarding",
+      "name": "Oracle Onboarding for ACCOUNT_ID",
       "requests": [
         {
           "id": 1,
           "meta": {
-            "info": "Register IdType Oracle"
+            "info": "Register ACCOUNT_ID Oracle"
           },
-          "description": "Register IdType Oracle",
+          "description": "Register ACCOUNT_ID Oracle",
           "apiVersion": {
             "minorVersion": 1,
             "majorVersion": 1,
@@ -410,12 +410,11 @@
           "path": "/oracles",
           "method": "post",
           "body": {
-            "oracleIdType": "{$inputs.payeeIdType}",
+            "oracleIdType": "ACCOUNT_ID",
             "endpoint": {
-              "value": "{$inputs.HOST_SIMULATOR}/oracle",
+              "value": "{$inputs.HOST_ORACLE_ACCOUNT_ID}",
               "endpointType": "URL"
             },
-            "currency": "{$inputs.currency}",
             "isDefault": true
           },
           "headers": {
