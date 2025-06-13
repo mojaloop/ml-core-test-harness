@@ -13,7 +13,7 @@ services:
     deploy:
       mode: replicated
       replicas: ${ALS_REPLICAS}
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/account-lookup-service.js /opt/app/config/default.json && /opt/app/wait4/wait4.js account-lookup-service && npm run migrate && node src/index.js server"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/account-lookup-service.js /opt/app/config/default.json && /opt/app/wait4/wait4.js account-lookup-service && npm run migrate && npm run start:all"
     # ports:
     #   - "4001:4001"
     #   - "4002:4002"
@@ -32,8 +32,6 @@ services:
       - EVENT_SDK_TRACEID_PER_VENDOR=false
       ## Disable API Routes from displaying on startup
       - ALS_DISPLAY_ROUTES=false
-      ## Configure Switch Endpoint
-      - ALS_SWITCH_ENDPOINT=http://callback-handler-svc-cl-sim:3001/admin
       ## Increase UV Threads for IO Operations - https://nodejs.org/api/cli.html#uv_threadpool_sizesize
       - UV_THREADPOOL_SIZE=16
       ## Temporary Cache configuration for v14.2.4-snapshot.3 @ https://github.com/mojaloop/account-lookup-service/pull/461
@@ -525,14 +523,60 @@ services:
     # ports:
     #   - "3002:3002"
     #   - "9229:9229"
+    env_file:
+      - .env
+      - perf.env
     depends_on:
       mysql-cl:
-        condition: service_started
+        condition: service_healthy
       central-ledger:
         condition: service_started
+      kafka:
+        condition: service_started
+      kafka-provisioning:
+        condition: service_completed_successfully
     environment:
       ## Allows TraceID to be propogated - https://github.com/mojaloop/event-sdk#configuration
       - EVENT_SDK_TRACEID_PER_VENDOR=false
+      - UV_THREADPOOL_SIZE=20
+    volumes:
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: wget -q http://0.0.0.0:3002/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - all-services
+      - quotes-test
+
+  quoting-service-handler:
+    image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/quoting-service-perf.js /opt/app/config/default.json && npm run start:handlers"
+    deploy:
+      mode: replicated
+      replicas: ${QS_REPLICAS}
+    networks:
+      - mojaloop-net
+    env_file:
+      - .env
+      - perf.env
+    depends_on:
+      mysql-cl:
+        condition: service_healthy
+      central-ledger:
+        condition: service_started
+      kafka:
+        condition: service_started
+      quoting-service:
+        condition: service_healthy
+      kafka-provisioning:
+        condition: service_completed_successfully
+    environment:
+      ## Allows TraceID to be propogated - https://github.com/mojaloop/event-sdk#configuration
+      - EVENT_SDK_TRACEID_PER_VENDOR=false
+      - UV_THREADPOOL_SIZE=20
     volumes:
       - ./docker/config-modifier:/opt/app/config-modifier
     healthcheck:
@@ -588,6 +632,16 @@ services:
       kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-notification-event --replication-factor 1 --partitions $$KAFKA_NOTIFICATION_PARTITIONS_NUM
       kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-get --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
       kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-admin-transfer --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-quotes-post  --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-quotes-put  --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-quotes-get  --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-fx-quotes-post  --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-fx-quotes-put  --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-fx-quotes-get  --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulkquotes-post  --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulkquotes-put  --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulkquotes-get  --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
+      kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-transfer-position-batch  --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
       # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-prepare --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
       # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-fulfil --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
       # kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic topic-bulk-processing --replication-factor 1 --partitions $$KAFKA_GENERAL_PARTITIONS_NUM
@@ -911,7 +965,7 @@ services:
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --labels std,perf --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/default-env.json --labels std,perf --save-report true --report-format html --report-target file://reports/ttk-provisioning-report.html"
     user: root
     profiles:
       - ttk-provisioning-quotes
@@ -930,53 +984,62 @@ services:
         condition: service_healthy
       central-ledger:
         condition: service_healthy
+      account-lookup-service:
+        condition: service_healthy
     networks:
       - mojaloop-net
     command:
       - sh
       - -c
-      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/perf-e2e-env.json --labels std,perf --save-report --report-format html --report-target file://reports/ttk-provisioning-report.html"
+      - "npm run cli -- -u http://mojaloop-testing-toolkit:5050 -l 2 -i collections/provisioning -e environments/perf-e2e-env.json --labels std,perf --save-report true --report-format html --report-target file://reports/ttk-provisioning-report.html"
     user: root
     profiles:
       - ttk-provisioning-e2e
 
-  callback-handler-svc-oracle-sim:
-    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+  als-msisdn-oracle-svc:
+    image: mojaloop/als-msisdn-oracle-svc:${ALS_MSISDN_ORACLE_SVC_VERSION}
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/dist/config/default.json /opt/app/config-modifier/configs/als-msisdn-oracle-svc.js /opt/app/dist/config/default.json && /opt/app/wait4/wait4.js als-msisdn-oracle-svc && npm run migrate && node ./dist/src/cli.js"
+    networks:
+      - mojaloop-net
     deploy:
       mode: replicated
       replicas: 1
     env_file:
       - .env
       - perf.env
-    ports:
-      - "30000:3001"
-    networks:
-      - mojaloop-net
     environment: {}
-      # - LOG_LEVEL=error
+    depends_on:
+      mysql-als:
+        condition: service_healthy
+      central-ledger:
+        condition: service_started
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
     healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:3000/health -O /dev/null || exit 1
       timeout: 20s
-      retries: 30
-      interval: 15s
+      retries: 10
+      start_period: 40s
+      interval: 30s
     user: root
     profiles:
-      - simulators
-      - callback-handler
       - all-services
       - als-test
       - oracle
+
 
   sdk-scheme-adapter-api-svc:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
     env_file:
       - .env
       - perf.env
+      - perf.override.env
     container_name: sdk-scheme-adapter
     command: yarn nx run modules-api-svc:start
-    ports:
-      - "4000:4000"
-      - "4001:4001"
+    # ports:
+    #   - "4000:4000"
+    #   - "4001:4001"
     networks:
       - mojaloop-net
     depends_on:
@@ -999,35 +1062,96 @@ services:
     user: root
     profiles:
       - sdk-scheme-adapter
-      - all-services
 
-  callback-handler-svc-cl-sim:
-    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    deploy:
-      mode: replicated
-      replicas: 1
+  perf-sdk-payer:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
     env_file:
       - .env
-      - ./envs/cl-sim.env
-    ports:
-      - "3001:3001"
+      - ./envs/perf-sdk-payer.env
+      - perf.env
+      - perf.override.env
+    command: yarn nx run modules-api-svc:start
     networks:
       - mojaloop-net
-    environment: {}
-      # - LOG_LEVEL=error
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
     healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      test: [
+        "CMD" ,
+        "apk", "add", "--no-cache", "curl", # Install curl
+        "&&",
+        "curl", "-f", "http://localhost:4001" # Check if api is up
+        ]
       timeout: 20s
-      retries: 30
-      interval: 15s
+      retries: 10
+      start_period: 40s
+      interval: 30s
     user: root
     profiles:
-      - simulators
-      - callback-handler
-      - all-services
-      - als-test
-      - transfers-test
-      - quotes-test
+      - fx-sdk-e2e
+
+  perf-sdk-payee:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    env_file:
+      - .env
+      - ./envs/perf-sdk-payee.env
+      - perf.env
+      - perf.override.env
+    command: yarn nx run modules-api-svc:start
+    networks:
+      - mojaloop-net
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+    healthcheck:
+      test: [
+        "CMD" ,
+        "apk", "add", "--no-cache", "curl", # Install curl
+        "&&",
+        "curl", "-f", "http://localhost:4001" # Check if api is up
+        ]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - fx-sdk-e2e
+
+  perf-sdk-fxp:
+    image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
+    env_file:
+      - .env
+      - ./envs/perf-sdk-fxp.env
+      - perf.env
+      - perf.override.env
+    command: yarn nx run modules-api-svc:start
+    networks:
+      - mojaloop-net
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./docker/wait4:/opt/app/wait4
+    healthcheck:
+      test: [
+        "CMD" ,
+        "apk", "add", "--no-cache", "curl", # Install curl
+        "&&",
+        "curl", "-f", "http://localhost:4001" # Check if api is up
+        ]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    user: root
+    profiles:
+      - fx-sdk-e2e
 
   redis:
     networks:
@@ -1312,17 +1436,19 @@ services:
     profiles:
       - 8dfsp
 
-  sim-fspiop:
+  sim-perf-backend-payer:
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
     image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
-    # deploy:
-    #   mode: replicated
-    #   replicas: 5
+    deploy:
+      mode: replicated
+      replicas: 1
     env_file:
       - .env
-      - ./envs/fspiop-sim.env
-    ports:
-      - "3001:3001"
-      - "3002:3002"
+      - perf.env
+      - perf.override.env
+      - ./envs/perf-backend.env
     networks:
       - mojaloop-net
     environment: {}
@@ -1334,8 +1460,73 @@ services:
       interval: 15s
     user: root
     profiles:
-      - simulators
-      - callback-handler
+      - fx-sdk-e2e
+
+  sim-perf-backend-payee:
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    deploy:
+      mode: replicated
+      replicas: 1
+    env_file:
+      - .env
+      - perf.env
+      - perf.override.env
+      - ./envs/perf-backend.env
+    networks:
+      - mojaloop-net
+    environment: {}
+      # - LOG_LEVEL=error
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - fx-sdk-e2e
+
+  sim-perf-backend-fxp:
+    sysctls:
+      # websockets do not have keep-alive, resulting in many TIME_WAIT sockets
+      net.ipv4.tcp_tw_reuse: 1
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    deploy:
+      mode: replicated
+      replicas: 1
+    env_file:
+      - .env
+      - perf.env
+      - perf.override.env
+      - ./envs/perf-backend.env
+    networks:
+      - mojaloop-net
+    environment: {}
+      # - LOG_LEVEL=error
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
+      - fx-sdk-e2e
+
+  sim-fspiop:
+    image: mojaloop/callback-handler-simulator-svc:${TEST_CALLBACK_HAND_SVC_VERSION}
+    env_file:
+      - .env
+      - ./envs/fspiop-sim.env
+    networks:
+      - mojaloop-net
+    environment: {}
+    healthcheck:
+      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    user: root
+    profiles:
       - sdk-scheme-adapter
-      - all-services
-      - als-test

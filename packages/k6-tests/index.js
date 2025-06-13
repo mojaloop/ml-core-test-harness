@@ -20,6 +20,7 @@ export { inboundSDKTransfersScenarios } from './scenarios/inboundSDKTransfers.js
 export { outboundSDKDiscoveryScenarios } from './scenarios/outboundSDKDiscovery.js';
 export { outboundSDKQuotesScenarios } from './scenarios/outboundSDKQuotes.js';
 export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.js';
+export { sdkFxSendE2EScenarios } from './scenarios/sdkFxSendE2E.js';
 export { localhostScenarios } from './scenarios/localhost.js';
 
 const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';

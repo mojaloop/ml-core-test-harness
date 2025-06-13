@@ -10,4 +10,3 @@ workflows:
           filters:
             tags:
               only: /v\d+(\.\d+){2}(-[a-zA-Z-][0-9a-zA-Z-]*\.\d+)?/
-          base_image: ghcr.io/grafana/k6-operator:runner-v0.0.17

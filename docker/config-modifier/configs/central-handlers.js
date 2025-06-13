@@ -31,6 +31,19 @@ module.exports = {
     "EXPIRES_IN_MS": 1000
   },
   "KAFKA": {
+    EVENT_TYPE_ACTION_TOPIC_MAP: {
+      POSITION:{
+        "PREPARE": "topic-transfer-position-batch",
+        "FX_PREPARE": "topic-transfer-position-batch",
+        "COMMIT": "topic-transfer-position-batch",
+        "RESERVE": "topic-transfer-position-batch",
+        "FX_RESERVE": "topic-transfer-position-batch",
+        "TIMEOUT_RESERVED": "topic-transfer-position-batch",
+        "FX_TIMEOUT_RESERVED": "topic-transfer-position-batch",
+        "ABORT": "topic-transfer-position-batch",
+        "FX_ABORT": "topic-transfer-position-batch"
+      }
+    },
     "CONSUMER": {
       "BULK": {
         "PREPARE": {
