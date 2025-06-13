@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.9.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.8.0...v2.9.0) (2025-06-13)
+
+
+### Features
+
+* fx sdk perf test ([#114](https://github.com/mojaloop/ml-core-test-harness/issues/114)) ([ae21162](https://github.com/mojaloop/ml-core-test-harness/commit/ae2116207c91ecdcf2f493932ca6a4a57c159a0c))
+
 ## [2.8.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.7.0...v2.8.0) (2025-06-10)
 
 
