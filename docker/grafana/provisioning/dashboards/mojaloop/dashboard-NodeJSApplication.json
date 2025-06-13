@@ -1021,12 +1021,17 @@
             "value": "moja_als"
           },
           {
+            "selected": false,
+            "text": "mojaloop_connector_default",
+            "value": "mojaloop_connector_default"
+          },
+          {
             "selected": true,
             "text": "cbs",
             "value": "cbs"
           }
         ],
-        "query": "moja_cl,moja_ml,moja_als,cbs",
+        "query": "moja_cl,moja_ml,moja_als,cbs,mojaloop_connector_default",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
