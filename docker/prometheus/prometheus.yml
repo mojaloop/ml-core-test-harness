@@ -141,4 +141,7 @@ scrape_configs:
           'mysqlexporter-als:9104',
           'mysqlexporter-cl:9104',
           'kafka-exporter:9308',
+          'perf-sdk-payer:4004',
+          'perf-sdk-payee:4004',
+          'perf-sdk-fxp:4004',
         ]
