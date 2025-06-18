@@ -65,10 +65,14 @@ const millisecondsToTime = (milliseconds) => {
 }
 
 export function setup() {
-  const testName = __ENV.K6_SCRIPT_CONFIG_FILE_NAME?.replace('.json', '');
-  const setupFunction = setupFunctions[testName + 'Setup'];
-  if (setupFunction) {
-    setupFunction();
+  const scenarios = testConfig.scenarios || {};
+  const scenarioNames = Object.keys(scenarios);
+  if (scenarioNames.length !== 0) {
+    const execName = scenarios[scenarioNames[0]].exec;
+    const setupFunction = setupFunctions[execName.replace('Scenarios', 'Setup')];
+    if (setupFunction) {
+      setupFunction();
+    }
   }
 }
 
