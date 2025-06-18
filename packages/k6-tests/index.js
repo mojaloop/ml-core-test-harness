@@ -23,6 +23,12 @@ export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.
 export { sdkFxSendE2EScenarios } from './scenarios/sdkFxSendE2E.js';
 export { localhostScenarios } from './scenarios/localhost.js';
 
+// Setup functions
+import { setup as sdkFxSendE2ESetup } from './scripts/sdkFxSendE2E.js';
+const setupFunctions = {
+  sdkFxSendE2ESetup
+}
+
 const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';
 const configFile = configFolder + __ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json';
 const testConfig = JSON.parse(open(configFile));
@@ -56,6 +62,14 @@ const millisecondsToTime = (milliseconds) => {
   const minutes = Math.floor(seconds / 60)
   const hours = Math.floor(minutes / 60)
   return `${String(hours).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`
+}
+
+export function setup() {
+  const testName = __ENV.K6_SCRIPT_CONFIG_FILE_NAME?.replace('.json', '');
+  const setupFunction = setupFunctions[testName + 'Setup'];
+  if (setupFunction) {
+    setupFunction();
+  }
 }
 
 export function handleSummary(data) {
