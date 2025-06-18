@@ -74,7 +74,7 @@ export function sdkFxSendE2E() {
 
     // Lets send the FSPIOP POST /transfers request
     const postTransferResponse = http.post(`${sdkEndpointUrl}/transfers`, JSON.stringify(body), params);
-    console.log('postTransferResponse', postTransferResponse)
+    // console.log('postTransferResponse', postTransferResponse)
     check(postTransferResponse, { 'TRANSFERS__POST_TRANSFERS_RESPONSE_IS_200' : (r) => r.status == 200 });
 
     const transferId = JSON.parse(postTransferResponse.body).transferId
@@ -83,7 +83,7 @@ export function sdkFxSendE2E() {
       const putTransferacceptPartyResponse = http.put(`${sdkEndpointUrl}/transfers/${transferId}`, JSON.stringify({
         "acceptParty": true
       }), params);
-      console.log('putTransferacceptPartyResponse', putTransferacceptPartyResponse)
+      // console.log('putTransferacceptPartyResponse', putTransferacceptPartyResponse)
       check(putTransferacceptPartyResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_PARTY_RESPONSE_IS_200' : (r) => r.status == 200 });
 
       if (putTransferacceptPartyResponse.status == 200) {
@@ -91,14 +91,14 @@ export function sdkFxSendE2E() {
         const putTransferAcceptConversionResponse = http.put(`${sdkEndpointUrl}/transfers/${transferId}`, JSON.stringify({
           "acceptConversion": true
         }), params);
-        console.log('putTransferAcceptConversionResponse', putTransferAcceptConversionResponse)
+        // console.log('putTransferAcceptConversionResponse', putTransferAcceptConversionResponse)
         check(putTransferAcceptConversionResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_CONVERSION_RESPONSE_IS_200' : (r) => r.status == 200 });
 
         if (putTransferAcceptConversionResponse.status == 200) {
           const putTransferAcceptQuoteResponse = http.put(`${sdkEndpointUrl}/transfers/${transferId}`, JSON.stringify({
             "acceptQuote": true
           }), params);
-          console.log('putTransferAcceptQuoteResponse', putTransferAcceptQuoteResponse)
+          // console.log('putTransferAcceptQuoteResponse', putTransferAcceptQuoteResponse)
           check(putTransferAcceptQuoteResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_QUOTE_RESPONSE_IS_200' : (r) => r.status == 200 });
 
           try {
