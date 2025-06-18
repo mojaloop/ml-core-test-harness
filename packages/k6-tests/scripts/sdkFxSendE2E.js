@@ -14,6 +14,42 @@ const idType = __ENV.K6_SCRIPT_ID_TYPE || 'ACCOUNT_ID';
 
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
+// Setup function - runs once at the beginning of the test
+export function setup() {
+  console.log('Making party provisioning requests to accounts endpoints...');
+
+  // Provision accounts for all FSPs in the pool
+  for (const fsp of fspList) {
+    const sdkEndpointUrl = fsp['outboundUrl'];
+    const partyId = fsp['partyId'];
+    
+    if (!sdkEndpointUrl || !partyId) {
+      console.log(`Skipping FSP ${fsp['fspId']} - missing outboundUrl or partyId`);
+      continue;
+    }
+
+    console.log(`Provisioning account for FSP ${fsp['fspId']} with partyId ${partyId}`);
+    const startupParams = {
+      tags: {},
+      headers: {
+        'Content-Type': 'application/json',
+        'Date': (new Date()).toUTCString()
+      }
+    };
+    const startupBody = JSON.stringify([{"idType":idType,"idValue":partyId}]);
+    const startupResponse = http.post(`${sdkEndpointUrl}/accounts`, startupBody, startupParams);
+
+    if (startupResponse.status >= 200 && startupResponse.status < 300) {
+      console.log(`Account provisioning successful for FSP ${fsp['fspId']}`);
+    } else {
+      console.log(`Account provisioning failed for FSP ${fsp['fspId']} with status: ${startupResponse.status}`);
+    }
+
+  }
+
+  console.log('Completed account provisioning');
+}
+
 export function sdkFxSendE2E() {
   !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("Post Transfers", function () {
@@ -47,7 +83,6 @@ export function sdkFxSendE2E() {
       },
     };
 
-    // Use payerFsp.outboundUrl instead of __ENV.K6_SCRIPT_SDK_ENDPOINT_URL
     const sdkEndpointUrl = payerFsp['outboundUrl'];
 
     const body = {
