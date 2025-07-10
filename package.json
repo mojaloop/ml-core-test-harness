@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/ml-core-test-harness",
-  "version": "2.10.0",
+  "version": "2.11.0-proxy.0",
   "private": true,
   "scripts": {
     "lint": "true",
