@@ -4,13 +4,13 @@
     "transformerName": "none",
     "generateIDType": "ulid"
   },
-  "name": "ml-testing-toolkit_test-cases_collections_tests_golden_path_negative_scenarios_quotes_negative",
+  "name": "collections_tests_golden_path_negative_scenarios_quotes_negative",
   "test_cases": [
     {
       "id": "POST-quotes-with",
       "name": "POST /quotes with missing headers",
       "fileInfo": {
-        "path": "ml-testing-toolkit/test-cases/collections/tests/golden_path/negative_scenarios/quotes_negative.json",
+        "path": "collections/tests/golden_path/negative_scenarios/quotes_negative.json",
         "labels": ["std-gp"]
       },
       "meta": {
@@ -223,7 +223,7 @@
           }
         },
         {
-          "id": "Post-Quote-Missing",
+          "id": "Post-Quote-Missing-Accept-header",
           "description": "Post Quote - Missing Accept header",
           "apiVersion": {
             "minorVersion": 0,
@@ -326,7 +326,7 @@
           "disabled": false
         },
         {
-          "id": "Post-Quote-Missing",
+          "id": "Post-Quote-Missing-Date-Header",
           "description": "Post Quote - Missing Date header",
           "apiVersion": {
             "minorVersion": 0,
@@ -498,7 +498,7 @@
           }
         },
         {
-          "id": "Post-Quote-Missing",
+          "id": "Post-Quote-Missing-Fspiop-Header",
           "description": "Post Quote - Missing FSPIOP Source header",
           "apiVersion": {
             "minorVersion": 0,
@@ -606,7 +606,7 @@
       "id": "POST-quotes-with-0",
       "name": "POST /quotes with invalid values in header",
       "fileInfo": {
-        "path": "ml-testing-toolkit/test-cases/collections/tests/golden_path/negative_scenarios/quotes_negative.json",
+        "path": "collections/tests/golden_path/negative_scenarios/quotes_negative.json",
         "labels": ["std-gp"]
       },
       "meta": {
@@ -944,7 +944,7 @@
       "id": "POST-quotes-with-1",
       "name": "POST /quotes with missing parameters in body",
       "fileInfo": {
-        "path": "ml-testing-toolkit/test-cases/collections/tests/golden_path/negative_scenarios/quotes_negative.json",
+        "path": "collections/tests/golden_path/negative_scenarios/quotes_negative.json",
         "labels": ["std-gp"]
       },
       "meta": {
