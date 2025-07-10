@@ -6,13 +6,13 @@
       "env": {
         "UNIDIRECTIONAL": "true"
       },
-      "vus": 1,
+      "vus": 10,
       "duration": "5m"
     }
   },
   "thresholds": {
-    "iteration_duration": [ "p(95)<1000" ],
+    "iteration_duration": [ "p(95)<8000" ],
     "http_req_failed": [ "rate<0.01" ],
-    "http_req_duration": [ "p(95)<1000" ]
+    "http_req_duration": [ "p(95)<5000" ]
   }
 }
