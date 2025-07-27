@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.11.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.10.0...v2.11.0) (2025-07-14)
+
+
+### Features
+
+* added negative tests for quotes endpoint ([53e7653](https://github.com/mojaloop/ml-core-test-harness/commit/53e76536a5c25486d872fbd1c597728071c075a6))
+
 ## [2.10.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.9.2...v2.10.0) (2025-06-18)
 
 
