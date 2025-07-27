@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.11.1](https://github.com/mojaloop/ml-core-test-harness/compare/v2.11.0...v2.11.1) (2025-07-27)
+
 ## [2.11.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.10.0...v2.11.0) (2025-07-14)
 
 
