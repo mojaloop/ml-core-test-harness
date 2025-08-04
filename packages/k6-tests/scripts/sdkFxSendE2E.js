@@ -16,13 +16,13 @@ const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON
 
 // Setup function - runs once at the beginning of the test
 export function setup() {
-  console.log('Making party provisioning requests to accounts endpoints...');
+  console.log('Making party provisioning requests to accounts endpoints...', { fspList });
 
   // Provision accounts for all FSPs in the pool
   for (const fsp of fspList) {
     const sdkEndpointUrl = fsp['outboundUrl'];
     const partyId = fsp['partyId'];
-    
+
     if (!sdkEndpointUrl || !partyId) {
       console.log(`Skipping FSP ${fsp['fspId']} - missing outboundUrl or partyId`);
       continue;
