@@ -1,0 +1,478 @@
+{
+  "options": {
+    "breakOnError": false,
+    "transformerName": "none",
+    "generateIDType": "ulid"
+  },
+  "name": "hub_golden_path_by_folder_parties",
+  "test_cases": [
+    {
+      "id": "Positive-tests-for",
+      "name": "Positive tests for parties",
+      "fileInfo": {
+        "path": "hub/golden_path_by_folder/parties/parties.json"
+      },
+      "meta": {
+        "info": "Positive tests for parties endpoints"
+      },
+      "requests": [
+        {
+          "id": "GET-partiesTypeID",
+          "description": "GET /parties/{Type}/{ID}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Accept": "{$inputs.acceptParties}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-party",
+                "description": "Callback body should contain party",
+                "exec": ["expect(callback.body).to.have.property('party')"]
+              },
+              {
+                "id": "req-src-inputs-fromFspId",
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "cb-content-type-parties",
+                "description": "Callback content-type to be parties",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
+                ]
+              },
+              {
+                "id": "cb-partyIdInfo-partyIdType-par",
+                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
+                "exec": [
+                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')"
+                ]
+              },
+              {
+                "id": "Payee-src",
+                "description": "Payee FSPIOP-Source",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Content-Type",
+                "description": "Payee Content-Type",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$inputs.toIdValue}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "PUT-partiesTypeID",
+          "description": "PUT /parties/{Type}/{ID}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "rsp-statusText-ok",
+                "description": "Response statusText be OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": "PUT-parties-Type-ID-error",
+          "description": "PUT /parties/{Type}/{ID}/error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/parties/{Type}/{ID}/error",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}/error",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": "5100",
+              "errorDescription": "string",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "string",
+                    "value": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "rsp-statusText-ok",
+                "description": "Response statusText be OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": "GET-parties-Type-ID-SubId",
+          "description": "GET /parties/{Type}/{ID}/{SubId}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/parties/{Type}/{ID}/{SubId}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}",
+            "SubId": "{$inputs.toSubIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Accept": "{$inputs.acceptParties}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-party",
+                "description": "Callback body should contain party",
+                "exec": ["expect(callback.body).to.have.property('party')"]
+              },
+              {
+                "id": "req-src-inputs-fromFspId",
+                "description": "Request FSPIOP-Source same as inputs fromFspId",
+                "exec": [
+                  "expect('{$request.headers['FSPIOP-Source']}').to.equal('{$inputs.fromFspId}')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSPIOP-Destination same as request FSPIOP-Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "cb-content-type-parties",
+                "description": "Callback content-type to be parties",
+                "exec": [
+                  "expect(callback.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')"
+                ]
+              },
+              {
+                "id": "cb-partyIdInfo-partyIdType-par",
+                "description": "Callback partyIdInfo (partyIdType, partyIdentifier)",
+                "exec": [
+                  "expect(callback.body.party.partyIdInfo.partyIdType).to.equal('{$inputs.toIdType}')",
+                  "expect(callback.body.party.partyIdInfo.partyIdentifier).to.equal('{$inputs.toIdValue}')"
+                ]
+              },
+              {
+                "id": "Payee-src",
+                "description": "Payee FSPIOP-Source",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Content-Type",
+                "description": "Payee Content-Type",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "  expect(environment.payeeRequest.headers['content-type']).to.equal('application/vnd.interoperability.parties+json;version={$inputs.expectedPartiesVersion}')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": "PUT-parties-Type-ID-SubId",
+          "description": "PUT /parties/{Type}/{ID}/{SubId}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/parties/{Type}/{ID}/{SubId}",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}",
+            "SubId": "{$inputs.toSubIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "party": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "16135551212",
+                "partySubIdOrType": "string",
+                "fspId": "string",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "string",
+                      "value": "string"
+                    }
+                  ]
+                }
+              },
+              "merchantClassificationCode": "string",
+              "name": "string",
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Henrik",
+                  "middleName": "Johannes",
+                  "lastName": "Karlsson"
+                },
+                "dateOfBirth": "1966-06-16",
+                "kycInformation": "{\n    \"metadata\": {\n        \"format\": \"JSON\",\n        \"version\": \"1.0\",\n        \"description\": \"Data containing KYC Information\"\n    },\n    \"data\": {\n        \"name\": \"John Doe\",\n        \"dob\": \"1980-05-15\",\n        \"gender\": \"Male\",\n        \"address\": \"123 Main Street, Anytown, USA\",\n        \"email\": \"johndoe@example.com\",\n        \"phone\": \"+1 555-123-4567\",\n        \"nationality\": \"US\",\n        \"passport_number\": \"AB1234567\",\n        \"issue_date\": \"2010-02-20\",\n        \"expiry_date\": \"2025-02-20\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_name\": \"Example Bank\",\n        \"employer\": \"ABC Company\",\n        \"occupation\": \"Software Engineer\",\n        \"income\": \"$80,000 per year\",\n        \"marital_status\": \"Single\",\n        \"dependents\": 0,\n        \"risk_level\": \"Low\"\n    }\n}"
+              },
+              "supportedCurrencies": ["AED"]
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "rsp-statusText-ok",
+                "description": "Response statusText be OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": "PUT-parties-Type-ID-SubId-error",
+          "description": "PUT /parties/{Type}/{ID}/{SubId}/error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/parties/{Type}/{ID}/{SubId}/error",
+          "path": "/parties/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}/error",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}",
+            "SubId": "{$inputs.toSubIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-200",
+                "description": "Response status to be 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "rsp-statusText-ok",
+                "description": "Response statusText be OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              }
+            ]
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParties}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}"
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": "5100",
+              "errorDescription": "string",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "string",
+                    "value": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "disabled": false
+        }
+      ]
+    }
+  ]
+}
