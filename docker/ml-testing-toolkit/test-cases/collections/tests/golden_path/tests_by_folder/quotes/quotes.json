@@ -1,0 +1,472 @@
+{
+  "options": {
+    "breakOnError": false,
+    "transformerName": "none",
+    "generateIDType": "ulid"
+  },
+  "name": "tests_golden_path_tests_by_folder_quotes",
+  "test_cases": [
+    {
+      "id": "Positive-tests-for",
+      "name": "Positive tests for quotes",
+      "fileInfo": {
+        "path": "tests/golden_path/tests_by_folder/quotes/quotes.json",
+        "labels": ["std-gp"]
+      },
+      "meta": {
+        "info": "Positive tests for quotes"
+      },
+      "requests": [
+        {
+          "id": "POST-quotes",
+          "description": "POST /quotes",
+          "tests": {
+            "assertions": [
+              {
+                "id": "rsp-status-202",
+                "description": "Response status to be 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": "rsp-statusText-Accepted",
+                "description": "Response statusText be Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": "cb-Content-Length-not-0",
+                "description": "Callback Content Length not 0",
+                "exec": [
+                  "expect(callback.headers['Content-Length']).to.not.equal('0')"
+                ]
+              },
+              {
+                "id": "cb-dest-req-src",
+                "description": "Callback FSP Destination equal to request FSP Source",
+                "exec": [
+                  "expect(callback.headers['fspiop-destination']).to.equal('{$request.headers['FSPIOP-Source']}')"
+                ]
+              },
+              {
+                "id": "quotes-post-rsp-body-empty",
+                "description": "Synchronous response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "quotes-post-rsp-cache-control-no-cache",
+                "description": "Synchronous response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "cb-transferAmount",
+                "description": "Callback body should contain transferAmount",
+                "exec": [
+                  "expect(callback.body).to.have.property('transferAmount')"
+                ]
+              },
+              {
+                "id": "cb-transferAmount-amt-curr-req",
+                "description": "Callback transferAmount (amount & currency)to match the request",
+                "exec": [
+                  "expect(callback.body.transferAmount.amount).to.equal('{$request.body.amount.amount}')",
+                  "expect(callback.body.transferAmount.currency).to.equal('{$request.body.amount.currency}')"
+                ]
+              },
+              {
+                "id": "req-transactionType-scenario-t",
+                "description": "Request transactionType scenario to be TRANSFER",
+                "exec": [
+                  "expect('{$request.body.transactionType.scenario}').to.equal('TRANSFER')"
+                ]
+              },
+              {
+                "id": "req-transactionType-initiator-",
+                "description": "Request transactionType initiator to be PAYER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiator}').to.equal('PAYER')"
+                ]
+              },
+              {
+                "id": "req-transactionType-initiatorT",
+                "description": "Request transactionType initiatorType to be CONSUMER",
+                "exec": [
+                  "expect('{$request.body.transactionType.initiatorType}').to.equal('CONSUMER')"
+                ]
+              },
+              {
+                "id": "Payee-src",
+                "description": "Payee FSPIOP-Source",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.headers['fspiop-source']).to.equal('{$inputs.fromFspId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-Content-Type",
+                "description": "Payee Content-Type",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.headers['content-type']).to.equal(request.headers['content-type'])",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-QuoteId",
+                "description": "Payee Body QuoteId",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.data['quoteId']).to.equal('{$request.body.quoteId}')",
+                  "}"
+                ]
+              },
+              {
+                "id": "Payee-TransactionId",
+                "description": "Payee Body TransactionId",
+                "exec": [
+                  "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                  "expect(environment.payeeRequest.data['transactionId']).to.equal('{$request.body.transactionId}')",
+                  "}"
+                ]
+              }
+            ]
+          },
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptQuotes}",
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateID}",
+            "transactionId": "{$function.generic.generateID}",
+            "transactionRequestId": "{$function.generic.generateID}",
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "{$inputs.fromIdType}",
+                "partyIdentifier": "{$inputs.fromIdValue}",
+                "fspId": "{$inputs.fromFspId}"
+              },
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "{$inputs.fromFirstName}",
+                  "lastName": "{$inputs.fromLastName}"
+                },
+                "dateOfBirth": "{$inputs.fromDOB}"
+              }
+            },
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "27713803912",
+                "fspId": "testingtoolkitdfsp"
+              }
+            },
+            "amountType": "RECEIVE",
+            "amount": {
+              "amount": "{$inputs.amount}",
+              "currency": "{$inputs.currency}"
+            },
+            "transactionType": {
+              "scenario": "TRANSFER",
+              "initiator": "PAYER",
+              "initiatorType": "CONSUMER"
+            },
+            "note": "{$inputs.note}"
+          },
+          "scriptingEngine": "javascript",
+          "disabled": false,
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  await websocket.connect(environment.PAYEEFSP_SDK_TESTAPI_WS_URL + '/requests/{$request.body.quoteId}', 'payeeRequest')",
+                "}"
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "if (environment.ENABLE_WS_ASSERTIONS===true) {",
+                "  environment.payeeRequest = await websocket.getMessage('payeeRequest', environment.WS_ASSERTION_TIMEOUT)",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "GET-quotesID",
+          "description": "GET /quotes/{ID}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/01K1WV2595Z7XST8FW5K4XRDZB",
+          "method": "get",
+          "params": {
+            "ID": "01K1WV2595Z7XST8FW5K4XRDZB"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "Accept": "{$inputs.acceptQuotes}",
+            "Authorization": "{$inputs.TTK_BEARER_TOKEN}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "quotes-get-rsp-status-202",
+                "description": "Response status is 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": "quotes-get-rsp-statusText-accepted",
+                "description": "Response statusText is Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": "quotes-get-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "quotes-get-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "quotes-get-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "quotes-get-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": "PUT-quotesID",
+          "description": "PUT /quotes/{ID}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/01K56F9R1B4N47YMXPXKW45FMQ",
+          "method": "put",
+          "params": {
+            "ID": "01K56F9R1B4N47YMXPXKW45FMQ"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "quotes-put-rsp-status-200",
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "quotes-put-rsp-statusText-ok",
+                "description": "Response statusText is OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              },
+              {
+                "id": "quotes-put-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "quotes-put-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "quotes-put-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "quotes-put-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "transferAmount": {
+              "currency": "AED",
+              "amount": "123.45"
+            },
+            "payeeReceiveAmount": {
+              "currency": "AED",
+              "amount": "123.45"
+            },
+            "payeeFspFee": {
+              "currency": "AED",
+              "amount": "123.45"
+            },
+            "payeeFspCommission": {
+              "currency": "AED",
+              "amount": "123.45"
+            },
+            "expiration": "2016-05-24T08:38:08.699-04:00",
+            "geoCode": {
+              "latitude": "+45.4215",
+              "longitude": "+75.6972"
+            },
+            "ilpPacket": "AYIBgQAAAAAAAASwNGxldmVsb25lLmRmc3AxLm1lci45T2RTOF81MDdqUUZERmZlakgyOVc4bXFmNEpLMHlGTFGCAUBQU0svMS4wCk5vbmNlOiB1SXlweUYzY3pYSXBFdzVVc05TYWh3CkVuY3J5cHRpb246IG5vbmUKUGF5bWVudC1JZDogMTMyMzZhM2ItOGZhOC00MTYzLTg0NDctNGMzZWQzZGE5OGE3CgpDb250ZW50LUxlbmd0aDogMTM1CkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbgpTZW5kZXItSWRlbnRpZmllcjogOTI4MDYzOTEKCiJ7XCJmZWVcIjowLFwidHJhbnNmZXJDb2RlXCI6XCJpbnZvaWNlXCIsXCJkZWJpdE5hbWVcIjpcImFsaWNlIGNvb3BlclwiLFwiY3JlZGl0TmFtZVwiOlwibWVyIGNoYW50XCIsXCJkZWJpdElkZW50aWZpZXJcIjpcIjkyODA2MzkxXCJ9IgA",
+            "condition": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "PUT-quotesIDerror",
+          "description": "PUT /quotes/{ID}/error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/quotes/{ID}/error",
+          "path": "/quotes/01K1WV2595Z7XST8FW5K4XRDZB/error",
+          "method": "put",
+          "params": {
+            "ID": "01K1WV2595Z7XST8FW5K4XRDZB"
+          },
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeQuotes}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.fromFspId}",
+            "FSPIOP-Destination": "{$inputs.toFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "quotes-error-rsp-status-200",
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "quotes-error-rsp-statusText-ok",
+                "description": "Response statusText is OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              },
+              {
+                "id": "quotes-error-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "quotes-error-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "quotes-error-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "quotes-error-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "body": {
+            "errorInformation": {
+              "errorCode": "5100",
+              "errorDescription": "string",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "string",
+                    "value": "string"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
