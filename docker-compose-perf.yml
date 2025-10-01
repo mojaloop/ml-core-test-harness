@@ -614,7 +614,7 @@ services:
     container_name: kafka-provisioning
     networks:
       - mojaloop-net
-    image: docker.io/bitnami/kafka:${DEP_KAFKA_VERSION}
+    image: docker.io/bitnamilegacy/kafka:${DEP_KAFKA_VERSION}
     env_file:
       - perf.env
     depends_on:
@@ -660,7 +660,7 @@ services:
   kafka:
     networks:
       - mojaloop-net
-    image: docker.io/bitnami/kafka:${DEP_KAFKA_VERSION}
+    image: docker.io/bitnamilegacy/kafka:${DEP_KAFKA_VERSION}
     container_name: kafka
     # ports:
     #   - "9092:9092"
