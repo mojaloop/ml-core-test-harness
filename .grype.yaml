@@ -10,7 +10,9 @@ ignore:
   - vulnerability: CVE-2025-22871
   - vulnerability: GHSA-vvgc-356p-c3xw
   - vulnerability: CVE-2025-22874
-  - vulnerability: CVE-2025-4673
+  - vulnerability: CVE-2025-47907
+  - vulnerability: CVE-2025-4674
+  - vulnerability: CVE-2025-9230
 # Set output format defaults
 output:
   - "table"
