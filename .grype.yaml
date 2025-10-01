@@ -17,6 +17,8 @@ ignore:
   - vulnerability: CVE-2025-4673
   - vulnerability: CVE-2025-9231
   - vulnerability: CVE-2025-9232
+# Set output format defaults
+output:
   - "table"
   - "json"
 
