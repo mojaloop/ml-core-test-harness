@@ -1,5 +1,6 @@
 import http from 'k6/http';
-import { humanizeValue } from 'https://jslib.k6.io/k6-summary/0.1.0/index.js';
+import { humanizeValue, textSummary } from 'https://jslib.k6.io/k6-summary/0.1.0/index.js';
+import { AWSConfig, S3Client } from 'https://jslib.k6.io/aws/0.14.0/s3.js';
 
 export { fspiopDiscoveryScenarios } from './scenarios/fspiopDiscovery.js';
 export { fspiopDiscoveryNoCallbackScenarios } from './scenarios/fspiopDiscoveryNoCallbackConstantRate.js';
@@ -92,12 +93,44 @@ export function handleSummary(data) {
 
   const releaseCdUrl = __ENV.K6_SCRIPT_RELEASE_CD_URL;
   const testName = __ENV.K6_SCRIPT_CONFIG_FILE_NAME?.replace('.json', '') || 'k6-test';
+
+  let report
+  if (__ENV.S3_ENDPOINT && __ENV.S3_BUCKET && __ENV.S3_KEY) {
+    console.log('Uploading test summary to ' + __ENV.K6_SCRIPT_S3_ENDPOINT);
+    let summary = textSummary(data, { enableColors: false })
+    const s3 = new S3Client(AWSConfig.fromEnvironment({ endpoint: __ENV.K6_SCRIPT_S3_ENDPOINT }))
+    s3.putObject(
+      __ENV.S3_BUCKET,
+      __ENV.S3_KEY + '.txt',
+      summary, {
+        contentType: 'text/plain',
+        contentLength: summary.length,
+      }
+    ).catch(console.error);
+    report =  __ENV.K6_SCRIPT_REPORT_ENDPOINT + __ENV.S3_KEY + '.txt'
+    summary = JSON.stringify(data)
+    s3.putObject(
+      __ENV.S3_BUCKET,
+      __ENV.S3_KEY + '.json',
+      summary, {
+        contentType: 'application/json',
+        contentLength: summary.length,
+      }
+    ).catch(console.error);
+  }
+
   if (releaseCdUrl) {
     console.log('Sending summary to ReleaseCD at ' + releaseCdUrl);
     const releaseCdData = JSON.stringify({
       [`tests.${testName}`]: {
         totalAssertions,
         totalPassedAssertions,
+        duration: data?.state?.testRunDurationMs,
+        requests: data?.metrics?.http_reqs?.values?.count,
+        iterations: data?.metrics?.values?.count,
+        dataWrite: data?.metrics?.data_sent?.values?.count,
+        dataRead: data?.metrics?.data_received?.values?.count,
+        report,
         k6: data
       }
     });
