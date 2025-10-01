@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.12.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.11.1...v2.12.0) (2025-10-01)
+
+
+### Features
+
+* positive tests for all quotes endpoints ([514d15e](https://github.com/mojaloop/ml-core-test-harness/commit/514d15e228bfbcab08012233163def1ed65ffe91))
+
+
+### Bug Fixes
+
+* update bitnami images ([#126](https://github.com/mojaloop/ml-core-test-harness/issues/126)) ([c2511f8](https://github.com/mojaloop/ml-core-test-harness/commit/c2511f8df70e65e7a7591d15dcf0d1050b2eabed))
+
 ### [2.11.1](https://github.com/mojaloop/ml-core-test-harness/compare/v2.11.0...v2.11.1) (2025-07-27)
 
 ## [2.11.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.10.0...v2.11.0) (2025-07-14)
