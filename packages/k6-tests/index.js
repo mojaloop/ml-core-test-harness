@@ -96,9 +96,9 @@ export function handleSummary(data) {
 
   let report
   if (__ENV.S3_ENDPOINT && __ENV.S3_BUCKET && __ENV.S3_KEY) {
-    console.log('Uploading test summary to ' + __ENV.K6_SCRIPT_S3_ENDPOINT);
+    console.log('Uploading test summary to ' + __ENV.S3_ENDPOINT);
     let summary = textSummary(data, { enableColors: false })
-    const s3 = new S3Client(AWSConfig.fromEnvironment({ endpoint: __ENV.K6_SCRIPT_S3_ENDPOINT }))
+    const s3 = new S3Client(AWSConfig.fromEnvironment({ endpoint: __ENV.S3_ENDPOINT }))
     s3.putObject(
       __ENV.S3_BUCKET,
       __ENV.S3_KEY + '.txt',
