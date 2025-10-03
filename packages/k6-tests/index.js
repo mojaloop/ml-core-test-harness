@@ -107,7 +107,7 @@ export function handleSummary(data) {
         contentLength: summary.length,
       }
     ).catch(console.error);
-    report =  __ENV.K6_SCRIPT_REPORT_ENDPOINT + __ENV.S3_KEY + '.txt'
+    if (__ENV.K6_SCRIPT_REPORT_ENDPOINT) report =  __ENV.K6_SCRIPT_REPORT_ENDPOINT.replace('{key}', __ENV.S3_KEY + '.txt');
     summary = JSON.stringify(data)
     s3.putObject(
       __ENV.S3_BUCKET,
@@ -150,7 +150,8 @@ export function handleSummary(data) {
           type: 'rich_text_section',
           elements: [
             { type: 'text', text: `${failed ? '🔴' : '🟢'}` },
-            { type: 'text', text: `${slackPrefix || ''} ${testName} VUs: ` },
+            report ? { type: 'link', url: report, text: `${slackPrefix || ''} K6 ${testName}` } : { type: 'text', text: `${slackPrefix || ''} K6 ${testName}` },
+            { type: 'text', text: ` VUs: ` },
             { type: 'text', text: String(data.metrics.vus.values.max), style: { code: true } },
             { type: 'text', text: ', requests: ' },
             { type: 'text', text: String(data.metrics.http_reqs.values.count), style: { code: true } },
