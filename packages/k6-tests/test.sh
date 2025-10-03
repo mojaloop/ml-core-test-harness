@@ -1,5 +1,10 @@
 #! /bin/bash
 
+# set the env vars from the IGNORE.env file
+set -a
+source ./IGNORE.env
+set +a
+
 # Start the server in the background
 node localhost.js & SERVER_PID=$!
 
