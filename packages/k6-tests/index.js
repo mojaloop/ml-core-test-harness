@@ -103,8 +103,7 @@ export function handleSummary(data) {
       __ENV.S3_BUCKET,
       __ENV.S3_KEY + '.txt',
       summary, {
-        contentType: 'text/plain',
-        contentLength: summary.length,
+        contentType: 'text/plain; charset=utf-8'
       }
     ).catch(console.error);
     if (__ENV.K6_SCRIPT_REPORT_ENDPOINT) report =  __ENV.K6_SCRIPT_REPORT_ENDPOINT.replace('{key}', __ENV.S3_KEY + '.txt');
@@ -113,8 +112,7 @@ export function handleSummary(data) {
       __ENV.S3_BUCKET,
       __ENV.S3_KEY + '.json',
       summary, {
-        contentType: 'application/json',
-        contentLength: summary.length,
+        contentType: 'application/json'
       }
     ).catch(console.error);
   }
