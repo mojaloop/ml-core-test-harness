@@ -147,8 +147,8 @@ export function handleSummary(data) {
         elements: [{
           type: 'rich_text_section',
           elements: [
-            { type: 'text', text: `${failed ? '🔴' : '🟢'}` },
-            report ? { type: 'link', url: report, text: `${slackPrefix || ''} K6 ${testName}` } : { type: 'text', text: `${slackPrefix || ''} K6 ${testName}` },
+            { type: 'text', text: `${failed ? '⚠️' : '✅'}${slackPrefix || ''} ` },
+            report ? { type: 'link', url: report, text: `K6 ${testName}` } : { type: 'text', text: `${slackPrefix || ''} K6 ${testName}` },
             { type: 'text', text: ` VUs: ` },
             { type: 'text', text: String(data.metrics.vus.values.max), style: { code: true } },
             { type: 'text', text: ', requests: ' },
