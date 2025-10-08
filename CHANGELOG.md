@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.13.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.12.0...v2.13.0) (2025-10-08)
+
+
+### Features
+
+* enhance test summary handling with S3 upload support ([#128](https://github.com/mojaloop/ml-core-test-harness/issues/128)) ([5691afc](https://github.com/mojaloop/ml-core-test-harness/commit/5691afc40cef60308eb19315deec218b2883b077))
+
 ## [2.12.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.11.1...v2.12.0) (2025-10-01)
 
 
