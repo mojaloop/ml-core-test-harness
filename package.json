@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/ml-core-test-harness",
-  "version": "2.13.0-s3-upload.3",
+  "version": "2.13.0-s3-upload.4",
   "private": true,
   "scripts": {
     "lint": "true",
