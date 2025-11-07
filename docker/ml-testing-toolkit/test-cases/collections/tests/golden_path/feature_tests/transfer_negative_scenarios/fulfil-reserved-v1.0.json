@@ -12,7 +12,7 @@
         "path": "collections/tests/golden_path/feature_tests/transfer_negative_scenarios/fulfil-reserved-v1.0.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "requests": [

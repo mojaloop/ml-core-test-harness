@@ -4,7 +4,7 @@
       "name": "admin-api-tests",
       "type": "folder",
       "labels": [
-        "prod-tests"
+        "release-tests"
       ]
     },
     {

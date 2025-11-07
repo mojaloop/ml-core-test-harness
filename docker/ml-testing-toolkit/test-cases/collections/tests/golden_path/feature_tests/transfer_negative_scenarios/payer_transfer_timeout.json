@@ -355,7 +355,7 @@
         "path": "collections/tests/golden_path/feature_tests/transfer_negative_scenarios/payer_transfer_timeout.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

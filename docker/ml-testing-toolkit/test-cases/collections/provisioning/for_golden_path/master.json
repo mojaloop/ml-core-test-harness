@@ -11,14 +11,14 @@
       "name": "MojaloopHub_Setup_prod",
       "type": "folder",
       "labels": [
-        "prod-tests"
+        "release-tests"
       ]
     },
     {
       "name": "MojaloopSims_Onboarding",
       "type": "folder",
       "labels": [
-        "prod-tests"
+        "release-tests"
       ]
     },
     {

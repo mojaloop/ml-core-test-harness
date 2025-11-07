@@ -701,7 +701,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/noresponsepayeefsp.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -1538,7 +1538,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/noresponsepayeefsp.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -1667,7 +1667,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/noresponsepayeefsp.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

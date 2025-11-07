@@ -9,7 +9,7 @@
         "path": "collections/tests/golden_path/feature_tests/resources_based/participants/participants.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "meta": {

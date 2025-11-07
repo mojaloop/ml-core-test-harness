@@ -12,7 +12,7 @@
         "path": "collections/tests/golden_path/bug fixes/other-bug-fixes.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "requests": [

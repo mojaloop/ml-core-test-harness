@@ -11,7 +11,7 @@
         "path": "collections/tests/golden_path/bug fixes/Test for Bugfix #2697 - Fulfil Handler does not correctly invalidate requests.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "requests": [
@@ -378,7 +378,7 @@
         "path": "collections/tests/golden_path/bug fixes/Test for Bugfix #2697 - Fulfil Handler does not correctly invalidate requests.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "requests": [

@@ -212,7 +212,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp3.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -708,7 +708,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp3.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -804,7 +804,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp3.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     }
