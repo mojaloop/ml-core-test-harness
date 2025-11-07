@@ -342,7 +342,7 @@
         "path": "collections/tests/golden_path/bug fixes/Tests for Bugfix #998 - Quoting service not using most recent endpoint.json",
         "labels": [
           "std-gp",
-          "prod-tests",
+          "release-tests",
           "quotes"
         ]
       }

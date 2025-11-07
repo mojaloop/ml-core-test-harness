@@ -11,7 +11,7 @@
         "path": "collections/tests/golden_path/feature_tests/block_transfer.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "requests": [
@@ -641,7 +641,7 @@
         "path": "collections/tests/golden_path/feature_tests/block_transfer.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "requests": [

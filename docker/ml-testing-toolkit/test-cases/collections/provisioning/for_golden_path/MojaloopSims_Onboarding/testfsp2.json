@@ -701,7 +701,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp2.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -1352,7 +1352,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp2.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -1481,7 +1481,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp2.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -1539,7 +1539,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp2.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -1633,7 +1633,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/testfsp2.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

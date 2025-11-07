@@ -1384,7 +1384,7 @@
         "path": "collections/tests/golden_path/transaction_request_service/Error-framework-authorizations.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

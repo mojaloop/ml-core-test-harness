@@ -11,7 +11,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopHub_Setup/hub.json",
         "labels": [
-          "prod-tests",
+          "release-tests",
           "min-func-tests",
           "basic-func-tests"
         ]
@@ -476,7 +476,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopHub_Setup/hub.json",
         "labels": [
-          "prod-tests",
+          "release-tests",
           "min-func-tests",
           "basic-func-tests"
         ]
@@ -667,7 +667,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopHub_Setup/hub.json",
         "labels": [
-          "prod-tests",
+          "release-tests",
           "min-func-tests",
           "basic-func-tests"
         ]

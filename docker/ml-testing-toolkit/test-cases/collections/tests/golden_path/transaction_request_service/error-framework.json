@@ -595,7 +595,7 @@
         "path": "collections/tests/golden_path/transaction_request_service/error-framework.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

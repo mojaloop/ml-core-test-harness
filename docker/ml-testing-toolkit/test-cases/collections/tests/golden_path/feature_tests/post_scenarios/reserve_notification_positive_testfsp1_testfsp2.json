@@ -11,7 +11,7 @@
         "path": "collections/tests/golden_path/feature_tests/post_scenarios/reserve_notification_positive_testfsp1_testfsp2.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "requests": [

@@ -404,7 +404,7 @@
         "path": "collections/tests/golden_path/bug fixes/Tests for Bugfix #990 and #1016 - Quotes.json",
         "labels": [
           "std-gp",
-          "prod-tests",
+          "release-tests",
           "quotes"
         ]
       }
@@ -1201,7 +1201,7 @@
         "path": "collections/tests/golden_path/bug fixes/Tests for Bugfix #990 and #1016 - Quotes.json",
         "labels": [
           "std-gp",
-          "prod-tests",
+          "release-tests",
           "quotes"
         ]
       }

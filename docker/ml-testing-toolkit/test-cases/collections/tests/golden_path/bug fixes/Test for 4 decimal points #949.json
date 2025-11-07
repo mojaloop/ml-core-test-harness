@@ -277,7 +277,7 @@
         "path": "collections/tests/golden_path/bug fixes/Test for 4 decimal points #949.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

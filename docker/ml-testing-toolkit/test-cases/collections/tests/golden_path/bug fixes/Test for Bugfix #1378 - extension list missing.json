@@ -221,7 +221,7 @@
         "path": "collections/tests/golden_path/bug fixes/Test for Bugfix #1378 - extension list missing.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }
