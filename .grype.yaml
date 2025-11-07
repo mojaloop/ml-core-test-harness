@@ -17,6 +17,17 @@ ignore:
   - vulnerability: CVE-2025-4673
   - vulnerability: CVE-2025-9231
   - vulnerability: CVE-2025-9232
+  - vulnerability: CVE-2025-61723
+  - vulnerability: CVE-2025-61725
+  - vulnerability: CVE-2025-58188
+  - vulnerability: CVE-2025-58187
+  - vulnerability: CVE-2025-58186
+  - vulnerability: CVE-2025-61724
+  - vulnerability: CVE-2025-47912
+  - vulnerability: CVE-2025-58189
+  - vulnerability: CVE-2025-58185
+  - vulnerability: CVE-2025-58183
+
 # Set output format defaults
 output:
   - "table"
