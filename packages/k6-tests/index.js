@@ -22,6 +22,7 @@ export { outboundSDKDiscoveryScenarios } from './scenarios/outboundSDKDiscovery.
 export { outboundSDKQuotesScenarios } from './scenarios/outboundSDKQuotes.js';
 export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.js';
 export { sdkFxSendE2EScenarios } from './scenarios/sdkFxSendE2E.js';
+export { sdkSendE2EScenarios } from './scenarios/sdkSendE2E.js';
 export { localhostScenarios } from './scenarios/localhost.js';
 
 // Setup functions
