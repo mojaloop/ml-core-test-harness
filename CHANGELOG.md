@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.14.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.13.1...v2.14.0) (2025-11-12)
+
+
+### Features
+
+* add sdk non fx testcase ([573e503](https://github.com/mojaloop/ml-core-test-harness/commit/573e503b8c92cc4c21c59688c8c14f07678d4da0))
+
+
+### Bug Fixes
+
+* include scenario in index ([ae20247](https://github.com/mojaloop/ml-core-test-harness/commit/ae20247d7f5bd1fbfe73244ade512a7316040af4))
+
 ### [2.13.1](https://github.com/mojaloop/ml-core-test-harness/compare/v2.13.0...v2.13.1) (2025-11-07)
 
 ## [2.13.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.12.0...v2.13.0) (2025-10-08)
