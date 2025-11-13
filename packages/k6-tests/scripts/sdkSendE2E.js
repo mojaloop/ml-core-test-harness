@@ -50,7 +50,7 @@ export function setup() {
   console.log('Completed account provisioning');
 }
 
-export function sdkFxSendE2E() {
+export function sdkSendE2E() {
   !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("Post Transfers", function () {
     let payerFsp
