@@ -5,7 +5,6 @@ networks:
     name: mojaloop-net
 
 services:
-
   ## Switch
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -14,9 +13,9 @@ services:
     # ports:
     # - "3001:3001"
     volumes:
-       - ./docker/wait4:/opt/app/wait4
-       - ./docker/config-modifier:/opt/app/config-modifier
-       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+      - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     environment:
       - LOG_LEVEL=info
       - CLEDG_MONGODB__DISABLED=false
@@ -45,6 +44,7 @@ services:
       - agreement
       - all-services
       - fx
+      - merchant-registry
 
   central-handler-position-batch:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
@@ -53,9 +53,9 @@ services:
     # ports:
     #   - "3001:3001"
     volumes:
-       - ./docker/wait4:/opt/app/wait4
-       - ./docker/config-modifier:/opt/app/config-modifier
-       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+      - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     environment:
       - LOG_LEVEL=info
       - CLEDG_MONGODB__DISABLED=true
@@ -81,6 +81,7 @@ services:
     profiles:
       - all-services
       - fx
+      - merchant-registry
 
   objstore:
     image: mongo:${DEP_MONGO_VERSION}
@@ -90,7 +91,7 @@ services:
     networks:
       - mojaloop-net
     logging:
-        driver: none
+      driver: none
     healthcheck:
       test: mongosh --eval 'db.runCommand("ping").ok' localhost:27017/test --quiet
       interval: 10s
@@ -104,6 +105,7 @@ services:
       - agreement
       - all-services
       - fx
+      - merchant-registry
 
   kafka-provisioning:
     container_name: kafka-provisioning
@@ -122,6 +124,7 @@ services:
       - agreement
       - all-services
       - fx
+      - merchant-registry
 
   kafka:
     networks:
@@ -146,7 +149,13 @@ services:
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@127.0.0.1:9093
       KAFKA_ENABLE_KRAFT: "true"
     healthcheck:
-      test: ["CMD" ,"/opt/bitnami/kafka/bin/kafka-broker-api-versions.sh","--bootstrap-server","kafka:9092"]
+      test:
+        [
+          "CMD",
+          "/opt/bitnami/kafka/bin/kafka-broker-api-versions.sh",
+          "--bootstrap-server",
+          "kafka:9092",
+        ]
       timeout: 20s
       retries: 10
       start_period: 40s
@@ -158,6 +167,7 @@ services:
       - agreement
       - all-services
       - fx
+      - merchant-registry
 
   mysql:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
@@ -175,7 +185,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "mysql"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "mysql"]
       timeout: 20s
       retries: 10
       start_period: 40s
@@ -187,6 +197,7 @@ services:
       - agreement
       - all-services
       - fx
+      - merchant-registry
 
   quoting-service:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
@@ -221,6 +232,7 @@ services:
       - agreement
       - all-services
       - fx
+      - merchant-registry
 
   quoting-service-handler:
     image: "mojaloop/quoting-service:${QUOTING_SERVICE_VERSION}"
@@ -258,6 +270,7 @@ services:
       - agreement
       - all-services
       - fx
+      - merchant-registry
 
   ml-api-adapter:
     image: mojaloop/ml-api-adapter:${ML_API_ADAPTER_VERSION}
@@ -293,6 +306,7 @@ services:
       - transfer
       - all-services
       - fx
+      - merchant-registry
 
   simulator:
     image: mojaloop/simulator:${TEST_SIMULATOR_VERSION}
@@ -318,6 +332,7 @@ services:
       - discovery
       - all-services
       - fx
+      - merchant-registry
 
   account-lookup-service:
     image: mojaloop/account-lookup-service:${ACCOUNT_LOOKUP_SERVICE_VERSION}
@@ -355,6 +370,7 @@ services:
       - discovery
       - all-services
       - fx
+      - merchant-registry
 
   als-msisdn-oracle-svc:
     image: mojaloop/als-msisdn-oracle-svc:${ALS_MSISDN_ORACLE_SVC_VERSION}
@@ -390,6 +406,7 @@ services:
       - discovery
       - all-services
       - fx
+      - merchant-registry
 
   mysql-als:
     image: mysql/mysql-server:${DEP_MYSQL_VERSION}
@@ -406,7 +423,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "mysql-als"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "mysql-als"]
       timeout: 20s
       retries: 10
       start_period: 40s
@@ -417,6 +434,7 @@ services:
       - discovery
       - all-services
       - fx
+      - merchant-registry
 
   fx-provider1-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
@@ -467,6 +485,7 @@ services:
     profiles:
       - all-services
       - fx
+      - merchant-registry
 
   ## Testing Toolkit
   mojaloop-testing-toolkit:
@@ -494,9 +513,12 @@ services:
     profiles:
       - testing-toolkit
       - all-services
+      - merchant-registry
 
   mojaloop-testing-toolkit-ui:
-    image: mojaloop/ml-testing-toolkit-ui:${TEST_TTK_UI_VERSION}
+    build:
+      context: /Users/sprak/Documents/mojaloop/LEI/ml-testing-toolkit-ui
+      dockerfile: Dockerfile
     container_name: mojaloop-testing-toolkit-ui
     ports:
       - "9660:6060"
@@ -513,6 +535,7 @@ services:
     profiles:
       - testing-toolkit
       - all-services
+      - merchant-registry
 
   ttk-provisioning:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
@@ -544,6 +567,7 @@ services:
     user: root
     profiles:
       - ttk-provisioning
+      - merchant-registry
 
   ttk-provisioning-gp:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
@@ -670,6 +694,7 @@ services:
     user: root
     profiles:
       - ttk-tests
+      - merchant-registry
 
   ttk-tests-gp:
     image: mojaloop/ml-testing-toolkit-client-lib:${TEST_TTK_CLI_VERSION}
@@ -791,10 +816,10 @@ services:
   ## Finance Portal services
   reporting-events-processor-svc:
     image: mojaloop/reporting-events-processor-svc:${FP_EVENTS_PROCESSOR_SVC_VERSION}
-    user: root  ##TODO: Need to check if this is required
+    user: root ##TODO: Need to check if this is required
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/reporting-events-processor-svc.js /opt/app/config/default.json && npm start"
     volumes:
-       - ./docker/config-modifier:/opt/app/config-modifier
+      - ./docker/config-modifier:/opt/app/config-modifier
     environment:
       - EVENT_STORE_DB_HOST=objstore
       - EVENT_STORE_DB_PORT=27017
@@ -802,7 +827,7 @@ services:
       - EVENT_STORE_DB_EVENTS_COLLECTION=reporting
       - KAFKA_TOPIC_EVENT=topic-event-audit
     networks:
-        - mojaloop-net
+      - mojaloop-net
     depends_on:
       objstore:
         condition: service_healthy
@@ -824,11 +849,11 @@ services:
       ## Change localhost to the host IP if you are running the UI on a different machine
       - CORS_WHITELIST=http://localhost:9400
     volumes:
-       - ./docker/reporting-hub-bop-api-svc/config:/opt/reporting/config
+      - ./docker/reporting-hub-bop-api-svc/config:/opt/reporting/config
     ports:
       - "9401:3000"
     networks:
-        - mojaloop-net
+      - mojaloop-net
     depends_on:
       objstore:
         condition: service_healthy
@@ -846,7 +871,7 @@ services:
       - quoting-service
       - reporting-hub-bop-shell
     networks:
-        - mojaloop-net
+      - mojaloop-net
     profiles:
       - finance-portal
 
@@ -931,9 +956,9 @@ services:
     container_name: central-settlement
     command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-settlement.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-settlement && node src/api/index.js"
     volumes:
-       - ./docker/wait4:/opt/app/wait4
-       - ./docker/config-modifier:/opt/app/config-modifier
-       - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
+      - ./docker/wait4:/opt/app/wait4
+      - ./docker/config-modifier:/opt/app/config-modifier
+      - ./docker/event_sdk/config.json:/opt/app/.EVENT_SDKrc
     environment:
       - LOG_LEVEL=info
       - CLEDG_MONGODB__DISABLED=false
@@ -958,6 +983,7 @@ services:
     profiles:
       - central-settlement
       - all-services
+      - merchant-registry
 
   payeefsp-redis:
     image: "redis:6.2.4-alpine"
@@ -970,7 +996,8 @@ services:
     profiles:
       - all-services
       - fx
-  
+      - merchant-registry
+
   payeefsp-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
     container_name: payeefsp-sdk
@@ -985,6 +1012,7 @@ services:
     profiles:
       - all-services
       - fx
+      - merchant-registry
 
   payerfsp-redis:
     image: "redis:6.2.4-alpine"
@@ -997,6 +1025,7 @@ services:
     profiles:
       - all-services
       - fx
+      - merchant-registry
 
   payerfsp-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
@@ -1012,6 +1041,7 @@ services:
     profiles:
       - all-services
       - fx
+      - merchant-registry
 
   testfsp1-redis:
     image: "redis:6.2.4-alpine"
@@ -1024,6 +1054,7 @@ services:
     profiles:
       - all-services
       - fx
+      - merchant-registry
 
   testfsp1-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
@@ -1040,6 +1071,7 @@ services:
       - central-settlement
       - all-services
       - fx
+      - merchant-registry
 
   testfsp2-redis:
     image: "redis:6.2.4-alpine"
@@ -1052,6 +1084,7 @@ services:
     profiles:
       - all-services
       - fx
+      - merchant-registry
 
   testfsp2-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
@@ -1068,6 +1101,7 @@ services:
       - central-settlement
       - all-services
       - fx
+      - merchant-registry
 
   testfsp3-redis:
     image: "redis:6.2.4-alpine"
@@ -1080,6 +1114,7 @@ services:
     profiles:
       - all-services
       - fx
+      - merchant-registry
 
   testfsp3-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
@@ -1096,6 +1131,7 @@ services:
       - central-settlement
       - all-services
       - fx
+      - merchant-registry
 
   testfsp4-redis:
     image: "redis:6.2.4-alpine"
@@ -1108,6 +1144,7 @@ services:
     profiles:
       - all-services
       - fx
+      - merchant-registry
 
   testfsp4-sdk:
     image: mojaloop/sdk-scheme-adapter:${SDK_SCHEME_ADAPTER_VERSION}
@@ -1124,3 +1161,153 @@ services:
       - central-settlement
       - all-services
       - fx
+      - merchant-registry
+
+  ## Merchant Registry Services
+  acquirer-backend:
+    build:
+      context: your/local/path/to/merchant-registry-svc
+      dockerfile: Dockerfile-acquirer-backend
+    restart: unless-stopped
+    command: ["npm", "run", "acquirer-backend:start"]
+    ports:
+      - "5555:5555"
+    environment:
+      - APP_URL=http://127.0.0.1:5555 # SendGrid Callback Email Verification URL
+      - FRONTEND_SET_PASSWORD_URL=http://localhost:5173/set-password # Callback redirect password URL
+      - HOST=0.0.0.0
+      - PORT=5555
+
+      - DB_HOST=merchant-db
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=password
+      - DB_DATABASE=acquirer_db
+
+      - S3_ENDPOINT=minio
+      - S3_PORT=9000
+      - S3_ACCESS_KEY=minioadmin
+      - S3_SECRET_KEY=minioadmin
+      - S3_MERCHANT_BUCKET_NAME=merchant-documents
+
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest # TODO: change this in production
+      - RABBITMQ_PASSWORD=guest # TODO: change this in production
+      - RABBITMQ_QUEUE=acquirer_to_registry
+      - RABBITMQ_REPLY_QUEUE=registry_reply_acquirer
+
+      - RECAPTCHA_SECRET_KEY=your-recaptcha-secret-key
+      - RECAPTCHA_ENABLED=true
+
+      - SENDGRID_API_KEY=your-sendgrid-api-key
+      - SENDER_EMAIL=your-email@example.com
+
+      # GLEIF API Configuration
+      - GLEIF_API_URL=https://api.gleif.org/api/v1
+      - GLEIF_API_KEY=
+    depends_on:
+      - merchant-db
+      - minio
+      - rabbitmq
+    networks:
+      - mojaloop-net
+    profiles:
+      - merchant-registry
+
+  acquirer-frontend:
+    restart: unless-stopped
+    build:
+      context: your/local/path/to/merchant-registry-frontend
+      dockerfile: Dockerfile-acquirer-frontend
+    environment:
+      - VITE_HOST=0.0.0.0
+      - VITE_PORT=5173
+      - VITE_API_URL=http://127.0.0.1:5555/api/v1
+      - VITE_RECAPTCHA_SITE_KEY=your-recaptcha-site-key
+    ports:
+      - "5173:5173"
+    networks:
+      - mojaloop-net
+    profiles:
+      - merchant-registry
+
+  registry-oracle:
+    build:
+      context: your/local/path/to/merchant-registry-svc
+      dockerfile: Dockerfile-registry-oracle
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8888
+
+      - DB_HOST=merchant-db
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=password
+      - DB_DATABASE=registry_db
+
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest # TODO: change this in production
+      - RABBITMQ_PASSWORD=guest # TODO: change this in production
+      - RABBITMQ_QUEUE=acquirer_to_registry
+      - RABBITMQ_REPLY_QUEUE=registry_reply_acquirer
+    depends_on:
+      - merchant-db
+      - rabbitmq
+    networks:
+      - mojaloop-net
+    profiles:
+      - merchant-registry
+
+  rabbitmq:
+    image: rabbitmq:3.12.4-management-alpine
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest # TODO: change this in production
+      - RABBITMQ_DEFAULT_PASS=guest # TODO: change this in production
+    networks:
+      - mojaloop-net
+    profiles:
+      - merchant-registry
+
+  merchant-db:
+    container_name: mysql-db
+    image: mysql:8.0.33
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - "3307:3306"
+    volumes:
+      - your_local_path_to_merchant_registry_sql_scripts:/docker-entrypoint-initdb.d
+    networks:
+      - mojaloop-net
+    profiles:
+      - merchant-registry
+
+  minio:
+    image: minio/minio:RELEASE.2023-07-21T21-12-44Z
+    restart: unless-stopped
+    volumes:
+      - data:/data
+    ports:
+      - "9000:9000"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    command: server /data
+    networks:
+      - mojaloop-net
+    profiles:
+      - merchant-registry
+
+volumes:
+  data:

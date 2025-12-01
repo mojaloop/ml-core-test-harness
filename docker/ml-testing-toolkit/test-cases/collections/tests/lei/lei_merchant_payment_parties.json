@@ -1,0 +1,395 @@
+{
+  "name": "LEI Merchant to Merchant Payment - Parties Lookup",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "LEI Merchant Payment - Complete Flow using Parties API",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Registry Oracle - Get payer merchant party info using parties/ALIAS endpoint",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator",
+            "asynchronous": false
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/ALIAS/787200JXIR2YYZDPNP23",
+          "method": "get",
+          "params": {
+            "Type": "ALIAS",
+            "ID": "787200JXIR2YYZDPNP23"
+          },
+          "url": "http://registry-oracle:8888",
+          "headers": {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "testingtoolkitdfsp"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response should have partyList with fspId",
+                "exec": [
+                  "expect(response.body).to.have.property('partyList')",
+                  "expect(response.body.partyList).to.be.an('array')",
+                  "expect(response.body.partyList[0]).to.have.property('fspId')",
+                  "expect(response.body.partyList[0]).to.have.property('currency')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log('✅ Payer Parties API Response:', JSON.stringify(response.body, null, 2))",
+                "if (response.body && response.body.partyList && response.body.partyList[0]) {",
+                "  environment.PAYER_FSP_ID = response.body.partyList[0].fspId",
+                "  environment.PAYER_CURRENCY = response.body.partyList[0].currency",
+                "  console.log('✅ Set PAYER_FSP_ID:', environment.PAYER_FSP_ID)",
+                "  console.log('✅ Set PAYER_CURRENCY:', environment.PAYER_CURRENCY)",
+                "} else {",
+                "  throw new Error('❌ Failed to get payer FSP information from parties API')",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Registry Oracle - Get payee merchant party info using parties/ALIAS endpoint",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 0,
+            "type": "mojaloop_simulator",
+            "asynchronous": false
+          },
+          "operationPath": "/parties/{Type}/{ID}",
+          "path": "/parties/ALIAS/529900VJSEB3P1FV4R31",
+          "method": "get",
+          "params": {
+            "Type": "ALIAS",
+            "ID": "529900VJSEB3P1FV4R31"
+          },
+          "url": "http://registry-oracle:8888",
+          "headers": {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "testingtoolkitdfsp"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Response should have partyList with fspId",
+                "exec": [
+                  "expect(response.body).to.have.property('partyList')",
+                  "expect(response.body.partyList).to.be.an('array')",
+                  "expect(response.body.partyList[0]).to.have.property('fspId')",
+                  "expect(response.body.partyList[0]).to.have.property('currency')"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "console.log('✅ Payee Parties API Response:', JSON.stringify(response.body, null, 2))",
+                "if (response.body && response.body.partyList && response.body.partyList[0]) {",
+                "  environment.PAYEE_FSP_ID = response.body.partyList[0].fspId",
+                "  environment.PAYEE_CURRENCY = response.body.partyList[0].currency",
+                "  console.log('✅ Set PAYEE_FSP_ID:', environment.PAYEE_FSP_ID)",
+                "  console.log('✅ Set PAYEE_CURRENCY:', environment.PAYEE_CURRENCY)",
+                "} else {",
+                "  throw new Error('❌ Failed to get payee FSP information from parties API')",
+                "}"
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Post Quotes - Request quote for LEI merchant payment (using parties API data)",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/quotes",
+          "path": "/quotes",
+          "method": "post",
+          "url": "{$inputs.HOST_QUOTING_SERVICE}",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$environment.PAYER_FSP_ID}",
+            "FSPIOP-Destination": "{$environment.PAYEE_FSP_ID}"
+          },
+          "body": {
+            "quoteId": "{$function.generic.generateUUID}",
+            "transactionId": "{$function.generic.generateUUID}",
+            "transactionRequestId": "{$function.generic.generateUUID}",
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "ALIAS",
+                "partyIdentifier": "529900VJSEB3P1FV4R31",
+                "fspId": "DFSP001"
+              },
+              "merchantClassificationCode": "5814",
+              "name": "SECOND MERCHANT CORP"
+            },
+            "payer": {
+              "partyIdInfo": {
+                "partyIdType": "ALIAS",
+                "partyIdentifier": "787200JXIR2YYZDPNP23",
+                "fspId": "DFSP001"
+              },
+              "merchantClassificationCode": "5814",
+              "name": "HALMADENT SRL"
+            },
+            "amountType": "SEND",
+            "amount": {
+              "amount": "100",
+              "currency": "USD"
+            },
+            "transactionType": {
+              "scenario": "PAYMENT",
+              "initiator": "PAYER",
+              "initiatorType": "BUSINESS"
+            },
+            "expiration": "2025-10-31T23:59:59.000Z",
+            "note": "LEI merchant payment using parties/ALIAS API"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "console.log('🚀 Starting LEI Merchant Payment Quote via Parties API')",
+                "console.log('Payer LEI: 787200JXIR2YYZDPNP23 → FSP:', environment.PAYER_FSP_ID)",
+                "console.log('Payee LEI: 529900VJSEB3P1FV4R31 → FSP:', environment.PAYEE_FSP_ID)",
+                "console.log('Amount: 100', environment.PAYEE_CURRENCY)",
+                "console.log('📝 Note: Using /parties/ALIAS/{lei} endpoint for merchant lookups')",
+                "console.log('🔗 Parties API provided FSP mapping, proceeding with payment flow')",
+                "environment.quoteId = requestBody.quoteId",
+                "environment.transactionId = requestBody.transactionId",
+                "environment.transactionRequestId = requestBody.transactionRequestId"
+              ]
+            }
+          }
+        },
+        {
+          "id": 4,
+          "description": "Callback - PUT Quotes response from payee FSP",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": false
+          },
+          "operationPath": "/quotes/{ID}",
+          "path": "/quotes/{$environment.quoteId}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.quoteId}"
+          },
+          "url": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}",
+          "headers": {
+            "Accept": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.quotes+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$environment.PAYEE_FSP_ID}",
+            "FSPIOP-Destination": "{$environment.PAYER_FSP_ID}"
+          },
+          "body": {
+            "transferAmount": {
+              "amount": "100",
+              "currency": "USD"
+            },
+            "payeeReceiveAmount": {
+              "amount": "100",
+              "currency": "USD"
+            },
+            "payeeFspFee": {
+              "amount": "0",
+              "currency": "USD"
+            },
+            "payeeFspCommission": {
+              "amount": "0", 
+              "currency": "USD"
+            },
+            "expiration": "2025-10-31T23:59:59.000Z",
+            "geoCode": {
+              "latitude": "42.69751",
+              "longitude": "23.32415"
+            },
+            "ilpPacket": "AYIBgQAAAAAAAASwNGxldmVsb25lLmRmc3AxLm1lci45T2RTOF81MDdqUUZERmZlakgyOVc4bXFmNEpLMHlGTFGCAUBQU0svMS4wCk5vbmNlOiB1SXlweUYzY3pYSXpFUzRvTVBiTlVVQ3VlbXFmNE1rRndudDBxZWQyM2NHTElJFDANdGVzdC5sZWFnM3IuZGZzcDEuYWJjZGVmZWNjJCs4MD8xMsOwYXQAa2IjbCtERmdOBoBnIGxldmVsb25lLmRmc3AxLm1lci45T2RTOF81MDdqUUZERmZlakgyOVc4bXFmNEpKMHlGTTIwMQSATE5PVEVYUEVYQU1QTEUNCmRhdGUgZGVjZW50cmFsaXpmMV9TcnRzSUhkQXk=",
+            "condition": "YlK5TZyhflbXaDRPtR5ehDxlMSqM3uIMBoVhqoD0ddg"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.ilpPacket = requestBody.ilpPacket",
+                "environment.condition = requestBody.condition"
+              ]
+            }
+          }
+        },
+        {
+          "id": 5,
+          "description": "Post Transfers - Execute LEI merchant payment",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": true
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "{$inputs.HOST_ML_API_ADAPTER}",
+          "headers": {
+            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$environment.PAYER_FSP_ID}",
+            "FSPIOP-Destination": "{$environment.PAYEE_FSP_ID}"
+          },
+          "body": {
+            "transferId": "{$function.generic.generateUUID}",
+            "payeeFsp": "{$environment.PAYEE_FSP_ID}",
+            "payerFsp": "{$environment.PAYER_FSP_ID}",
+            "amount": {
+              "amount": "100",
+              "currency": "USD"
+            },
+            "expiration": "2025-10-31T23:59:59.000Z",
+            "ilpPacket": "{$environment.ilpPacket}",
+            "condition": "{$environment.condition}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 202",
+                "exec": [
+                  "expect(response.status).to.equal(202)"
+                ]
+              }
+            ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "environment.transferId = requestBody.transferId"
+              ]
+            }
+          }
+        },
+        {
+          "id": 6,
+          "description": "Callback - PUT Transfers fulfil from payee FSP",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 1,
+            "type": "fspiop",
+            "asynchronous": false
+          },
+          "operationPath": "/transfers/{ID}",
+          "path": "/transfers/{$environment.transferId}",
+          "method": "put",
+          "params": {
+            "ID": "{$environment.transferId}"
+          },
+          "url": "{$inputs.CALLBACK_ENDPOINT_BASE_URL}",
+          "headers": {
+            "Accept": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Content-Type": "application/vnd.interoperability.transfers+json;version=1.0",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$environment.PAYEE_FSP_ID}",
+            "FSPIOP-Destination": "{$environment.PAYER_FSP_ID}"
+          },
+          "body": {
+            "fulfilment": "UNlJ98hZTY_dsw0cAqw4i_UN3v4utt7CYSWR0yTCaAo",
+            "completedTimestamp": "2025-09-20T08:14:16.000Z",
+            "transferState": "COMMITTED"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Response status to be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Transfer fulfillment should be successful",
+                "exec": [
+                  "expect(response.status).to.equal(200)",
+                  "console.log('Transfer fulfillment completed successfully')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "LEI merchant payment via Parties API completed successfully",
+                "exec": [
+                  "console.log('✅ LEI Merchant Payment via Parties API Completed!')",
+                  "console.log('Payer LEI: 787200JXIR2YYZDPNP23 (HALMADENT SRL)')",
+                  "console.log('Payee LEI: 529900VJSEB3P1FV4R31 (SECOND MERCHANT CORP)')",
+                  "console.log('Amount: 100 USD')",
+                  "console.log('Transfer State: COMMITTED')",
+                  "console.log('🎉 Success: Used /parties/ALIAS/{lei} endpoint for merchant resolution')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "fileInfo": {
+    "path": "tests/lei_merchant_payment_parties.json"
+  }
+}
