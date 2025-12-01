@@ -11,7 +11,7 @@
         "path": "collections/tests/golden_path/feature_tests/backward_compatibility/fspiop_protocol_validation.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "requests": [
@@ -330,7 +330,7 @@
         "path": "collections/tests/golden_path/feature_tests/backward_compatibility/fspiop_protocol_validation.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "requests": [
@@ -930,7 +930,7 @@
         "path": "collections/tests/golden_path/feature_tests/backward_compatibility/fspiop_protocol_validation.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "requests": [
@@ -1615,7 +1615,7 @@
         "path": "collections/tests/golden_path/feature_tests/backward_compatibility/fspiop_protocol_validation.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "requests": [

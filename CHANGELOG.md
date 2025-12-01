@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.14.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.13.1...v2.14.0) (2025-11-12)
+
+
+### Features
+
+* add sdk non fx testcase ([573e503](https://github.com/mojaloop/ml-core-test-harness/commit/573e503b8c92cc4c21c59688c8c14f07678d4da0))
+
+
+### Bug Fixes
+
+* include scenario in index ([ae20247](https://github.com/mojaloop/ml-core-test-harness/commit/ae20247d7f5bd1fbfe73244ade512a7316040af4))
+
+### [2.13.1](https://github.com/mojaloop/ml-core-test-harness/compare/v2.13.0...v2.13.1) (2025-11-07)
+
+## [2.13.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.12.0...v2.13.0) (2025-10-08)
+
+
+### Features
+
+* enhance test summary handling with S3 upload support ([#128](https://github.com/mojaloop/ml-core-test-harness/issues/128)) ([5691afc](https://github.com/mojaloop/ml-core-test-harness/commit/5691afc40cef60308eb19315deec218b2883b077))
+
+## [2.12.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.11.1...v2.12.0) (2025-10-01)
+
+
+### Features
+
+* positive tests for all quotes endpoints ([514d15e](https://github.com/mojaloop/ml-core-test-harness/commit/514d15e228bfbcab08012233163def1ed65ffe91))
+
+
+### Bug Fixes
+
+* update bitnami images ([#126](https://github.com/mojaloop/ml-core-test-harness/issues/126)) ([c2511f8](https://github.com/mojaloop/ml-core-test-harness/commit/c2511f8df70e65e7a7591d15dcf0d1050b2eabed))
+
 ### [2.11.1](https://github.com/mojaloop/ml-core-test-harness/compare/v2.11.0...v2.11.1) (2025-07-27)
 
 ## [2.11.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.10.0...v2.11.0) (2025-07-14)

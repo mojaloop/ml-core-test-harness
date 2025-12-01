@@ -681,7 +681,7 @@
         "path": "collections/tests/golden_path/settlement_management_prod/mixed_settlement_model.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "options": {
@@ -1867,7 +1867,7 @@
         "path": "collections/tests/golden_path/settlement_management_prod/mixed_settlement_model.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       },
       "options": {

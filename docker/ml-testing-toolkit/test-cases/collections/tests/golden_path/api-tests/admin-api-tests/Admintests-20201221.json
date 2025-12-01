@@ -221,7 +221,7 @@
         "path": "collections/tests/golden_path/api-tests/admin-api-tests/Admintests-20201221.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

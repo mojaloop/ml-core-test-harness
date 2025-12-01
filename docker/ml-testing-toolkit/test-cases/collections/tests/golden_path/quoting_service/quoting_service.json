@@ -650,7 +650,7 @@
         "labels": [
           "std-gp",
           "quotes",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

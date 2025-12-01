@@ -317,7 +317,7 @@
         "path": "collections/tests/golden_path/transaction_request_service/rejected State.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

@@ -46,7 +46,7 @@
         "path": "collections/tests/golden_path/transaction_request_service/transaction_request_service_health.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

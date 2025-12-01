@@ -514,7 +514,7 @@
         "path": "collections/tests/golden_path/feature_tests/duplicate_handling/transfers/fulfill_reject.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -1037,7 +1037,7 @@
         "path": "collections/tests/golden_path/feature_tests/duplicate_handling/transfers/fulfill_reject.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

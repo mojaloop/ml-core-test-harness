@@ -1014,7 +1014,7 @@
         "path": "collections/tests/golden_path/feature_tests/get_transfers.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

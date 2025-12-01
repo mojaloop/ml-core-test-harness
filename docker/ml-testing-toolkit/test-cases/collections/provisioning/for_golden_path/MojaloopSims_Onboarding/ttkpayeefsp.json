@@ -1235,7 +1235,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/ttkpayeefsp.json",
         "labels": [
-          "prod-tests",
+          "release-tests",
           "min-func-tests"
         ]
       }

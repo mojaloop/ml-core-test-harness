@@ -707,7 +707,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/payerfsp.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -1544,7 +1544,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/payerfsp.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -1673,7 +1673,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/payerfsp.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     },
@@ -1767,7 +1767,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/payerfsp.json",
         "labels": [
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

@@ -991,7 +991,7 @@
         "path": "collections/tests/golden_path/feature_tests/Active_Inactive_participants/active_and_inactive_participant.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

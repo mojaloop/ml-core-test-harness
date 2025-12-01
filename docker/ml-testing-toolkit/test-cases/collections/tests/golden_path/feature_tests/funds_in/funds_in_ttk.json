@@ -447,7 +447,7 @@
         "path": "collections/tests/golden_path/feature_tests/funds_in/funds_in_ttk.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

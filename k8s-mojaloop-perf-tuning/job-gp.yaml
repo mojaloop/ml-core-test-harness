@@ -50,14 +50,14 @@ spec:
               https://github.com/mojaloop/testing-toolkit-test-cases/archive/v16.0.0.zip
               -O downloaded-test-collections.zip;
 
-              mkdir tmp_test_cases;
+              mkdir /tmp/test_cases;
 
-              unzip -d tmp_test_cases -o downloaded-test-collections.zip;
+              unzip -d /tmp/test_cases -o downloaded-test-collections.zip;
 
               npm run cli -- \
                 -c cli-default-config.json \
                 -e cli-testcase-environment.json \
-                -i tmp_test_cases/testing-toolkit-test-cases-16.0.0/collections/hub/golden_path \
+                -i /tmp/test_cases/testing-toolkit-test-cases-16.0.0/collections/hub/golden_path \
                 -u http://moja-ml-testing-toolkit-backend:5050 \
                 --report-format html \
                 --report-auto-filename-enable true \

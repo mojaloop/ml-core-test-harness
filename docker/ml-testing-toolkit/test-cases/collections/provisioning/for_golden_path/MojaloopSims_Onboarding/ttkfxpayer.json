@@ -95,7 +95,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/ttkfxpayer.json",
         "labels": [
-          "prod-tests",
+          "release-tests",
           "min-func-tests"
         ]
       }
@@ -1147,7 +1147,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/ttkfxpayer.json",
         "labels": [
-          "prod-tests",
+          "release-tests",
           "min-func-tests"
         ]
       }
@@ -1380,7 +1380,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/ttkfxpayer.json",
         "labels": [
-          "prod-tests",
+          "release-tests",
           "min-func-tests"
         ]
       }

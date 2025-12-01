@@ -273,7 +273,7 @@
         "path": "collections/tests/golden_path/bug fixes/Tests for Bugfix #1009 - ML Adapter and ALS service health should include broker status.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

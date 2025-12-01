@@ -186,7 +186,7 @@
         "path": "collections/tests/golden_path/bug fixes/Test for Bugfix #742 - Error code check.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

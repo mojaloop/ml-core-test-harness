@@ -435,7 +435,7 @@
         "path": "collections/tests/golden_path/p2p_on_us_transfers/p2p_money_transfer_on_us.json",
         "labels": [
           "std-gp",
-          "prod-tests"
+          "release-tests"
         ]
       }
     }

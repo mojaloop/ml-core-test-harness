@@ -19,7 +19,7 @@
       "type": "file",
       "labels": [
         "std",
-        "prod-tests"
+        "release-tests"
       ]
     },
     {
@@ -27,7 +27,7 @@
       "type": "file",
       "labels": [
         "std",
-        "prod-tests"
+        "release-tests"
       ]
     },
     {
@@ -35,7 +35,7 @@
       "type": "file",
       "labels": [
         "std",
-        "prod-tests"
+        "release-tests"
       ]
     },
     {
@@ -43,7 +43,7 @@
       "type": "file",
       "labels": [
         "std",
-        "prod-tests"
+        "release-tests"
       ]
     },
     {
@@ -51,7 +51,7 @@
       "type": "folder",
       "labels": [
         "perf",
-        "prod-tests"
+        "release-tests"
       ]
     },
     {
@@ -59,7 +59,7 @@
       "type": "folder",
       "labels": [
         "fx",
-        "prod-tests"
+        "release-tests"
       ]
     },
     {
@@ -67,7 +67,7 @@
       "type": "folder",
       "labels": [
         "fx-sdk",
-        "prod-tests"
+        "release-tests"
       ]
     }
   ]

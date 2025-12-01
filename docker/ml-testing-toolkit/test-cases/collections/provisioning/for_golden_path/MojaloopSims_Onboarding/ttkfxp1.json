@@ -95,7 +95,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/ttkfxp1.json",
         "labels": [
-          "prod-tests",
+          "release-tests",
           "min-func-tests"
         ]
       }
@@ -194,7 +194,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/ttkfxp1.json",
         "labels": [
-          "prod-tests",
+          "release-tests",
           "min-func-tests"
         ]
       }
@@ -1246,7 +1246,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/ttkfxp1.json",
         "labels": [
-          "prod-tests",
+          "release-tests",
           "min-func-tests"
         ]
       }
@@ -1479,7 +1479,7 @@
       "fileInfo": {
         "path": "hub/provisioning/for_golden_path/MojaloopSims_Onboarding/ttkfxp1.json",
         "labels": [
-          "prod-tests",
+          "release-tests",
           "min-func-tests"
         ]
       }
