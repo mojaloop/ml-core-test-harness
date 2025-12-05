@@ -27,6 +27,9 @@ ignore:
   - vulnerability: CVE-2025-58189
   - vulnerability: CVE-2025-58185
   - vulnerability: CVE-2025-58183
+  - vulnerability: CVE-2025-61729
+  - vulnerability: GHSA-j5w8-q4qc-rx2x
+  - vulnerability: GHSA-f6x5-jh6r-wrfv
 
 # Set output format defaults
 output:

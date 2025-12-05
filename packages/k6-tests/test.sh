@@ -9,7 +9,8 @@ set +a
 node localhost.js & SERVER_PID=$!
 
 # Run k6 test
-K6_SCRIPT_CONFIG_FILE_NAME=localhost.json k6 run --quiet ./index.js
+K6_TRACE_PERIOD_SECONDS=1 K6_SCRIPT_CONFIG_FILE_NAME=localhost.json k6 run --quiet ./index.js
+
 
 # Stop the server after k6 finishes
 kill $SERVER_PID
