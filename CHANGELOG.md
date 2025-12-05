@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.15.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.14.2...v2.15.0) (2025-12-05)
+
+
+### Features
+
+* add lei based merchant payments ([ee91fb5](https://github.com/mojaloop/ml-core-test-harness/commit/ee91fb56f27522fdac5f24b840e12dcc2fae60c2))
+* implement dynamic traceparent generation and logging ([#133](https://github.com/mojaloop/ml-core-test-harness/issues/133)) ([27ddaab](https://github.com/mojaloop/ml-core-test-harness/commit/27ddaabfdac350944ed47b848878904d2771f3de))
+
 ## [2.14.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.13.1...v2.14.0) (2025-11-12)
 
 
