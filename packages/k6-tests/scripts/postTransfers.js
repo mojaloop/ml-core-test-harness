@@ -1,5 +1,4 @@
 import http from 'k6/http';
-import { crypto } from "k6/experimental/webcrypto";
 import { check, fail, sleep, group } from 'k6';
 import exec from 'k6/execution';
 import { WebSocket } from 'k6/experimental/websockets';

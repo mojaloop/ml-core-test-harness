@@ -1,5 +1,4 @@
 import http from 'k6/http';
-import { crypto } from "k6/experimental/webcrypto";
 import { check, group } from 'k6';
 import { getTwoItemsFromArray } from "../common/utils.js";
 import exec from 'k6/execution';

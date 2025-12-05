@@ -52,10 +52,11 @@ export function Trace (...args) {
 }
 
 export function traceParent() {
+  const now = Date.now();
   const trace = (tracePeriod > 0 && vu.idInTest === 1 && (now - prevTrace > tracePeriod * 1000))
   const result = `00-${hex(crypto.randomBytes(16))}-${hex(crypto.randomBytes(8))}-${trace ? '01' : '00'}`;
   if (trace) {
-    prevTrace = Date.now();
+    prevTrace = now;
     console.log(`Generating new traceparent ${result}`);
   }
   return result;

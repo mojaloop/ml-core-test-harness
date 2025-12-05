@@ -1,6 +1,5 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
-// import { crypto } from "k6/experimental/webcrypto";
 import { WebSocket } from 'k6/experimental/websockets';
 import { setTimeout, clearTimeout } from 'k6/timers';
 import { Trace } from "../common/trace.js";
