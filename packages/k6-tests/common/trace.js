@@ -1,9 +1,11 @@
 import crypto from "k6/crypto";
 import { vu } from 'k6/execution';
 
+const tracePeriod = __ENV.K6_TRACE_PERIOD_SECONDS ? parseInt(__ENV.K6_TRACE_PERIOD_SECONDS) : 30;
+
 // Precomputed Hex Octets w/ for Loop (Fastest/Baseline)
 const byteToHex = [];
-let prevTrace = 0;
+let prevTrace = Date.now();
 
 for (let n = 0; n <= 0xff; ++n)
 {
@@ -32,8 +34,9 @@ class TraceParent {
     this.traceId = hex(crypto.randomBytes(16));
     this.parentId = hex(crypto.randomBytes(8));
     const now = Date.now();
-    if (vu.idInTest === 1 && (now - prevTrace > 10000)) { // trace every 10 seconds
+    if (tracePeriod > 0 && vu.idInTest === 1 && (now - prevTrace > tracePeriod * 1000)) { // trace every 10 seconds
       this.traceFlags = '01';
+      console.log(`Generating new traceparent ${result}`);
       prevTrace = now;
     } else this.traceFlags = '00';
   }
@@ -46,4 +49,14 @@ class TraceParent {
 
 export function Trace (...args) {
   return new TraceParent(...args);
+}
+
+export function traceParent() {
+  const trace = (tracePeriod > 0 && vu.idInTest === 1 && (now - prevTrace > tracePeriod * 1000))
+  const result = `00-${hex(crypto.randomBytes(16))}-${hex(crypto.randomBytes(8))}-${trace ? '01' : '00'}`;
+  if (trace) {
+    prevTrace = Date.now();
+    console.log(`Generating new traceparent ${result}`);
+  }
+  return result;
 }

@@ -2,6 +2,7 @@ import http from 'k6/http';
 import { check, group } from 'k6';
 import exec from 'k6/execution';
 import { getTwoItemsFromArray } from "../common/utils.js";
+import { traceParent } from "../common/trace.js";
 
 function log() {
   console.log('Env Vars -->');
@@ -22,7 +23,7 @@ export function setup() {
   for (const fsp of fspList) {
     const sdkEndpointUrl = fsp['outboundUrl'];
     const partyId = fsp['partyId'];
-    
+
     if (!sdkEndpointUrl || !partyId) {
       console.log(`Skipping FSP ${fsp['fspId']} - missing outboundUrl or partyId`);
       continue;
@@ -80,6 +81,7 @@ export function sdkFxSendE2E() {
       headers: {
         'Date': (new Date()).toUTCString(),
         'Content-Type': 'application/json',
+        'traceparent': traceParent()
       },
     };
 
