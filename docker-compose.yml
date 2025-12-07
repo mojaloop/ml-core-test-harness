@@ -372,6 +372,53 @@ services:
       - fx
       - merchant-registry
 
+  # transaction-requests-service:
+  #   # image: mojaloop/transaction-requests-service:${TRANSACTION_REQUESTS_SERVICE_VERSION}
+  #   # container_name: transaction-requests-service
+  #   # build:
+  #     # context: ../../transaction-requests-service
+  #   # command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/transaction-requests-service.js /opt/app/config/default.json && /opt/app/wait4/wait4.js transaction-requests-service && npm run migrate && npm run start:all"
+  #   ports:
+  #     - "4003:4003"
+  #   #   - "4001:4001"
+  #   #   - "4002:4002"
+  #   environment:
+  #     - LOG_LEVEL=info
+  #     - ALS_DISPLAY_ROUTES=false
+  #     - EVENT_SDK_TRACEID_PER_VENDOR=false
+  #   networks:
+  #     - mojaloop-net
+  #   depends_on:
+  #     mojaloop-testing-toolkit:
+  #       condition: service_healthy
+  #     # mysql:
+  #     #   condition: service_healthy
+  #     ml-api-adapter:
+  #       condition: service_healthy
+  #     central-ledger:
+  #       condition: service_healthy
+  #     account-lookup-service:
+  #       condition: service_healthy
+  #     quoting-service:
+  #       condition: service_healthy
+  #     simulator:
+  #       condition: service_healthy
+
+  #   healthcheck:
+  #     test: wget -q http://127.0.0.1:4003/health -O /dev/null || exit 1
+  #     timeout: 20s
+  #     retries: 10
+  #     start_period: 40s
+  #     interval: 30s
+  #   user: root
+  #   profiles:
+  #     - testing-toolkit
+  #     # - transaction-requests-service
+  #     - transfer
+  #     - discovery
+  #     - all-services
+  #     - fx
+
   als-msisdn-oracle-svc:
     image: mojaloop/als-msisdn-oracle-svc:${ALS_MSISDN_ORACLE_SVC_VERSION}
     container_name: als-msisdn-oracle-svc
