@@ -1,4 +1,4 @@
-FROM ghcr.io/grafana/k6-operator:runner-v1.1.0
+FROM ghcr.io/grafana/k6-operator:runner-v1.2.0
 
 # create node_modules directory to satisfy license scanner
 USER root
