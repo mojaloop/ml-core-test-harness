@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.15.1](https://github.com/mojaloop/ml-core-test-harness/compare/v2.15.0...v2.15.1) (2026-02-03)
+
+
+### Bug Fixes
+
+* cardinality issues in sdk perf tests and improvements ([#136](https://github.com/mojaloop/ml-core-test-harness/issues/136)) ([7b3e767](https://github.com/mojaloop/ml-core-test-harness/commit/7b3e767f27f7e58708254ccb91a670bbf9b137e8))
+
 ## [2.15.0](https://github.com/mojaloop/ml-core-test-harness/compare/v2.14.2...v2.15.0) (2025-12-05)
 
 
