@@ -1104,7 +1104,7 @@
           "exemplar": false,
           "expr": "avg by(mlTransferPhase) ((histogram_sum(rate(k6_http_req_duration_seconds{testid=~\"$testid\"}[$__rate_interval]))\n/\nhistogram_count(rate(k6_http_req_duration_seconds{testid=~\"$testid\"}[$__rate_interval]))))",
           "hide": false,
-          "legendFormat": "Response Time (avg)  -> {{mlTransferPhase}}",
+          "legendFormat": "Response Duration -> {{mlTransferPhase}}",
           "range": true,
           "refId": "J"
         }
@@ -1226,7 +1226,8 @@
               "viz": false
             }
           },
-          "mappings": []
+          "mappings": [],
+          "unit": "s"
         },
         "overrides": []
       },
@@ -1270,7 +1271,7 @@
           "refId": "A"
         }
       ],
-      "title": "Panel Title",
+      "title": "Response Duration by ML Transfer Phase",
       "type": "piechart"
     },
     {
