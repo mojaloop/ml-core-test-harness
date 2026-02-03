@@ -31,7 +31,12 @@ export function setup() {
 
     console.log(`Provisioning account for FSP ${fsp['fspId']} with partyId ${partyId}`);
     const startupParams = {
-      tags: {},
+      tags: {
+        name: 'post_accounts',
+        url: `${sdkEndpointUrl}/accounts`,
+        endpoint: 'accounts',
+        operation: 'post_accounts'
+      },
       headers: {
         'Content-Type': 'application/json',
         'Date': (new Date()).toUTCString()
@@ -73,16 +78,14 @@ export function sdkSendE2E() {
     const amount = payerFsp['amount'] || '2';
     const currency = payerFsp['currency'] || 'XXX';
 
-    const params = {
-      tags: {
-        payerFspId,
-        payeeFspId
-      },
-      headers: {
-        'Date': (new Date()).toUTCString(),
-        'Content-Type': 'application/json',
-        'traceparent': traceParent()
-      },
+    const paramTags = {
+      payerFspId,
+      payeeFspId
+    };
+    const paramHeaders = {
+      'Date': (new Date()).toUTCString(),
+      'Content-Type': 'application/json',
+      'traceparent': traceParent()
     };
 
     const sdkEndpointUrl = payerFsp['outboundUrl'];
@@ -110,21 +113,59 @@ export function sdkSendE2E() {
     }
 
     // Lets send the FSPIOP POST /transfers request
-    const postTransferResponse = http.post(`${sdkEndpointUrl}/transfers`, JSON.stringify(body), params);
+    const postTransferResponse = http.post(
+      `${sdkEndpointUrl}/transfers`,
+      JSON.stringify(body),
+      {
+        tags: {
+          ...paramTags,
+          name: 'init_transfer',
+          mlTransferPhase: 'discovery',
+          url: `${sdkEndpointUrl}/transfers`,
+          endpoint: 'transfers',
+          operation: 'post_transfers'
+        },
+        headers: paramHeaders
+      }
+    );
     check(postTransferResponse, { 'TRANSFERS__POST_TRANSFERS_RESPONSE_IS_200' : (r) => r.status == 200 });
 
     const transferId = JSON.parse(postTransferResponse.body).transferId
 
     if (postTransferResponse.status == 200) {
-      const putTransferAcceptPartyResponse = http.put(`${sdkEndpointUrl}/transfers/${transferId}`, JSON.stringify({
-        "acceptParty": true
-      }), params);
+      const putTransferAcceptPartyResponse = http.put(
+        `${sdkEndpointUrl}/transfers/${transferId}`,
+        JSON.stringify({ "acceptParty": true }),
+        {
+          tags: {
+            ...paramTags,
+            name: 'accept_party',
+            mlTransferPhase: 'quotes',
+            url: `${sdkEndpointUrl}/transfers/:id`,
+            endpoint: 'transfers',
+            operation: 'put_transfer'
+          },
+          headers: paramHeaders
+        }
+      );
       check(putTransferAcceptPartyResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_PARTY_RESPONSE_IS_200' : (r) => r.status == 200 });
 
       if (putTransferAcceptPartyResponse.status == 200) {
-        const putTransferAcceptQuoteResponse = http.put(`${sdkEndpointUrl}/transfers/${transferId}`, JSON.stringify({
-          "acceptQuote": true
-        }), params);
+        const putTransferAcceptQuoteResponse = http.put(
+          `${sdkEndpointUrl}/transfers/${transferId}`,
+          JSON.stringify({ "acceptQuote": true }),
+          {
+            tags: {
+              ...paramTags,
+              name: 'accept_quote',
+              mlTransferPhase: 'transfers',
+              url: `${sdkEndpointUrl}/transfers/:id`,
+              endpoint: 'transfers',
+              operation: 'put_transfer'
+            },
+            headers: paramHeaders
+          }
+        );
         check(putTransferAcceptQuoteResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_QUOTE_RESPONSE_IS_200' : (r) => r.status == 200 });
 
         try {
