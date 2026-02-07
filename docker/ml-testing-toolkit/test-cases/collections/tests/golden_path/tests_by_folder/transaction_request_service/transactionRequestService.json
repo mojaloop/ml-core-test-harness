@@ -1,0 +1,354 @@
+{
+  "options": {
+    "breakOnError": false,
+    "transformerName": "none",
+    "generateIDType": "ulid"
+  },
+  "name": "tests_golden_path_tests_by_folder_transactionRequests",
+  "test_cases": [
+    {
+      "id": "positive-tests-for",
+      "name": "positive tests for transactionRequests",
+      "fileInfo": {
+        "path": "tests/golden_path/tests_by_folder/transactionRequests/transactionRequests.json",
+        "labels": ["std-gp"]
+      },
+      "meta": {
+        "info": "positive tests for transactionRequests"
+      },
+      "requests": [
+        {
+          "id": "POST-transactionRequests",
+          "description": "POST /transactionRequests",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/transactionRequests",
+          "path": "/transactionRequests",
+          "method": "post",
+          "url": null,
+          "body": {
+            "transactionRequestId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+            "payee": {
+              "partyIdInfo": {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "16135551212",
+                "partySubIdOrType": "string",
+                "fspId": "string",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "string",
+                      "value": "string"
+                    }
+                  ]
+                }
+              },
+              "merchantClassificationCode": "4111",
+              "name": "string",
+              "personalInfo": {
+                "complexName": {
+                  "firstName": "Henrik",
+                  "middleName": "Johannes",
+                  "lastName": "Karlsson"
+                },
+                "dateOfBirth": "1966-06-16",
+                "kycInformation": "{\n    \"metadata\": {\n        \"format\": \"JSON\",\n        \"version\": \"1.0\",\n        \"description\": \"Data containing KYC Information\"\n    },\n    \"data\": {\n        \"name\": \"John Doe\",\n        \"dob\": \"1980-05-15\",\n        \"gender\": \"Male\",\n        \"address\": \"123 Main Street, Anytown, USA\",\n        \"email\": \"johndoe@example.com\",\n        \"phone\": \"+1 555-123-4567\",\n        \"nationality\": \"US\",\n        \"passport_number\": \"AB1234567\",\n        \"issue_date\": \"2010-02-20\",\n        \"expiry_date\": \"2025-02-20\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_name\": \"Example Bank\",\n        \"employer\": \"ABC Company\",\n        \"occupation\": \"Software Engineer\",\n        \"income\": \"$80,000 per year\",\n        \"marital_status\": \"Single\",\n        \"dependents\": 0,\n        \"risk_level\": \"Low\"\n    }\n}"
+              },
+              "supportedCurrencies": ["AED"]
+            },
+            "payer": {
+              "partyIdType": "MSISDN",
+              "partyIdentifier": "16135551212",
+              "partySubIdOrType": "string",
+              "fspId": "string",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "string",
+                    "value": "string"
+                  }
+                ]
+              }
+            },
+            "amount": {
+              "currency": "AED",
+              "amount": "123.45"
+            },
+            "transactionType": {
+              "scenario": "DEPOSIT",
+              "subScenario": "LOCALLY_DEFINED_SUBSCENARIO",
+              "initiator": "PAYEE",
+              "initiatorType": "CONSUMER",
+              "refundInfo": {
+                "originalTransactionId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+                "refundReason": "Free text indicating reason for the refund."
+              },
+              "balanceOfPayments": "123"
+            },
+            "note": "Note sent to Payee.",
+            "geoCode": {
+              "latitude": "+45.4215",
+              "longitude": "+75.6972"
+            },
+            "authenticationType": "OTP",
+            "expiration": "2016-05-24T08:38:08.699-04:00",
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Accept": "{$inputs.acceptTransactionRequests}",
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "tr-post-rsp-status-202",
+                "description": "Synchronous response status is 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": "tr-post-rsp-statusText-accepted",
+                "description": "Synchronous response statusText is Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": "tr-post-rsp-content-length-0",
+                "description": "Synchronous response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "tr-post-rsp-body-empty",
+                "description": "Synchronous response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "tr-post-rsp-cache-control-no-cache",
+                "description": "Synchronous response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "tr-post-rsp-date-valid",
+                "description": "Synchronous response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": "GET-transactionRequests-ID",
+          "description": "GET /transactionRequests/{ID}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/transactionRequests/{ID}",
+          "path": "/transactionRequests/{ID}",
+          "method": "get",
+          "params": {
+            "ID": ""
+          },
+          "url": null,
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Accept": "{$inputs.acceptTransactionRequests}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "tr-post-rsp-status-202",
+                "description": "Synchronous response status is 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": "tr-post-rsp-statusText-accepted",
+                "description": "Synchronous response statusText is Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": "tr-post-rsp-content-length-0",
+                "description": "Synchronous response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "tr-post-rsp-body-empty",
+                "description": "Synchronous response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "tr-post-rsp-cache-control-no-cache",
+                "description": "Synchronous response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "tr-post-rsp-date-valid",
+                "description": "Synchronous response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": "PUT-transactionRequests-ID",
+          "description": "PUT /transactionRequests/{ID}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/transactionRequests/{ID}",
+          "path": "/transactionRequests/{ID}",
+          "method": "put",
+          "params": {
+            "ID": ""
+          },
+          "url": null,
+          "body": {
+            "transactionId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+            "transactionRequestState": "RECEIVED",
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          },
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": "tr-putcb-rsp-status-200",
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "tr-putcb-rsp-statusText-ok",
+                "description": "Response statusText is OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              },
+              {
+                "id": "tr-putcb-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "tr-putcb-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "tr-putcb-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "tr-putcb-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "PUT-transcationRequests-ID-error",
+          "description": "PUT /transactionRequests/{ID}/error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/transactionRequests/{ID}/error",
+          "path": "/transactionRequests/{ID}/error",
+          "method": "put",
+          "params": {
+            "ID": ""
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": "5100",
+              "errorDescription": "string",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "string",
+                    "value": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeTransactionRequests}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          },
+          "disabled": false
+        }
+      ]
+    }
+  ]
+}
