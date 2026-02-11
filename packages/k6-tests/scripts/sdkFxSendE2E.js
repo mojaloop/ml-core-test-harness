@@ -5,13 +5,8 @@ import exec from 'k6/execution';
 import { getTwoItemsFromArray } from "../common/utils.js";
 import { traceParent } from "../common/trace.js";
 
-// Custom error counters for tracking check failures
+// Custom error counter for tracking check failures with tags
 const checkFailures = new Counter('check_failures');
-const postTransferCheckFailures = new Counter('post_transfer_check_failures');
-const acceptPartyCheckFailures = new Counter('accept_party_check_failures');
-const acceptConversionCheckFailures = new Counter('accept_conversion_check_failures');
-const acceptQuoteCheckFailures = new Counter('accept_quote_check_failures');
-const statusCompletedCheckFailures = new Counter('status_completed_check_failures');
 
 function log() {
   console.log('Env Vars -->');
@@ -140,8 +135,7 @@ export function sdkFxSendE2E() {
     // console.log('postTransferResponse', postTransferResponse)
     const postTransferCheckResult = check(postTransferResponse, { 'TRANSFERS__POST_TRANSFERS_RESPONSE_IS_200' : (r) => r.status == 200 });
     if (!postTransferCheckResult) {
-      checkFailures.add(1);
-      postTransferCheckFailures.add(1);
+      checkFailures.add(1, { check_type: 'post_transfer' });
     }
 
     const transferId = JSON.parse(postTransferResponse.body).transferId
@@ -163,8 +157,7 @@ export function sdkFxSendE2E() {
       // console.log('putTransferacceptPartyResponse', putTransferacceptPartyResponse)
       const acceptPartyCheckResult = check(putTransferacceptPartyResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_PARTY_RESPONSE_IS_200' : (r) => r.status == 200 });
       if (!acceptPartyCheckResult) {
-        checkFailures.add(1);
-        acceptPartyCheckFailures.add(1);
+        checkFailures.add(1, { check_type: 'accept_party' });
       }
 
       if (putTransferacceptPartyResponse.status == 200) {
@@ -185,8 +178,7 @@ export function sdkFxSendE2E() {
         // console.log('putTransferAcceptConversionResponse', putTransferAcceptConversionResponse)
         const acceptConversionCheckResult = check(putTransferAcceptConversionResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_CONVERSION_RESPONSE_IS_200' : (r) => r.status == 200 });
         if (!acceptConversionCheckResult) {
-          checkFailures.add(1);
-          acceptConversionCheckFailures.add(1);
+          checkFailures.add(1, { check_type: 'accept_conversion' });
         }
 
         if (putTransferAcceptConversionResponse.status == 200) {
@@ -206,8 +198,7 @@ export function sdkFxSendE2E() {
           // console.log('putTransferAcceptQuoteResponse', putTransferAcceptQuoteResponse)
           const acceptQuoteCheckResult = check(putTransferAcceptQuoteResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_QUOTE_RESPONSE_IS_200' : (r) => r.status == 200 });
           if (!acceptQuoteCheckResult) {
-            checkFailures.add(1);
-            acceptQuoteCheckFailures.add(1);
+            checkFailures.add(1, { check_type: 'accept_quote' });
           }
 
           let statusCheckResult;
@@ -220,8 +211,7 @@ export function sdkFxSendE2E() {
             statusCheckResult = check(null, { 'SDK_E2E_STATUS_COMPLETED': () => false });
           }
           if (!statusCheckResult) {
-            checkFailures.add(1);
-            statusCompletedCheckFailures.add(1);
+            checkFailures.add(1, { check_type: 'status_completed' });
           }
         }
       }
