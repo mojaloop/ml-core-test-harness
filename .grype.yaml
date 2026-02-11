@@ -19,6 +19,8 @@ ignore:
   - vulnerability: CVE-2025-61730
   - vulnerability: CVE-2025-15469
   - vulnerability: CVE-2025-69418
+  - vulnerability: CVE-2025-68121
+  - vulnerability: CVE-2025-61732
 
 # Set output format defaults
 output:
