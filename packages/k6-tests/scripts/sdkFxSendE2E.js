@@ -24,6 +24,7 @@ const interschemeDiscoveryRate = parseFloat(__ENV.K6_SCRIPT_INTERSCHEME_DISCOVER
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 let partiesByFsp = {};
+let usedPayees = new Set(); // Track MSISDNs that have been used as payees
 
 // Setup function - runs once at the beginning of the test
 export function setup() {
@@ -94,15 +95,19 @@ export function sdkFxSendE2E(testContext) {
     let useInterschemeDiscovery = Math.random() < interschemeDiscoveryRate;
     let payeePartyId;
     if (useInterschemeDiscovery) {
-      // Pick a payee MSISDN that is NOT in the payer's DFSP (simulate interscheme discovery)
-      payeePartyId = getRandomItemExcluding(payeeMsisdns, new Set(payerMsisdns));
+      // Pick a payee MSISDN that has never been used as a payee before (for interscheme discovery)
+      const excludeSet = new Set([...payerMsisdns, ...usedPayees]);
+      payeePartyId = getRandomItemExcluding(payeeMsisdns, excludeSet);
+      if (payeePartyId) {
+        usedPayees.add(payeePartyId); // Mark this MSISDN as used
+      } else {
+        throw new Error(`No unused payee MSISDNs available for interscheme discovery for DFSP: ${payeeFspId}`);
+      }
     } else {
-      // Pick a payee MSISDN that is in the payer's DFSP (simulate cached/precached lookup)
-      // If not possible, fallback to any payee MSISDN
       payeePartyId = getRandomItemExcluding(payeeMsisdns, new Set());
     }
     // Pick a random payer party
-    const payerPartyId = getRandomItemExcluding(payerMsisdns, new Set([payeePartyId]));
+    const payerPartyId = getRandomItemExcluding(payerMsisdns, new Set());
     const amount = payerFsp['amount'] || '2';
     const currency = payerFsp['currency'] || 'XXX';
     const paramTags = { payerFspId, payeeFspId };
