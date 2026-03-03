@@ -4,6 +4,7 @@ import { Counter } from 'k6/metrics';
 import exec from 'k6/execution';
 import { getTwoItemsFromArray } from "../common/utils.js";
 import { traceParent } from "../common/trace.js";
+import { generateMsisdnSet, getRandomItemExcluding } from "../common/msisdnUtils.js";
 
 // Custom counters for tracking check results with tags
 const checkFailures = new Counter('check_failures');
@@ -15,86 +16,102 @@ function log() {
   console.log(`  K6_SCRIPT_ABORT_ON_ERROR=${__ENV.K6_SCRIPT_ABORT_ON_ERROR}`);
 }
 
-const fspList = JSON.parse(__ENV.K6_SCRIPT_SDK_FSP_POOL || '[]');
-const idType = __ENV.K6_SCRIPT_ID_TYPE || 'ACCOUNT_ID';
 
+const fspList = JSON.parse(__ENV.K6_SCRIPT_SDK_FSP_POOL || '[]');
+const idType = __ENV.K6_SCRIPT_ID_TYPE || 'MSISDN';
+const msisdnLength = parseInt(__ENV.K6_SCRIPT_MSISDN_LENGTH || '12');
+const interschemeDiscoveryRate = parseFloat(__ENV.K6_SCRIPT_INTERSCHEME_DISCOVERY_RATE || '0'); // e.g. 0.3 for 30%
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
+
+let partiesByFsp = {};
 
 // Setup function - runs once at the beginning of the test
 export function setup() {
-  console.log('Making party provisioning requests to accounts endpoints...');
-
-  // Provision accounts for all FSPs in the pool
+  console.log('Generating and provisioning MSISDNs for DFSPs...');
+  partiesByFsp = {};
   for (const fsp of fspList) {
-    const sdkEndpointUrl = fsp['outboundUrl'];
-    const partyId = fsp['partyId'];
-
-    if (!sdkEndpointUrl || !partyId) {
-      console.log(`Skipping FSP ${fsp['fspId']} - missing outboundUrl or partyId`);
+    const { fspId, outboundUrl, msisdnPrefix, partyCount } = fsp;
+    if (!fspId || !outboundUrl || !msisdnPrefix || !partyCount) {
+      console.log(`Skipping FSP ${fspId} - missing required config (fspId, outboundUrl, msisdnPrefix, partyCount)`);
       continue;
     }
-
-    console.log(`Provisioning account for FSP ${fsp['fspId']} with partyId ${partyId}`);
-    const startupParams = {
-      tags: {
-        name: 'post_accounts',
-        url: `${sdkEndpointUrl}/accounts`,
-        endpoint: 'accounts',
-        operation: 'post_accounts'
-      },
-      headers: {
-        'Content-Type': 'application/json',
-        'Date': (new Date()).toUTCString()
+    // Generate unique MSISDNs for this DFSP
+    const msisdns = generateMsisdnSet(msisdnPrefix, partyCount, msisdnLength);
+    partiesByFsp[fspId] = msisdns;
+    // Register each MSISDN as a party
+    for (const msisdn of msisdns) {
+      const startupParams = {
+        tags: {
+          name: 'post_accounts',
+          url: `${outboundUrl}/accounts`,
+          endpoint: 'accounts',
+          operation: 'post_accounts'
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Date': (new Date()).toUTCString()
+        }
+      };
+      const startupBody = JSON.stringify([{ idType, idValue: msisdn }]);
+      const startupResponse = http.post(`${outboundUrl}/accounts`, startupBody, startupParams);
+      if (startupResponse.status >= 200 && startupResponse.status < 300) {
+        console.log(`Account provisioning successful for FSP ${fspId} party ${msisdn}`);
+      } else {
+        console.log(`Account provisioning failed for FSP ${fspId} party ${msisdn} with status: ${startupResponse.status}`);
       }
-    };
-    const startupBody = JSON.stringify([{"idType":idType,"idValue":partyId}]);
-    const startupResponse = http.post(`${sdkEndpointUrl}/accounts`, startupBody, startupParams);
-
-    if (startupResponse.status >= 200 && startupResponse.status < 300) {
-      console.log(`Account provisioning successful for FSP ${fsp['fspId']}`);
-    } else {
-      console.log(`Account provisioning failed for FSP ${fsp['fspId']} with status: ${startupResponse.status}`);
     }
-
   }
-
   console.log('Completed account provisioning');
+  return { partiesByFsp };
 }
 
-export function sdkFxSendE2E() {
+export function sdkFxSendE2E(testContext) {
+  // testContext.partiesByFsp comes from setup()
+  if (!testContext || !testContext.partiesByFsp) {
+    throw new Error('Missing partiesByFsp in test context.');
+  }
+  const partiesByFspLocal = testContext.partiesByFsp;
   !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
   group("Post Transfers", function () {
-    let payerFsp
-    let payeeFsp
-
+    // Randomly select payer and payee DFSPs
+    let payerFsp, payeeFsp;
     if (__ENV.UNIDIRECTIONAL === "true" || __ENV.UNIDIRECTIONAL === "TRUE") {
-      payerFsp = fspList[0]
-      payeeFsp =  fspList[1]
+      payerFsp = fspList[0];
+      payeeFsp = fspList[1];
     } else {
-      const selectedFsps = getTwoItemsFromArray(fspList)
-      payerFsp = selectedFsps[0]
-      payeeFsp =  selectedFsps[1]
+      const selectedFsps = getTwoItemsFromArray(fspList);
+      payerFsp = selectedFsps[0];
+      payeeFsp = selectedFsps[1];
     }
-
     const payerFspId = payerFsp['fspId'];
     const payeeFspId = payeeFsp['fspId'];
-    const payerPartyId = payerFsp['partyId'];
-    const payeePartyId = payeeFsp['partyId'];
+    const payerMsisdns = partiesByFspLocal[payerFspId];
+    const payeeMsisdns = partiesByFspLocal[payeeFspId];
+    if (!payerMsisdns || !payeeMsisdns) {
+      throw new Error(`Missing MSISDNs for payer or payee DFSP: ${payerFspId}, ${payeeFspId}`);
+    }
+    // Decide if this transfer should use interscheme discovery or precached lookup
+    let useInterschemeDiscovery = Math.random() < interschemeDiscoveryRate;
+    let payeePartyId;
+    if (useInterschemeDiscovery) {
+      // Pick a payee MSISDN that is NOT in the payer's DFSP (simulate interscheme discovery)
+      payeePartyId = getRandomItemExcluding(payeeMsisdns, new Set(payerMsisdns));
+    } else {
+      // Pick a payee MSISDN that is in the payer's DFSP (simulate cached/precached lookup)
+      // If not possible, fallback to any payee MSISDN
+      payeePartyId = getRandomItemExcluding(payeeMsisdns, new Set());
+    }
+    // Pick a random payer party
+    const payerPartyId = getRandomItemExcluding(payerMsisdns, new Set([payeePartyId]));
     const amount = payerFsp['amount'] || '2';
     const currency = payerFsp['currency'] || 'XXX';
-
-    const paramTags = {
-      payerFspId,
-      payeeFspId
-    };
+    const paramTags = { payerFspId, payeeFspId };
     const paramHeaders = {
       'Date': (new Date()).toUTCString(),
       'Content-Type': 'application/json',
       'traceparent': traceParent()
     };
-
     const sdkEndpointUrl = payerFsp['outboundUrl'];
-
     const body = {
       "homeTransactionId": "string",
       "from": {

@@ -5,10 +5,10 @@
       "exec": "sdkFxSendE2EScenarios",
       "env": {
         "UNIDIRECTIONAL": "true",
-        "K6_SCRIPT_INTERSCHEME_DISCOVERY_RATE": "0"
+        "K6_SCRIPT_INTERSCHEME_DISCOVERY_RATE": "0.3"
       },
       "vus": 1,
-      "duration": "5m"
+      "duration": "1m"
     }
   },
   "thresholds": {
