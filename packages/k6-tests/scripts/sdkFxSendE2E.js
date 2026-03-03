@@ -28,18 +28,34 @@ let usedPayees = new Set(); // Track MSISDNs that have been used as payees
 
 // Setup function - runs once at the beginning of the test
 export function setup() {
-  console.log('Generating and provisioning MSISDNs for DFSPs...');
-  console.log(`FSP Pool configuration: ${JSON.stringify(fspList, null, 2)}`);
-  const localPartiesByFsp = {};
-  for (const fsp of fspList) {
-    const { fspId, outboundUrl, msisdnPrefix, partyCount } = fsp;
-    if (!fspId || !outboundUrl || !msisdnPrefix || !partyCount) {
-      console.log(`Skipping FSP ${fspId} - missing required config (fspId, outboundUrl, msisdnPrefix, partyCount)`);
-      continue;
+  try {
+    console.log('=== SETUP FUNCTION START ===');
+    console.log('Generating and provisioning MSISDNs for DFSPs...');
+    console.log(`FSP Pool configuration: ${JSON.stringify(fspList, null, 2)}`);
+    console.log(`fspList length: ${fspList.length}`);
+    console.log(`msisdnLength: ${msisdnLength}`);
+    console.log(`idType: ${idType}`);
+
+    const localPartiesByFsp = {};
+
+    for (let i = 0; i < fspList.length; i++) {
+      const fsp = fspList[i];
+      console.log(`Processing FSP ${i + 1}/${fspList.length}`);
+      const { fspId, outboundUrl, msisdnPrefix, partyCount } = fsp;
+
+      if (!fspId || !outboundUrl || !msisdnPrefix || !partyCount) {
+        console.log(`Skipping FSP ${fspId} - missing required config`);
+        console.log(`  fspId: ${fspId}, outboundUrl: ${outboundUrl}, msisdnPrefix: ${msisdnPrefix}, partyCount: ${partyCount}`);
+        continue;
+      }
+
+      console.log(`Generating MSISDNs for FSP ${fspId}: prefix=${msisdnPrefix}, count=${partyCount}`);
+      // Generate unique MSISDNs for this DFSP
+      const msisdns = generateMsisdnSet(msisdnPrefix, partyCount, msisdnLength);
+      console.log(`Generated ${msisdns.length} MSISDNs for ${fspId}`);
+      localPartiesByFsp[fspId] = msisdns;
     }
-    // Generate unique MSISDNs for this DFSP
-    const msisdns = generateMsisdnSet(msisdnPrefix, partyCount, msisdnLength);
-    localPartiesByFsp[fspId] = msisdns;
+
     // Register each MSISDN as a party
     for (const msisdn of msisdns) {
       const startupParams = {
@@ -62,10 +78,19 @@ export function setup() {
         console.log(`Account provisioning failed for FSP ${fspId} party ${msisdn} with status: ${startupResponse.status}`);
       }
     }
+    console.log('Completed account provisioning');
+    console.log(`Provisioned parties for FSPs: ${Object.keys(localPartiesByFsp).join(', ')}`);
+    console.log(`Total FSPs in localPartiesByFsp: ${Object.keys(localPartiesByFsp).length}`);
+    console.log(`localPartiesByFsp structure: ${JSON.stringify(Object.keys(localPartiesByFsp).reduce((acc, key) => { acc[key] = localPartiesByFsp[key].length; return acc; }, {}))}`);
+    const result = { partiesByFsp: localPartiesByFsp };
+    console.log(`Returning from setup with keys: ${Object.keys(result).join(', ')}`);
+    console.log(`=== SETUP FUNCTION END ===`);
+    return result;
+  } catch (error) {
+    console.error(`!!! SETUP FUNCTION ERROR: ${error.message}`);
+    console.error(`Error stack: ${error.stack}`);
+    throw error;
   }
-  console.log('Completed account provisioning');
-  console.log(`Provisioned parties for FSPs: ${Object.keys(localPartiesByFsp).join(', ')}`);
-  return { partiesByFsp: localPartiesByFsp };
 }
 
 export function sdkFxSendE2E(testContext) {

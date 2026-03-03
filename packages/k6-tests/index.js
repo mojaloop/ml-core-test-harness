@@ -34,7 +34,10 @@ const setupFunctions = {
 }
 
 const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';
-const configFile = configFolder + __ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json';
+const configFile = configFolder + (__ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json');
+console.log(`Index.js: Loading config from: ${configFile}`);
+console.log(`Index.js: K6_SCRIPT_CONFIG_FOLDER_NAME="${__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME}"`);
+console.log(`Index.js: K6_SCRIPT_CONFIG_FILE_NAME="${__ENV.K6_SCRIPT_CONFIG_FILE_NAME}"`);
 const testConfig = JSON.parse(open(configFile));
 
 export const options = Object.assign(
@@ -69,25 +72,44 @@ const millisecondsToTime = (milliseconds) => {
 }
 
 export function setup() {
-  const scenarios = testConfig.scenarios || {};
-  const scenarioNames = Object.keys(scenarios);
-  console.log(`K6 setup: Found ${scenarioNames.length} scenarios: ${scenarioNames.join(', ')}`);
-  if (scenarioNames.length !== 0) {
-    const execName = scenarios[scenarioNames[0]].exec;
-    const setupFunctionName = execName.replace('Scenarios', 'Setup');
-    console.log(`K6 setup: Looking for setup function: ${setupFunctionName}`);
-    const setupFunction = setupFunctions[setupFunctionName];
-    if (setupFunction) {
-      console.log(`K6 setup: Calling setup function: ${setupFunctionName}`);
-      const result = setupFunction();
-      console.log(`K6 setup: Setup function completed, returning data with keys: ${Object.keys(result || {}).join(', ')}`);
-      return result;
-    } else {
-      console.log(`K6 setup: No setup function found for ${setupFunctionName}`);
+  try {
+    console.log('=== K6 SETUP START ===');
+    console.log(`Config file loaded from: ${configFile}`);
+    console.log(`testConfig: ${JSON.stringify(testConfig, null, 2)}`);
+    const scenarios = testConfig.scenarios || {};
+    const scenarioNames = Object.keys(scenarios);
+    console.log(`K6 setup: Found ${scenarioNames.length} scenarios: ${scenarioNames.join(', ')}`);
+    console.log(`Available setup functions: ${Object.keys(setupFunctions).join(', ')}`);
+
+    if (scenarioNames.length !== 0) {
+      const execName = scenarios[scenarioNames[0]].exec;
+      const setupFunctionName = execName.replace('Scenarios', 'Setup');
+      console.log(`K6 setup: execName="${execName}" -> setupFunctionName="${setupFunctionName}"`);
+      const setupFunction = setupFunctions[setupFunctionName];
+
+      if (setupFunction) {
+        console.log(`K6 setup: Calling setup function: ${setupFunctionName}`);
+        const result = setupFunction();
+        console.log(`K6 setup: Setup function completed`);
+        console.log(`K6 setup: Result keys: ${Object.keys(result || {}).join(', ')}`);
+        if (result && result.partiesByFsp) {
+          console.log(`K6 setup: partiesByFsp FSPs: ${Object.keys(result.partiesByFsp).join(', ')}`);
+        }
+        console.log(`=== K6 SETUP END (SUCCESS) ===`);
+        return result;
+      } else {
+        console.log(`K6 setup: No setup function found for ${setupFunctionName}`);
+        console.log(`K6 setup: Available functions: ${Object.keys(setupFunctions).join(', ')}`);
+      }
     }
+    console.log(`K6 setup: Returning empty object`);
+    console.log(`=== K6 SETUP END (EMPTY) ===`);
+    return {};
+  } catch (error) {
+    console.error(`!!! K6 SETUP ERROR: ${error.message}`);
+    console.error(`Error stack: ${error.stack}`);
+    throw error;
   }
-  console.log(`K6 setup: Returning empty object`);
-  return {};
 }
 
 export function handleSummary(data) {
