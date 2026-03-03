@@ -29,7 +29,8 @@ let usedPayees = new Set(); // Track MSISDNs that have been used as payees
 // Setup function - runs once at the beginning of the test
 export function setup() {
   console.log('Generating and provisioning MSISDNs for DFSPs...');
-  partiesByFsp = {};
+  console.log(`FSP Pool configuration: ${JSON.stringify(fspList, null, 2)}`);
+  const localPartiesByFsp = {};
   for (const fsp of fspList) {
     const { fspId, outboundUrl, msisdnPrefix, partyCount } = fsp;
     if (!fspId || !outboundUrl || !msisdnPrefix || !partyCount) {
@@ -38,7 +39,7 @@ export function setup() {
     }
     // Generate unique MSISDNs for this DFSP
     const msisdns = generateMsisdnSet(msisdnPrefix, partyCount, msisdnLength);
-    partiesByFsp[fspId] = msisdns;
+    localPartiesByFsp[fspId] = msisdns;
     // Register each MSISDN as a party
     for (const msisdn of msisdns) {
       const startupParams = {
@@ -63,16 +64,19 @@ export function setup() {
     }
   }
   console.log('Completed account provisioning');
-  return { partiesByFsp };
+  console.log(`Provisioned parties for FSPs: ${Object.keys(localPartiesByFsp).join(', ')}`);
+  return { partiesByFsp: localPartiesByFsp };
 }
 
 export function sdkFxSendE2E(testContext) {
   // testContext.partiesByFsp comes from setup()
   if (!testContext || !testContext.partiesByFsp) {
+    console.error(`Test context is missing or invalid. testContext: ${JSON.stringify(testContext)}`);
     throw new Error('Missing partiesByFsp in test context.');
   }
   const partiesByFspLocal = testContext.partiesByFsp;
   !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && log();
+  !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1) && console.log(`Available FSPs in context: ${Object.keys(partiesByFspLocal).join(', ')}`);
   group("Post Transfers", function () {
     // Randomly select payer and payee DFSPs
     let payerFsp, payeeFsp;
@@ -89,6 +93,10 @@ export function sdkFxSendE2E(testContext) {
     const payerMsisdns = partiesByFspLocal[payerFspId];
     const payeeMsisdns = partiesByFspLocal[payeeFspId];
     if (!payerMsisdns || !payeeMsisdns) {
+      console.error(`Available FSPs: ${Object.keys(partiesByFspLocal).join(', ')}`);
+      console.error(`Requested payer FSP: ${payerFspId}, found: ${!!payerMsisdns}`);
+      console.error(`Requested payee FSP: ${payeeFspId}, found: ${!!payeeMsisdns}`);
+      console.error(`FSP List from config: ${JSON.stringify(fspList.map(f => f.fspId))}`);
       throw new Error(`Missing MSISDNs for payer or payee DFSP: ${payerFspId}, ${payeeFspId}`);
     }
     // Decide if this transfer should use interscheme discovery or precached lookup

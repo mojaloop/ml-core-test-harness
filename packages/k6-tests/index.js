@@ -71,13 +71,22 @@ const millisecondsToTime = (milliseconds) => {
 export function setup() {
   const scenarios = testConfig.scenarios || {};
   const scenarioNames = Object.keys(scenarios);
+  console.log(`K6 setup: Found ${scenarioNames.length} scenarios: ${scenarioNames.join(', ')}`);
   if (scenarioNames.length !== 0) {
     const execName = scenarios[scenarioNames[0]].exec;
-    const setupFunction = setupFunctions[execName.replace('Scenarios', 'Setup')];
+    const setupFunctionName = execName.replace('Scenarios', 'Setup');
+    console.log(`K6 setup: Looking for setup function: ${setupFunctionName}`);
+    const setupFunction = setupFunctions[setupFunctionName];
     if (setupFunction) {
-      return setupFunction();
+      console.log(`K6 setup: Calling setup function: ${setupFunctionName}`);
+      const result = setupFunction();
+      console.log(`K6 setup: Setup function completed, returning data with keys: ${Object.keys(result || {}).join(', ')}`);
+      return result;
+    } else {
+      console.log(`K6 setup: No setup function found for ${setupFunctionName}`);
     }
   }
+  console.log(`K6 setup: Returning empty object`);
   return {};
 }
 
