@@ -223,7 +223,9 @@ export function sdkFxSendE2EPool(testContext) {
     }
 
     const transferId = JSON.parse(postTransferResponse.body).transferId
-    console.log(`Transfer ID: ${transferId}`);
+    if (__ENV.K6_DEBUG_TRANSFER_ID === 'true') {
+      console.log(`Transfer ID: ${transferId}`);
+    }
 
     if (postTransferResponse.status == 200) {
       const putTransferacceptPartyResponse = http.put(`${sdkEndpointUrl}/transfers/${transferId}`, JSON.stringify({
