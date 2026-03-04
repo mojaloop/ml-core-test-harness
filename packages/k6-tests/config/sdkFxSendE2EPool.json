@@ -2,7 +2,7 @@
   "scenarios": {
     "sdkFxSendE2E": {
       "executor": "constant-vus",
-      "exec": "sdkFxSendE2EScenarios",
+      "exec": "sdkFxSendE2EPoolScenarios",
       "env": {
         "UNIDIRECTIONAL": "true",
         "K6_SCRIPT_INTERSCHEME_DISCOVERY_RATE": "0.3"

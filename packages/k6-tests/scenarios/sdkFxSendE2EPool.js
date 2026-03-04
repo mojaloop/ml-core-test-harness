@@ -1,7 +1,7 @@
 import { sdkFxSendE2E } from "../scripts/sdkFxSendE2EPool.js";
 import exec from 'k6/execution';
 
-export function sdkFxSendE2EScenarios(data) {
+export function sdkFxSendE2EPoolScenarios(data) {
   const isFirstIteration = !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1);
   if (isFirstIteration) {
     console.log(`=== SCENARIO WRAPPER START ===`);
