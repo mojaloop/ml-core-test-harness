@@ -36,7 +36,14 @@ export function generateMsisdnSet(prefix, count, length) {
     );
   }
 
-  const maxUniqueMsisdns = digits === 0 ? 1 : Math.pow(10, digits);
+  if (digits === 0) {
+    throw new Error(
+      `Cannot generate MSISDNs: total length ${length} equals prefix length. ` +
+      `Length must be greater than prefix length to generate unique MSISDNs.`
+    );
+  }
+
+  const maxUniqueMsisdns = Math.pow(10, digits);
 
   if (count > maxUniqueMsisdns) {
     throw new Error(
