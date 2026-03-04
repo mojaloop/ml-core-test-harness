@@ -16,7 +16,6 @@ function log() {
   console.log(`  K6_SCRIPT_ABORT_ON_ERROR=${__ENV.K6_SCRIPT_ABORT_ON_ERROR}`);
 }
 
-
 const fspList = JSON.parse(__ENV.K6_SCRIPT_SDK_FSP_POOL || '[]');
 const idType = __ENV.K6_SCRIPT_ID_TYPE || 'MSISDN';
 const msisdnLength = parseInt(__ENV.K6_SCRIPT_MSISDN_LENGTH || '12');
@@ -94,7 +93,6 @@ export function setup() {
 }
 
 export function sdkFxSendE2EPool(testContext) {
-  console.log(`!!!!! sdkFxSendE2EPool CALLED, testContext type: ${typeof testContext}, is undefined: ${testContext === undefined}, is null: ${testContext === null}`);
   // testContext.partiesByFsp comes from setup()
   if (!testContext || !testContext.partiesByFsp) {
     console.error(`Test context is missing or invalid. testContext: ${JSON.stringify(testContext)}`);
@@ -134,6 +132,7 @@ export function sdkFxSendE2EPool(testContext) {
       payeePartyId = getRandomItemExcluding(payeeMsisdns, excludeSet);
       if (payeePartyId) {
         usedPayees.add(payeePartyId); // Mark this MSISDN as used
+        console.log(`Using new payee for interscheme discovery: ${payeePartyId} (DFSP: ${payeeFspId})`);
       } else {
         throw new Error(`No unused payee MSISDNs available for interscheme discovery for DFSP: ${payeeFspId}`);
       }
@@ -197,7 +196,17 @@ export function sdkFxSendE2EPool(testContext) {
       checkSuccesses.add(1, { check_type: 'post_transfer' });
     }
 
+    // Check if response is valid before parsing
+    if (postTransferResponse.status != 200 || !postTransferResponse.body) {
+      console.error(`POST /transfers failed with status ${postTransferResponse.status}, body: ${postTransferResponse.body}`);
+      if (abortOnError) {
+        exec.test.abort();
+      }
+      return; // Skip the rest of the transfer flow
+    }
+
     const transferId = JSON.parse(postTransferResponse.body).transferId
+    console.log(`Transfer ID: ${transferId}`);
 
     if (postTransferResponse.status == 200) {
       const putTransferacceptPartyResponse = http.put(`${sdkEndpointUrl}/transfers/${transferId}`, JSON.stringify({

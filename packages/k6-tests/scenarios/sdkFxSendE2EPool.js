@@ -4,7 +4,6 @@ import exec from 'k6/execution';
 export function sdkFxSendE2EPoolScenarios(data) {
   const isFirstIteration = !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1);
   if (isFirstIteration) {
-    console.log(`=== SCENARIO WRAPPER START ===`);
     console.log(`sdkFxSendE2EPoolScenarios received data: ${data ? 'yes' : 'no'}`);
     if (data) {
       console.log(`Data keys: ${Object.keys(data).join(', ')}`);
@@ -16,7 +15,6 @@ export function sdkFxSendE2EPoolScenarios(data) {
     } else {
       console.log(`WARNING: data is undefined or null!`);
     }
-    console.log(`=== SCENARIO WRAPPER END ===`);
   }
   sdkFxSendE2EPool(data);
 }

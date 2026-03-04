@@ -59,7 +59,6 @@ export const options = Object.assign(
   },
   testConfig
 );
-console.log(`Index.js: Options exported successfully`);
 
 // used to store global variables
 globalThis.VARS = [];
@@ -68,6 +67,8 @@ globalThis.VARS = [];
 globalThis.PAUSE_MIN = __ENV.K6_SCRIPT_PAUSE_MIN || 5;
 globalThis.PAUSE_MAX = __ENV.K6_SCRIPT_PAUSE_MAX || 15;
 
+// Important to pass data into the default function
+// k6s uses it to attach context from the setup function.
 export default async (data) => {
   console.log("No scenarios found in config/test.json. Executing default function...");
 }
@@ -80,7 +81,6 @@ const millisecondsToTime = (milliseconds) => {
 }
 
 export function setup() {
-  console.log('!!!!! SETUP FUNCTION CALLED !!!!!');
   try {
     console.log('=== K6 SETUP START ===');
     console.log(`Config file loaded from: ${configFile}`);
