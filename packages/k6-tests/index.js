@@ -63,7 +63,7 @@ globalThis.PAUSE_MAX = __ENV.K6_SCRIPT_PAUSE_MAX || 15;
 // Important to pass data into the default function
 // k6s uses it to attach context from the setup function.
 export default async (data) => {
-  console.log("No scenarios found in config/test.json. Executing default function...");
+  console.log(`No scenarios found in ${configFile}. Executing default function...`);
 }
 
 const millisecondsToTime = (milliseconds) => {
