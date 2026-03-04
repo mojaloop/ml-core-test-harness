@@ -1,11 +1,11 @@
-import { sdkFxSendE2E } from "../scripts/sdkFxSendE2EPool.js";
+import { sdkFxSendE2EPool } from "../scripts/sdkFxSendE2EPool.js";
 import exec from 'k6/execution';
 
 export function sdkFxSendE2EPoolScenarios(data) {
   const isFirstIteration = !exec.instance.iterationsCompleted && (exec.vu.idInTest === 1);
   if (isFirstIteration) {
     console.log(`=== SCENARIO WRAPPER START ===`);
-    console.log(`sdkFxSendE2EScenarios received data: ${data ? 'yes' : 'no'}`);
+    console.log(`sdkFxSendE2EPoolScenarios received data: ${data ? 'yes' : 'no'}`);
     if (data) {
       console.log(`Data keys: ${Object.keys(data).join(', ')}`);
       if (data.partiesByFsp) {
@@ -18,5 +18,5 @@ export function sdkFxSendE2EPoolScenarios(data) {
     }
     console.log(`=== SCENARIO WRAPPER END ===`);
   }
-  sdkFxSendE2E(data);
+  sdkFxSendE2EPool(data);
 }
