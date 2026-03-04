@@ -310,9 +310,9 @@ export function sdkFxSendE2EPool(testContext) {
       }
     }
 
-    if (abortOnError && res.status != 200) {
+    if (abortOnError && postTransferResponse.status != 200) {
       // Abort the entire k6 test execution runner
-      console.error(traceId, `POST /transfers returned status: ${res.status}`);
+      console.error(`POST /transfers for transferId ${JSON.parse(postTransferResponse.body).transferId} returned status: ${postTransferResponse.status}`);
       exec.test.abort()
     }
   });
