@@ -35,17 +35,10 @@ const setupFunctions = {
   sdkFxSendE2EPoolSetup,
   sdkSendE2ESetup,
 }
-console.log(`Index.js: Setup functions loaded: ${Object.keys(setupFunctions).join(', ')}`);
-console.log(`Index.js: sdkFxSendE2ESetup type: ${typeof sdkFxSendE2ESetup}`);
-console.log(`Index.js: sdkFxSendE2EPoolSetup type: ${typeof sdkFxSendE2EPoolSetup}`);
 
 const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';
 const configFile = configFolder + (__ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json');
-console.log(`Index.js: Loading config from: ${configFile}`);
-console.log(`Index.js: K6_SCRIPT_CONFIG_FOLDER_NAME="${__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME}"`);
-console.log(`Index.js: K6_SCRIPT_CONFIG_FILE_NAME="${__ENV.K6_SCRIPT_CONFIG_FILE_NAME}"`);
 const testConfig = JSON.parse(open(configFile));
-console.log(`Index.js: Successfully loaded config with scenarios: ${Object.keys(testConfig.scenarios || {}).join(', ')}`);
 
 export const options = Object.assign(
   { // default configs

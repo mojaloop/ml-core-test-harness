@@ -8,6 +8,9 @@
  * @returns {string} - Randomly generated MSISDN.
  */
 export function generateRandomMsisdn(prefix, length) {
+  if (length <= prefix.length) {
+    throw new Error(`Length (${length}) must be greater than prefix length (${prefix.length})`);
+  }
   const digits = length - prefix.length;
   let msisdn = prefix;
   for (let i = 0; i < digits; i++) {
