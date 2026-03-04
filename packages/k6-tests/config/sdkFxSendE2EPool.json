@@ -1,6 +1,6 @@
 {
   "scenarios": {
-    "sdkFxSendE2E": {
+    "sdkFxSendE2EPool": {
       "executor": "constant-vus",
       "exec": "sdkFxSendE2EPoolScenarios",
       "env": {
