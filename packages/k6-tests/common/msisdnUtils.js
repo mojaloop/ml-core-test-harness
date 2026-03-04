@@ -25,8 +25,36 @@ export function generateRandomMsisdn(prefix, length) {
  */
 export function generateMsisdnSet(prefix, count, length) {
   const msisdns = new Set();
-  while (msisdns.size < count) {
+  const digits = length - prefix.length;
+
+  if (digits < 0) {
+    throw new Error(
+      `Cannot generate MSISDNs: total length ${length} is shorter than prefix "${prefix}" (length ${prefix.length}).`
+    );
+  }
+
+  const maxUniqueMsisdns = digits === 0 ? 1 : Math.pow(10, digits);
+
+  if (count > maxUniqueMsisdns) {
+    throw new Error(
+      `Cannot generate ${count} unique MSISDN(s) with prefix "${prefix}" and length ${length}. ` +
+      `Maximum possible unique MSISDNs is ${maxUniqueMsisdns}.`
+    );
+  }
+
+  const maxAttempts = maxUniqueMsisdns * 5;
+  let attempts = 0;
+
+  while (msisdns.size < count && attempts < maxAttempts) {
     msisdns.add(generateRandomMsisdn(prefix, length));
+    attempts++;
+  }
+
+  if (msisdns.size < count) {
+    throw new Error(
+      `Failed to generate ${count} unique MSISDN(s) with prefix "${prefix}" and length ${length} ` +
+      `after ${attempts} attempts. Consider using a shorter prefix or requesting fewer MSISDNs.`
+    );
   }
   return Array.from(msisdns);
 }
