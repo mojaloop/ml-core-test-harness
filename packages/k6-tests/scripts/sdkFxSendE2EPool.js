@@ -19,7 +19,24 @@ function log() {
 const fspList = JSON.parse(__ENV.K6_SCRIPT_SDK_FSP_POOL || '[]');
 const idType = __ENV.K6_SCRIPT_ID_TYPE || 'MSISDN';
 const msisdnLength = parseInt(__ENV.K6_SCRIPT_MSISDN_LENGTH || '12');
-const interschemeDiscoveryRate = parseFloat(__ENV.K6_SCRIPT_INTERSCHEME_DISCOVERY_RATE || '0'); // e.g. 0.3 for 30%
+const rawInterschemeDiscoveryRate = parseFloat(__ENV.K6_SCRIPT_INTERSCHEME_DISCOVERY_RATE || '0');
+const interschemeDiscoveryRate = (function () {
+  if (isNaN(rawInterschemeDiscoveryRate)) {
+    return 0;
+  }
+  let value = rawInterschemeDiscoveryRate;
+  // Support both normalized probabilities (e.g. 0.3) and percentages (e.g. 30 for 30%)
+  if (value > 1) {
+    value = value / 100;
+  }
+  if (value < 0) {
+    return 0;
+  }
+  if (value > 1) {
+    return 1;
+  }
+  return value;
+})();
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
 let usedPayees = new Set(); // Track MSISDNs that have been used as payees
