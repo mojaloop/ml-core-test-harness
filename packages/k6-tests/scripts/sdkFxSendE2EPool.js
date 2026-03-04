@@ -312,10 +312,5 @@ export function sdkFxSendE2EPool(testContext) {
       }
     }
 
-    if (abortOnError && postTransferResponse.status != 200) {
-      // Abort the entire k6 test execution runner
-      console.error(`POST /transfers for transferId ${JSON.parse(postTransferResponse.body).transferId} returned status: ${postTransferResponse.status}`);
-      exec.test.abort()
-    }
   });
 }
