@@ -32,6 +32,8 @@ const setupFunctions = {
   sdkFxSendE2ESetup,
   sdkSendE2ESetup,
 }
+console.log(`Index.js: Setup functions loaded: ${Object.keys(setupFunctions).join(', ')}`);
+console.log(`Index.js: sdkFxSendE2ESetup type: ${typeof sdkFxSendE2ESetup}`);
 
 const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';
 const configFile = configFolder + (__ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json');
@@ -39,6 +41,7 @@ console.log(`Index.js: Loading config from: ${configFile}`);
 console.log(`Index.js: K6_SCRIPT_CONFIG_FOLDER_NAME="${__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME}"`);
 console.log(`Index.js: K6_SCRIPT_CONFIG_FILE_NAME="${__ENV.K6_SCRIPT_CONFIG_FILE_NAME}"`);
 const testConfig = JSON.parse(open(configFile));
+console.log(`Index.js: Successfully loaded config with scenarios: ${Object.keys(testConfig.scenarios || {}).join(', ')}`);
 
 export const options = Object.assign(
   { // default configs
@@ -52,6 +55,7 @@ export const options = Object.assign(
   },
   testConfig
 );
+console.log(`Index.js: Options exported successfully`);
 
 // used to store global variables
 globalThis.VARS = [];
@@ -72,6 +76,7 @@ const millisecondsToTime = (milliseconds) => {
 }
 
 export function setup() {
+  console.log('!!!!! SETUP FUNCTION CALLED !!!!!');
   try {
     console.log('=== K6 SETUP START ===');
     console.log(`Config file loaded from: ${configFile}`);
