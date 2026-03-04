@@ -1,8 +1,13 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
+import { Counter } from 'k6/metrics';
 import exec from 'k6/execution';
 import { getTwoItemsFromArray } from "../common/utils.js";
 import { traceParent } from "../common/trace.js";
+
+// Custom counters for tracking check results with tags
+const checkFailures = new Counter('check_failures');
+const checkSuccesses = new Counter('check_successes');
 
 function log() {
   console.log('Env Vars -->');
@@ -129,7 +134,12 @@ export function sdkFxSendE2E() {
       }
     );
     // console.log('postTransferResponse', postTransferResponse)
-    check(postTransferResponse, { 'TRANSFERS__POST_TRANSFERS_RESPONSE_IS_200' : (r) => r.status == 200 });
+    const postTransferCheckResult = check(postTransferResponse, { 'TRANSFERS__POST_TRANSFERS_RESPONSE_IS_200' : (r) => r.status == 200 });
+    if (!postTransferCheckResult) {
+      checkFailures.add(1, { check_type: 'post_transfer' });
+    } else {
+      checkSuccesses.add(1, { check_type: 'post_transfer' });
+    }
 
     const transferId = JSON.parse(postTransferResponse.body).transferId
 
@@ -148,7 +158,12 @@ export function sdkFxSendE2E() {
         headers: paramHeaders
       });
       // console.log('putTransferacceptPartyResponse', putTransferacceptPartyResponse)
-      check(putTransferacceptPartyResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_PARTY_RESPONSE_IS_200' : (r) => r.status == 200 });
+      const acceptPartyCheckResult = check(putTransferacceptPartyResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_PARTY_RESPONSE_IS_200' : (r) => r.status == 200 });
+      if (!acceptPartyCheckResult) {
+        checkFailures.add(1, { check_type: 'accept_party' });
+      } else {
+        checkSuccesses.add(1, { check_type: 'accept_party' });
+      }
 
       if (putTransferacceptPartyResponse.status == 200) {
         // Call acceptConversion before acceptQuote
@@ -166,7 +181,12 @@ export function sdkFxSendE2E() {
           headers: paramHeaders
         });
         // console.log('putTransferAcceptConversionResponse', putTransferAcceptConversionResponse)
-        check(putTransferAcceptConversionResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_CONVERSION_RESPONSE_IS_200' : (r) => r.status == 200 });
+        const acceptConversionCheckResult = check(putTransferAcceptConversionResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_CONVERSION_RESPONSE_IS_200' : (r) => r.status == 200 });
+        if (!acceptConversionCheckResult) {
+          checkFailures.add(1, { check_type: 'accept_conversion' });
+        } else {
+          checkSuccesses.add(1, { check_type: 'accept_conversion' });
+        }
 
         if (putTransferAcceptConversionResponse.status == 200) {
           const putTransferAcceptQuoteResponse = http.put(`${sdkEndpointUrl}/transfers/${transferId}`, JSON.stringify({
@@ -183,15 +203,26 @@ export function sdkFxSendE2E() {
             headers: paramHeaders
           });
           // console.log('putTransferAcceptQuoteResponse', putTransferAcceptQuoteResponse)
-          check(putTransferAcceptQuoteResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_QUOTE_RESPONSE_IS_200' : (r) => r.status == 200 });
+          const acceptQuoteCheckResult = check(putTransferAcceptQuoteResponse, { 'TRANSFERS__PUT_TRANSFERS_ACCEPT_QUOTE_RESPONSE_IS_200' : (r) => r.status == 200 });
+          if (!acceptQuoteCheckResult) {
+            checkFailures.add(1, { check_type: 'accept_quote' });
+          } else {
+            checkSuccesses.add(1, { check_type: 'accept_quote' });
+          }
 
+          let statusCheckResult;
           try {
             const responseBody = JSON.parse(putTransferAcceptQuoteResponse.body);
-            check(responseBody, {
+            statusCheckResult = check(responseBody, {
               'SDK_E2E_STATUS_COMPLETED': (r) => r.currentState === "COMPLETED"
             });
           } catch (e) {
-            check(null, { 'SDK_E2E_STATUS_COMPLETED': () => false });
+            statusCheckResult = check(null, { 'SDK_E2E_STATUS_COMPLETED': () => false });
+          }
+          if (!statusCheckResult) {
+            checkFailures.add(1, { check_type: 'status_completed' });
+          } else {
+            checkSuccesses.add(1, { check_type: 'status_completed' });
           }
         }
       }
