@@ -23,14 +23,13 @@ const msisdnLength = parseInt(__ENV.K6_SCRIPT_MSISDN_LENGTH || '12');
 const interschemeDiscoveryRate = parseFloat(__ENV.K6_SCRIPT_INTERSCHEME_DISCOVERY_RATE || '0'); // e.g. 0.3 for 30%
 const abortOnError = (__ENV.K6_SCRIPT_ABORT_ON_ERROR && __ENV.K6_SCRIPT_ABORT_ON_ERROR.toLowerCase() === 'true') ? true : false
 
-let partiesByFsp = {};
 let usedPayees = new Set(); // Track MSISDNs that have been used as payees
 
 // Setup function - runs once at the beginning of the test
 export function setup() {
-  console.log('!!!!! sdkFxSendE2ESetup FUNCTION CALLED !!!!!');
+  console.log('!!!!! sdkFxSendE2EPoolSetup FUNCTION CALLED !!!!!');
   try {
-    console.log('=== SETUP FUNCTION START ===');
+    console.log('=== SETUP FUNCTION START (POOL) ===');
     console.log('Generating and provisioning MSISDNs for DFSPs...');
     console.log(`FSP Pool configuration: ${JSON.stringify(fspList, null, 2)}`);
     console.log(`fspList length: ${fspList.length}`);
@@ -55,28 +54,28 @@ export function setup() {
       const msisdns = generateMsisdnSet(msisdnPrefix, partyCount, msisdnLength);
       console.log(`Generated ${msisdns.length} MSISDNs for ${fspId}`);
       localPartiesByFsp[fspId] = msisdns;
-    }
 
-    // Register each MSISDN as a party
-    for (const msisdn of msisdns) {
-      const startupParams = {
-        tags: {
-          name: 'post_accounts',
-          url: `${outboundUrl}/accounts`,
-          endpoint: 'accounts',
-          operation: 'post_accounts'
-        },
-        headers: {
-          'Content-Type': 'application/json',
-          'Date': (new Date()).toUTCString()
+      // Register each MSISDN as a party
+      for (const msisdn of msisdns) {
+        const startupParams = {
+          tags: {
+            name: 'post_accounts',
+            url: `${outboundUrl}/accounts`,
+            endpoint: 'accounts',
+            operation: 'post_accounts'
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            'Date': (new Date()).toUTCString()
+          }
+        };
+        const startupBody = JSON.stringify([{ idType, idValue: msisdn }]);
+        const startupResponse = http.post(`${outboundUrl}/accounts`, startupBody, startupParams);
+        if (startupResponse.status >= 200 && startupResponse.status < 300) {
+          console.log(`Account provisioning successful for FSP ${fspId} party ${msisdn}`);
+        } else {
+          console.log(`Account provisioning failed for FSP ${fspId} party ${msisdn} with status: ${startupResponse.status}`);
         }
-      };
-      const startupBody = JSON.stringify([{ idType, idValue: msisdn }]);
-      const startupResponse = http.post(`${outboundUrl}/accounts`, startupBody, startupParams);
-      if (startupResponse.status >= 200 && startupResponse.status < 300) {
-        console.log(`Account provisioning successful for FSP ${fspId} party ${msisdn}`);
-      } else {
-        console.log(`Account provisioning failed for FSP ${fspId} party ${msisdn} with status: ${startupResponse.status}`);
       }
     }
     console.log('Completed account provisioning');
@@ -95,7 +94,7 @@ export function setup() {
 }
 
 export function sdkFxSendE2EPool(testContext) {
-  console.log(`!!!!! sdkFxSendE2E CALLED, testContext type: ${typeof testContext}, is undefined: ${testContext === undefined}, is null: ${testContext === null}`);
+  console.log(`!!!!! sdkFxSendE2EPool CALLED, testContext type: ${typeof testContext}, is undefined: ${testContext === undefined}, is null: ${testContext === null}`);
   // testContext.partiesByFsp comes from setup()
   if (!testContext || !testContext.partiesByFsp) {
     console.error(`Test context is missing or invalid. testContext: ${JSON.stringify(testContext)}`);

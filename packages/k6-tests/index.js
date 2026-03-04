@@ -28,13 +28,16 @@ export { sdkFxSendE2EPoolScenarios } from './scenarios/sdkFxSendE2EPool.js';
 
 // Setup functions
 import { setup as sdkFxSendE2ESetup } from './scripts/sdkFxSendE2E.js';
+import { setup as sdkFxSendE2EPoolSetup } from './scripts/sdkFxSendE2EPool.js';
 import { setup as sdkSendE2ESetup } from './scripts/sdkSendE2E.js';
 const setupFunctions = {
   sdkFxSendE2ESetup,
+  sdkFxSendE2EPoolSetup,
   sdkSendE2ESetup,
 }
 console.log(`Index.js: Setup functions loaded: ${Object.keys(setupFunctions).join(', ')}`);
 console.log(`Index.js: sdkFxSendE2ESetup type: ${typeof sdkFxSendE2ESetup}`);
+console.log(`Index.js: sdkFxSendE2EPoolSetup type: ${typeof sdkFxSendE2EPoolSetup}`);
 
 const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';
 const configFile = configFolder + (__ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json');
