@@ -154,7 +154,13 @@ export function sdkFxSendE2EPool(testContext) {
         throw new Error(`No unused payee MSISDNs available for interscheme discovery for DFSP: ${payeeFspId}`);
       }
     } else {
-      payeePartyId = getRandomItemExcluding(payeeMsisdns, new Set());
+      // If false use a payee that has been used before (for precached lookup)
+      const usedPayeesForThisFsp = [...usedPayees].filter(msisdn => payeeMsisdns.includes(msisdn));
+      if (usedPayeesForThisFsp.length > 0) {
+        payeePartyId = usedPayeesForThisFsp[Math.floor(Math.random() * usedPayeesForThisFsp.length)];
+      } else {
+        payeePartyId = getRandomItemExcluding(payeeMsisdns, new Set());
+      }
     }
     // Pick a random payer party
     const payerPartyId = getRandomItemExcluding(payerMsisdns, new Set());
