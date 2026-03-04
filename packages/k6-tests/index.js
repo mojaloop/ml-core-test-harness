@@ -24,6 +24,7 @@ export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.
 export { sdkFxSendE2EScenarios } from './scenarios/sdkFxSendE2E.js';
 export { sdkSendE2EScenarios } from './scenarios/sdkSendE2E.js';
 export { localhostScenarios } from './scenarios/localhost.js';
+export { sdkFxSendE2EPoolScenarios } from './scenarios/sdkFxSendE2EPool.js';
 
 // Setup functions
 import { setup as sdkFxSendE2ESetup } from './scripts/sdkFxSendE2E.js';
