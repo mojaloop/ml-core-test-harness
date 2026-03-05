@@ -1,0 +1,19 @@
+{
+  "scenarios": {
+    "sdkFxSendE2EPool": {
+      "executor": "constant-vus",
+      "exec": "sdkFxSendE2EPoolScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "true",
+        "K6_SCRIPT_INTERSCHEME_DISCOVERY_RATE": "0.3"
+      },
+      "vus": 1,
+      "duration": "1m"
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}

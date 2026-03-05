@@ -24,17 +24,20 @@ export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.
 export { sdkFxSendE2EScenarios } from './scenarios/sdkFxSendE2E.js';
 export { sdkSendE2EScenarios } from './scenarios/sdkSendE2E.js';
 export { localhostScenarios } from './scenarios/localhost.js';
+export { sdkFxSendE2EPoolScenarios } from './scenarios/sdkFxSendE2EPool.js';
 
 // Setup functions
 import { setup as sdkFxSendE2ESetup } from './scripts/sdkFxSendE2E.js';
+import { setup as sdkFxSendE2EPoolSetup } from './scripts/sdkFxSendE2EPool.js';
 import { setup as sdkSendE2ESetup } from './scripts/sdkSendE2E.js';
 const setupFunctions = {
   sdkFxSendE2ESetup,
+  sdkFxSendE2EPoolSetup,
   sdkSendE2ESetup,
 }
 
 const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';
-const configFile = configFolder + __ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json';
+const configFile = configFolder + (__ENV.K6_SCRIPT_CONFIG_FILE_NAME || 'test.json');
 const testConfig = JSON.parse(open(configFile));
 
 export const options = Object.assign(
@@ -57,8 +60,10 @@ globalThis.VARS = [];
 globalThis.PAUSE_MIN = __ENV.K6_SCRIPT_PAUSE_MIN || 5;
 globalThis.PAUSE_MAX = __ENV.K6_SCRIPT_PAUSE_MAX || 15;
 
-export default async () => {
-  console.log("No scenarios found in config/test.json. Executing default function...");
+// Important to pass data into the default function
+// k6s uses it to attach context from the setup function.
+export default async (data) => {
+  console.log(`No scenarios found in ${configFile}. Executing default function...`);
 }
 
 const millisecondsToTime = (milliseconds) => {
@@ -69,14 +74,43 @@ const millisecondsToTime = (milliseconds) => {
 }
 
 export function setup() {
-  const scenarios = testConfig.scenarios || {};
-  const scenarioNames = Object.keys(scenarios);
-  if (scenarioNames.length !== 0) {
-    const execName = scenarios[scenarioNames[0]].exec;
-    const setupFunction = setupFunctions[execName.replace('Scenarios', 'Setup')];
-    if (setupFunction) {
-      setupFunction();
+  try {
+    console.log('=== K6 SETUP START ===');
+    console.log(`Config file loaded from: ${configFile}`);
+    console.log(`testConfig: ${JSON.stringify(testConfig, null, 2)}`);
+    const scenarios = testConfig.scenarios || {};
+    const scenarioNames = Object.keys(scenarios);
+    console.log(`K6 setup: Found ${scenarioNames.length} scenarios: ${scenarioNames.join(', ')}`);
+    console.log(`Available setup functions: ${Object.keys(setupFunctions).join(', ')}`);
+
+    if (scenarioNames.length !== 0) {
+      const execName = scenarios[scenarioNames[0]].exec;
+      const setupFunctionName = execName.replace('Scenarios', 'Setup');
+      console.log(`K6 setup: execName="${execName}" -> setupFunctionName="${setupFunctionName}"`);
+      const setupFunction = setupFunctions[setupFunctionName];
+
+      if (setupFunction) {
+        console.log(`K6 setup: Calling setup function: ${setupFunctionName}`);
+        const result = setupFunction();
+        console.log(`K6 setup: Setup function completed`);
+        console.log(`K6 setup: Result keys: ${Object.keys(result || {}).join(', ')}`);
+        if (result && result.partiesByFsp) {
+          console.log(`K6 setup: partiesByFsp FSPs: ${Object.keys(result.partiesByFsp).join(', ')}`);
+        }
+        console.log(`=== K6 SETUP END (SUCCESS) ===`);
+        return result;
+      } else {
+        console.log(`K6 setup: No setup function found for ${setupFunctionName}`);
+        console.log(`K6 setup: Available functions: ${Object.keys(setupFunctions).join(', ')}`);
+      }
     }
+    console.log(`K6 setup: Returning empty object`);
+    console.log(`=== K6 SETUP END (EMPTY) ===`);
+    return {};
+  } catch (error) {
+    console.error(`!!! K6 SETUP ERROR: ${error.message}`);
+    console.error(`Error stack: ${error.stack}`);
+    throw error;
   }
 }
 
