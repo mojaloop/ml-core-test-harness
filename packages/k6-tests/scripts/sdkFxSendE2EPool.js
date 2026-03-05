@@ -165,7 +165,7 @@ export function sdkFxSendE2EPool(testContext) {
     const payerPartyId = getRandomItemExcluding(payerMsisdns, new Set());
     const amount = payerFsp['amount'] || '2';
     const currency = payerFsp['currency'] || 'XXX';
-    const paramTags = { payerFspId, payeeFspId };
+    const paramTags = { payerFspId, payeeFspId, useInterschemeDiscovery };
     const paramHeaders = {
       'Date': (new Date()).toUTCString(),
       'Content-Type': 'application/json',
