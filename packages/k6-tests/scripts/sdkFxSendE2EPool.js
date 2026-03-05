@@ -71,27 +71,26 @@ export function setup() {
       console.log(`Generated ${msisdns.length} MSISDNs for ${fspId}`);
       localPartiesByFsp[fspId] = msisdns;
 
-      // Register each MSISDN as a party
-      for (const msisdn of msisdns) {
-        const startupParams = {
-          tags: {
-            name: 'post_accounts',
-            url: `${outboundUrl}/accounts`,
-            endpoint: 'accounts',
-            operation: 'post_accounts'
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            'Date': (new Date()).toUTCString()
-          }
-        };
-        const startupBody = JSON.stringify([{ idType, idValue: msisdn }]);
-        const startupResponse = http.post(`${outboundUrl}/accounts`, startupBody, startupParams);
-        if (startupResponse.status >= 200 && startupResponse.status < 300) {
-          console.log(`Account provisioning successful for FSP ${fspId} party ${msisdn}`);
-        } else {
-          console.log(`Account provisioning failed for FSP ${fspId} party ${msisdn} with status: ${startupResponse.status}`);
+      // Register all MSISDNs as parties in a single batch request
+      const accounts = msisdns.map(msisdn => ({ idType, idValue: msisdn }));
+      const startupParams = {
+        tags: {
+          name: 'post_accounts',
+          url: `${outboundUrl}/accounts`,
+          endpoint: 'accounts',
+          operation: 'post_accounts'
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Date': (new Date()).toUTCString()
         }
+      };
+      const startupBody = JSON.stringify(accounts);
+      const startupResponse = http.post(`${outboundUrl}/accounts`, startupBody, startupParams);
+      if (startupResponse.status >= 200 && startupResponse.status < 300) {
+        console.log(`Account provisioning successful for FSP ${fspId} - ${accounts.length} accounts registered`);
+      } else {
+        console.log(`Account provisioning failed for FSP ${fspId} with status: ${startupResponse.status}`);
       }
     }
     console.log('Completed account provisioning');
