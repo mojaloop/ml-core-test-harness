@@ -23,13 +23,33 @@ build_docker_image_from_repo() {
   # Checkout the specified tag
   git checkout "$TAG"
 
-  # Build the Docker image for ARM64
-  export NODE_VERSION="$(cat .nvmrc)-alpine"
-  docker build -t "$IMAGE" .
+  # Build the Docker image for ARM64.
+  # If .nvmrc exists, pass NODE_VERSION as a build arg for Dockerfiles that need it.
+  if [[ -f .nvmrc ]]; then
+    NODE_VERSION="$(cat .nvmrc)-alpine"
+    docker build \
+      --build-arg NODE_VERSION="$NODE_VERSION" \
+      -t "$IMAGE" \
+      .
+  else
+    docker build -t "$IMAGE" .
+  fi
 
   # Cleanup and go back to parent directory
   cd .. || exit
   rm -rf "$REPO_NAME"
+}
+
+# Return success when the image exists locally and is built for ARM64.
+is_local_arm64_image() {
+  IMAGE_NAME=$1
+
+  if ! docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
+    return 1
+  fi
+
+  ARCHITECTURE=$(docker image inspect --format '{{.Architecture}}' "$IMAGE_NAME" 2>/dev/null | head -n 1)
+  [[ "$ARCHITECTURE" == "arm64" || "$ARCHITECTURE" == "aarch64" ]]
 }
 
 # Extract all images from docker-compose.yaml that reference environment variables
@@ -79,9 +99,13 @@ do
         # Mark this image as processed by writing it to the temporary file
         echo "$UNIQUE_KEY" >> processed_images.txt
 
-        # Run the build function in the background
-        echo "Building Docker image $RESOLVED_IMAGE from repo $GIT_REPO with tag $TAG"
-        build_docker_image_from_repo "$RESOLVED_IMAGE" "$GIT_REPO" "$TAG" &
+        if is_local_arm64_image "$RESOLVED_IMAGE"; then
+          echo "Skipping image: $RESOLVED_IMAGE (ARM64 image already exists locally)"
+        else
+          # Run the build function in the background
+          echo "Building Docker image $RESOLVED_IMAGE from repo $GIT_REPO with tag $TAG"
+          build_docker_image_from_repo "$RESOLVED_IMAGE" "$GIT_REPO" "$TAG" &
+        fi
       else
         echo "Skipping duplicate image: $RESOLVED_IMAGE"
       fi
