@@ -1,0 +1,25 @@
+{
+  "scenarios": {
+    "sdkSendE2E": {
+      "executor": "ramping-vus",
+      "exec": "sdkSendE2EScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "true"
+      },
+      "startVUs": 1,
+      "stages": [
+        { "duration": "30s", "target": 10 },
+        { "duration": "2m", "target": 10 },
+        { "duration": "2m", "target": 20 },
+        { "duration": "2m", "target": 30 },
+        { "duration": "2m", "target": 40 },
+        { "duration": "2m", "target": 50 }
+      ]
+    }
+  },
+  "thresholds": {
+    "iteration_duration": [ "p(95)<1000" ],
+    "http_req_failed": [ "rate<0.01" ],
+    "http_req_duration": [ "p(95)<1000" ]
+  }
+}

@@ -1003,7 +1003,7 @@ services:
       - mojaloop-net
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 3
     env_file:
       - .env
       - perf.env
@@ -1076,6 +1076,9 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    deploy:
+      mode: replicated
+      replicas: 3
     volumes:
       - ./docker/wait4:/opt/app/wait4
     healthcheck:
@@ -1103,6 +1106,9 @@ services:
     command: yarn nx run modules-api-svc:start
     networks:
       - mojaloop-net
+    deploy:
+      mode: replicated
+      replicas: 3
     depends_on:
       redis:
         condition: service_healthy
