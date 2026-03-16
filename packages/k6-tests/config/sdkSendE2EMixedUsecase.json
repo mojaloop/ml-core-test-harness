@@ -1,0 +1,39 @@
+{
+  "scenarios": {
+    "sdkSendE2EMixedUsecase": {
+      "executor": "ramping-arrival-rate",
+      "exec": "sdkSendE2EMixedUsecaseScenarios",
+      "env": {
+        "UNIDIRECTIONAL": "false",
+        "K6_SCRIPT_DRPP_RATE": "0.65",
+        "K6_SCRIPT_DRPP_P2M_RATE": "0.30",
+        "K6_SCRIPT_UNHAPPY_RATE": "0.08",
+        "K6_SCRIPT_UNHAPPY_TIMEOUT_ENABLED": "true",
+        "K6_SCRIPT_UNHAPPY_PAYEE_ABORT_ENABLED": "true",
+        "K6_SCRIPT_UNHAPPY_FXP_ABORT_ENABLED": "true",
+        "K6_SCRIPT_UNHAPPY_QUOTE_RULE_ENABLED": "true",
+        "K6_SCRIPT_UNHAPPY_LIQUIDITY_NDC_ENABLED": "true",
+        "K6_SCRIPT_UNHAPPY_INVALID_NUMBER_ENABLED": "true",
+        "K6_SCRIPT_NOTE_SIZE_MIN": "128",
+        "K6_SCRIPT_NOTE_SIZE_MAX": "4096"
+      },
+      "preAllocatedVUs": 150,
+      "maxVUs": 500,
+      "timeUnit": "1s",
+      "startRate": 10,
+      "stages": [
+        { "target": 30, "duration": "5m" },
+        { "target": 60, "duration": "10m" },
+        { "target": 90, "duration": "10m" },
+        { "target": 120, "duration": "10m" },
+        { "target": 150, "duration": "10m" },
+        { "target": 60, "duration": "5m" }
+      ]
+    }
+  },
+  "thresholds": {
+    "http_req_failed": ["rate<0.25"],
+    "http_req_duration": ["p(95)<3000"],
+    "iteration_duration": ["p(95)<6000"]
+  }
+}

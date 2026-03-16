@@ -23,6 +23,7 @@ export { outboundSDKQuotesScenarios } from './scenarios/outboundSDKQuotes.js';
 export { outboundSDKTransfersScenarios } from './scenarios/outboundSDKTransfers.js';
 export { sdkFxSendE2EScenarios } from './scenarios/sdkFxSendE2E.js';
 export { sdkSendE2EScenarios } from './scenarios/sdkSendE2E.js';
+export { sdkSendE2EMixedUsecaseScenarios } from './scenarios/sdkSendE2EMixedUsecase.js';
 export { localhostScenarios } from './scenarios/localhost.js';
 export { sdkFxSendE2EPoolScenarios } from './scenarios/sdkFxSendE2EPool.js';
 
@@ -30,10 +31,12 @@ export { sdkFxSendE2EPoolScenarios } from './scenarios/sdkFxSendE2EPool.js';
 import { setup as sdkFxSendE2ESetup } from './scripts/sdkFxSendE2E.js';
 import { setup as sdkFxSendE2EPoolSetup } from './scripts/sdkFxSendE2EPool.js';
 import { setup as sdkSendE2ESetup } from './scripts/sdkSendE2E.js';
+import { setup as sdkSendE2EMixedUsecaseSetup } from './scripts/sdkSendE2EMixedUsecase.js';
 const setupFunctions = {
   sdkFxSendE2ESetup,
   sdkFxSendE2EPoolSetup,
   sdkSendE2ESetup,
+  sdkSendE2EMixedUsecaseSetup,
 }
 
 const configFolder = './' + (__ENV.K6_SCRIPT_CONFIG_FOLDER_NAME || 'config') + '/';

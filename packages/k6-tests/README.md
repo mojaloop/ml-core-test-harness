@@ -25,6 +25,58 @@ Please note that the server hosting the site is not scaled for heavy load; the s
 2. Clone the repo
 3. Navigate to the directory and `k6 run index.js` (make sure k6 is on your PATH)
 
+## Mixed regional soak scenario (DRPP + GISP)
+
+Use `sdkSendE2EMixedUsecase` to run a realistic soak profile with:
+
+- DRPP cross-border P2P and P2M (FX path with `acceptConversion`)
+- GISP P2P single-currency (in-scheme path)
+- Variable payload size using the `note` field
+- Metadata-rich payloads using `quoteRequestExtensions` and `transferRequestExtensions`
+- Toggleable unhappy-path injections
+
+### `from.displayName` trigger strings
+
+The script uses `from.displayName` to trigger simulator behavior. Default values:
+
+- Happy path: `TRIG_HAPPY`
+- Timeout: `TRIG_TIMEOUT`
+- Payee abort: `TRIG_PAYEE_ABORT`
+- FXP abort: `TRIG_FXP_ABORT`
+- Quote rule rejection: `TRIG_QUOTE_RULE`
+- Liquidity/NDC rejection: `TRIG_LIQUIDITY_NDC`
+- Invalid lookup/number: `TRIG_INVALID_NUMBER`
+
+You can override any trigger string via environment variables:
+
+- `K6_SCRIPT_TRIGGER_HAPPY`
+- `K6_SCRIPT_TRIGGER_TIMEOUT`
+- `K6_SCRIPT_TRIGGER_PAYEE_ABORT`
+- `K6_SCRIPT_TRIGGER_FXP_ABORT`
+- `K6_SCRIPT_TRIGGER_QUOTE_RULE`
+- `K6_SCRIPT_TRIGGER_LIQUIDITY_NDC`
+- `K6_SCRIPT_TRIGGER_INVALID_NUMBER`
+
+### Enable/disable unhappy paths
+
+Each unhappy path can be independently enabled or disabled:
+
+- `K6_SCRIPT_UNHAPPY_TIMEOUT_ENABLED`
+- `K6_SCRIPT_UNHAPPY_PAYEE_ABORT_ENABLED`
+- `K6_SCRIPT_UNHAPPY_FXP_ABORT_ENABLED`
+- `K6_SCRIPT_UNHAPPY_QUOTE_RULE_ENABLED`
+- `K6_SCRIPT_UNHAPPY_LIQUIDITY_NDC_ENABLED`
+- `K6_SCRIPT_UNHAPPY_INVALID_NUMBER_ENABLED`
+
+Control overall unhappy injection rate with `K6_SCRIPT_UNHAPPY_RATE`.
+
+### Variable-rate execution
+
+Run with variable rate using the included config:
+
+- local: `K6_SCRIPT_CONFIG_FILE_NAME=sdkSendE2EMixedUsecase.json k6 run index.js`
+- k8s profile folder: `K6_SCRIPT_CONFIG_FOLDER_NAME=config-k8s K6_SCRIPT_CONFIG_FILE_NAME=sdkSendE2EMixedUsecase.json k6 run index.js`
+
 ## A note on large projects
 
 Projects grow over time. Depending on the scale of the automation effort (and, arguably, how well the system you're testing was written), there can be many distinct combinations of endpoint URLs, potentially spanning multiple domains and/or subdomains. In this situation, it may help to organize scripts into subfolders within the `scripts` folder.
