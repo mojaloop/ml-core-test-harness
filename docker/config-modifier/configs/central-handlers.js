@@ -79,7 +79,8 @@ module.exports = {
         "PREPARE": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "kafka:29092",
+              "fetch.wait.max.ms": 1
             }
           }
         },
@@ -93,7 +94,8 @@ module.exports = {
         "FULFIL": {
           "config": {
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "kafka:29092",
+              "fetch.wait.max.ms": 1
             }
           }
         },
@@ -110,7 +112,8 @@ module.exports = {
               "batchSize": 50
             },
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "kafka:29092",
+              "fetch.wait.max.ms": 1
             }
           }
         }

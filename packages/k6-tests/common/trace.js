@@ -36,7 +36,7 @@ class TraceParent {
     const now = Date.now();
     if (tracePeriod > 0 && vu.idInTest === 1 && (now - prevTrace > tracePeriod * 1000)) { // trace every 10 seconds
       this.traceFlags = '01';
-      console.log(`Generating new traceparent ${result}`);
+      console.log(`Generating new traceId ${this.traceId} with parentId ${this.parentId}`);
       prevTrace = now;
     } else this.traceFlags = '00';
   }
