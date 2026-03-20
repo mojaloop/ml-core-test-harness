@@ -27,7 +27,7 @@
     "contentTypeParticipants": "application/vnd.interoperability.participants+json;version=2.0",
     "contentTypeQuotes": "application/vnd.interoperability.quotes+json;version=2.0",
     "currency": "XXX",
-    "currency2": "XTS",
+    "currency2": "XXX",
     "cgscurrency": "INR",
     "fromDOB": "1984-01-01",
     "fromFirstName": "Firstname-Test",

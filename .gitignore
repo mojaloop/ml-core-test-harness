@@ -14,3 +14,5 @@ k8s.yaml
 node_modules/
 
 **/.DS_Store
+
+**/tempo-data/*

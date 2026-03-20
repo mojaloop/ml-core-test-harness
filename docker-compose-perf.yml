@@ -3,13 +3,26 @@ networks:
     name: mojaloop-net
     # external: true
 
+volumes:
+  otel-node-modules:
+
 services:
+
+  otel-deps:
+    image: node:24.14.0-alpine
+    volumes:
+      - otel-node-modules:/otel
+    command: >
+      sh -c "cd /otel && npm init -y &&
+             npm install @opentelemetry/auto-instrumentations-node"
+
 
   account-lookup-service:
     image: mojaloop/account-lookup-service:${ACCOUNT_LOOKUP_SERVICE_VERSION}
     env_file:
       - .env
       - perf.env
+      - otel.env
     deploy:
       mode: replicated
       replicas: ${ALS_REPLICAS}
@@ -18,6 +31,7 @@ services:
     #   - "4001:4001"
     #   - "4002:4002"
     environment:
+      - OTEL_SERVICE_NAME=als-service
       ## Wait 4 Config script
       - WAIT4_CONFIG=./wait4.config.perf-als.js
       # - LOG_LEVEL=error
@@ -41,9 +55,12 @@ services:
     depends_on:
       mysql-als:
         condition: service_started
+      otel-deps:
+        condition: service_completed_successfully
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
+      - otel-node-modules:/otel
     healthcheck:
       test: wget -q http://localhost:4001/health -O /dev/null || exit 1
       timeout: 20s
@@ -132,6 +149,7 @@ services:
     env_file:
       - .env
       - perf.env
+      - otel.env
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
@@ -141,7 +159,9 @@ services:
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
+       - otel-node-modules:/otel
     environment:
+      - OTEL_SERVICE_NAME=central-ledger-service
       ## Wait 4 Config script
       - WAIT4_CONFIG=./wait4.config.perf-cl.js
       # - LOG_LEVEL=error
@@ -156,6 +176,8 @@ services:
       kafka:
         condition: service_started
       central-ledger-migrator:
+        condition: service_completed_successfully
+      otel-deps:
         condition: service_completed_successfully
       # objstore:
       #   condition: service_started
@@ -180,6 +202,7 @@ services:
     env_file:
       - .env
       - perf.env
+      - otel.env
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
@@ -189,8 +212,10 @@ services:
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
+       - otel-node-modules:/otel
     environment:
       # - LOG_LEVEL=error
+      - OTEL_SERVICE_NAME=central-ledger-handler-prepare-service
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
@@ -202,6 +227,8 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      otel-deps:
+        condition: service_completed_successfully
       # objstore:
       #   condition: service_started
     healthcheck:
@@ -224,6 +251,7 @@ services:
     env_file:
       - .env
       - perf.env
+      - otel.env
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_POSITION_REPLICAS}
@@ -233,8 +261,10 @@ services:
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
+       - otel-node-modules:/otel
     environment:
       # - LOG_LEVEL=error
+      - OTEL_SERVICE_NAME=central-ledger-handler-position-service
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
@@ -246,6 +276,8 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      otel-deps:
+        condition: service_completed_successfully
       # objstore:
       #   condition: service_started
     healthcheck:
@@ -268,6 +300,7 @@ services:
     env_file:
       - .env
       - perf.env
+      - otel.env
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_POSITION_BATCH_REPLICAS}
@@ -277,8 +310,10 @@ services:
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
+       - otel-node-modules:/otel
     environment:
       # - LOG_LEVEL=error
+      - OTEL_SERVICE_NAME=central-ledger-handler-position-batch-service
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
     networks:
@@ -290,6 +325,8 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      otel-deps:
+        condition: service_completed_successfully
     healthcheck:
       test: wget -q http://localhost:3001/health -O /dev/null || exit 1
       timeout: 20s
@@ -308,6 +345,7 @@ services:
     env_file:
       - .env
       - perf.env
+      - otel.env
     deploy:
       mode: replicated
       replicas: ${CENTRAL_LEDGER_GENERAL_REPLICAS}
@@ -317,10 +355,12 @@ services:
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
+       - otel-node-modules:/otel
     environment:
       # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
+      - OTEL_SERVICE_NAME=central-ledger-handler-fulfil-service
     networks:
       - mojaloop-net
     depends_on:
@@ -330,6 +370,8 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      otel-deps:
+        condition: service_completed_successfully
       # objstore:
       #   condition: service_started
     healthcheck:
@@ -473,6 +515,7 @@ services:
     env_file:
       - .env
       - perf.env
+      - otel.env
     deploy:
       mode: replicated
       replicas: 1 # We dont need to scale this unless we are testing funds-in/out
@@ -482,7 +525,9 @@ services:
     volumes:
        - ./docker/wait4:/opt/app/wait4
        - ./docker/config-modifier:/opt/app/config-modifier
+       - otel-node-modules:/otel
     environment:
+      - OTEL_SERVICE_NAME=central-ledger-handler-admin-service
       # - LOG_LEVEL=error
       - CLEDG_MONGODB__DISABLED=true
       - EVENT_SDK_TRACEID_PER_VENDOR=false
@@ -495,6 +540,8 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      otel-deps:
+        condition: service_completed_successfully
       # objstore:
       #   condition: service_started
     healthcheck:
@@ -526,6 +573,7 @@ services:
     env_file:
       - .env
       - perf.env
+      - otel.env
     depends_on:
       mysql-cl:
         condition: service_healthy
@@ -535,12 +583,16 @@ services:
         condition: service_started
       kafka-provisioning:
         condition: service_completed_successfully
+      otel-deps:
+        condition: service_completed_successfully
     environment:
+      - OTEL_SERVICE_NAME=quoting-service
       ## Allows TraceID to be propogated - https://github.com/mojaloop/event-sdk#configuration
       - EVENT_SDK_TRACEID_PER_VENDOR=false
       - UV_THREADPOOL_SIZE=20
     volumes:
       - ./docker/config-modifier:/opt/app/config-modifier
+      - otel-node-modules:/otel
     healthcheck:
       test: wget -q http://0.0.0.0:3002/health -O /dev/null || exit 1
       timeout: 20s
@@ -562,6 +614,7 @@ services:
     env_file:
       - .env
       - perf.env
+      - otel.env
     depends_on:
       mysql-cl:
         condition: service_healthy
@@ -573,12 +626,16 @@ services:
         condition: service_healthy
       kafka-provisioning:
         condition: service_completed_successfully
+      otel-deps:
+        condition: service_completed_successfully
     environment:
+      - OTEL_SERVICE_NAME=quoting-service-handler
       ## Allows TraceID to be propogated - https://github.com/mojaloop/event-sdk#configuration
       - EVENT_SDK_TRACEID_PER_VENDOR=false
       - UV_THREADPOOL_SIZE=20
     volumes:
       - ./docker/config-modifier:/opt/app/config-modifier
+      - otel-node-modules:/otel
     healthcheck:
       test: wget -q http://0.0.0.0:3002/health -O /dev/null || exit 1
       timeout: 20s
@@ -737,6 +794,7 @@ services:
     env_file:
       - .env
       - perf.env
+      - otel.env
     deploy:
       mode: replicated
       replicas: ${ML_API_ADAPTER_REPLICAS}
@@ -747,7 +805,9 @@ services:
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
+      - otel-node-modules:/otel
     environment:
+      - OTEL_SERVICE_NAME=ml-api-adapter-service
       # - LOG_LEVEL=error
       - EVENT_SDK_TRACEID_PER_VENDOR=false
       - MLAPI_TRANSFERS__SEND_TRANSFER_CONFIRMATION_TO_PAYEE=false
@@ -758,6 +818,8 @@ services:
         condition: service_healthy
       central-ledger:
         condition: service_healthy
+      otel-deps:
+        condition: service_completed_successfully
     healthcheck:
       test: wget -q http://localhost:3000/health -O /dev/null || exit 1
       timeout: 30s
@@ -776,6 +838,7 @@ services:
     env_file:
       - .env
       - perf.env
+      - otel.env
     deploy:
       mode: replicated
       replicas: ${ML_NOTIFICATION_REPLICAS}
@@ -786,7 +849,9 @@ services:
     volumes:
       - ./docker/wait4:/opt/app/wait4
       - ./docker/config-modifier:/opt/app/config-modifier
-    environment: {}
+      - otel-node-modules:/otel
+    environment:
+      - OTEL_SERVICE_NAME=ml-handler-notification-service
       # - LOG_LEVEL=error
     networks:
       - mojaloop-net
@@ -795,6 +860,8 @@ services:
         condition: service_started
       central-ledger:
         condition: service_started
+      otel-deps:
+        condition: service_completed_successfully
     healthcheck:
       test: wget -q http://localhost:3000/health -O /dev/null || exit 1
       timeout: 30s
@@ -1003,7 +1070,7 @@ services:
       - mojaloop-net
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 3
     env_file:
       - .env
       - perf.env
@@ -1076,6 +1143,9 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    deploy:
+      mode: replicated
+      replicas: 3
     volumes:
       - ./docker/wait4:/opt/app/wait4
     healthcheck:
@@ -1103,6 +1173,9 @@ services:
     command: yarn nx run modules-api-svc:start
     networks:
       - mojaloop-net
+    deploy:
+      mode: replicated
+      replicas: 3
     depends_on:
       redis:
         condition: service_healthy

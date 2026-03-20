@@ -63,8 +63,9 @@ const deepMerge = function () {
 	const merge = function (obj) {
 		for (var prop in obj) {
 			if (obj.hasOwnProperty(prop)) {
-				// If property is an object, merge properties
-				if (Object.prototype.toString.call(obj[prop]) === '[object Object]') {
+				if (obj[prop] === null) {
+					delete newObj[prop]
+				} else if (Object.prototype.toString.call(obj[prop]) === '[object Object]') {
 					newObj[prop] = deepMerge(newObj[prop], obj[prop])
 				} else {
 					newObj[prop] = obj[prop]
