@@ -43,11 +43,25 @@ topics=(
   "topic-event-trace"
 )
 
+# Topics that need multiple partitions to support consumer scaling
+multi_partition_topics=(
+  "topic-notification-event"
+  "topic-transfer-position"
+  "topic-transfer-position-batch"
+)
+
 # Loop through the topics and create them using kafka-topics.sh
 for topic in "${topics[@]}"
 do
-  echo -e "--> Creating topic $topic..."
-  kafka-topics.sh --bootstrap-server $KAFKAHOST:$KAFKAPORT --create --if-not-exists --topic "$topic" --replication-factor 1 --partitions 1
+  partitions=1
+  for mp_topic in "${multi_partition_topics[@]}"; do
+    if [ "$topic" = "$mp_topic" ]; then
+      partitions=4
+      break
+    fi
+  done
+  echo -e "--> Creating topic $topic with $partitions partition(s)..."
+  kafka-topics.sh --bootstrap-server $KAFKAHOST:$KAFKAPORT --create --if-not-exists --topic "$topic" --replication-factor 1 --partitions $partitions
 done
 
 echo -e ""

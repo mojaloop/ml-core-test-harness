@@ -18,7 +18,11 @@ module.exports = {
               "sync": true
             },
             "rdkafkaConf": {
-              "metadata.broker.list": "kafka:29092"
+              "metadata.broker.list": "kafka:29092",
+              "session.timeout.ms": 30000,
+              "heartbeat.interval.ms": 10000,
+              "max.poll.interval.ms": 300000,
+              "partition.assignment.strategy": "cooperative-sticky"
             }
           }
         }
