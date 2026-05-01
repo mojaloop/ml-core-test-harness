@@ -1,0 +1,13 @@
+{
+    "inputValues": {
+        "HOST_TRANSACTION_REQUESTS_SERVICE": "http://transaction-request-service:4003",
+        "HOST_CENTRAL_LEDGER": "http://central-ledger:3001",
+        "HOST_ACCOUNT_LOOKUP_SERVICE": "http://account-lookup-service:4002",
+        "HOST_ACCOUNT_LOOKUP_SERVICE_ADMIN": "http://account-lookup-service:4001",
+        "HOST_QUOTING_SERVICE": "http://quoting-service:3002",
+        "HOST_SIMULATOR": "http://simulator:8444",
+        "HOST_ML_API_ADAPTER": "http://ml-api-adapter:3000",
+        "HOST_ORACLE_MSISDN": "http://als-msisdn-oracle-svc:3000",
+        "HOST_FXP_SERVICES": "http://mojaloop-testing-toolkit:4040"
+    }
+}

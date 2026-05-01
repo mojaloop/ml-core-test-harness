@@ -376,15 +376,28 @@ services:
       /opt/app/config/default.json &&
       npm start
       "
+    ports:
+      - "4003:4003"
     networks:
-      - mojaloop-net
+      mojaloop-net:
+        aliases:
+          - transaction-requests-service
+          - transaction-request-service
     depends_on:
       central-ledger:
         condition: service_started
     volumes:
       - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: wget -q http://127.0.0.1:4003/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
     profiles:
       - all-services
+      - testing-toolkit
+      - fx
   als-msisdn-oracle-svc:
     image: mojaloop/als-msisdn-oracle-svc:${ALS_MSISDN_ORACLE_SVC_VERSION}
     container_name: als-msisdn-oracle-svc
