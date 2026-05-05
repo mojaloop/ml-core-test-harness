@@ -72,6 +72,7 @@ ignore:
   - vulnerability: GHSA-73rr-hh4g-fpgx
   - vulnerability: GHSA-qffp-2rhf-9h96
   - vulnerability: GHSA-8qq5-rm4j-mr97
+  - vulnerability: GHSA-pjcq-xvwq-hhpj
 
 # Set output format defaults
 output:
