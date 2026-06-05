@@ -149,13 +149,7 @@ services:
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@127.0.0.1:9093
       KAFKA_ENABLE_KRAFT: "true"
     healthcheck:
-      test:
-        [
-          "CMD",
-          "/opt/bitnami/kafka/bin/kafka-broker-api-versions.sh",
-          "--bootstrap-server",
-          "kafka:9092",
-        ]
+      test: [ "CMD", "/opt/bitnami/kafka/bin/kafka-broker-api-versions.sh", "--bootstrap-server", "kafka:9092" ]
       timeout: 20s
       retries: 10
       start_period: 40s
@@ -185,7 +179,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "mysql"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "mysql" ]
       timeout: 20s
       retries: 10
       start_period: 40s
@@ -371,7 +365,39 @@ services:
       - all-services
       - fx
       - merchant-registry
-
+  transaction-request-service:
+    image: mojaloop/transaction-requests-service:latest
+    container_name: transaction-request-service
+    command: >
+      sh -c "
+      /opt/app/config-modifier/run.js 
+      /opt/app/config/default.json 
+      /opt/app/config-modifier/configs/transaction-request-service.js 
+      /opt/app/config/default.json &&
+      npm start
+      "
+    ports:
+      - "4003:4003"
+    networks:
+      mojaloop-net:
+        aliases:
+          - transaction-requests-service
+          - transaction-request-service
+    depends_on:
+      central-ledger:
+        condition: service_started
+    volumes:
+      - ./docker/config-modifier:/opt/app/config-modifier
+    healthcheck:
+      test: wget -q http://127.0.0.1:4003/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 30s
+    profiles:
+      - all-services
+      - testing-toolkit
+      - fx
   als-msisdn-oracle-svc:
     image: mojaloop/als-msisdn-oracle-svc:${ALS_MSISDN_ORACLE_SVC_VERSION}
     container_name: als-msisdn-oracle-svc
@@ -423,7 +449,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "mysql-als"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "mysql-als" ]
       timeout: 20s
       retries: 10
       start_period: 40s
@@ -505,7 +531,7 @@ services:
     networks:
       - mojaloop-net
     healthcheck:
-      test: ["CMD-SHELL", "nc -z -v localhost 4040"]
+      test: [ "CMD-SHELL", "nc -z -v localhost 4040" ]
       interval: 5s
       timeout: 10s
       start_period: 10s
@@ -1167,7 +1193,7 @@ services:
       context: your/local/path/to/merchant-registry-svc
       dockerfile: Dockerfile-acquirer-backend
     restart: unless-stopped
-    command: ["npm", "run", "acquirer-backend:start"]
+    command: [ "npm", "run", "acquirer-backend:start" ]
     ports:
       - "5555:5555"
     environment:
@@ -1285,7 +1311,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - your_local_path_to_merchant_registry_sql_scripts:/docker-entrypoint-initdb.d
+      - ../merchant-registry-svc/mysql-init-scripts:/docker-entrypoint-initdb.d
     networks:
       - mojaloop-net
     profiles:

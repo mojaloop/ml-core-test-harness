@@ -100,7 +100,7 @@
     "HOST_QUOTING_SERVICE_HANDLER": "http://quoting-service-handler:3003",
     "HOST_SIMULATOR": "http://simulator:8444",
     "HOST_THIRDPARTY_API_SVC": "http://thirdparty-api-svc",
-    "HOST_TRANSACTION_REQUESTS_SERVICE": "http://transaction-requests-service",
+    "HOST_TRANSACTION_REQUESTS_SERVICE": "http://transaction-request-service:4003",
     "HUB_NAME": "Hub",
     "HUB_OPERATOR_BEARER_TOKEN": "NOT_APPLICABLE",
     "NET_DEBIT_CAP": "50000",
