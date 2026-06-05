@@ -1,0 +1,1032 @@
+{
+  "options": {
+    "breakOnError": false,
+    "transformerName": "none",
+    "generateIDType": "ulid"
+  },
+  "name": "tests_golden_path_tests_by_folder_participants",
+  "test_cases": [
+    {
+      "id": "positive-tests-for",
+      "name": "positive tests for participants",
+      "fileInfo": {
+        "path": "tests/golden_path/tests_by_folder/participants/participants.json",
+        "labels": ["std-gp"]
+      },
+      "meta": {
+        "info": "positive tests for participants"
+      },
+      "requests": [
+        {
+          "id": "POST-participants",
+          "description": "POST /participants",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants",
+          "path": "/participants",
+          "method": "post",
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "headers": {
+            "Accept": "{$inputs.acceptParticipants}",
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          },
+          "body": {
+            "requestId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+            "partyList": [
+              {
+                "partyIdType": "MSISDN",
+                "partyIdentifier": "16135551212",
+                "partySubIdOrType": "string",
+                "fspId": "string",
+                "extensionList": {
+                  "extension": [
+                    {
+                      "key": "string",
+                      "value": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "currency": "AED"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "als-participants-post-rsp-status-200",
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "als-participants-post-rsp-statusText-ok",
+                "description": "Response statusText is OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              },
+              {
+                "id": "als-participants-post-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "als-participants-post-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "als-participants-post-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "als-participants-post-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": "PUT-participantsID",
+          "description": "PUT /participants/{ID}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{ID}",
+          "path": "/participants/{$inputs.toIdValue}",
+          "method": "put",
+          "params": {
+            "ID": "{$inputs.toIdValue}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "participants-put-v2-rsp-status-200",
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "participants-put-v2-rsp-statusText-ok",
+                "description": "Response statusText is OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              },
+              {
+                "id": "participants-put-v2-rsp-content-type-v",
+                "description": "Response Content-Type is participants v{$inputs.expectedParticipantsVersion}",
+                "exec": [
+                  "expect(response.headers['content-type']).to.equal('application/vnd.interoperability.participants+json;version={$inputs.expectedParticipantsVersion}')"
+                ]
+              },
+              {
+                "id": "participants-put-v2-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "participants-put-v2-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "participants-put-v2-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "participants-put-v2-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              }
+            ]
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          },
+          "body": {
+            "partyList": [
+              {
+                "partyId": {
+                  "partyIdType": "MSISDN",
+                  "partyIdentifier": "16135551212",
+                  "partySubIdOrType": "string",
+                  "fspId": "string",
+                  "extensionList": {
+                    "extension": [
+                      {
+                        "key": "string",
+                        "value": "string"
+                      }
+                    ]
+                  }
+                },
+                "errorInformation": {
+                  "errorCode": "5100",
+                  "errorDescription": "string",
+                  "extensionList": {
+                    "extension": [
+                      {
+                        "key": "string",
+                        "value": "string"
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "currency": "AED"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "disabled": false
+        },
+        {
+          "id": "PUT",
+          "description": "PUT /participants/{ID}/error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{ID}/error",
+          "path": "/participants/{ID}/error",
+          "method": "put",
+          "params": {
+            "ID": ""
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "body": {
+            "errorInformation": {
+              "errorCode": "5100",
+              "errorDescription": "string",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "string",
+                    "value": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": "POST-participants-type-id",
+          "description": "POST /participants/{Type}/{ID}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "body": {
+            "fspId": "string",
+            "currency": "AED",
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "als-participants-post-rsp-status-202",
+                "description": "Response status is 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": "als-participants-post-rsp-statusText-accepted",
+                "description": "Response statusText is Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": "als-participants-post-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "als-participants-post-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "als-participants-post-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "als-participants-post-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": "GET-participants-type-id",
+          "description": "GET /participants/{Type}/{ID}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "body": {
+            "fspId": "string",
+            "currency": "AED",
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "als-participants-post-rsp-status-202",
+                "description": "Response status is 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": "als-participants-post-rsp-statusText-accepted",
+                "description": "Response statusText is Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": "als-participants-post-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "als-participants-post-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "als-participants-post-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "als-participants-post-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": "PUT-participants-type-id",
+          "description": "PUT /participants/{Type}/{ID}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          },
+          "body": {
+            "fspId": "string"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": "als-participants-post-rsp-status-200",
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "als-participants-post-rsp-statusText-ok",
+                "description": "Response statusText is OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              },
+              {
+                "id": "als-participants-post-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "als-participants-post-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "als-participants-post-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "als-participants-post-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
+        },
+        {
+          "id": "delete-participants-type-id",
+          "description": "delete /participants/{Type}/{ID}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}",
+          "method": "delete",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": "als-get-participant-rsp-status-202",
+                "description": "Response status is 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": "als-get-participant-rsp-statusText-accepted",
+                "description": "Response statusText is Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": "als-get-participant-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "als-get-participant-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "als-get-participant-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "als-get-participant-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              },
+              {
+                "id": "als-get-participant-rsp-connection-keep-alive",
+                "description": "Connection header is keep-alive",
+                "exec": [
+                  "expect((response.headers['connection']||'').toLowerCase()).to.equal('keep-alive')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "PUT-participants-type-id-error",
+          "description": "PUT /participants/{Type}/{ID}/error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/error",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}/error",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}"
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": "5100",
+              "errorDescription": "string",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "string",
+                    "value": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "disabled": false,
+          "tests": {
+            "assertions": [
+              {
+                "id": "als-participant-error-rsp-status-200",
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "als-participant-error-rsp-statusText-ok",
+                "description": "Response statusText is OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              },
+              {
+                "id": "als-participant-error-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "als-participant-error-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "als-participant-error-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "als-participant-error-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              },
+              {
+                "id": "als-participant-error-rsp-connection-keep-alive",
+                "description": "Connection header is keep-alive",
+                "exec": [
+                  "expect((response.headers['connection']||'').toLowerCase()).to.equal('keep-alive')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "POST-participants-type-id-subid",
+          "description": "POST /participants/{Type}/{ID}/{SubId}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}",
+          "method": "post",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}",
+            "SubId": "{$inputs.toSubIdValue}"
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          },
+          "body": {
+            "fspId": "string",
+            "currency": "AED",
+            "extensionList": {
+              "extension": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ]
+            }
+          },
+          "disabled": false,
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "als-get-participant-rsp-status-202",
+                "description": "Response status is 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": "als-get-participant-rsp-statusText-accepted",
+                "description": "Response statusText is Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": "als-get-participant-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "als-get-participant-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "als-get-participant-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "als-get-participant-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              },
+              {
+                "id": "als-get-participant-rsp-connection-keep-alive",
+                "description": "Connection header is keep-alive",
+                "exec": [
+                  "expect((response.headers['connection']||'').toLowerCase()).to.equal('keep-alive')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "GET-participants-type-id-subid",
+          "description": "GET /participants/{Type}/{ID}/{SubId}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}",
+          "method": "get",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}",
+            "SubId": "{$inputs.toSubIdValue}"
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          },
+          "disabled": false,
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "als-get-participant-rsp-status-202",
+                "description": "Response status is 202",
+                "exec": ["expect(response.status).to.equal(202)"]
+              },
+              {
+                "id": "als-get-participant-rsp-statusText-accepted",
+                "description": "Response statusText is Accepted",
+                "exec": ["expect(response.statusText).to.equal('Accepted')"]
+              },
+              {
+                "id": "als-get-participant-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "als-get-participant-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "als-get-participant-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "als-get-participant-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              },
+              {
+                "id": "als-get-participant-rsp-connection-keep-alive",
+                "description": "Connection header is keep-alive",
+                "exec": [
+                  "expect((response.headers['connection']||'').toLowerCase()).to.equal('keep-alive')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "PUT-participants-type-id-subid",
+          "description": "PUT /participants/{Type}/{ID}/{SubId}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}",
+            "SubId": "{$inputs.toSubIdValue}"
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          },
+          "body": {
+            "fspId": "string"
+          },
+          "disabled": false,
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "als-participant-error-rsp-status-200",
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "als-participant-error-rsp-statusText-ok",
+                "description": "Response statusText is OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              },
+              {
+                "id": "als-participant-error-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "als-participant-error-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "als-participant-error-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "als-participant-error-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              },
+              {
+                "id": "als-participant-error-rsp-connection-keep-alive",
+                "description": "Connection header is keep-alive",
+                "exec": [
+                  "expect((response.headers['connection']||'').toLowerCase()).to.equal('keep-alive')"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "DELETE-participants-type-id-subid",
+          "description": "DELETE /participants/{Type}/{ID}/{SubId}",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}",
+          "method": "delete",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}",
+            "SubId": "{$inputs.toSubIdValue}"
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}",
+            "Accept": "{$inputs.acceptParticipants}"
+          },
+          "disabled": false,
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}"
+        },
+        {
+          "id": "PUT-participants-type-id-subid-error",
+          "description": "PUT /participants/{Type}/{ID}/{SubId}/error",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "fspiop",
+            "asynchronous": true,
+            "specFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+            "callbackMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/callback_map.json",
+            "responseMapFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/response_map.json",
+            "jsfRefFile": "/opt/app/spec_files/api_definitions/fspiop_2.0/mockRef.json",
+            "triggerTemplatesFolder": "/opt/app/spec_files/api_definitions/fspiop_2.0/trigger_templates"
+          },
+          "operationPath": "/participants/{Type}/{ID}/{SubId}/error",
+          "path": "/participants/{$inputs.toIdType}/{$inputs.toIdValue}/{$inputs.toSubIdValue}/error",
+          "method": "put",
+          "params": {
+            "Type": "{$inputs.toIdType}",
+            "ID": "{$inputs.toIdValue}",
+            "SubId": "{$inputs.toSubIdValue}"
+          },
+          "headers": {
+            "Content-Type": "{$inputs.contentTypeParticipants}",
+            "Date": "{$function.generic.curDate}",
+            "FSPIOP-Source": "{$inputs.toFspId}"
+          },
+          "body": {
+            "errorInformation": {
+              "errorCode": "5100",
+              "errorDescription": "string",
+              "extensionList": {
+                "extension": [
+                  {
+                    "key": "string",
+                    "value": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "disabled": false,
+          "url": "{$inputs.HOST_ACCOUNT_LOOKUP_SERVICE}",
+          "tests": {
+            "assertions": [
+              {
+                "id": "als-participant-error-rsp-status-200",
+                "description": "Response status is 200",
+                "exec": ["expect(response.status).to.equal(200)"]
+              },
+              {
+                "id": "als-participant-error-rsp-statusText-ok",
+                "description": "Response statusText is OK",
+                "exec": ["expect(response.statusText).to.equal('OK')"]
+              },
+              {
+                "id": "als-participant-error-rsp-content-length-0",
+                "description": "Response Content-Length is 0",
+                "exec": [
+                  "expect(response.headers['content-length']).to.equal('0')"
+                ]
+              },
+              {
+                "id": "als-participant-error-rsp-body-empty",
+                "description": "Response body is empty",
+                "exec": ["expect(response.body).to.equal('')"]
+              },
+              {
+                "id": "als-participant-error-rsp-cache-control-no-cache",
+                "description": "Response Cache-Control contains no-cache",
+                "exec": [
+                  "expect((response.headers['cache-control']||'').toLowerCase()).to.contain('no-cache')"
+                ]
+              },
+              {
+                "id": "als-participant-error-rsp-date-valid",
+                "description": "Response Date is a valid HTTP date",
+                "exec": [
+                  "expect(new Date(response.headers['date']).toString()).to.not.equal('Invalid Date')"
+                ]
+              },
+              {
+                "id": "als-participant-error-rsp-connection-keep-alive",
+                "description": "Connection header is keep-alive",
+                "exec": [
+                  "expect((response.headers['connection']||'').toLowerCase()).to.equal('keep-alive')"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
