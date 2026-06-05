@@ -516,9 +516,7 @@ services:
       - merchant-registry
 
   mojaloop-testing-toolkit-ui:
-    build:
-      context: /Users/sprak/Documents/mojaloop/LEI/ml-testing-toolkit-ui
-      dockerfile: Dockerfile
+    image: mojaloop/ml-testing-toolkit-ui:${TEST_TTK_UI_VERSION}
     container_name: mojaloop-testing-toolkit-ui
     ports:
       - "9660:6060"
