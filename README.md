@@ -77,6 +77,8 @@ By making a transfer using sender mobile application, you can see all the mojalo
 
 http://localhost:9660/mobilesimulator
 
+_Note: on a fresh environment the two DFSPs used by the mobile simulator (`pinkbankfsp` and `greenbankfsp`) are not onboarded by the standard provisioning. Open the settings on the mobile simulator page and click `Start Provisioning` once before making your first transfer._
+
 ## Profiles available
 
 | Profile Name | Description | Dependent Profiles |
