@@ -166,9 +166,9 @@
               },
               {
                 "id": "Check-Error-code-3100",
-                "description": "Check Error code 3100",
+                "description": "Check Error code 3101",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100');"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101');"
                 ]
               }
             ]
