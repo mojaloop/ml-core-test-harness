@@ -9,7 +9,7 @@ services:
   central-ledger:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
     container_name: central-ledger
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/api/index.js"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && { [ -f /opt/app/dist/api/index.js ] && node /opt/app/dist/api/index.js || node /opt/app/src/api/index.js; }"
     # ports:
     # - "3001:3001"
     volumes:
@@ -49,7 +49,7 @@ services:
   central-handler-position-batch:
     image: mojaloop/central-ledger:${CENTRAL_LEDGER_VERSION}
     container_name: central-handler-position-batch
-    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && node src/handlers/index.js handler --positionbatch"
+    command: sh -c "/opt/app/config-modifier/run.js /opt/app/config/default.json /opt/app/config-modifier/configs/central-ledger.js /opt/app/config/default.json && /opt/app/wait4/wait4.js central-ledger && { [ -f /opt/app/dist/handlers/index.js ] && node /opt/app/dist/handlers/index.js handler --positionbatch || node /opt/app/src/handlers/index.js handler --positionbatch; }"
     # ports:
     #   - "3001:3001"
     volumes:
@@ -972,7 +972,7 @@ services:
       kafka-provisioning:
         condition: service_completed_successfully
     healthcheck:
-      test: wget -q http://127.0.0.1:3001/health -O /dev/null || exit 1
+      test: wget -q http://127.0.0.1:3007/v2/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 30s
@@ -1306,6 +1306,81 @@ services:
       - mojaloop-net
     profiles:
       - merchant-registry
+
+  ## Migrated-service smoke slots (mojaloop/#4479): boot the locally-built
+  ## OpenAPI 3.0.3 / openapi-backend images inside the harness network.
+  event-sidecar:
+    image: mojaloop/event-sidecar:${EVENT_SIDECAR_VERSION}
+    container_name: event-sidecar
+    volumes:
+      - ./docker/event-sidecar/default.json:/opt/app/config/default.json
+    depends_on:
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: wget -q http://127.0.0.1:4001/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    networks:
+      - mojaloop-net
+    profiles:
+      - migrated-extras
+
+  bulk-api-adapter:
+    image: mojaloop/bulk-api-adapter:${BULK_API_ADAPTER_VERSION}
+    container_name: bulk-api-adapter
+    volumes:
+      - ./docker/bulk-api-adapter/default.json:/opt/app/config/default.json
+    depends_on:
+      kafka:
+        condition: service_healthy
+      objstore:
+        condition: service_healthy
+      central-ledger:
+        condition: service_healthy
+    healthcheck:
+      test: wget -q http://127.0.0.1:3003/health -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    networks:
+      - mojaloop-net
+    profiles:
+      - migrated-extras
+
+  ## PATHFINDER_TLS_HOST points at the real GSMA PathFinder; without
+  ## reachability the service boots but reports degraded health on GET /.
+  als-oracle-pathfinder:
+    image: mojaloop/als-oracle-pathfinder:${ALS_ORACLE_PATHFINDER_VERSION}
+    container_name: als-oracle-pathfinder
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=central_ledger
+      - DB_USER=central_ledger
+      - DB_PASSWORD=password
+      - LOG_LEVEL=info
+      - ALS_SERVICE_NAME=als-oracle-pathfinder
+      - SERVER_PORT=3000
+      - PATHFINDER_TLS_HOST=156.154.59.224
+      - PATHFINDER_TLS_PORT=7007
+      - PATHFINDER_REJECT_UNAUTHORIZED=false
+      - PATHFINDER_QUERY_TIMEOUT_MS=10000
+      - PATHFINDER_MAX_QUERIES_PER_SECOND=50
+      - PATHFINDER_KEEPALIVE_INTERVAL_MS=45000
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: wget -q http://127.0.0.1:3000/ -O /dev/null || exit 1
+      timeout: 20s
+      retries: 30
+      interval: 15s
+    networks:
+      - mojaloop-net
+    profiles:
+      - migrated-extras
 
 volumes:
   data:

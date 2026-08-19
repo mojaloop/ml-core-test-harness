@@ -11,7 +11,9 @@
       "name": "POST /quotes with missing headers",
       "fileInfo": {
         "path": "collections/tests/golden_path/negative_scenarios/quotes_negative.json",
-        "labels": ["std-gp"]
+        "labels": [
+          "std-gp"
+        ]
       },
       "meta": {
         "info": "POST /quotes with missing headers"
@@ -25,12 +27,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -128,12 +134,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -244,12 +254,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -378,7 +392,9 @@
                 "dateOfBirth": "1966-06-16",
                 "kycInformation": "{\n    \"metadata\": {\n        \"format\": \"JSON\",\n        \"version\": \"1.0\",\n        \"description\": \"Data containing KYC Information\"\n    },\n    \"data\": {\n        \"name\": \"John Doe\",\n        \"dob\": \"1980-05-15\",\n        \"gender\": \"Male\",\n        \"address\": \"123 Main Street, Anytown, USA\",\n        \"email\": \"johndoe@example.com\",\n        \"phone\": \"+1 555-123-4567\",\n        \"nationality\": \"US\",\n        \"passport_number\": \"AB1234567\",\n        \"issue_date\": \"2010-02-20\",\n        \"expiry_date\": \"2025-02-20\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_name\": \"Example Bank\",\n        \"employer\": \"ABC Company\",\n        \"occupation\": \"Software Engineer\",\n        \"income\": \"$80,000 per year\",\n        \"marital_status\": \"Single\",\n        \"dependents\": 0,\n        \"risk_level\": \"Low\"\n    }\n}"
               },
-              "supportedCurrencies": ["AED"]
+              "supportedCurrencies": [
+                "AED"
+              ]
             },
             "payer": {
               "partyIdInfo": {
@@ -406,7 +422,9 @@
                 "dateOfBirth": "1966-06-16",
                 "kycInformation": "{\n    \"metadata\": {\n        \"format\": \"JSON\",\n        \"version\": \"1.0\",\n        \"description\": \"Data containing KYC Information\"\n    },\n    \"data\": {\n        \"name\": \"John Doe\",\n        \"dob\": \"1980-05-15\",\n        \"gender\": \"Male\",\n        \"address\": \"123 Main Street, Anytown, USA\",\n        \"email\": \"johndoe@example.com\",\n        \"phone\": \"+1 555-123-4567\",\n        \"nationality\": \"US\",\n        \"passport_number\": \"AB1234567\",\n        \"issue_date\": \"2010-02-20\",\n        \"expiry_date\": \"2025-02-20\",\n        \"bank_account_number\": \"1234567890\",\n        \"bank_name\": \"Example Bank\",\n        \"employer\": \"ABC Company\",\n        \"occupation\": \"Software Engineer\",\n        \"income\": \"$80,000 per year\",\n        \"marital_status\": \"Single\",\n        \"dependents\": 0,\n        \"risk_level\": \"Low\"\n    }\n}"
               },
-              "supportedCurrencies": ["AED"]
+              "supportedCurrencies": [
+                "AED"
+              ]
             },
             "amountType": "RECEIVE",
             "amount": {
@@ -459,12 +477,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -525,12 +547,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -607,7 +633,9 @@
       "name": "POST /quotes with invalid values in header",
       "fileInfo": {
         "path": "collections/tests/golden_path/negative_scenarios/quotes_negative.json",
-        "labels": ["std-gp"]
+        "labels": [
+          "std-gp"
+        ]
       },
       "meta": {
         "info": "POST /quotes with invalid values in header"
@@ -635,12 +663,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -697,12 +729,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -771,12 +807,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -869,12 +909,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -945,7 +989,9 @@
       "name": "POST /quotes with missing parameters in body",
       "fileInfo": {
         "path": "collections/tests/golden_path/negative_scenarios/quotes_negative.json",
-        "labels": ["std-gp"]
+        "labels": [
+          "std-gp"
+        ]
       },
       "meta": {
         "info": "POST /quotes with missing parameters in body"
@@ -974,12 +1020,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -1063,12 +1113,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -1220,12 +1274,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -1324,12 +1382,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -1354,9 +1416,9 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3100'",
+                "description": "Response should contain '3101'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               }
             ]
@@ -1428,12 +1490,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -1458,9 +1524,9 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3100'",
+                "description": "Response should contain '3101'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               }
             ]
@@ -1532,12 +1598,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -1562,9 +1632,9 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3100'",
+                "description": "Response should contain '3101'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               }
             ]
@@ -1636,12 +1706,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -1666,9 +1740,9 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3100'",
+                "description": "Response should contain '3101'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               }
             ]
@@ -1740,12 +1814,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -1770,9 +1848,9 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3100'",
+                "description": "Response should contain '3101'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               }
             ]
@@ -1844,12 +1922,16 @@
               {
                 "id": 1,
                 "description": "Response status to be 400",
-                "exec": ["expect(response.status).to.equal(400)"]
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
               },
               {
                 "id": 2,
                 "description": "Response statusText be Bad Request",
-                "exec": ["expect(response.statusText).to.equal('Bad Request')"]
+                "exec": [
+                  "expect(response.statusText).to.equal('Bad Request')"
+                ]
               },
               {
                 "id": 3,
@@ -1874,9 +1956,9 @@
               },
               {
                 "id": 6,
-                "description": "Response should contain '3100'",
+                "description": "Response should contain '3101'",
                 "exec": [
-                  "expect(response.body.errorInformation.errorCode).to.include('3100')"
+                  "expect(response.body.errorInformation.errorCode).to.include('3101')"
                 ]
               }
             ]
