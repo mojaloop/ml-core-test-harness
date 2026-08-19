@@ -20,6 +20,184 @@ ignore:
   - vulnerability: CVE-2025-15469
   - vulnerability: CVE-2025-69418
 
+  - vulnerability: CVE-2026-2673
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-27171
+    include-aliases: true
+    reason: "Alpine base package (zlib) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-28387
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-28388
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-28389
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-28390
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-31789
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-31790
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-34180
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-34181
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-34182
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-34183
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-40200
+    include-aliases: true
+    reason: "Alpine base package (musl) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-42764
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-42766
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-42767
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-42769
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-45445
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-45446
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-45447
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-6042
+    include-aliases: true
+    reason: "Alpine base package (musl) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-7383
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: CVE-2026-9076
+    include-aliases: true
+    reason: "Alpine base package (libcrypto3) of the upstream ghcr.io/grafana/k6-operator runner image; not fixable from this repo. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GHSA-5cv4-jp36-h3mw
+    include-aliases: true
+    reason: "Go module (golang.org/x/net) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GHSA-9h8m-3fm2-qjrq
+    include-aliases: true
+    reason: "Go module (go.opentelemetry.io/otel/sdk) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GHSA-hrxh-6v49-42gf
+    include-aliases: true
+    reason: "Go module (google.golang.org/grpc) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GHSA-mh2q-q3fh-2475
+    include-aliases: true
+    reason: "Go module (go.opentelemetry.io/otel) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GHSA-p77j-4mvh-x3m3
+    include-aliases: true
+    reason: "Go module (google.golang.org/grpc) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GHSA-pjcq-xvwq-hhpj
+    include-aliases: true
+    reason: "Go module (github.com/Azure/go-ntlmssp) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GHSA-w8rr-5gcm-pp58
+    include-aliases: true
+    reason: "Go module (go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4337
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4340
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4341
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4601
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4603
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4865
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4869
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4870
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4918
+    include-aliases: true
+    reason: "Go module (golang.org/x/net) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4946
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4947
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4971
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4980
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4981
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-4982
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-5025
+    include-aliases: true
+    reason: "Go module (golang.org/x/net) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-5026
+    include-aliases: true
+    reason: "Go module (golang.org/x/net) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-5027
+    include-aliases: true
+    reason: "Go module (golang.org/x/net) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-5029
+    include-aliases: true
+    reason: "Go module (golang.org/x/net) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-5030
+    include-aliases: true
+    reason: "Go module (golang.org/x/net) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-5037
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-5039
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-5856
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-5970
+    include-aliases: true
+    reason: "Go module (golang.org/x/text) vendored in the upstream ghcr.io/grafana/k6-operator runner image; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-5972
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-6089
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-6090
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-6091
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+  - vulnerability: GO-2026-6218
+    include-aliases: true
+    reason: "Go standard library compiled into the upstream ghcr.io/grafana/k6-operator runner binary; fixed only by an upstream k6 rebuild. Reviewed 2026-08-18 [mojaloop/#4479]"
+
 # Set output format defaults
 output:
   - "table"
