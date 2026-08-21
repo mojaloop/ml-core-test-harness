@@ -69,7 +69,7 @@ After all services been started, if you want to execute the P2P transfer from th
 docker-compose --project-name ttk-test-only --profile ttk-tests up --no-deps
 ```
 
-\_Note: This doesn't wait for any dependent services. You should make sure that all the services are up and healthy.
+_Note: This doesn't wait for any dependent services. You should make sure that all the services are up and healthy.
 
 ## Running P2P transfer using testing toolkit web interface
 
