@@ -49,6 +49,18 @@ You should see the following output after some time. That means all your mojaloo
 
 You can see all the test reports at http://localhost:9660/admin/reports and latest report should be available in `reports/` folder.
 
+## Selecting a specific mojaloop version
+
+Change the `MOJALOOP_VERSION` variable in `.env` to select the specific Mojaloop version. The core service versions will be resolved from the corresponding Helm chart.
+
+After changing the variable to your desired version, execute the following commands to update `.env` and re-compose Docker:
+
+```bash
+bash get_mojaloop_versions.sh
+docker compose down
+docker compose up -d
+```
+
 ## Running P2P transfer again in a separate terminal session along with the running mojaloop
 
 After all services been started, if you want to execute the P2P transfer from the command line again, use the following command in a separate terminal session.
@@ -57,7 +69,7 @@ After all services been started, if you want to execute the P2P transfer from th
 docker-compose --project-name ttk-test-only --profile ttk-tests up --no-deps
 ```
 
-_Note: This doesn't wait for any dependent services. You should make sure that all the services are up and healthy.
+\_Note: This doesn't wait for any dependent services. You should make sure that all the services are up and healthy.
 
 ## Running P2P transfer using testing toolkit web interface
 
@@ -79,21 +91,21 @@ http://localhost:9660/mobilesimulator
 
 ## Profiles available
 
-| Profile Name | Description | Dependent Profiles |
-| -------------------- | ----------- | ----------- |
-| all-services | All mojaloop services including TTK | - |
-| ttk-provisioning | For setting up mojaloop switch and onboard sample DFSPs | - |
-| ttk-tests | TTK tests | - |
-| ttk-provisioning-gp | For Running golden path tests | - |
-| ttk-tests-gp | TTK GP tests | - |
-| debug | Debug utilities (kowl) | kafka |
-| central-ledger | Central Ledger service | kafka |
-| ml-api-adapter | ML API Adapter service | central-ledger |
-| quoting-service | Quoting service | central-ledger |
-| account-lookup-service | Account lookup service | central-ledger |
-| discovery | Services used for discovery | - |
-| agreement | Services used for agreement | - |
-| transfer | Services used for transfer | - |
+| Profile Name           | Description                                             | Dependent Profiles |
+| ---------------------- | ------------------------------------------------------- | ------------------ |
+| all-services           | All mojaloop services including TTK                     | -                  |
+| ttk-provisioning       | For setting up mojaloop switch and onboard sample DFSPs | -                  |
+| ttk-tests              | TTK tests                                               | -                  |
+| ttk-provisioning-gp    | For Running golden path tests                           | -                  |
+| ttk-tests-gp           | TTK GP tests                                            | -                  |
+| debug                  | Debug utilities (kowl)                                  | kafka              |
+| central-ledger         | Central Ledger service                                  | kafka              |
+| ml-api-adapter         | ML API Adapter service                                  | central-ledger     |
+| quoting-service        | Quoting service                                         | central-ledger     |
+| account-lookup-service | Account lookup service                                  | central-ledger     |
+| discovery              | Services used for discovery                             | -                  |
+| agreement              | Services used for agreement                             | -                  |
+| transfer               | Services used for transfer                              | -                  |
 
 ## Running various services with different profile combinations
 
@@ -243,7 +255,6 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile trans
 
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
-
 ### Running Services for Quotes characterization
 
 ```bash
@@ -288,13 +299,14 @@ docker compose --project-name ml-core -f docker-compose-perf.yml --profile sdk-s
 ```
 
 #### Setting up the Inbound/Outbound Server variables
+
 - Go to `perf.env` and comment out the inboundSDK variables. You'll need to do the same and restart the `docker-compose` in order to change test suite.
 
 ### Configuration for Transfers with batch support
+
 - Set CENTRAL_LEDGER_POSITION_BATCH_REPLICAS to desired count in `.env` file
 - Enable line `CLEDG_KAFKA__EVENT_TYPE_ACTION_TOPIC_MAP__POSITION__PREPARE=topic-transfer-position-batch` in `perf.env` file
 - Set `CENTRAL_LEDGER_VERSION` to `v17.2.0` or higher
-
 
 ### Monitoring
 
@@ -341,7 +353,6 @@ Start monitoring with all exporters
 docker compose --project-name monitoring --profile als-test --profile quotes-test --profile transfers-test -f docker-compose-monitoring.yml up -d
 ```
 
-
 > NOTE: `-v` argument is optional, and it will delete any volume data created by the monitoring docker compose
 
 TODO:
@@ -364,14 +375,46 @@ For reference here are the provisioned dfsps with an associated partyId availabl
 
 ```json
 [
-  {"partyId":19012345001,"fspId":"perffsp-1","wsUrl":"ws://sim-perffsp-1:3002"},
-  {"partyId":19012345002,"fspId":"perffsp-2","wsUrl":"ws://sim-perffsp-2:3002"},
-  {"partyId":19012345003,"fspId":"perffsp-3","wsUrl":"ws://sim-perffsp-3:3002"},
-  {"partyId":19012345004,"fspId":"perffsp-4","wsUrl":"ws://sim-perffsp-4:3002"},
-  {"partyId":19012345005,"fspId":"perffsp-5","wsUrl":"ws://sim-perffsp-5:3002"},
-  {"partyId":19012345006,"fspId":"perffsp-6","wsUrl":"ws://sim-perffsp-6:3002"},
-  {"partyId":19012345007,"fspId":"perffsp-7","wsUrl":"ws://sim-perffsp-7:3002"},
-  {"partyId":19012345008,"fspId":"perffsp-8","wsUrl":"ws://sim-perffsp-8:3002"},
+  {
+    "partyId": 19012345001,
+    "fspId": "perffsp-1",
+    "wsUrl": "ws://sim-perffsp-1:3002"
+  },
+  {
+    "partyId": 19012345002,
+    "fspId": "perffsp-2",
+    "wsUrl": "ws://sim-perffsp-2:3002"
+  },
+  {
+    "partyId": 19012345003,
+    "fspId": "perffsp-3",
+    "wsUrl": "ws://sim-perffsp-3:3002"
+  },
+  {
+    "partyId": 19012345004,
+    "fspId": "perffsp-4",
+    "wsUrl": "ws://sim-perffsp-4:3002"
+  },
+  {
+    "partyId": 19012345005,
+    "fspId": "perffsp-5",
+    "wsUrl": "ws://sim-perffsp-5:3002"
+  },
+  {
+    "partyId": 19012345006,
+    "fspId": "perffsp-6",
+    "wsUrl": "ws://sim-perffsp-6:3002"
+  },
+  {
+    "partyId": 19012345007,
+    "fspId": "perffsp-7",
+    "wsUrl": "ws://sim-perffsp-7:3002"
+  },
+  {
+    "partyId": 19012345008,
+    "fspId": "perffsp-8",
+    "wsUrl": "ws://sim-perffsp-8:3002"
+  }
 ]
 ```
 
@@ -433,7 +476,6 @@ Here are more verbose hands on instructions of what above commands do.
 
 - Run `docker compose --project-name security -f docker-compose-security.yml --profile security-sdk-scheme-adapter up`
 
-
 ### Automate Load Tests
 
 This section describes the process to automate capturing of grafana rendered dashboards after running the performance testing scenarios.
@@ -467,16 +509,19 @@ For executing performance test scenarios against a Mojaloop deployment, follow t
    - Edit the file `docker/ml-testing-toolkit/test-cases/environments/remote-k8s-env.json` to customize currencies and MSISDNs according to your requirements.
 
 3. **Run Simulators and TTK Provisioning:**
+
    ```bash
    docker compose --project-name simulators -f docker-compose-perf.yml --profile 8dfsp --profile testing-toolkit --profile ttk-provisioning-remote-k8s --profile oracle up -d
    ```
 
 4. **Run Monitoring Services:**
+
    ```bash
    docker compose --project-name monitoring --profile transfers-test -f docker-compose-monitoring.yml up -d
    ```
 
 5. **Execute Single Transfer Test Case:**
+
    ```bash
    env K6_SCRIPT_CONFIG_FILE_NAME=fspiopSingleTransfer.json docker compose --project-name load -f docker-compose-load.yml up
    ```
@@ -489,19 +534,22 @@ For executing performance test scenarios against a Mojaloop deployment, follow t
 
 > **Note:** The `-v` argument is optional and will delete any volume data created by the monitoring Docker Compose.
 
-### Helper scripts ###
+### Helper scripts
 
 The following helper scripts are available to allow easier execution of repetitive tasks.
+
 - [perf-test.sh](./perf-test.sh) - run various performance tests
 - [k8s-mojaloop-perf-tuning/patch.sh](./k8s-mojaloop-perf-tuning/patch.sh) - patch k8s cluster to test with different releases and configurations
 
 The easiest way to use these scripts is to create bash aliases for them:
+
 ```sh
 alias p='./k8s-mojaloop-perf-tuning/patch.sh'
 alias t='./perf-test.sh'
 ```
 
 Then use one of the following commands:
+
 - `t discovery` - Test single account discovery
 - `t discoveries` - Test account discoveries
 - `t discoveries rate` - Test account discoveries with ramping rates
