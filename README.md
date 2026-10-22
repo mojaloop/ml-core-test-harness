@@ -201,7 +201,7 @@ docker-compose --profile testing-toolkit --profile fx --profile ttk-provisioning
 
 ### Finance Portal
 
-docker-compose --profile all-services --profile fx --profile finance-portal --profile ttk-provisioning-fx --profile ttk-fx-tests --profile debug up -d
+docker compose --profile all-services --profile fx --profile finance-portal --profile ttk-provisioning-fx --profile ttk-fx-tests --profile debug up -d
 
 ## Performance Characterization - Quick Start
 
